@@ -1,0 +1,16 @@
+{
+  "name": "shortsmith-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MVP pipeline for turning long videos into scored vertical shorts.",
+  "scripts": {
+    "process": "node src/cli.js process",
+    "server": "node src/server.js",
+    "test": "node --test tests/*.test.js",
+    "smoke": "node tests/smoke-e2e.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

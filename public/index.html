@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shortsmith MVP</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace">
+        <aside class="panel">
+          <div class="brand">
+            <span class="mark">SS</span>
+            <div>
+              <h1>Shortsmith</h1>
+              <p>Motor MVP para convertir videos largos en shorts puntuados.</p>
+            </div>
+          </div>
+
+          <form id="job-form" class="form">
+            <label>
+              <span>Ruta local del video</span>
+              <input name="sourcePath" type="text" placeholder="D:\videos\directo.mp4">
+            </label>
+
+            <label>
+              <span>O subir video</span>
+              <input name="video" type="file" accept="video/*">
+            </label>
+
+            <label>
+              <span>Ruta local transcript</span>
+              <input name="transcriptPath" type="text" placeholder="D:\videos\directo.srt">
+            </label>
+
+            <label>
+              <span>O subir transcript SRT/VTT/JSON</span>
+              <input name="transcript" type="file" accept=".srt,.vtt,.json,.txt">
+            </label>
+
+            <label>
+              <span>Transcript pegado</span>
+              <textarea name="transcriptText" rows="7" placeholder="Opcional. Si no tiene timestamps, se aproxima sobre la duración del video."></textarea>
+            </label>
+
+            <div class="grid2">
+              <label>
+                <span>Clips</span>
+                <input name="topN" type="number" value="5" min="1" max="20">
+              </label>
+              <label>
+                <span>Duración máx.</span>
+                <input name="maxDuration" type="number" value="60" min="8" max="120">
+              </label>
+            </div>
+
+            <div class="grid2">
+              <label>
+                <span>Duración mín.</span>
+                <input name="minDuration" type="number" value="18" min="4" max="90">
+              </label>
+              <label>
+                <span>Layout</span>
+                <select name="renderMode">
+                  <option value="">Auto</option>
+                  <option value="pip">Webcam + pantalla</option>
+                  <option value="fit">Pantalla completa</option>
+                  <option value="crop">Crop vertical</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="grid2">
+              <label>
+                <span>Calidad render</span>
+                <select name="renderQuality">
+                  <option value="high">Alta</option>
+                  <option value="standard">Estándar</option>
+                  <option value="draft">Borrador</option>
+                </select>
+              </label>
+              <label>
+                <span>Subtítulos</span>
+                <select name="subtitleMode">
+                  <option value="words">Palabra a palabra</option>
+                  <option value="lines">Frases</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="grid2">
+              <label class="switch">
+                <input name="useLlm" type="checkbox">
+                <span>LLM scoring</span>
+              </label>
+            </div>
+
+            <button type="submit">Procesar video</button>
+          </form>
+        </aside>
+
+        <section class="results">
+          <div class="statusbar">
+            <div>
+              <span class="eyebrow">Estado</span>
+              <strong id="status">Esperando video</strong>
+            </div>
+            <code id="job-id"></code>
+          </div>
+
+          <div id="summary" class="summary"></div>
+          <div id="warnings" class="warnings"></div>
+          <div id="publishing" class="publishing"></div>
+          <div id="clips" class="clips"></div>
+        </section>
+      </section>
+      <section class="story-studio">
+        <header class="story-intro"><div><span class="eyebrow">Nuevo módulo · 1080 × 1920</span><h2>Storysmith</h2></div><p>De una noticia cruda a una secuencia editorial lista para Instagram.</p></header>
+        <div class="story-grid">
+          <form id="story-form" class="story-controls">
+            <label><span>Título / tema</span><input name="title" placeholder="Claude estrena una nueva función"></label>
+            <label><span>Fuente o texto verificable</span><textarea name="source" rows="12" required placeholder="Pega aquí la noticia, transcripción o notas. El sistema no añadirá hechos ajenos a esta fuente."></textarea></label>
+            <div class="grid2"><label><span>Identidad</span><input name="handle" value="shortsmith.ai"></label><label><span>Dirección visual</span><select name="theme"><option value="signal">Signal / naranja</option><option value="cobalt">Cobalt / azul</option><option value="acid">Acid / lima</option><option value="night">Night / oscuro</option></select></label></div>
+            <label class="switch"><input name="useLlm" type="checkbox" checked><span>Usar MiniMax M3 para estructurar</span></label>
+            <button type="submit">Diseñar historias →</button><p id="story-note" class="story-note">Sin API configurada se genera una muestra local de 3 diapositivas.</p>
+          </form>
+          <div class="story-output"><div id="story-toolbar" class="story-toolbar"></div><div id="story-preview" class="story-preview"><div class="story-empty"><b>01</b><span>Tu secuencia aparecerá aquí</span></div></div></div>
+        </div>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
+
