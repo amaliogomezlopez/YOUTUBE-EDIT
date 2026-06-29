@@ -5,11 +5,12 @@ import {mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {publishJob} from '../src/lib/publishers.js';
 import {publishToInstagram} from '../src/lib/publishers/instagram.js';
+import {publishToTiktok} from '../src/lib/publishers/tiktok.js';
 
 const PUBLISHER_ENV_KEYS = [
   'YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET', 'YOUTUBE_REFRESH_TOKEN',
   'META_ACCESS_TOKEN', 'INSTAGRAM_BUSINESS_ACCOUNT_ID',
-  'TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET',
+  'TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET', 'TIKTOK_ACCESS_TOKEN',
   'X_API_KEY', 'X_API_SECRET'
 ];
 
@@ -41,6 +42,49 @@ test('publishJob prepares all platform runs without configured credentials', asy
     assert.deepEqual(Object.keys(run.platforms), ['youtube', 'instagram', 'tiktok', 'x']);
     assert.equal(run.platforms.instagram.status, 'requires_manual_action');
     assert.match(run.platforms.youtube.reason, /YouTube Data API/);
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test('tiktok publisher initializes and uploads draft video', async () => {
+  const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
+  process.env.TIKTOK_CLIENT_KEY = 'client-key';
+  process.env.TIKTOK_CLIENT_SECRET = 'client-secret';
+  process.env.TIKTOK_ACCESS_TOKEN = 'access-token';
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-tiktok-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, 'fake video');
+    const calls = [];
+    const result = await publishToTiktok({
+      videoFile,
+      metadata: {
+        summary: {short: 'Resumen'},
+        platform_posts: {tiktok: {caption: 'Caption TikTok'}}
+      },
+      options: {
+        initUpload: async (input) => {
+          calls.push(input);
+          assert.equal(input.videoSize, 10);
+          assert.equal(input.postInfo.title, 'Caption TikTok');
+          return {data: {upload_url: 'https://upload.example.com/video', publish_id: 'publish-1'}};
+        },
+        uploadVideoFile: async (uploadUrl, file, size) => {
+          assert.equal(uploadUrl, 'https://upload.example.com/video');
+          assert.equal(file, videoFile);
+          assert.equal(size, 10);
+        }
+      }
+    });
+    assert.equal(result.status, 'processing');
+    assert.equal(result.mode, 'draft_upload');
+    assert.equal(result.publishId, 'publish-1');
+    assert.equal(calls[0].accessToken, 'access-token');
   } finally {
     await rm(jobDir, {recursive: true, force: true});
     for (const [key, value] of Object.entries(saved)) {

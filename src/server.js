@@ -10,6 +10,7 @@ import {planStory} from './lib/stories/planner.js';
 import {renderStorySvg} from './lib/stories/renderer.js';
 import {describeInstagramConfig, exchangeInstagramCode, exchangeLongLivedMetaToken, findInstagramBusinessAccount, instagramAuthUrl, validateInstagramToken} from './lib/instagram-oauth.js';
 import {exchangeYoutubeCode, makeOAuthState, youtubeAuthUrl} from './lib/youtube-oauth.js';
+import {describeTiktokConfig, exchangeTiktokCode, tiktokAuthUrl, validateTiktokToken} from './lib/tiktok-oauth.js';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const runningJobs = new Map();
@@ -228,6 +229,77 @@ No pegues este token en chats, commits ni capturas.`);
       redirect(res, instagramAuthUrl({state}));
     } catch (error) {
       sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/oauth/tiktok/start') {
+    try {
+      const state = makeOAuthState();
+      oauthStates.add(state);
+      redirect(res, tiktokAuthUrl({state}));
+    } catch (error) {
+      sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/oauth/tiktok/doctor') {
+    const report = {config: describeTiktokConfig(), accessTokenPresent: Boolean(process.env.TIKTOK_ACCESS_TOKEN)};
+    try {
+      report.authUrl = tiktokAuthUrl();
+    } catch (error) {
+      report.authUrlError = error.message;
+    }
+    if (process.env.TIKTOK_ACCESS_TOKEN) {
+      try {
+        report.user = await validateTiktokToken(process.env.TIKTOK_ACCESS_TOKEN);
+        report.tokenOk = true;
+      } catch (error) {
+        report.tokenOk = false;
+        report.tokenError = error.message;
+      }
+    }
+    sendJson(res, 200, report);
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/oauth/tiktok/callback') {
+    const code = url.searchParams.get('code');
+    const state = url.searchParams.get('state');
+    const oauthError = url.searchParams.get('error');
+    const oauthErrorDescription = url.searchParams.get('error_description');
+    if (oauthError) {
+      sendText(res, 400, `TikTok OAuth error: ${oauthErrorDescription || oauthError}`);
+      return;
+    }
+    if (!code || (state && !oauthStates.has(state))) {
+      sendText(res, 400, 'OAuth callback TikTok invalido o expirado. Vuelve a abrir /api/oauth/tiktok/start.');
+      return;
+    }
+    if (state) oauthStates.delete(state);
+    try {
+      const tokens = await exchangeTiktokCode(code);
+      const maskedAccess = tokens.access_token?.length > 12
+        ? `${tokens.access_token.slice(0, 6)}…${tokens.access_token.slice(-4)}(len=${tokens.access_token.length})`
+        : '***';
+      const maskedRefresh = tokens.refresh_token?.length > 12
+        ? `${tokens.refresh_token.slice(0, 6)}…${tokens.refresh_token.slice(-4)}(len=${tokens.refresh_token.length})`
+        : '***';
+      sendText(res, 200, `TikTok OAuth OK.
+
+Copia estas lineas en tu .env local y reinicia el servidor:
+
+TIKTOK_ACCESS_TOKEN=<pega tu access token; archivo local, no lo compartas>
+TIKTOK_REFRESH_TOKEN=<pega tu refresh token; archivo local, no lo compartas>
+TIKTOK_OPEN_ID=${tokens.open_id || ''}
+
+Resumen saneado:
+access_token=${maskedAccess}
+refresh_token=${maskedRefresh}
+scope=${tokens.scope || 'no informado por TikTok'}
+expires_in=${tokens.expires_in || 'no informado'}
+
+No pegues estos tokens en chats, commits ni capturas. El token completo se guarda solo en .env.`);
+    } catch (error) {
+      sendText(res, 500, `No se pudo completar OAuth de TikTok: ${error.message}`);
     }
     return;
   }
