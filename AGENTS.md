@@ -203,7 +203,7 @@ Asset host SSH/SCP:
 Contexto VPS conocido para pruebas:
 - Host: `sibelion.ddns.net`
 - SSH: puerto `2223`, usuario `amalio`
-- Claves locales que conectan: `C:\Users\amalio\.ssh\sibelion_poly.key` y `C:\Users\amalio\.ssh\id_ed25519`
+- Clave local configurada en `.env` mediante `ASSET_HOST_SSH_KEY_PATH`; no documentar rutas privadas reales en repositorios publicos.
 - Nginx sirve `sibelion.ddns.net` y HTTPS en `8443`, pero actualmente proxya `/` a `127.0.0.1:5050`.
 - `/var/www/html` existe, pero no esta publicado por la configuracion nginx activa.
 - Infraestructura actual: nginx sirve `location /shortsmith/videos/` desde `/var/www/shortsmith/videos/`, carpeta escribible por `amalio` y legible por `www-data`.

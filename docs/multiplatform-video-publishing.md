@@ -73,7 +73,7 @@ ASSET_HOST_PROVIDER=ssh
 ASSET_HOST_SSH_HOST=sibelion.ddns.net
 ASSET_HOST_SSH_PORT=2223
 ASSET_HOST_SSH_USER=amalio
-ASSET_HOST_SSH_KEY_PATH=C:\Users\amalio\.ssh\sibelion_poly.key
+ASSET_HOST_SSH_KEY_PATH=C:\ruta\local\a\clave_ssh.key
 ASSET_HOST_REMOTE_DIR=/var/www/shortsmith/videos
 ASSET_HOST_PUBLIC_BASE_URL=https://sibelion.ddns.net:8443/shortsmith/videos
 ```
@@ -96,9 +96,7 @@ Contexto verificado:
 - Host: `sibelion.ddns.net`
 - SSH: puerto `2223`
 - Usuario: `amalio`
-- Claves locales que conectan:
-  - `C:\Users\amalio\.ssh\sibelion_poly.key`
-  - `C:\Users\amalio\.ssh\id_ed25519`
+- Clave local configurada en `.env` mediante `ASSET_HOST_SSH_KEY_PATH`. No documentar rutas privadas reales ni subir claves al repositorio.
 - Claves que no conectaron como `amalio`:
   - `sibelion_codex.key`
   - `sibelion_xauto.key`
@@ -142,8 +140,8 @@ sudo systemctl reload nginx
 Prueba segura:
 
 ```bash
-ssh -i "C:\Users\amalio\.ssh\sibelion_poly.key" -p 2223 amalio@sibelion.ddns.net 'mkdir -p /var/www/shortsmith/videos'
-scp -i "C:\Users\amalio\.ssh\sibelion_poly.key" -P 2223 tiny-test.mp4 amalio@sibelion.ddns.net:/var/www/shortsmith/videos/tiny-test.mp4
+ssh -i "C:\ruta\local\a\clave_ssh.key" -p 2223 amalio@sibelion.ddns.net 'mkdir -p /var/www/shortsmith/videos'
+scp -i "C:\ruta\local\a\clave_ssh.key" -P 2223 tiny-test.mp4 amalio@sibelion.ddns.net:/var/www/shortsmith/videos/tiny-test.mp4
 curl -I https://sibelion.ddns.net:8443/shortsmith/videos/tiny-test.mp4
 ```
 
