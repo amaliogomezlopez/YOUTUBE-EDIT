@@ -5,6 +5,11 @@ data/uploads/*
 data/jobs/*
 data/output/*
 data/tmp/*
+data/secrets/*
+.ssh_known_hosts*
+__pycache__/
+*.pyc
+samples/input/*.mp4
 !data/uploads/.gitkeep
 !data/jobs/.gitkeep
 !data/output/.gitkeep

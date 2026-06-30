@@ -285,6 +285,24 @@ code {
   font-size: 12px;
 }
 
+.clip-publishing {
+  display: grid;
+  gap: 4px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.clip-publishing strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.clip-publishing small {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
 .empty {
   padding: 30px;
   color: var(--muted);

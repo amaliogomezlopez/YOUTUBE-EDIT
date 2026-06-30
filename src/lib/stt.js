@@ -53,9 +53,9 @@ async function transcribeOpenAi(audioFile, options = {}) {
 
 async function transcribeWhisperCli(audioFile, options = {}) {
   const outDir = options.outDir ?? path.dirname(audioFile);
-  const command = options.command ?? env('FASTER_WHISPER_COMMAND') ?? env('WHISPER_COMMAND') ?? 'whisper';
-  const model = options.model ?? env('TRANSCRIPTION_MODEL') ?? env('WHISPER_MODEL');
-  const language = options.language ?? env('TRANSCRIPTION_LANGUAGE') ?? env('WHISPER_LANGUAGE');
+  const command = options.command || env('FASTER_WHISPER_COMMAND') || env('WHISPER_COMMAND') || 'whisper';
+  const model = options.model || env('TRANSCRIPTION_MODEL') || env('WHISPER_MODEL');
+  const language = options.language || env('TRANSCRIPTION_LANGUAGE') || env('WHISPER_LANGUAGE');
   const args = [audioFile, '--output_format', 'json', '--output_dir', outDir];
   if (model) args.push('--model', model);
   if (language && language !== 'auto') args.push('--language', language);

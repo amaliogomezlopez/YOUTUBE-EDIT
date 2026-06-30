@@ -33,6 +33,24 @@ test('finds and ranks deduplicated transcript windows', () => {
   assert.ok(candidates[0].duration <= 20);
 });
 
+test('deduplicates candidates that restart inside a selected clip', () => {
+  const captions = [
+    {id: 's0', start: 0, end: 6, text: 'El debate más calentito es si GLM gana a Claude Opus.'},
+    {id: 's1', start: 6, end: 12, text: 'Pero estamos enfocando mal la pregunta.'},
+    {id: 's2', start: 12, end: 18, text: 'La verdadera pregunta es si echas de menos los otros modelos.'},
+    {id: 's3', start: 18, end: 24, text: 'Vamos a comparar GPT y GLM con ejemplos visuales.'},
+    {id: 's4', start: 24, end: 30, text: 'La diferencia de precio cambia la recomendación final.'},
+    {id: 's5', start: 90, end: 96, text: 'Cuidado con pagar una suscripción completa.'},
+    {id: 's6', start: 96, end: 102, text: 'Si sale otro modelo en julio puede cambiar la comparativa.'},
+    {id: 's7', start: 102, end: 108, text: 'Yo recomiendo probarlo en tu caso real antes de pagar.'}
+  ];
+  const candidates = findCandidates(captions, {minDuration: 12, maxDuration: 24, stride: 1});
+  for (const [index, candidate] of candidates.entries()) {
+    const previous = candidates.slice(0, index);
+    assert.equal(previous.some((existing) => candidate.start > existing.start && candidate.start < existing.end), false);
+  }
+});
+
 test('prioritizes AI and finance topic over generic model talk', () => {
   const focused = scoreCandidate({
     id: 'focused',

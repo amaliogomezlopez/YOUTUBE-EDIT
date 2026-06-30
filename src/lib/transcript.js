@@ -98,7 +98,19 @@ function trimPrefixOverlap(previousText, text) {
 
 function cleanCaptionText(text) {
   const words = text.split(/\s+/).filter(Boolean);
-  return removeRepeatedRuns(words).join(' ').trim();
+  return normalizeDomainTerms(removeRepeatedRuns(words).join(' ')).trim();
+}
+
+function normalizeDomainTerms(text) {
+  return text
+    .replace(/\bclod\s*opus\b/gi, 'Claude Opus')
+    .replace(/\bclodopus\b/gi, 'Claude Opus')
+    .replace(/\bclod\b/gi, 'Claude')
+    .replace(/\bclaud\b/gi, 'Claude')
+    .replace(/\bopus\b/gi, 'Opus')
+    .replace(/\bdipstick\b/gi, 'DeepSeek')
+    .replace(/\bglem\b/gi, 'GLM')
+    .replace(/\bgpt\b/gi, 'GPT');
 }
 
 export function cleanTranscriptCaptions(captions) {

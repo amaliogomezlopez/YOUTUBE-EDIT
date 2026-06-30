@@ -1,6 +1,7 @@
 import {manualResult, missing, validateVideoAsset} from './common.js';
 import {uploadAssetToSshHost} from '../asset-host.js';
 import {validateInstagramToken} from '../instagram-oauth.js';
+import {postForPlatform} from '../publishing.js';
 
 const REQUIRED_ENV = ['INSTAGRAM_BUSINESS_ACCOUNT_ID', 'META_ACCESS_TOKEN'];
 const INSTAGRAM_GRAPH_BASE = 'https://graph.instagram.com';
@@ -36,6 +37,16 @@ async function graphPost(path, body, token) {
   return {ok: true, payload};
 }
 
+async function graphGetMedia(mediaId, token) {
+  const url = graphUrl(`/${mediaId}`, {fields: 'id,permalink,media_type,username', access_token: token});
+  const response = await fetch(url);
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error?.message || `Instagram Graph media lookup failed with ${response.status}`);
+  }
+  return payload;
+}
+
 async function pollContainerStatus(containerId, token, {onLog} = {}) {
   const deadline = Date.now() + POLL_TIMEOUT_MS;
   while (Date.now() < deadline) {
@@ -54,13 +65,13 @@ async function pollContainerStatus(containerId, token, {onLog} = {}) {
   throw new Error(`Instagram container polling timed out after ${POLL_TIMEOUT_MS / 1000}s`);
 }
 
-export async function publishToInstagram({videoFile, metadata, options = {}}) {
+export async function publishToInstagram({videoFile, metadata, clip, options = {}}) {
   const assetError = validateVideoAsset(videoFile);
   if (assetError) {
     return {platform: 'instagram', status: 'failed', error: assetError};
   }
 
-  const post = metadata.platform_posts?.instagram ?? {};
+  const post = postForPlatform(metadata, clip, 'instagram');
   const missingEnv = missing(REQUIRED_ENV);
   if (missingEnv.length) {
     return manualResult('instagram', 'Faltan credenciales de Instagram Graph API. Reels requiere cuenta profesional y media URL accesible por HTTPS.', {
@@ -76,6 +87,7 @@ export async function publishToInstagram({videoFile, metadata, options = {}}) {
 
   const validateToken = options.validateInstagramToken || validateInstagramToken;
   const postGraph = options.graphPost || graphPost;
+  const getMedia = options.graphGetMedia || graphGetMedia;
   const pollStatus = options.pollContainerStatus || pollContainerStatus;
   const uploadAsset = options.uploadAsset || uploadAssetToSshHost;
 
@@ -191,6 +203,12 @@ export async function publishToInstagram({videoFile, metadata, options = {}}) {
       details: publish.payload?.error
     };
   }
+  let media = {};
+  try {
+    media = await getMedia(publish.payload.id, token);
+  } catch {
+    media = {};
+  }
 
   return {
     platform: 'instagram',
@@ -200,6 +218,6 @@ export async function publishToInstagram({videoFile, metadata, options = {}}) {
     videoUrl,
     containerId,
     mediaId: publish.payload.id,
-    permalink: publish.payload.permalink || `https://www.instagram.com/${probe.username}/`
+    permalink: media.permalink || publish.payload.permalink || `https://www.instagram.com/${probe.username}/`
   };
 }

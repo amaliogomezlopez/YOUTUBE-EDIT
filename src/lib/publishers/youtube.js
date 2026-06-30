@@ -1,6 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {manualResult, missing, validateVideoAsset} from './common.js';
 import {refreshYoutubeAccessToken} from '../youtube-oauth.js';
+import {postForPlatform} from '../publishing.js';
 
 const REQUIRED_ENV = ['YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET', 'YOUTUBE_REFRESH_TOKEN'];
 const VIDEOS_INSERT_URL = 'https://www.googleapis.com/upload/youtube/v3/videos?part=snippet,status&uploadType=multipart';
@@ -12,6 +13,7 @@ function youtubeMetadata({metadata, clip, post}) {
     .map((tag) => String(tag).replace(/^#/, '').trim())
     .filter(Boolean)
     .slice(0, 30);
+  const publishAt = post.publishAt || metadata.publishAt || null;
   return {
     snippet: {
       title,
@@ -20,7 +22,8 @@ function youtubeMetadata({metadata, clip, post}) {
       categoryId: String(process.env.YOUTUBE_CATEGORY_ID || '22')
     },
     status: {
-      privacyStatus: post.privacy || process.env.YOUTUBE_PRIVACY_STATUS || 'private',
+      privacyStatus: publishAt ? 'private' : (post.privacy || process.env.YOUTUBE_PRIVACY_STATUS || 'private'),
+      ...(publishAt ? {publishAt} : {}),
       selfDeclaredMadeForKids: false
     }
   };
@@ -51,7 +54,7 @@ export async function publishToYoutube({videoFile, metadata, clip}) {
     return {platform: 'youtube', status: 'failed', error: assetError};
   }
 
-  const post = metadata.platform_posts?.youtube_shorts ?? metadata.platform_posts?.youtube ?? {};
+  const post = postForPlatform(metadata, clip, 'youtube_shorts') ?? metadata.platform_posts?.youtube ?? {};
   const missingEnv = missing(REQUIRED_ENV);
   if (missingEnv.length) {
     return manualResult('youtube', 'Faltan credenciales OAuth de YouTube Data API para subir automaticamente.', {
@@ -96,6 +99,7 @@ export async function publishToYoutube({videoFile, metadata, clip}) {
     videoId: payload.id,
     url: payload.id ? `https://www.youtube.com/watch?v=${payload.id}` : null,
     privacyStatus: metadataPart.status.privacyStatus,
+    publishAt: metadataPart.status.publishAt || null,
     title: metadataPart.snippet.title
   };
 }

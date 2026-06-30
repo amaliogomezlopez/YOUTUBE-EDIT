@@ -184,6 +184,10 @@ export function scoreCandidate(candidate) {
     editorial: editorialScore(text)
   };
   const repeatPenalty = repetitionPenalty(words);
+  const cutPenalty =
+    (candidate.cleanStart === false ? 8 : 0) +
+    (candidate.cleanEnd === false ? 5 : 0) +
+    (components.boundary < 50 ? 6 : 0);
 
   const score =
     components.hook * 0.2 +
@@ -194,7 +198,8 @@ export function scoreCandidate(candidate) {
     components.boundary * 0.14 +
     components.topic * 0.16 +
     components.editorial * 0.16 -
-    repeatPenalty;
+    repeatPenalty -
+    cutPenalty;
 
   const reasons = [];
   if (components.hook >= 70) reasons.push('hook fuerte en el arranque');
@@ -205,6 +210,7 @@ export function scoreCandidate(candidate) {
   if (components.boundary >= 78) reasons.push('corte de inicio y cierre solido');
   if (components.topic >= 75) reasons.push('alineado con IA/ML aplicado a inversion y mercados');
   if (components.editorial >= 75) reasons.push('opinion o recomendacion clara sobre modelos/IA');
+  if (cutPenalty > 0) reasons.push('penalizado por corte incompleto');
   if (repeatPenalty > 0) reasons.push('penalizado por repeticion de transcripcion');
   if (reasons.length === 0) reasons.push('clip entendible y compacto');
 
@@ -221,6 +227,10 @@ function buildWindow(captions, startIndex, minDuration, maxDuration) {
   const start = captions[startIndex].start;
   let end = start;
   for (let i = startIndex; i < captions.length; i += 1) {
+    const nextDuration = captions[i].end - start;
+    if (selected.length > 0 && nextDuration > maxDuration && end - start >= minDuration) {
+      break;
+    }
     selected.push(captions[i]);
     end = captions[i].end;
     const duration = end - start;
@@ -253,6 +263,10 @@ function overlapRatio(a, b) {
   return overlap / Math.max(0.001, minDuration);
 }
 
+function startsInside(candidate, existing) {
+  return candidate.start > existing.start && candidate.start < existing.end;
+}
+
 export function findCandidates(captions, options = {}) {
   const minDuration = Number(options.minDuration ?? 18);
   const maxDuration = Number(options.maxDuration ?? 60);
@@ -265,7 +279,7 @@ export function findCandidates(captions, options = {}) {
   const ranked = raw.sort((a, b) => b.viralScore - a.viralScore || a.start - b.start);
   const deduped = [];
   for (const candidate of ranked) {
-    if (deduped.every((existing) => overlapRatio(candidate, existing) < 0.55)) {
+    if (deduped.every((existing) => overlapRatio(candidate, existing) < 0.35 && !startsInside(candidate, existing))) {
       deduped.push(candidate);
     }
   }

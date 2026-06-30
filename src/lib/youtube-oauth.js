@@ -1,11 +1,12 @@
 import {randomBytes} from 'node:crypto';
+import {publicOAuthCallback} from './oauth-redirect.js';
 
 export const YOUTUBE_UPLOAD_SCOPE = 'https://www.googleapis.com/auth/youtube.upload';
 export const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 export const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
 export function youtubeRedirectUri() {
-  return process.env.YOUTUBE_REDIRECT_URI || `http://localhost:${process.env.PORT || 3000}/api/oauth/youtube/callback`;
+  return process.env.YOUTUBE_REDIRECT_URI || publicOAuthCallback('youtube') || `http://localhost:${process.env.PORT || 3000}/api/oauth/youtube/callback`;
 }
 
 export function getYoutubeOAuthConfig() {

@@ -22,6 +22,7 @@ export async function ensureDataDirs() {
 
 export async function loadDotEnv(file = path.join(ROOT, '.env')) {
   if (!existsSync(file)) return;
+  const externalEnv = new Set(Object.keys(process.env));
   const raw = await readFile(file, 'utf8');
   for (const line of raw.split(/\r?\n/)) {
     const trimmed = line.trim();
@@ -29,7 +30,7 @@ export async function loadDotEnv(file = path.join(ROOT, '.env')) {
     const match = /^([A-Za-z_][A-Za-z0-9_]*)=(.*)$/.exec(trimmed);
     if (!match) continue;
     const [, key, valueRaw] = match;
-    if (process.env[key] !== undefined) continue;
+    if (externalEnv.has(key)) continue;
     const value = valueRaw.replace(/^['"]|['"]$/g, '');
     process.env[key] = value;
   }

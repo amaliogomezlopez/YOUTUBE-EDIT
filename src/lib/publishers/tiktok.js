@@ -1,5 +1,6 @@
 import {readFile, stat} from 'node:fs/promises';
 import {manualResult, missing, validateVideoAsset} from './common.js';
+import {postForPlatform} from '../publishing.js';
 
 const REQUIRED_ENV = ['TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET', 'TIKTOK_ACCESS_TOKEN'];
 const TIKTOK_INBOX_INIT_URL = 'https://open.tiktokapis.com/v2/post/publish/inbox/video/init/';
@@ -51,13 +52,13 @@ async function uploadVideoFile(uploadUrl, videoFile, videoSize) {
   }
 }
 
-export async function publishToTiktok({videoFile, metadata, options = {}}) {
+export async function publishToTiktok({videoFile, metadata, clip, options = {}}) {
   const assetError = validateVideoAsset(videoFile);
   if (assetError) {
     return {platform: 'tiktok', status: 'failed', error: assetError};
   }
 
-  const post = metadata.platform_posts?.tiktok ?? {};
+  const post = postForPlatform(metadata, clip, 'tiktok');
   const missingEnv = missing(REQUIRED_ENV);
   if (missingEnv.length) {
     return manualResult('tiktok', 'Faltan credenciales de TikTok Content Posting API y scopes de publicacion.', {

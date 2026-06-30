@@ -58,6 +58,13 @@ function renderJob(job) {
         <div class="reasons">
           ${(clip.reasons || []).slice(0, 4).map((reason) => `<span class="pill">${escapeHtml(reason)}</span>`).join('')}
         </div>
+        ${clip.publishing ? `
+          <div class="clip-publishing">
+            <strong>${escapeHtml(clip.publishing.title || clip.suggestedTitle || clip.id)}</strong>
+            <small>${escapeHtml((clip.publishing.priorityHashtags || []).join(' '))}</small>
+            <small>Publicar +${escapeHtml(clip.publishing.schedule?.recommendedOffsetHours ?? 0)}h respecto al primer clip</small>
+          </div>
+        ` : ''}
       </div>
     </article>
   `).join('');

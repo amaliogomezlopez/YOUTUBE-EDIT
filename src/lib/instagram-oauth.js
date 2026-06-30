@@ -1,3 +1,5 @@
+import {publicOAuthCallback} from './oauth-redirect.js';
+
 export const META_GRAPH_VERSION = process.env.META_GRAPH_VERSION || 'v23.0';
 export const META_DIALOG_URL = 'https://www.facebook.com/dialog/oauth';
 export const INSTAGRAM_DIALOG_URL = 'https://www.instagram.com/oauth/authorize';
@@ -12,7 +14,7 @@ export const DEFAULT_INSTAGRAM_SCOPES = [
 ];
 
 export function instagramRedirectUri() {
-  return process.env.META_REDIRECT_URI || `http://localhost:${process.env.PORT || 3000}/api/oauth/instagram/callback`;
+  return process.env.META_REDIRECT_URI || publicOAuthCallback('instagram') || `http://localhost:${process.env.PORT || 3000}/api/oauth/instagram/callback`;
 }
 
 export function getInstagramOAuthConfig() {
@@ -116,6 +118,16 @@ export async function exchangeLongLivedMetaToken(shortLivedToken, config = getIn
     client_secret: config.appSecret,
     fb_exchange_token: shortLivedToken
   });
+}
+
+export async function refreshInstagramLongLivedToken(accessToken = process.env.META_ACCESS_TOKEN) {
+  if (!accessToken) {
+    throw new Error('Falta META_ACCESS_TOKEN para refrescar.');
+  }
+  return graphGet('/refresh_access_token', {
+    grant_type: 'ig_refresh_token',
+    access_token: accessToken
+  }, INSTAGRAM_GRAPH_BASE);
 }
 
 function maskSecret(value) {

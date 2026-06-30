@@ -7,13 +7,16 @@ Este documento recoge el contrato operativo para subir clips generados por Short
 - YouTube: preparado para subida directa del MP4 local con YouTube Data API.
 - Instagram: preparado para publicar Reels mediante Instagram Graph API, pero requiere una URL HTTPS publica del MP4.
 - TikTok: conector reservado; debe completarse con TikTok Content Posting API.
-- X: conector reservado; debe completarse con X API.
+- X: conector preparado para X API v2 media upload + `POST /2/tweets`, condicionado a plan/API con escritura y subida de media habilitadas.
 
 Shortsmith no debe usar scraping para publicar. Si una API, cuenta, scope, plan o revision impide publicar automaticamente, el conector debe devolver `requires_manual_action` y exportar caption/assets.
 
 ## Flujo comun
 
 1. El pipeline genera un clip vertical MP4 y `publishing-metadata.json`.
+   - `publishing-metadata.json` conserva la metadata global del video largo.
+   - Cada clip renderizado puede incluir `clip.publishing` con titulo, hashtags, caption, descripcion y cadencia recomendada propios.
+   - Los conectores deben preferir `clip.publishing.{platform}` y usar `publishing-metadata.json` solo como fallback para jobs antiguos.
 2. La UI o API local llama a `POST /api/jobs/{id}/publish`.
 3. `src/lib/publishers.js` selecciona el clip renderizado y ejecuta conectores independientes.
 4. Cada conector devuelve un estado de publicacion:
@@ -61,6 +64,83 @@ Notas:
 - El token debe coincidir con `INSTAGRAM_BUSINESS_ACCOUNT_ID`.
 - El OAuth manual puede fallar por configuracion de Meta/Instagram Login; para pruebas basta con un token valido generado desde Meta.
 - No registrar ni exponer `META_ACCESS_TOKEN`.
+
+### OAuth estable para Shortsmith
+
+Para evitar URLs temporales tipo `trycloudflare`, Shortsmith puede usar una base publica fija para los callbacks OAuth:
+
+```text
+SHORTSMITH_PUBLIC_BASE_URL=https://sibelion.ddns.net:8443
+```
+
+Con esa variable, los callbacks por defecto pasan a ser:
+
+```text
+https://sibelion.ddns.net:8443/shortsmith/oauth/instagram/callback
+https://sibelion.ddns.net:8443/shortsmith/oauth/youtube/callback
+https://sibelion.ddns.net:8443/shortsmith/oauth/x/callback
+```
+
+Tambien se siguen aceptando overrides especificos:
+
+```text
+META_REDIRECT_URI=
+YOUTUBE_REDIRECT_URI=
+X_REDIRECT_URI=
+X_REDIRECT_URI_NEW_APP=
+```
+
+Registra en cada consola de proveedor la URL exacta que use Shortsmith. Para Instagram:
+
+```text
+App Settings > Instagram Login > Valid OAuth Redirect URIs
+https://sibelion.ddns.net:8443/shortsmith/oauth/instagram/callback
+```
+
+Comandos operativos:
+
+```bash
+npm run instagram:doctor
+npm run instagram:refresh-token
+npm run instagram:redeem-vps-code
+```
+
+`instagram:doctor` valida configuracion, token, cuenta profesional y asset host sin imprimir secretos. `instagram:refresh-token` refresca el token largo actual, valida la cuenta y actualiza `.env` local sin mostrar el token en stdout. Ejecutarlo semanalmente reduce la probabilidad de que una publicacion falle por token caducado.
+
+Para reautorizacion futura, el VPS no debe guardar `META_APP_SECRET`. El receptor seguro en `/home/amalio/shortsmith-oauth` solo captura el `code` OAuth de un solo uso en `instagram-code.json` con permisos `600`. Despues, en Windows:
+
+```bash
+npm run instagram:redeem-vps-code
+```
+
+Ese comando trae el `code` por SSH, lo canjea localmente con el secreto ya existente en `.env`, actualiza `META_ACCESS_TOKEN` e `INSTAGRAM_BUSINESS_ACCOUNT_ID`, y borra el `code` remoto.
+
+El servicio remoto es `shortsmith-oauth-code.service` y escucha en `127.0.0.1:3052`. Nginx debe enrutar `/shortsmith/oauth/` hacia ese puerto:
+
+```nginx
+location /shortsmith/oauth/ {
+    proxy_pass http://127.0.0.1:3052;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 30s;
+    proxy_connect_timeout 5s;
+    limit_except GET { deny all; }
+}
+```
+
+Aplicar el bloque en los server blocks HTTP y HTTPS antes de `location /`, ejecutar `nginx -t` y recargar nginx. Si Meta revoca permisos o bloquea la app, hay que volver a autorizar desde `/api/oauth/instagram/start` o desde una URL OAuth equivalente con el redirect fijo.
+
+En el VPS queda preparado un script idempotente para aplicar esa ruta con privilegios:
+
+```bash
+sudo bash /home/amalio/shortsmith-oauth/apply-nginx-shortsmith-oauth.sh
+```
+
+El script crea backup de `/etc/nginx/sites-available/smartglasses`, inserta el bloque antes de ambos `location /`, ejecuta `nginx -t` y recarga nginx.
+
+Runbook detallado: `docs/meta-instagram-reauthorization.md`.
 
 ## Asset host SSH/SCP
 
@@ -146,6 +226,93 @@ curl -I https://sibelion.ddns.net:8443/shortsmith/videos/tiny-test.mp4
 ```
 
 La prueba debe devolver `200`, `Content-Type: video/mp4` o compatible, y ser accesible desde una red externa.
+
+## X / Twitter
+
+Shortsmith usa APIs oficiales de X, nunca scraping. El flujo programatico para publicar un clip con texto es:
+
+1. Subir el MP4 con X API v2 Media Upload:
+
+```text
+POST /2/media/upload/initialize
+POST /2/media/upload/{id}/append
+POST /2/media/upload/{id}/finalize
+GET  /2/media/upload?command=STATUS&media_id=...
+```
+
+Shortsmith inicializa video como `media_category=tweet_video`, `media_type=video/mp4` y envia cada segmento a `append` como `multipart/form-data` con `segment_index` y `media`. El endpoint simple `POST /2/media/upload` se reserva para imagenes/subtitulos y no acepta `tweet_video`.
+
+2. Crear el post con el media asociado:
+
+```text
+POST /2/tweets
+{
+  "text": "...",
+  "media": {"media_ids": ["..."]}
+}
+```
+
+Variables:
+
+```text
+X_USER_ACCESS_TOKEN=
+```
+
+Alias aceptado:
+
+```text
+X_OAUTH2_ACCESS_TOKEN=
+```
+
+Fallback OAuth 1.0a para media upload legacy oficial:
+
+```text
+X_API_KEY=
+X_API_SECRET=
+X_ACCESS_TOKEN=
+X_ACCESS_TOKEN_SECRET=
+```
+
+Tambien se aceptan aliases con sufijo para evitar confundirlos con OAuth 2.0:
+
+```text
+X_API_KEY_OAUTH1=
+X_API_SECRET_OAUTH1=
+X_ACCESS_TOKEN_OAUTH1=
+X_ACCESS_TOKEN_SECRET_OAUTH1=
+```
+
+Scopes recomendados para el token de usuario OAuth 2.0:
+
+```text
+tweet.write tweet.read users.read media.write offline.access
+```
+
+Shortsmith puede generar una URL OAuth 2.0 con `media.write` aunque el portal no muestre ese scope:
+
+```text
+GET /api/oauth/x/start
+GET /api/oauth/x/doctor
+GET /api/oauth/x/callback
+```
+
+El callback guarda el ultimo token completo en `data/secrets/x-oauth-latest.env` para evitar mostrar secretos completos en pantalla. Copiar esas lineas al `.env` local y no commitear `data/secrets`.
+
+Variables para la app nueva:
+
+```text
+X_CLIENT_ID_NEW_APP=
+X_CLIENT_SECRET_NEW_APP=
+X_REDIRECT_URI_NEW_APP=
+X_SCOPES_NEW_APP=tweet.read tweet.write users.read offline.access media.write
+```
+
+Notas:
+- `X_BEARER_TOKEN` suele ser token app-only y no basta para publicar como usuario.
+- Los tokens OAuth 1.0a (`X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET`) se usan como fallback oficial mediante `upload.twitter.com/1.1/media/upload.json` (`INIT`, `APPEND`, `FINALIZE`, `STATUS`) y `POST /1.1/statuses/update.json` si X API v2 bloquea `media.write`.
+- X no ofrece programacion nativa del post en `POST /2/tweets`; si Shortsmith necesita publicar en una fecha futura, debe guardar un job local `pending` y ejecutarlo con scheduler propio.
+- Si el plan, app, scope o acceso de la cuenta no permite `media.write` o escritura de posts, el conector debe devolver `requires_manual_action` cuando pueda detectarlo antes de publicar, o `failed` con mensaje saneado si X rechaza una llamada API.
+- No registrar tokens ni respuestas completas que puedan incluir credenciales.
 
 ## Checklist antes de publicar en Instagram
 

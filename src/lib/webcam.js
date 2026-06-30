@@ -57,24 +57,25 @@ function detectInFrame(frame) {
   }
   const integral = buildIntegral(mask, width, height);
   let best = null;
-  const minW = Math.round(width * 0.16);
-  const maxW = Math.round(width * 0.36);
+  const minW = Math.round(width * 0.08);
+  const maxW = Math.round(width * 0.28);
   const step = Math.max(6, Math.round(width / 80));
   const candidateWidths = [];
   for (let w = minW; w <= maxW; w += Math.round(width * 0.035)) candidateWidths.push(w);
   for (const w of candidateWidths) {
     for (const aspect of [4 / 3, 16 / 10, 1]) {
       const h = Math.round(w / aspect);
-      if (h < height * 0.12 || h > height * 0.42) continue;
-      for (let y = Math.round(height * 0.25); y <= height - h; y += step) {
-        for (let x = Math.round(width * 0.35); x <= width - w; x += step) {
+      if (h < height * 0.1 || h > height * 0.42) continue;
+      for (let y = 0; y <= height - h; y += step) {
+        for (let x = Math.round(width * 0.3); x <= width - w; x += step) {
           const skin = rectSum(integral, width, x, y, w, h);
           const density = skin / (w * h);
           if (density < 0.035) continue;
           const rightPrior = x / width;
-          const bottomPrior = y / height;
+          const topPrior = 1 - y / height;
+          const cornerPrior = Math.max(topPrior, y / height);
           const sizePrior = 1 - Math.abs(w / width - 0.24);
-          const score = density * 3.2 + rightPrior * 0.45 + bottomPrior * 0.25 + sizePrior * 0.15;
+          const score = density * 3.2 + rightPrior * 0.55 + cornerPrior * 0.3 + sizePrior * 0.12;
           if (!best || score > best.score) {
             best = {x, y, w, h, score, density};
           }
@@ -143,9 +144,11 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
   // The detector often locks onto the face area. Recover the surrounding
   // webcam rectangle asymmetrically: streamers usually need more headroom than
   // chest room, and symmetric padding can still cut hair/forehead.
-  const padX = w * 0.45;
-  const padTop = h * 1.1;
-  const padBottom = h * 0.36;
+  const touchesTop = y < media.height * 0.08;
+  const touchesRight = x + w > media.width * 0.78;
+  const padX = w * (touchesRight ? 0.7 : 0.5);
+  const padTop = h * (touchesTop ? 0.35 : 0.95);
+  const padBottom = h * 0.95;
   const box = {
     x: Math.round(clamp(x - padX, 0, media.width - 8)),
     y: Math.round(clamp(y - padTop, 0, media.height - 8)),

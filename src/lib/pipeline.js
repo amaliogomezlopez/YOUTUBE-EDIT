@@ -8,7 +8,7 @@ import {transcribeAudio} from './stt.js';
 import {ensureDir, JOBS_DIR, makeId, OUTPUT_DIR, readJson, round, safeFilename, writeJson} from './utils.js';
 import {writeAssFile} from './subtitles.js';
 import {detectWebcamBox} from './webcam.js';
-import {generatePublishingMetadata} from './publishing.js';
+import {buildClipPublishing, generatePublishingMetadata} from './publishing.js';
 
 export async function createJob({videoFile, transcriptFile = null, jobId = null}) {
   const id = jobId ?? makeId('job');
@@ -142,6 +142,7 @@ export async function processJob(state, options = {}) {
     const selected = candidates.slice(0, topN).map((candidate, index) => ({
       ...candidate,
       rank: index + 1,
+      publishing: buildClipPublishing({...candidate, rank: index + 1}, publishingMetadata),
       status: 'selected'
     }));
     await writeJson(path.join(state.jobDir, 'candidates.json'), candidates);

@@ -61,3 +61,15 @@ las 10:15. ¿Cómo quieres que se la progresión de precios? actualice la progre
 `);
   assert.equal(captions.map((caption) => caption.text).join(' '), 'Seos solo refresca los precios una vez al día a las 10:15. ¿Cómo quieres que se la progresión de precios? actualice la progresión de precios?');
 });
+
+test('normalizes common AI model transcription mistakes', () => {
+  const captions = parseSrtTranscript(`1
+00:00:01,000 --> 00:00:03,000
+GLM contra clodopus y gpt.
+
+2
+00:00:03,000 --> 00:00:05,000
+No echo de menos clod.
+`);
+  assert.equal(captions.map((caption) => caption.text).join(' '), 'GLM contra Claude Opus y GPT. No echo de menos Claude.');
+});
