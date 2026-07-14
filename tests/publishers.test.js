@@ -5,7 +5,7 @@ import {mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {publishJob} from '../src/lib/publishers.js';
 import {publishToInstagram} from '../src/lib/publishers/instagram.js';
-import {publishToTiktok} from '../src/lib/publishers/tiktok.js';
+import {planTikTokUpload, publishToTiktok, uploadVideoFile} from '../src/lib/publishers/tiktok.js';
 import {publishToX} from '../src/lib/publishers/x.js';
 import {makePkceChallenge, xAuthUrl} from '../src/lib/x-oauth.js';
 
@@ -56,6 +56,66 @@ test('publishJob prepares all platform runs without configured credentials', asy
   }
 });
 
+test('publishJob reuses a persisted idempotency key', async () => {
+  const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
+  for (const key of PUBLISHER_ENV_KEYS) delete process.env[key];
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-idempotent-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, 'fake video');
+    const state = {
+      id: 'job-idempotent',
+      jobDir,
+      publishingMetadata: {summary: {short: 'Resumen'}, platform_posts: {}},
+      clips: [{id: 'clip-1', files: {video: videoFile}}]
+    };
+    const first = await publishJob(state, {platforms: ['youtube'], idempotencyKey: 'request-1'});
+    const second = await publishJob(state, {platforms: ['youtube'], idempotencyKey: 'request-1'});
+    assert.equal(second.id, first.id);
+    assert.equal((await import('../src/lib/utils.js').then(({readJson}) => readJson(path.join(jobDir, 'publish-runs.json')))).length, 1);
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test('publishJob persists remote upload state before the platform completes', async () => {
+  const keys = ['YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET', 'YOUTUBE_REFRESH_TOKEN'];
+  const saved = Object.fromEntries(keys.map((key) => [key, process.env[key]]));
+  for (const key of keys) process.env[key] = `${key}-test`;
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-remote-state-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, '0123456789');
+    const state = {
+      id: 'job-remote', jobDir,
+      publishingMetadata: {summary: {}, titles: {}, platform_posts: {youtube_shorts: {title: 'Título'}}},
+      clips: [{id: 'clip-1', files: {video: videoFile}}]
+    };
+    const run = await publishJob(state, {
+      platforms: ['youtube'], idempotencyKey: 'remote-1',
+      connectorOptions: {youtube: {
+        refreshAccessToken: async () => ({access_token: 'token'}),
+        initiateUpload: async () => 'https://upload.youtube.test/persisted-session',
+        uploadVideo: async (_url, _file, size, options) => {
+          await options.onProgress({bytesUploaded: size, totalBytes: size, percent: 100, phase: 'uploaded'});
+          return {id: 'video-remote'};
+        }
+      }}
+    });
+    assert.equal(run.platforms.youtube.remote.videoId, 'video-remote');
+    const savedRuns = JSON.parse(await import('node:fs/promises').then(({readFile}) => readFile(path.join(jobDir, 'publish-runs.json'), 'utf8')));
+    assert.equal(savedRuns[0].platforms.youtube.remote.uploadUrl, 'https://upload.youtube.test/persisted-session');
+    assert.equal(savedRuns[0].platforms.youtube.remote.videoId, 'video-remote');
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    for (const [key, value] of Object.entries(saved)) value === undefined ? delete process.env[key] : process.env[key] = value;
+  }
+});
+
 test('tiktok publisher initializes and uploads draft video', async () => {
   const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
   process.env.TIKTOK_CLIENT_KEY = 'client-key';
@@ -83,10 +143,14 @@ test('tiktok publisher initializes and uploads draft video', async () => {
           assert.equal(uploadUrl, 'https://upload.example.com/video');
           assert.equal(file, videoFile);
           assert.equal(size, 10);
+        },
+        pollPostStatus: async ({publishId}) => {
+          assert.equal(publishId, 'publish-1');
+          return {status: 'requires_manual_action', tiktokStatus: 'SEND_TO_USER_INBOX', terminal: true, polls: 1, timedOut: false};
         }
       }
     });
-    assert.equal(result.status, 'processing');
+    assert.equal(result.status, 'requires_manual_action');
     assert.equal(result.mode, 'draft_upload');
     assert.equal(result.publishId, 'publish-1');
     assert.equal(calls[0].accessToken, 'access-token');
@@ -96,6 +160,111 @@ test('tiktok publisher initializes and uploads draft video', async () => {
       if (value === undefined) delete process.env[key];
       else process.env[key] = value;
     }
+  }
+});
+
+test('tiktok upload plan chunks videos larger than 64 MB', () => {
+  assert.deepEqual(planTikTokUpload(64_000_000), {
+    chunkSize: 64_000_000,
+    totalChunkCount: 1
+  });
+  assert.deepEqual(planTikTokUpload(64_000_001), {
+    chunkSize: 32_000_000,
+    totalChunkCount: 2
+  });
+  assert.deepEqual(planTikTokUpload(100_000_000), {
+    chunkSize: 32_000_000,
+    totalChunkCount: 3
+  });
+  assert.throws(() => planTikTokUpload(0), /no vacio/);
+});
+
+test('tiktok uploader reads and sends sequential chunks without loading the whole file', async () => {
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-tiktok-chunks-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, 'abcdefghijklm');
+    const calls = [];
+    await uploadVideoFile('https://upload.example.com/video', videoFile, 13, {
+      plan: {chunkSize: 5, totalChunkCount: 2},
+      retries: 1,
+      fetch: async (url, options) => {
+        calls.push({
+          url,
+          range: options.headers['content-range'],
+          length: options.headers['content-length'],
+          body: Buffer.from(options.body).toString('utf8')
+        });
+        return {ok: true, status: calls.length === 2 ? 201 : 206};
+      }
+    });
+    assert.deepEqual(calls, [
+      {
+        url: 'https://upload.example.com/video',
+        range: 'bytes 0-4/13',
+        length: '5',
+        body: 'abcde'
+      },
+      {
+        url: 'https://upload.example.com/video',
+        range: 'bytes 5-12/13',
+        length: '8',
+        body: 'fghijklm'
+      }
+    ]);
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+  }
+});
+
+test('tiktok publisher resumes persisted upload state and keeps publish id', async () => {
+  const saved = process.env.TIKTOK_ACCESS_TOKEN;
+  process.env.TIKTOK_ACCESS_TOKEN = 'access-token';
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-tiktok-resume-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, '0123456789');
+    const result = await publishToTiktok({
+      videoFile,
+      metadata: {summary: {short: 'Resumen'}, platform_posts: {tiktok: {caption: 'Caption'}}},
+      options: {
+        resumeState: {uploadUrl: 'https://upload.example/existing', publishId: 'publish-existing', videoSize: 10, bytesUploaded: 10},
+        initUpload: async () => assert.fail('must not initialize another upload'),
+        uploadVideoFile: async () => assert.fail('completed upload must not be repeated'),
+        pollPostStatus: async ({publishId}) => ({status: 'published', tiktokStatus: 'PUBLISH_COMPLETE', postIds: ['post-1'], publishId, polls: 1})
+      }
+    });
+    assert.equal(result.status, 'published');
+    assert.equal(result.publishId, 'publish-existing');
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    if (saved === undefined) delete process.env.TIKTOK_ACCESS_TOKEN; else process.env.TIKTOK_ACCESS_TOKEN = saved;
+  }
+});
+
+test('instagram and X stop for manual reconciliation after an ambiguous remote create', async () => {
+  const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
+  process.env.META_ACCESS_TOKEN = 'token';
+  process.env.INSTAGRAM_BUSINESS_ACCOUNT_ID = '178';
+  process.env.X_USER_ACCESS_TOKEN = 'x-token';
+  try {
+    const instagram = await publishToInstagram({
+      videoFile: 'D:\\clips\\short.mp4', metadata: {summary: {}, platform_posts: {instagram: {caption: 'Caption'}}},
+      options: {
+        resumeState: {phase: 'publishing', containerId: 'container-1', videoUrl: 'https://example.com/video.mp4'},
+        validateInstagramToken: async () => ({isProfessional: true, matchesEnv: true, username: 'test'}),
+        graphPost: async () => assert.fail('ambiguous publish must not be repeated')
+      }
+    });
+    assert.equal(instagram.status, 'requires_manual_action');
+
+    const x = await publishToX({
+      videoFile: 'D:\\clips\\short.mp4', metadata: {summary: {}, platform_posts: {x: {text: 'Post'}}},
+      options: {resumeState: {phase: 'posting', mediaId: 'media-1', uploadMode: 'oauth2_v2'}}
+    });
+    assert.equal(x.status, 'requires_manual_action');
+  } finally {
+    for (const [key, value] of Object.entries(saved)) value === undefined ? delete process.env[key] : process.env[key] = value;
   }
 });
 

@@ -20,9 +20,9 @@ function remoteQuote(value) {
   return `'${String(value).replace(/'/g, `'\\''`)}'`;
 }
 
-function runCommand(command, args, {timeoutMs = 120000} = {}) {
+function runCommand(command, args, {timeoutMs = 120000, signal} = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {stdio: ['ignore', 'ignore', 'pipe']});
+    const child = spawn(command, args, {stdio: ['ignore', 'ignore', 'pipe'], signal});
     let stderr = '';
     const timer = setTimeout(() => {
       child.kill('SIGTERM');
@@ -74,7 +74,7 @@ export function buildHostedAssetTarget(videoFile, {remoteDir, publicBaseUrl, fil
   };
 }
 
-export async function uploadAssetToSshHost(videoFile, {env = process.env, timeoutMs} = {}) {
+export async function uploadAssetToSshHost(videoFile, {env = process.env, timeoutMs, signal} = {}) {
   const config = getAssetHostConfig(env);
   if (!config.configured) {
     return {ok: false, status: 'requires_manual_action', missingEnv: config.missingEnv};
@@ -91,7 +91,7 @@ export async function uploadAssetToSshHost(videoFile, {env = process.env, timeou
     ...commonSshArgs,
     remote,
     `mkdir -p ${remoteQuote(config.remoteDir)}`
-  ], {timeoutMs});
+  ], {timeoutMs, signal});
   await runCommand('scp', [
     '-i', config.keyPath,
     '-P', String(config.port),
@@ -99,6 +99,25 @@ export async function uploadAssetToSshHost(videoFile, {env = process.env, timeou
     '-o', 'StrictHostKeyChecking=accept-new',
     videoFile,
     `${remote}:${target.remotePath}`
-  ], {timeoutMs});
-  return {ok: true, provider: 'ssh', publicUrl: target.publicUrl, remotePath: target.remotePath};
+  ], {timeoutMs, signal});
+  return {ok: true, provider: 'ssh', publicUrl: target.publicUrl, remotePath: target.remotePath, filename: target.filename};
+}
+
+export async function deleteHostedAsset(remotePath, {env = process.env, timeoutMs, signal} = {}) {
+  const config = getAssetHostConfig(env);
+  if (!config.configured) return {ok: false, status: 'requires_manual_action', missingEnv: config.missingEnv};
+  const normalized = String(remotePath || '').replace(/\\/g, '/');
+  if (!normalized.startsWith(`${config.remoteDir}/`) || normalized.includes('/../')) {
+    throw new Error('La ruta remota no pertenece al directorio de assets de Shortsmith.');
+  }
+  const remote = `${config.user}@${config.host}`;
+  await runCommand('ssh', [
+    '-i', config.keyPath,
+    '-p', String(config.port),
+    '-o', 'BatchMode=yes',
+    '-o', 'StrictHostKeyChecking=accept-new',
+    remote,
+    `rm -f -- ${remoteQuote(normalized)}`
+  ], {timeoutMs, signal});
+  return {ok: true, provider: 'ssh'};
 }

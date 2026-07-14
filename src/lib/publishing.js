@@ -239,6 +239,7 @@ ${transcript}`;
     ], {...config, temperature: Number(options.temperature ?? 0.7), maxTokens: Number(options.maxTokens ?? 1800)});
     return {...normalizeMetadata(raw, captions, chapters), llmUsed: true};
   } catch (error) {
+    if (options.signal?.aborted || error?.name === 'AbortError') throw error;
     return {...fallbackMetadata(captions, chapters), llmUsed: false, warning: `Publishing metadata LLM failed; using local fallback: ${error.message}`};
   }
 }

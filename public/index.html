@@ -3,133 +3,218 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Shortsmith MVP</title>
+    <meta name="theme-color" content="#0d0f12">
+    <title>Shortsmith · Creator Control Room</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
-    <main class="shell">
-      <section class="workspace">
-        <aside class="panel">
-          <div class="brand">
-            <span class="mark">SS</span>
-            <div>
-              <h1>Shortsmith</h1>
-              <p>Motor MVP para convertir videos largos en shorts puntuados.</p>
-            </div>
-          </div>
+    <a class="skip-link" href="#main-content">Saltar al contenido</a>
 
-          <form id="job-form" class="form">
-            <label>
-              <span>Ruta local del video</span>
-              <input name="sourcePath" type="text" placeholder="D:\videos\directo.mp4">
-            </label>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Navegación principal">
+        <a class="brand" href="#production-view" aria-label="Shortsmith, ir a producción">
+          <span class="mark" aria-hidden="true">SS</span>
+          <span>
+            <strong>Shortsmith</strong>
+            <small>Creator control room</small>
+          </span>
+        </a>
 
-            <label>
-              <span>O subir video</span>
-              <input name="video" type="file" accept="video/*">
-            </label>
+        <nav class="view-nav" aria-label="Vistas del espacio de trabajo">
+          <a class="nav-item is-active" id="nav-production" href="#production-view" aria-current="page">
+            <span class="nav-index" aria-hidden="true">01</span>
+            <span><strong>Producción</strong><small>Procesa y revisa</small></span>
+          </a>
+          <a class="nav-item" id="nav-library" href="#library-view">
+            <span class="nav-index" aria-hidden="true">02</span>
+            <span><strong>Biblioteca</strong><small>Jobs y entregables</small></span>
+          </a>
+          <a class="nav-item" id="nav-stories" href="#stories-view">
+            <span class="nav-index" aria-hidden="true">03</span>
+            <span><strong>Stories</strong><small>Secuencias 9:16</small></span>
+          </a>
+        </nav>
 
-            <label>
-              <span>Ruta local transcript</span>
-              <input name="transcriptPath" type="text" placeholder="D:\videos\directo.srt">
-            </label>
-
-            <label>
-              <span>O subir transcript SRT/VTT/JSON</span>
-              <input name="transcript" type="file" accept=".srt,.vtt,.json,.txt">
-            </label>
-
-            <label>
-              <span>Transcript pegado</span>
-              <textarea name="transcriptText" rows="7" placeholder="Opcional. Si no tiene timestamps, se aproxima sobre la duración del video."></textarea>
-            </label>
-
-            <div class="grid2">
-              <label>
-                <span>Clips</span>
-                <input name="topN" type="number" value="5" min="1" max="20">
-              </label>
-              <label>
-                <span>Duración máx.</span>
-                <input name="maxDuration" type="number" value="60" min="8" max="120">
-              </label>
-            </div>
-
-            <div class="grid2">
-              <label>
-                <span>Duración mín.</span>
-                <input name="minDuration" type="number" value="18" min="4" max="90">
-              </label>
-              <label>
-                <span>Layout</span>
-                <select name="renderMode">
-                  <option value="">Auto</option>
-                  <option value="pip">Webcam + pantalla</option>
-                  <option value="fit">Pantalla completa</option>
-                  <option value="crop">Crop vertical</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="grid2">
-              <label>
-                <span>Calidad render</span>
-                <select name="renderQuality">
-                  <option value="high">Alta</option>
-                  <option value="standard">Estándar</option>
-                  <option value="draft">Borrador</option>
-                </select>
-              </label>
-              <label>
-                <span>Subtítulos</span>
-                <select name="subtitleMode">
-                  <option value="words">Palabra a palabra</option>
-                  <option value="lines">Frases</option>
-                </select>
-              </label>
-            </div>
-
-            <div class="grid2">
-              <label class="switch">
-                <input name="useLlm" type="checkbox">
-                <span>LLM scoring</span>
-              </label>
-            </div>
-
-            <button type="submit">Procesar video</button>
-          </form>
-        </aside>
-
-        <section class="results">
-          <div class="statusbar">
-            <div>
-              <span class="eyebrow">Estado</span>
-              <strong id="status">Esperando video</strong>
-            </div>
-            <code id="job-id"></code>
-          </div>
-
-          <div id="summary" class="summary"></div>
-          <div id="warnings" class="warnings"></div>
-          <div id="publishing" class="publishing"></div>
-          <div id="clips" class="clips"></div>
+        <section class="system-card" id="system-status" aria-labelledby="system-status-title">
+          <div class="section-label" id="system-status-title">Estado del sistema</div>
+          <ul id="system-status-list" class="system-list">
+            <li><span class="status-dot is-ready" aria-hidden="true"></span><span><strong>Servidor local</strong><small>Conectado</small></span></li>
+            <li><span class="status-dot" aria-hidden="true"></span><span><strong>IA y publicación</strong><small>Se validan al usarlas</small></span></li>
+          </ul>
         </section>
-      </section>
-      <section class="story-studio">
-        <header class="story-intro"><div><span class="eyebrow">Nuevo módulo · 1080 × 1920</span><h2>Storysmith</h2></div><p>De una noticia cruda a una secuencia editorial lista para Instagram.</p></header>
-        <div class="story-grid">
-          <form id="story-form" class="story-controls">
-            <label><span>Título / tema</span><input name="title" placeholder="Claude estrena una nueva función"></label>
-            <label><span>Fuente o texto verificable</span><textarea name="source" rows="12" required placeholder="Pega aquí la noticia, transcripción o notas. El sistema no añadirá hechos ajenos a esta fuente."></textarea></label>
-            <div class="grid2"><label><span>Identidad</span><input name="handle" value="shortsmith.ai"></label><label><span>Dirección visual</span><select name="theme"><option value="signal">Signal / naranja</option><option value="cobalt">Cobalt / azul</option><option value="acid">Acid / lima</option><option value="night">Night / oscuro</option></select></label></div>
-            <label class="switch"><input name="useLlm" type="checkbox" checked><span>Usar MiniMax M3 para estructurar</span></label>
-            <button type="submit">Diseñar historias →</button><p id="story-note" class="story-note">Sin API configurada se genera una muestra local de 3 diapositivas.</p>
-          </form>
-          <div class="story-output"><div id="story-toolbar" class="story-toolbar"></div><div id="story-preview" class="story-preview"><div class="story-empty"><b>01</b><span>Tu secuencia aparecerá aquí</span></div></div></div>
-        </div>
-      </section>
-    </main>
-    <script src="/app.js"></script>
+
+        <p class="privacy-note">Tus vídeos se procesan localmente. Solo se conectan servicios externos cuando eliges usarlos.</p>
+      </aside>
+
+      <main id="main-content" class="main-content">
+        <section id="production-view" class="view-section production-view" aria-labelledby="production-title">
+          <header class="view-header">
+            <div>
+              <span class="section-label">Espacio de producción</span>
+              <h1 id="production-title">Convierte una grabación en contenido listo para revisar</h1>
+              <p>Prepara el vídeo, genera clips verticales y revisa la metadata antes de publicar.</p>
+            </div>
+            <div class="local-badge"><span class="status-dot is-ready" aria-hidden="true"></span>Procesamiento local</div>
+          </header>
+
+          <div class="production-layout">
+            <aside class="setup-panel" aria-labelledby="setup-title">
+              <div class="panel-heading">
+                <span class="step-badge" aria-hidden="true">01</span>
+                <div><h2 id="setup-title">Preparar fuente</h2><p>Elige una ruta local o sube archivos.</p></div>
+              </div>
+
+              <form id="job-form" class="form">
+                <fieldset>
+                  <legend>Vídeo</legend>
+                  <p class="field-help" id="video-source-help">Usa una de las dos opciones.</p>
+                  <label>
+                    <span>Ruta local del vídeo</span>
+                    <input name="sourcePath" type="text" autocomplete="off" aria-describedby="video-source-help" placeholder="D:\videos\directo.mp4…">
+                  </label>
+                  <div class="option-divider" aria-hidden="true"><span>o</span></div>
+                  <label>
+                    <span>Subir vídeo</span>
+                    <input name="video" type="file" accept="video/*" aria-describedby="video-source-help">
+                  </label>
+                </fieldset>
+
+                <fieldset>
+                  <legend>Transcripción</legend>
+                  <p class="field-help" id="transcript-help">Opcional. Si no aportas una, se usará el proveedor STT configurado.</p>
+                  <label>
+                    <span>Ruta local</span>
+                    <input name="transcriptPath" type="text" autocomplete="off" aria-describedby="transcript-help" placeholder="D:\videos\directo.srt…">
+                  </label>
+                  <label>
+                    <span>Subir SRT, VTT, JSON o TXT</span>
+                    <input name="transcript" type="file" accept=".srt,.vtt,.json,.txt" aria-describedby="transcript-help">
+                  </label>
+                  <label>
+                    <span>Pegar texto</span>
+                    <textarea name="transcriptText" rows="5" aria-describedby="transcript-help" placeholder="Pega aquí una transcripción o notas…"></textarea>
+                  </label>
+                </fieldset>
+
+                <details class="advanced-settings">
+                  <summary>Configurar clips y render</summary>
+                  <div class="settings-body">
+                    <div class="grid2">
+                      <label><span>Número de clips</span><input name="topN" type="number" value="5" min="1" max="20" inputmode="numeric"></label>
+                      <label><span>Duración máxima</span><span class="input-unit"><input name="maxDuration" type="number" value="60" min="8" max="120" inputmode="numeric"><small>s</small></span></label>
+                    </div>
+                    <div class="grid2">
+                      <label><span>Duración mínima</span><span class="input-unit"><input name="minDuration" type="number" value="18" min="4" max="90" inputmode="numeric"><small>s</small></span></label>
+                      <label><span>Composición</span><select name="renderMode"><option value="">Automática</option><option value="pip">Webcam + pantalla</option><option value="fit">Pantalla completa</option><option value="crop">Recorte vertical</option></select></label>
+                    </div>
+                    <div class="grid2">
+                      <label><span>Calidad</span><select name="renderQuality"><option value="high">Alta</option><option value="standard">Estándar</option><option value="draft">Borrador</option></select></label>
+                      <label><span>Subtítulos</span><select name="subtitleMode"><option value="words">Palabra a palabra</option><option value="lines">Por frases</option></select></label>
+                    </div>
+                    <label class="switch"><input name="useLlm" type="checkbox"><span><strong>Usar análisis editorial con IA</strong><small>Mejora el scoring, títulos y metadata si el proveedor está configurado.</small></span></label>
+                  </div>
+                </details>
+
+                <button class="primary-action" type="submit">Procesar vídeo</button>
+              </form>
+            </aside>
+
+            <section class="results" aria-labelledby="results-title">
+              <div class="statusbar" role="status" aria-live="polite" aria-atomic="true">
+                <div>
+                  <span class="section-label">Estado del proceso</span>
+                  <strong id="status">Esperando vídeo</strong>
+                  <progress id="upload-progress" max="100" value="0" hidden aria-label="Progreso de subida"></progress>
+                </div>
+                <div class="process-actions">
+                  <code id="job-id" title="Identificador del job"></code>
+                  <button id="cancel-job" class="secondary-action compact" type="button" disabled>Cancelar proceso</button>
+                  <button id="retry-job" class="secondary-action compact" type="button" hidden>Reintentar proceso</button>
+                </div>
+              </div>
+
+              <h2 id="results-title" class="sr-only">Resultados del procesamiento</h2>
+              <div id="summary" class="summary" aria-label="Resumen del vídeo"></div>
+              <div id="warnings" class="warnings" aria-live="polite" aria-label="Avisos del proceso"></div>
+              <section id="layout-editor" class="layout-editor" aria-label="Editor de composición PIP" hidden></section>
+              <div id="clips" class="clips" aria-live="polite">
+                <div class="empty-state">
+                  <span class="empty-index" aria-hidden="true">02</span>
+                  <div><strong>Los clips aparecerán aquí</strong><p>Procesa un vídeo para revisar sus momentos, puntuación y render vertical.</p></div>
+                </div>
+              </div>
+
+              <section class="metadata-workspace" id="metadata-workspace" aria-labelledby="metadata-title">
+                <div class="workspace-heading">
+                  <div><span class="section-label">Revisión humana</span><h2 id="metadata-title">Metadata y publicación</h2></div>
+                  <div class="metadata-actions" id="metadata-actions">
+                    <button id="save-metadata" class="secondary-action" type="button" disabled>Guardar metadata</button>
+                    <button id="review-publish" class="primary-action compact" type="button" disabled>Revisar publicación</button>
+                  </div>
+                </div>
+                <p class="workspace-note" id="metadata-action-note">Los controles se activarán cuando el análisis haya generado metadata editable.</p>
+                <div id="publishing" class="publishing"></div>
+                <section id="publish-confirmation" class="publish-confirmation" aria-labelledby="publish-confirmation-title" hidden>
+                  <h3 id="publish-confirmation-title">Confirma la publicación</h3>
+                  <p>Comprueba el clip, el texto y las plataformas antes de continuar.</p>
+                  <div id="publish-confirmation-summary"></div>
+                  <div class="confirmation-actions">
+                    <button id="cancel-publish" class="secondary-action" type="button">Volver a editar</button>
+                    <button id="confirm-publish" class="primary-action compact" type="button">Confirmar y publicar</button>
+                  </div>
+                </section>
+              </section>
+            </section>
+          </div>
+        </section>
+
+        <section id="library-view" class="view-section library-view" aria-labelledby="library-title">
+          <header class="section-header">
+            <div><span class="section-label">Biblioteca</span><h2 id="library-title">Jobs y entregables</h2><p>Recupera trabajos recientes y continúa donde lo dejaste.</p></div>
+            <button id="refresh-job-history" class="secondary-action" type="button" disabled>Actualizar historial</button>
+          </header>
+          <div id="job-history" class="job-history" aria-live="polite">
+            <div class="empty-state compact-empty"><span class="empty-index" aria-hidden="true">00</span><div><strong>Aún no hay historial disponible</strong><p>Los jobs procesados aparecerán aquí cuando el servidor exponga el listado.</p></div></div>
+          </div>
+          <section class="storage-manager" aria-labelledby="storage-title">
+            <div><h3 id="storage-title">Almacenamiento local</h3><p id="storage-summary">Calculando espacio disponible…</p></div>
+            <div class="storage-actions">
+              <button id="preview-cleanup" class="secondary-action compact" type="button">Revisar limpieza</button>
+              <button id="run-cleanup" class="secondary-action compact" type="button" disabled>Eliminar temporales</button>
+            </div>
+            <div id="storage-cleanup-preview" class="storage-preview" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section id="stories-view" class="view-section stories-view" aria-labelledby="stories-title">
+          <header class="section-header stories-header">
+            <div><span class="section-label">Storysmith · 1080 × 1920</span><h2 id="stories-title">Convierte una fuente en una secuencia editorial</h2><p>La IA estructura el relato; el renderer compone cada pieza sin deformar textos.</p></div>
+            <span class="evidence-badge">Solo usa tu fuente</span>
+          </header>
+
+          <div class="story-grid">
+            <form id="story-form" class="story-controls">
+              <label><span>Título o tema</span><input name="title" autocomplete="off" placeholder="Nueva función de Claude…"></label>
+              <label><span>Fuente verificable</span><textarea name="source" rows="12" required placeholder="Pega aquí la noticia, transcripción o notas…"></textarea></label>
+              <div class="grid2">
+                <label><span>Identidad</span><input name="handle" value="shortsmith.ai" autocomplete="off"></label>
+                <label><span>Dirección visual</span><select name="theme"><option value="signal">Signal · naranja</option><option value="cobalt">Cobalt · azul</option><option value="acid">Acid · lima</option><option value="night">Night · oscuro</option></select></label>
+              </div>
+              <label class="switch"><input name="useLlm" type="checkbox" checked><span><strong>Usar MiniMax M3</strong><small>Estructura el relato sin añadir hechos ajenos a la fuente.</small></span></label>
+              <button class="primary-action" type="submit">Diseñar historias</button>
+              <p id="story-note" class="story-note" aria-live="polite">Sin API configurada se genera una muestra local de 3 diapositivas.</p>
+            </form>
+            <div class="story-output">
+              <div id="story-toolbar" class="story-toolbar"></div>
+              <div id="story-preview" class="story-preview" aria-live="polite">
+                <div class="story-empty"><b aria-hidden="true">01</b><span>Tu secuencia aparecerá aquí</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
   </body>
 </html>
-

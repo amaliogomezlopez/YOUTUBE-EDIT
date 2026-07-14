@@ -4,9 +4,9 @@ Este documento recoge el contrato operativo para subir clips generados por Short
 
 ## Estado actual
 
-- YouTube: preparado para subida directa del MP4 local con YouTube Data API.
+- YouTube: subida resumible por chunks desde disco mediante YouTube Data API.
 - Instagram: preparado para publicar Reels mediante Instagram Graph API, pero requiere una URL HTTPS publica del MP4.
-- TikTok: conector reservado; debe completarse con TikTok Content Posting API.
+- TikTok: Content Posting API con upload por chunks y reconciliación del estado oficial hasta resultado terminal o timeout controlado.
 - X: conector preparado para X API v2 media upload + `POST /2/tweets`, condicionado a plan/API con escritura y subida de media habilitadas.
 
 Shortsmith no debe usar scraping para publicar. Si una API, cuenta, scope, plan o revision impide publicar automaticamente, el conector debe devolver `requires_manual_action` y exportar caption/assets.
@@ -18,8 +18,11 @@ Shortsmith no debe usar scraping para publicar. Si una API, cuenta, scope, plan 
    - Cada clip renderizado puede incluir `clip.publishing` con titulo, hashtags, caption, descripcion y cadencia recomendada propios.
    - Los conectores deben preferir `clip.publishing.{platform}` y usar `publishing-metadata.json` solo como fallback para jobs antiguos.
 2. La UI o API local llama a `POST /api/jobs/{id}/publish`.
-3. `src/lib/publishers.js` selecciona el clip renderizado y ejecuta conectores independientes.
-4. Cada conector devuelve un estado de publicacion:
+   - El dashboard guarda primero la metadata editada.
+   - La petición exige `confirm=true` y una `idempotencyKey`; repetir la misma clave no crea otra publicación.
+3. El servidor devuelve `202` al guardar la operación en `data/jobs/publishing-queue.json`. Puede incluir `scheduledFor`; la cola continúa aunque se cierre el navegador y recupera trabajos interrumpidos al reiniciar Shortsmith. El servidor debe permanecer encendido a la hora programada.
+4. `src/lib/publishers.js` selecciona el clip renderizado, guarda progreso incremental en `publish-runs.json` y ejecuta conectores independientes.
+5. Cada conector devuelve un estado de publicacion:
    - `pending`
    - `validating`
    - `uploading`
@@ -28,7 +31,22 @@ Shortsmith no debe usar scraping para publicar. Si una API, cuenta, scope, plan 
    - `failed`
    - `requires_manual_action`
    - `skipped`
-5. El resultado se guarda en `publish-runs.json` dentro del job local.
+6. El resultado se guarda en `publish-runs.json` dentro del job local. `GET /api/jobs/{id}` expone el run y el estado de la cola para que el dashboard pueda reconciliarse tras recargar.
+
+## Seguridad del dashboard local
+
+- El servidor escucha en `127.0.0.1` por defecto. Exponerlo a LAN o internet requiere `SHORTSMITH_AUTH_TOKEN` de al menos 24 caracteres y un proxy HTTPS.
+- Las mutaciones rechazan hosts no permitidos, peticiones `cross-site` y origins diferentes al host local. Los hosts/origins adicionales se declaran con `SHORTSMITH_ALLOWED_HOSTS` y `SHORTSMITH_ALLOWED_ORIGINS`.
+- La publicación exige confirmación explícita e idempotencia para reducir duplicados por doble clic o reintentos.
+- Los callbacks OAuth exigen `state` válido y de un solo uso. Los tokens se guardan en `.env` local sin mostrarlos completos.
+- Shortsmith no debe imprimir tokens, claves, `.env` ni rutas privadas en capturas o logs compartidos.
+- Las rutas locales quedan deshabilitadas en modo remoto salvo las incluidas en `SHORTSMITH_ALLOWED_MEDIA_ROOTS`.
+
+La cola deduplica por `jobId + idempotencyKey`, limita concurrencia con `PUBLISH_CONCURRENCY` y permite cancelar o reintentar mediante `/api/publishing-queue/{queueId}/cancel` y `/retry`. Una caída ocurrida exactamente después de que una plataforma acepte un post pero antes de guardar su ID sigue siendo una ambigüedad remota inevitable; antes de reintentar debe revisarse la cuenta para evitar un duplicado.
+
+Las sesiones resumibles, offsets, `publish_id`, contenedores y media IDs se guardan antes de continuar cada efecto remoto. YouTube reemplaza una sesión caducada; TikTok retoma el upload/poll; Instagram y X detienen una creación ambigua como `requires_manual_action` cuando no existe una consulta oficial suficientemente segura para deduplicarla.
+
+`npm run publishing:doctor` inspecciona credenciales y capacidades declaradas sin imprimir secretos ni publicar contenido. La certificación real sigue requiriendo una subida privada/de prueba autorizada en las cuentas de cada plataforma.
 
 ## Instagram Reels
 
@@ -332,3 +350,4 @@ Notas:
 - No hardcodear tokens, claves ni rutas privadas en codigo.
 - Las URLs temporales deberian limpiarse periodicamente en el VPS cuando ya no sean necesarias.
 - No borrar nada del VPS salvo archivos creados expresamente para Shortsmith.
+- La limpieza local del dashboard no elimina assets del VPS. `deleteHostedAsset()` limita cualquier borrado remoto al directorio configurado, pero debe invocarse de forma explícita cuando el propietario confirme que Meta ya no necesita el fichero.

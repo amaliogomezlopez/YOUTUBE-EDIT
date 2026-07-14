@@ -18,7 +18,7 @@ export function renderStorySvg(story, index, options = {}) {
   const t = THEMES[story.theme] || THEMES.signal; const n = story.slides.length;
   const headline = lines(s.headline, s.layout === 'stat' ? 12 : 15);
   const body = lines(s.body, 35);
-  const photo = s.imageUrl && /^https?:\/\//.test(s.imageUrl) ? `<image href="${esc(s.imageUrl)}" x="90" y="245" width="900" height="710" preserveAspectRatio="xMidYMid slice"/><rect x="90" y="245" width="900" height="710" fill="none" stroke="${t.ink}" stroke-width="5"/>` : '';
+  const photo = s.imageUrl && /^https:\/\//.test(s.imageUrl) ? `<image href="${esc(s.imageUrl)}" crossorigin="anonymous" x="90" y="245" width="900" height="710" preserveAspectRatio="xMidYMid slice"/><rect x="90" y="245" width="900" height="710" fill="none" stroke="${t.ink}" stroke-width="5"/>` : '';
   let composition = '';
   if (s.layout === 'cover') composition = `${photo}<rect x="90" y="${photo ? 1010 : 380}" width="165" height="18" fill="${t.accent}"/>${tspans(headline, 86, photo ? 1165 : 590, 148, `fill="${t.ink}" font-size="138" font-weight="900" letter-spacing="-6"` )}`;
   else if (s.layout === 'stat') composition = `<text x="86" y="610" fill="${t.accent}" font-size="270" font-weight="900" letter-spacing="-12">${esc(s.stat || headline[0] || '01')}</text>${tspans(headline.slice(s.stat ? 0 : 1), 90, 800, 130, `fill="${t.ink}" font-size="120" font-weight="900" letter-spacing="-4"`)}${tspans(body, 92, 1230, 64, `fill="${t.ink}" font-size="49" font-weight="500"` )}`;

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import {copyFile, writeFile} from 'node:fs/promises';
+import {copyFile, unlink, writeFile} from 'node:fs/promises';
 import {extractAudio, ffprobe, renderVerticalClip} from './ffmpeg.js';
 import {enrichCandidatesWithLlm} from './llm.js';
 import {findCandidates} from './scoring.js';
@@ -9,6 +9,11 @@ import {ensureDir, JOBS_DIR, makeId, OUTPUT_DIR, readJson, round, safeFilename, 
 import {writeAssFile} from './subtitles.js';
 import {detectWebcamBox} from './webcam.js';
 import {buildClipPublishing, generatePublishingMetadata} from './publishing.js';
+import {PersistentJobQueue} from './job-queue.js';
+
+function throwIfCancelled(signal) {
+  signal?.throwIfAborted();
+}
 
 export async function createJob({videoFile, transcriptFile = null, jobId = null}) {
   const id = jobId ?? makeId('job');
@@ -52,6 +57,11 @@ export async function loadJobState(id) {
   } catch {
     state.publishRuns = state.publishRuns ?? [];
   }
+  try {
+    state.metrics = await readJson(path.join(state.jobDir, 'metrics.json'));
+  } catch {
+    state.metrics = state.metrics ?? [];
+  }
   return state;
 }
 
@@ -67,10 +77,12 @@ function sourceQualityWarning(media, renderMode) {
 
 export async function processJob(state, options = {}) {
   const started = performance.now();
+  const {signal} = options;
   try {
+    throwIfCancelled(signal);
     state.status = 'probing';
     await saveJobState(state);
-    const media = await ffprobe(state.sourceVideo);
+    const media = await ffprobe(state.sourceVideo, {signal});
     state.media = {
       duration: round(media.duration, 3),
       width: media.width,
@@ -78,7 +90,7 @@ export async function processJob(state, options = {}) {
       fps: round(media.fps, 3)
     };
     const defaultRenderMode = media.width > media.height ? 'pip' : 'crop';
-    const renderMode = options.renderMode ?? defaultRenderMode;
+    let renderMode = options.renderMode ?? defaultRenderMode;
     const warning = sourceQualityWarning(media, renderMode);
     if (warning && !(state.warnings ?? []).includes(warning)) {
       state.warnings = [...(state.warnings ?? []), warning];
@@ -86,33 +98,46 @@ export async function processJob(state, options = {}) {
     }
     let webcamBox = options.webcamBox ?? null;
     if (renderMode === 'pip') {
+      throwIfCancelled(signal);
       state.status = 'detecting-webcam';
       await saveJobState(state);
-      webcamBox = await detectWebcamBox(state.sourceVideo, media, options.webcamDetection ?? {});
+      webcamBox = await detectWebcamBox(state.sourceVideo, media, {...(options.webcamDetection ?? {}), signal});
+      if (!webcamBox) {
+        renderMode = 'fit';
+        state.warnings = [...(state.warnings ?? []), 'No se detectó una webcam estable. Se usará pantalla completa para evitar un recorte falso.'];
+      }
       state.webcamBox = webcamBox;
     }
+    state.renderMode = renderMode;
 
     state.status = 'transcribing';
     await saveJobState(state);
-    const audioFile = path.join(state.jobDir, 'audio.wav');
-    await extractAudio(state.sourceVideo, audioFile);
     let captions;
     if (state.sourceTranscript) {
       captions = await loadTranscript(state.sourceTranscript, media.duration);
     } else {
+      const audioFile = path.join(state.jobDir, 'audio.wav');
+      await extractAudio(state.sourceVideo, audioFile, {signal});
       captions = await transcribeAudio(audioFile, {
         outDir: state.jobDir,
         provider: options.sttProvider,
         model: options.sttModel,
-        language: options.sttLanguage
+        language: options.sttLanguage,
+        chunkSeconds: options.sttChunkSeconds,
+        overlapSeconds: options.sttChunkOverlapSeconds,
+        timeoutMs: options.sttTimeoutMs,
+        retries: options.sttRetries,
+        signal
       });
     }
+    throwIfCancelled(signal);
     await writeJson(path.join(state.jobDir, 'transcript.json'), captions);
     state.transcript = {segments: captions.length};
 
     state.status = 'generating-metadata';
     await saveJobState(state);
-    const publishingMetadata = await generatePublishingMetadata(captions, {useLlm: options.useLlm !== false});
+    const publishingMetadata = await generatePublishingMetadata(captions, {useLlm: options.useLlm !== false, signal});
+    throwIfCancelled(signal);
     await writeJson(path.join(state.jobDir, 'publishing-metadata.json'), publishingMetadata);
     state.publishingMetadata = publishingMetadata;
     if (publishingMetadata.warning) {
@@ -129,7 +154,7 @@ export async function processJob(state, options = {}) {
     });
     if (options.useLlm !== false) {
       try {
-        candidates = await enrichCandidatesWithLlm(candidates, {limit: Number(options.llmLimit ?? 15)});
+        candidates = await enrichCandidatesWithLlm(candidates, {limit: Number(options.llmLimit ?? 15), signal});
       } catch (error) {
         state.warnings = [
           ...(state.warnings ?? []),
@@ -138,6 +163,7 @@ export async function processJob(state, options = {}) {
         await saveJobState(state);
       }
     }
+    throwIfCancelled(signal);
     const topN = Number(options.topN ?? 8);
     const selected = candidates.slice(0, topN).map((candidate, index) => ({
       ...candidate,
@@ -152,6 +178,7 @@ export async function processJob(state, options = {}) {
     await saveJobState(state);
     const rendered = [];
     for (const candidate of selected) {
+      throwIfCancelled(signal);
       const clipDir = path.join(state.outputDir, candidate.id);
       await ensureDir(clipDir);
       const clipCaptions = sliceCaptions(captions, candidate.start, candidate.end);
@@ -171,7 +198,8 @@ export async function processJob(state, options = {}) {
         cwd: clipDir,
         mode: renderMode,
         webcamBox,
-        quality: options.renderQuality ?? 'high'
+        quality: options.renderQuality ?? 'high',
+        signal
       });
       const metadata = {
         ...candidate,
@@ -195,14 +223,142 @@ export async function processJob(state, options = {}) {
     await writeFile(path.join(state.outputDir, 'README.txt'), `Generated ${rendered.length} shorts for job ${state.id}\n`, 'utf8');
     return state;
   } catch (error) {
-    state.status = 'failed';
-    state.error = {
-      message: error.message,
-      stack: error.stack
-    };
+    const cancelled = signal?.aborted || error?.name === 'AbortError';
+    state.status = cancelled ? 'cancelled' : 'failed';
+    state.error = cancelled ? null : {message: error.message, stack: error.stack};
+    if (cancelled) state.cancelledAt = new Date().toISOString();
     await saveJobState(state);
     throw error;
   }
+}
+
+function normalizedWebcamBox(box, media) {
+  if (!box) return null;
+  const values = ['x', 'y', 'w', 'h'].map((key) => Number(box[key]));
+  if (!values.every(Number.isFinite)) throw new Error('La caja de webcam necesita x, y, ancho y alto válidos.');
+  const normalized = box.normalized !== false && values.every((value) => value >= 0 && value <= 1);
+  const [x, y, w, h] = normalized
+    ? [values[0] * media.width, values[1] * media.height, values[2] * media.width, values[3] * media.height]
+    : values;
+  if (w < 24 || h < 24 || x < 0 || y < 0 || x + w > media.width || y + h > media.height) {
+    throw new Error('La caja de webcam queda fuera de la imagen o es demasiado pequeña.');
+  }
+  return {x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h), confidence: 1, method: 'manual-override'};
+}
+
+export async function updateClipDecision(state, clipId, decision) {
+  if (!['accepted', 'discarded', 'ready'].includes(decision)) throw new Error('Estado editorial no válido.');
+  const clip = (state.clips ?? []).find((item) => item.id === clipId);
+  if (!clip) throw new Error('Clip no encontrado.');
+  clip.editorialStatus = decision;
+  clip.editorialUpdatedAt = new Date().toISOString();
+  await saveJobState(state);
+  if (clip.files?.metadata) await writeJson(clip.files.metadata, clip);
+  return clip;
+}
+
+export async function rerenderClip(state, clipId, edits = {}, options = {}) {
+  const {signal} = options;
+  throwIfCancelled(signal);
+  const clip = (state.clips ?? []).find((item) => item.id === clipId);
+  if (!clip) throw new Error('Clip no encontrado.');
+  if (!state.media?.duration) throw new Error('El vídeo todavía no se ha analizado.');
+  const start = Number(edits.start ?? clip.start);
+  const end = Number(edits.end ?? clip.end);
+  if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end > state.media.duration || end - start < 1 || end - start > 180) {
+    throw new Error('El rango debe durar entre 1 y 180 segundos y quedar dentro del vídeo.');
+  }
+  const mode = ['crop', 'fit', 'pip'].includes(edits.renderMode) ? edits.renderMode : (state.renderMode || 'crop');
+  const webcamBox = edits.webcamBox ? normalizedWebcamBox(edits.webcamBox, state.media) : state.webcamBox;
+  if (mode === 'pip' && !webcamBox) throw new Error('Selecciona una caja de webcam antes de renderizar en modo PIP.');
+  const captions = await readJson(path.join(state.jobDir, 'transcript.json'));
+  const clipDir = path.dirname(clip.files?.metadata || path.join(state.outputDir, clip.id, 'metadata.json'));
+  await ensureDir(clipDir);
+  const assFile = path.join(clipDir, 'captions.ass');
+  await writeAssFile(assFile, sliceCaptions(captions, start, end), {
+    mode: edits.subtitleMode || 'words',
+    ...(edits.subtitleStyle ?? {})
+  });
+  const outputFile = path.join(clipDir, `short-${Date.now()}.mp4`);
+  const previousVideo = clip.files?.video;
+  clip.status = 'rendering';
+  clip.renderError = null;
+  clip.start = start;
+  clip.end = end;
+  clip.duration = round(end - start, 3);
+  clip.renderSettings = {mode, quality: edits.renderQuality || 'high', subtitleMode: edits.subtitleMode || 'words', webcamBox};
+  await saveJobState(state);
+  try {
+    await (options.renderClip || renderVerticalClip)({
+      videoFile: state.sourceVideo,
+      outputFile,
+      start,
+      end,
+      subtitleFile: assFile,
+      cwd: clipDir,
+      mode,
+      webcamBox,
+      quality: edits.renderQuality || 'high',
+      signal
+    });
+    clip.files = {...(clip.files ?? {}), video: outputFile, subtitles: assFile, metadata: path.join(clipDir, 'metadata.json')};
+    clip.status = 'ready';
+    clip.renderedAt = new Date().toISOString();
+    await writeJson(clip.files.metadata, clip);
+    await saveJobState(state);
+    if (previousVideo && previousVideo !== outputFile) await unlink(previousVideo).catch(() => {});
+    return clip;
+  } catch (error) {
+    clip.status = signal?.aborted ? 'cancelled' : 'render_failed';
+    clip.renderError = signal?.aborted ? null : error.message;
+    await saveJobState(state);
+    await unlink(outputFile).catch(() => {});
+    throw error;
+  }
+}
+
+export async function createProcessingQueue({
+  file = path.join(JOBS_DIR, 'queue.json'),
+  concurrency = Number(process.env.JOB_CONCURRENCY ?? 1),
+  retryDelayMs = Number(process.env.JOB_RETRY_DELAY_MS ?? 1000),
+  autoStart = true
+} = {}) {
+  const queue = new PersistentJobQueue({
+    file,
+    concurrency,
+    retryDelayMs,
+    autoStart,
+    handler: async ({type = 'process', jobId, clipId, edits = {}, options = {}}, context) => {
+      const state = await loadJobState(jobId);
+      state.error = null;
+      state.cancelledAt = null;
+      if (type === 'rerender-clip') {
+        const clip = await rerenderClip(state, clipId, edits, {...options, signal: context.signal});
+        return {jobId, clipId: clip.id, status: clip.status, renderedAt: clip.renderedAt};
+      }
+      const result = await processJob(state, {...options, signal: context.signal});
+      return {jobId: result.id, status: result.status, completedAt: result.completedAt};
+    }
+  });
+  await queue.init();
+  return queue;
+}
+
+export async function enqueueProcessingJob(queue, state, options = {}, queueOptions = {}) {
+  if (!queue || typeof queue.enqueue !== 'function') throw new Error('A processing queue is required');
+  return queue.enqueue({jobId: state.id, options}, {id: state.id, ...queueOptions});
+}
+
+export async function enqueueClipRerender(queue, state, clipId, edits = {}, queueOptions = {}) {
+  if (!queue || typeof queue.enqueue !== 'function') throw new Error('A processing queue is required');
+  const queueId = makeId(`rerender-${clipId}`);
+  const clip = (state.clips ?? []).find((item) => item.id === clipId);
+  if (!clip) throw new Error('Clip no encontrado.');
+  clip.renderQueueId = queueId;
+  clip.status = 'queued';
+  await saveJobState(state);
+  await queue.enqueue({type: 'rerender-clip', jobId: state.id, clipId, edits}, {id: queueId, maxAttempts: 2, ...queueOptions});
+  return queue.get(queueId);
 }
 
 export async function processVideo({videoFile, transcriptFile = null, options = {}}) {

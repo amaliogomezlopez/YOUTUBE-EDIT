@@ -1,12 +1,12 @@
 import {spawn} from 'node:child_process';
 import {createHash, randomUUID} from 'node:crypto';
 import {existsSync} from 'node:fs';
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, rename, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 export const ROOT = path.resolve(fileURLToPath(new URL('../..', import.meta.url)));
-export const DATA_DIR = path.join(ROOT, 'data');
+export const DATA_DIR = path.resolve(process.env.SHORTSMITH_DATA_DIR || path.join(ROOT, 'data'));
 export const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 export const JOBS_DIR = path.join(DATA_DIR, 'jobs');
 export const OUTPUT_DIR = path.join(DATA_DIR, 'output');
@@ -33,6 +33,25 @@ export async function loadDotEnv(file = path.join(ROOT, '.env')) {
     if (externalEnv.has(key)) continue;
     const value = valueRaw.replace(/^['"]|['"]$/g, '');
     process.env[key] = value;
+  }
+}
+
+export async function persistEnvValues(values, file = path.join(ROOT, '.env')) {
+  const current = existsSync(file) ? await readFile(file, 'utf8') : '';
+  const pending = new Map(Object.entries(values).filter(([, value]) => value !== undefined && value !== null && String(value).length));
+  const lines = current.split(/\r?\n/).map((line) => {
+    const key = /^([A-Za-z_][A-Za-z0-9_]*)=/.exec(line)?.[1];
+    if (!key || !pending.has(key)) return line;
+    const value = String(pending.get(key));
+    pending.delete(key);
+    return `${key}=${JSON.stringify(value)}`;
+  });
+  for (const [key, value] of pending) lines.push(`${key}=${JSON.stringify(String(value))}`);
+  const temp = `${file}.${process.pid}.tmp`;
+  await writeFile(temp, `${lines.join('\n').replace(/\n+$/g, '')}\n`, {encoding: 'utf8', mode: 0o600});
+  await rename(temp, file);
+  for (const [key, value] of Object.entries(values)) {
+    if (value !== undefined && value !== null && String(value).length) process.env[key] = String(value);
   }
 }
 
@@ -84,13 +103,28 @@ export function secondsToSrtTime(seconds) {
 
 export function run(command, args, options = {}) {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, args, {
+    const spawnOptions = {
       cwd: options.cwd ?? ROOT,
       env: {...process.env, ...(options.env ?? {})},
       windowsHide: true
-    });
+    };
+    if (options.signal) spawnOptions.signal = options.signal;
+    const child = spawn(command, args, spawnOptions);
     let stdout = '';
     let stderr = '';
+    let settled = false;
+    const timeout = Number(options.timeoutMs) > 0
+      ? setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        child.kill('SIGKILL');
+        const error = new Error(`${command} timed out after ${options.timeoutMs} ms`);
+        error.code = 'ETIMEDOUT';
+        error.stdout = stdout;
+        error.stderr = stderr;
+        reject(error);
+      }, Number(options.timeoutMs))
+      : null;
     child.stdout?.on('data', (chunk) => {
       stdout += chunk.toString();
       options.onStdout?.(chunk.toString());
@@ -99,8 +133,16 @@ export function run(command, args, options = {}) {
       stderr += chunk.toString();
       options.onStderr?.(chunk.toString());
     });
-    child.on('error', reject);
+    child.on('error', (error) => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
+      reject(error);
+    });
     child.on('close', (code) => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
       if (code === 0) {
         resolve({stdout, stderr});
         return;

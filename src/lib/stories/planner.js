@@ -55,6 +55,7 @@ export async function planStory(source, options = {}) {
     if (slides.length < 3) throw new Error('El LLM devolvió pocas diapositivas.');
     return {title: clean(result.title || fallback.title, 70), theme: options.theme || result.theme || 'signal', source: clean(options.source, 90), llmUsed: true, slides};
   } catch (error) {
+    if (options.signal?.aborted || error?.name === 'AbortError') throw error;
     return {...fallback, warning: `MiniMax no pudo estructurar la historia: ${error.message}`};
   }
 }

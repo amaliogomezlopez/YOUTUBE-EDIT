@@ -1,5 +1,6 @@
 import {randomBytes} from 'node:crypto';
 import {publicOAuthCallback} from './oauth-redirect.js';
+import {fetchWithTimeout} from './network.js';
 
 export const YOUTUBE_UPLOAD_SCOPE = 'https://www.googleapis.com/auth/youtube.upload';
 export const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -45,7 +46,7 @@ export function youtubeAuthUrl({state, config = getYoutubeOAuthConfig()} = {}) {
   return url.toString();
 }
 
-export async function exchangeYoutubeCode(code, config = getYoutubeOAuthConfig()) {
+export async function exchangeYoutubeCode(code, config = getYoutubeOAuthConfig(), options = {}) {
   const missing = validateYoutubeOAuthConfig(config);
   if (missing.length) {
     throw new Error(`Faltan variables OAuth de YouTube: ${missing.join(', ')}`);
@@ -57,11 +58,11 @@ export async function exchangeYoutubeCode(code, config = getYoutubeOAuthConfig()
     redirect_uri: config.redirectUri,
     grant_type: 'authorization_code'
   });
-  const response = await fetch(GOOGLE_TOKEN_URL, {
+  const response = await fetchWithTimeout(GOOGLE_TOKEN_URL, {
     method: 'POST',
     headers: {'content-type': 'application/x-www-form-urlencoded'},
     body
-  });
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error_description || payload.error || `Google token exchange failed with ${response.status}`);
@@ -69,7 +70,7 @@ export async function exchangeYoutubeCode(code, config = getYoutubeOAuthConfig()
   return payload;
 }
 
-export async function refreshYoutubeAccessToken(config = getYoutubeOAuthConfig()) {
+export async function refreshYoutubeAccessToken(config = getYoutubeOAuthConfig(), options = {}) {
   const missing = validateYoutubeOAuthConfig(config);
   if (missing.length) {
     throw new Error(`Faltan variables OAuth de YouTube: ${missing.join(', ')}`);
@@ -83,11 +84,11 @@ export async function refreshYoutubeAccessToken(config = getYoutubeOAuthConfig()
     refresh_token: process.env.YOUTUBE_REFRESH_TOKEN,
     grant_type: 'refresh_token'
   });
-  const response = await fetch(GOOGLE_TOKEN_URL, {
+  const response = await fetchWithTimeout(GOOGLE_TOKEN_URL, {
     method: 'POST',
     headers: {'content-type': 'application/x-www-form-urlencoded'},
     body
-  });
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error_description || payload.error || `Google refresh failed with ${response.status}`);

@@ -1,4 +1,5 @@
 import {makeOAuthState} from './youtube-oauth.js';
+import {fetchWithTimeout} from './network.js';
 
 export const TIKTOK_AUTH_URL = 'https://www.tiktok.com/v2/auth/authorize/';
 export const TIKTOK_TOKEN_URL = 'https://open.tiktokapis.com/v2/oauth/token/';
@@ -45,7 +46,7 @@ export function tiktokAuthUrl({state, config = getTiktokOAuthConfig()} = {}) {
   return url.toString();
 }
 
-export async function exchangeTiktokCode(code, config = getTiktokOAuthConfig()) {
+export async function exchangeTiktokCode(code, config = getTiktokOAuthConfig(), options = {}) {
   const missing = validateTiktokOAuthConfig(config);
   if (missing.length) {
     throw new Error(`Faltan variables OAuth de TikTok: ${missing.join(', ')}`);
@@ -57,11 +58,11 @@ export async function exchangeTiktokCode(code, config = getTiktokOAuthConfig()) 
     grant_type: 'authorization_code',
     redirect_uri: config.redirectUri
   });
-  const response = await fetch(TIKTOK_TOKEN_URL, {
+  const response = await fetchWithTimeout(TIKTOK_TOKEN_URL, {
     method: 'POST',
     headers: {'content-type': 'application/x-www-form-urlencoded'},
     body
-  });
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error_description || payload.error || `TikTok token exchange failed with ${response.status}`);
@@ -79,15 +80,15 @@ export function describeTiktokConfig(config = getTiktokOAuthConfig()) {
   };
 }
 
-export async function validateTiktokToken(accessToken, {fields = ['open_id', 'avatar_url', 'display_name']} = {}) {
+export async function validateTiktokToken(accessToken, {fields = ['open_id', 'avatar_url', 'display_name'], signal, fetch: fetchImpl = fetch, timeoutMs = 30_000} = {}) {
   if (!accessToken) {
     throw new Error('Falta TIKTOK_ACCESS_TOKEN para validar.');
   }
   const url = new URL(TIKTOK_USER_INFO_URL);
   url.searchParams.set('fields', fields.join(','));
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     headers: {authorization: `Bearer ${accessToken}`}
-  });
+  }, {fetchImpl, signal, timeoutMs});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || payload.error?.code) {
     throw new Error(payload.error?.message || payload.error_description || `TikTok user info failed with ${response.status}`);

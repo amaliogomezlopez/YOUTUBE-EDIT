@@ -9,6 +9,7 @@ data/secrets/*
 .ssh_known_hosts*
 __pycache__/
 *.pyc
+.impeccable/
 samples/input/*.mp4
 !data/uploads/.gitkeep
 !data/jobs/.gitkeep

@@ -1,11 +1,15 @@
 #!/usr/bin/env node
 import {createReadStream, existsSync} from 'node:fs';
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, stat, unlink, writeFile} from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
-import {createJob, loadJobState, processJob} from './lib/pipeline.js';
-import {publishJob} from './lib/publishers.js';
-import {ensureDataDirs, loadDotEnv, ROOT, UPLOADS_DIR, safeFilename} from './lib/utils.js';
+import {createJob, createProcessingQueue, enqueueClipRerender, enqueueProcessingJob, loadJobState, saveJobState, updateClipDecision} from './lib/pipeline.js';
+import {createPublishingQueue, enqueuePublishingJob} from './lib/publishing-queue.js';
+import {DATA_DIR, ensureDataDirs, loadDotEnv, persistEnvValues, ROOT, UPLOADS_DIR, safeFilename} from './lib/utils.js';
+import {listJobSummaries, publicJobState, publicQueueJob, saveMetadataEdits} from './lib/dashboard.js';
+import {getLlmConfig, isLlmEnabled} from './lib/llm.js';
+import {FixedWindowRateLimiter, hasCsrfHeader, isAuthenticated, isPathInsideRoots, isRequestAllowed, securityHeaders, validateExposureConfig} from './lib/server-security.js';
+import {parseMultipartUpload} from './lib/upload.js';
 import {planStory} from './lib/stories/planner.js';
 import {renderStorySvg} from './lib/stories/renderer.js';
 import {describeInstagramConfig, exchangeInstagramCode, exchangeLongLivedMetaToken, findInstagramBusinessAccount, instagramAuthUrl, validateInstagramToken} from './lib/instagram-oauth.js';
@@ -13,25 +17,45 @@ import {exchangeYoutubeCode, makeOAuthState, youtubeAuthUrl} from './lib/youtube
 import {describeTiktokConfig, exchangeTiktokCode, tiktokAuthUrl, validateTiktokToken} from './lib/tiktok-oauth.js';
 import {describeXConfig, exchangeXCode, makePkceChallenge, makePkceVerifier, xAuthUrl} from './lib/x-oauth.js';
 import {normalizeOAuthPath, SHORTSMITH_OAUTH_PREFIX} from './lib/oauth-redirect.js';
+import {assertDiskCapacity, cleanupStorage, diskStatus} from './lib/storage.js';
+import {acquireInstanceLock} from './lib/instance-lock.js';
+import {publishingReadiness} from './lib/publishing-readiness.js';
+import {loadMetrics, recordMetrics} from './lib/metrics.js';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
-const runningJobs = new Map();
+let processingQueue = null;
+let publishingQueue = null;
 const oauthStates = new Set();
 const xOauthStates = new Map();
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
+let mutationLimiter = null;
+let exposure = {remote: false, protected: false};
+
+function rememberOAuthState(state) {
+  oauthStates.add(state);
+  const timer = setTimeout(() => oauthStates.delete(state), OAUTH_STATE_TTL_MS);
+  timer.unref?.();
+}
+
+function rememberXOauthState(state, verifier) {
+  xOauthStates.set(state, {verifier, createdAt: Date.now()});
+  const timer = setTimeout(() => xOauthStates.delete(state), OAUTH_STATE_TTL_MS);
+  timer.unref?.();
+}
 
 function sendJson(res, status, value) {
   const body = JSON.stringify(value, null, 2);
-  res.writeHead(status, {'content-type': 'application/json; charset=utf-8'});
+  res.writeHead(status, securityHeaders({contentType: 'application/json; charset=utf-8'}));
   res.end(body);
 }
 
 function sendText(res, status, text, type = 'text/plain; charset=utf-8') {
-  res.writeHead(status, {'content-type': type});
+  res.writeHead(status, securityHeaders({contentType: type}));
   res.end(text);
 }
 
 function redirect(res, location) {
-  res.writeHead(302, {location});
+  res.writeHead(302, {...securityHeaders(), location});
   res.end();
 }
 
@@ -51,7 +75,8 @@ function contentType(file) {
 async function serveStatic(res, file) {
   try {
     const resolved = path.resolve(file);
-    if (!resolved.startsWith(PUBLIC_DIR)) {
+    const relative = path.relative(PUBLIC_DIR, resolved);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
       sendText(res, 403, 'Forbidden');
       return;
     }
@@ -59,7 +84,7 @@ async function serveStatic(res, file) {
       sendText(res, 404, 'Not found');
       return;
     }
-    res.writeHead(200, {'content-type': contentType(resolved)});
+    res.writeHead(200, securityHeaders({contentType: contentType(resolved), cache: !resolved.endsWith('index.html')}));
     const stream = createReadStream(resolved);
     stream.on('error', () => {
       if (!res.headersSent) sendText(res, 404, 'Not found');
@@ -71,20 +96,38 @@ async function serveStatic(res, file) {
   }
 }
 
-function splitBuffer(buffer, delimiter) {
-  const parts = [];
-  let start = 0;
-  let index = buffer.indexOf(delimiter, start);
-  while (index !== -1) {
-    parts.push(buffer.subarray(start, index));
-    start = index + delimiter.length;
-    index = buffer.indexOf(delimiter, start);
+async function serveVideoFile(req, res, file) {
+  const info = await stat(file);
+  const range = req.headers.range;
+  if (!range) {
+    res.writeHead(200, {...securityHeaders({contentType: 'video/mp4'}), 'accept-ranges': 'bytes', 'content-length': String(info.size)});
+    createReadStream(file).pipe(res);
+    return;
   }
-  parts.push(buffer.subarray(start));
-  return parts;
+  const match = /^bytes=(\d*)-(\d*)$/.exec(range);
+  if (!match) {
+    res.writeHead(416, {...securityHeaders(), 'content-range': `bytes */${info.size}`});
+    res.end();
+    return;
+  }
+  const start = match[1] ? Number(match[1]) : 0;
+  const end = match[2] ? Math.min(Number(match[2]), info.size - 1) : info.size - 1;
+  if (start > end || start >= info.size) {
+    res.writeHead(416, {...securityHeaders(), 'content-range': `bytes */${info.size}`});
+    res.end();
+    return;
+  }
+  res.writeHead(206, {...securityHeaders({contentType: 'video/mp4'}),
+    'accept-ranges': 'bytes',
+    'content-range': `bytes ${start}-${end}/${info.size}`,
+    'content-length': String(end - start + 1),
+  });
+  createReadStream(file, {start, end}).pipe(res);
 }
 
-async function readBody(req, maxBytes = 5 * 1024 * 1024 * 1024) {
+async function readBody(req, maxBytes = 2 * 1024 * 1024) {
+  const declared = Number(req.headers['content-length'] || 0);
+  if (declared && declared > maxBytes) throw new Error(`Upload too large. Maximum is ${Math.round(maxBytes / 1024 / 1024)} MB; use a local path for long videos.`);
   const chunks = [];
   let total = 0;
   for await (const chunk of req) {
@@ -95,97 +138,149 @@ async function readBody(req, maxBytes = 5 * 1024 * 1024 * 1024) {
   return Buffer.concat(chunks);
 }
 
-function parseMultipart(buffer, boundary) {
-  const delimiter = Buffer.from(`--${boundary}`);
-  const fields = {};
-  const files = {};
-  for (const rawPart of splitBuffer(buffer, delimiter)) {
-    let part = rawPart;
-    if (part.subarray(0, 2).toString() === '\r\n') part = part.subarray(2);
-    if (part.length === 0 || part.toString('utf8').startsWith('--')) continue;
-    const headerEnd = part.indexOf(Buffer.from('\r\n\r\n'));
-    if (headerEnd === -1) continue;
-    const headers = part.subarray(0, headerEnd).toString('utf8');
-    let body = part.subarray(headerEnd + 4);
-    if (body.subarray(body.length - 2).toString() === '\r\n') body = body.subarray(0, body.length - 2);
-    const name = /name="([^"]+)"/.exec(headers)?.[1];
-    const filename = /filename="([^"]*)"/.exec(headers)?.[1];
-    if (!name) continue;
-    if (filename) {
-      files[name] = {filename, body};
-    } else {
-      fields[name] = body.toString('utf8');
+function configured(...keys) {
+  return keys.every((key) => Boolean(process.env[key]));
+}
+
+async function systemStatus() {
+  const llm = getLlmConfig();
+  const sttProvider = process.env.TRANSCRIPTION_PROVIDER || process.env.STT_PROVIDER || 'off';
+  return {
+    app: {name: 'Shortsmith', version: '0.3.0', runningJobs: processingQueue?.stats().running ?? 0, queue: processingQueue?.stats() ?? null, publishingQueue: publishingQueue?.stats() ?? null, security: exposure},
+    llm: {configured: isLlmEnabled(llm), provider: llm.provider || 'off', model: isLlmEnabled(llm) ? llm.model : null},
+    transcription: {configured: sttProvider !== 'off', provider: sttProvider},
+    storage: await diskStatus(),
+    publishing: {
+      youtube: configured('YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET', 'YOUTUBE_REFRESH_TOKEN'),
+      instagram: configured('META_ACCESS_TOKEN', 'INSTAGRAM_BUSINESS_ACCOUNT_ID'),
+      tiktok: configured('TIKTOK_ACCESS_TOKEN'),
+      x: Boolean(process.env.X_USER_ACCESS_TOKEN || process.env.X_OAUTH2_ACCESS_TOKEN || configured('X_API_KEY', 'X_API_SECRET', 'X_ACCESS_TOKEN', 'X_ACCESS_TOKEN_SECRET'))
     }
-  }
-  return {fields, files};
+  };
+}
+
+function requestAllowed(req, {checkSite = true} = {}) {
+  return isRequestAllowed({
+    host: req.headers.host,
+    origin: req.headers.origin,
+    secFetchSite: checkSite ? req.headers['sec-fetch-site'] : '',
+    allowedHosts: process.env.SHORTSMITH_ALLOWED_HOSTS,
+    allowedOrigins: process.env.SHORTSMITH_ALLOWED_ORIGINS
+  });
 }
 
 async function handleCreateJob(req, res) {
-  const type = req.headers['content-type'] ?? '';
-  const boundary = /boundary=([^;]+)/i.exec(type)?.[1];
-  if (!boundary) {
-    sendJson(res, 400, {error: 'Expected multipart/form-data.'});
-    return;
-  }
-  const body = await readBody(req);
-  const {fields, files} = parseMultipart(body, boundary);
-  const video = files.video;
-  let videoPath = fields.sourcePath?.trim() ? path.resolve(fields.sourcePath.trim().replace(/^["']|["']$/g, '')) : null;
-  if (videoPath && !existsSync(videoPath)) {
-    sendJson(res, 400, {error: `Source video path does not exist: ${videoPath}`});
-    return;
-  }
-  if (!videoPath && !video?.body?.length) {
-    sendJson(res, 400, {error: 'Missing video file or local source path.'});
-    return;
-  }
-  await mkdir(UPLOADS_DIR, {recursive: true});
-  const stamp = Date.now();
-  if (!videoPath) {
-    videoPath = path.join(UPLOADS_DIR, `${stamp}-${safeFilename(video.filename || 'video.mp4')}`);
-    await writeFile(videoPath, video.body);
-  }
-
-  let transcriptPath = fields.transcriptPath?.trim()
-    ? path.resolve(fields.transcriptPath.trim().replace(/^["']|["']$/g, ''))
-    : null;
-  if (transcriptPath && !existsSync(transcriptPath)) {
-    sendJson(res, 400, {error: `Transcript path does not exist: ${transcriptPath}`});
-    return;
-  }
-  if (files.transcript?.body?.length) {
-    transcriptPath = path.join(UPLOADS_DIR, `${stamp}-${safeFilename(files.transcript.filename || 'transcript.srt')}`);
-    await writeFile(transcriptPath, files.transcript.body);
-  } else if (fields.transcriptText?.trim()) {
-    transcriptPath = path.join(UPLOADS_DIR, `${stamp}-transcript.txt`);
-    await writeFile(transcriptPath, fields.transcriptText.trim(), 'utf8');
-  }
-
-  const state = await createJob({videoFile: videoPath, transcriptFile: transcriptPath});
-  const options = {
-    topN: Number(fields.topN || 8),
-    minDuration: Number(fields.minDuration || 18),
-    maxDuration: Number(fields.maxDuration || 60),
-    renderMode: fields.renderMode || undefined,
-    renderQuality: fields.renderQuality || 'high',
-    subtitleMode: fields.subtitleMode || 'words',
-    useLlm: fields.useLlm === 'on'
-  };
-  runningJobs.set(state.id, {startedAt: Date.now()});
-  processJob(state, options).catch((error) => {
-    console.error(`[${state.id}] ${error.stack || error.message}`);
-  }).finally(() => {
-    runningJobs.delete(state.id);
+  const declaredBytes = Number(req.headers['content-length'] || 0);
+  await assertDiskCapacity(Math.max(64 * 1024 * 1024, declaredBytes * 2));
+  const upload = await parseMultipartUpload(req, {
+    uploadDir: UPLOADS_DIR,
+    maxVideoBytes: Number(process.env.SHORTSMITH_MAX_UPLOAD_BYTES || 20 * 1024 * 1024 * 1024),
+    maxTranscriptBytes: Number(process.env.SHORTSMITH_MAX_TRANSCRIPT_BYTES || 20 * 1024 * 1024)
   });
-  sendJson(res, 202, {id: state.id, status: state.status});
+  const {fields, files} = upload;
+  const video = files.video;
+  let pastedTranscriptPath = null;
+  try {
+    let videoPath = fields.sourcePath?.trim() ? path.resolve(fields.sourcePath.trim().replace(/^["']|["']$/g, '')) : null;
+    if (videoPath && !existsSync(videoPath)) {
+      sendJson(res, 400, {error: `Source video path does not exist: ${videoPath}`});
+      return;
+    }
+    if (!videoPath && !video?.size) {
+      sendJson(res, 400, {error: 'Missing video file or local source path.'});
+      return;
+    }
+    if (!videoPath) videoPath = video.path;
+    if (fields.sourcePath?.trim()) {
+      const sourceInfo = await stat(videoPath);
+      await assertDiskCapacity(Math.ceil(sourceInfo.size * 1.1));
+      if (exposure.remote) {
+        const roots = String(process.env.SHORTSMITH_ALLOWED_MEDIA_ROOTS || '').split(',').map((value) => value.trim()).filter(Boolean).map((value) => path.resolve(value));
+        const allowed = isPathInsideRoots(videoPath, roots);
+        if (!allowed) {
+          const error = new Error('Las rutas locales están deshabilitadas en modo remoto salvo dentro de SHORTSMITH_ALLOWED_MEDIA_ROOTS.');
+          error.status = 403;
+          error.code = 'MEDIA_PATH_BLOCKED';
+          throw error;
+        }
+      }
+    }
+
+    let transcriptPath = fields.transcriptPath?.trim()
+      ? path.resolve(fields.transcriptPath.trim().replace(/^["']|["']$/g, ''))
+      : null;
+    if (transcriptPath && !existsSync(transcriptPath)) {
+      sendJson(res, 400, {error: `Transcript path does not exist: ${transcriptPath}`});
+      return;
+    }
+    if (files.transcript?.size) {
+      transcriptPath = files.transcript.path;
+    } else if (fields.transcriptText?.trim()) {
+      pastedTranscriptPath = path.join(UPLOADS_DIR, `transcript-${Date.now()}-${safeFilename('pasted.txt')}`);
+      transcriptPath = pastedTranscriptPath;
+      await writeFile(transcriptPath, fields.transcriptText.trim(), 'utf8');
+    }
+
+    const state = await createJob({videoFile: videoPath, transcriptFile: transcriptPath});
+    const options = {
+      topN: Number(fields.topN || 8),
+      minDuration: Number(fields.minDuration || 18),
+      maxDuration: Number(fields.maxDuration || 60),
+      renderMode: fields.renderMode || undefined,
+      renderQuality: fields.renderQuality || 'high',
+      subtitleMode: fields.subtitleMode || 'words',
+      useLlm: fields.useLlm === 'on'
+    };
+    await enqueueProcessingJob(processingQueue, state, options, {
+      maxAttempts: Number(process.env.JOB_MAX_ATTEMPTS || 2)
+    });
+    sendJson(res, 202, {id: state.id, status: state.status});
+  } finally {
+    await upload.cleanup();
+    if (pastedTranscriptPath) await unlink(pastedTranscriptPath).catch(() => {});
+  }
 }
 
 async function handleApi(req, res, url) {
   url.pathname = normalizeOAuthPath(url.pathname);
+  if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method)) {
+    if (!requestAllowed(req) || !hasCsrfHeader(req.headers)) {
+      sendJson(res, 403, {error: 'Petición bloqueada por protección de origen/CSRF.', code: 'CSRF_BLOCKED'});
+      return;
+    }
+    const limited = mutationLimiter.consume(req.socket.remoteAddress);
+    if (!limited.allowed) {
+      res.setHeader('retry-after', String(Math.max(1, Math.ceil((limited.resetAt - Date.now()) / 1000))));
+      sendJson(res, 429, {error: 'Demasiadas operaciones. Espera un minuto antes de reintentar.', code: 'RATE_LIMITED'});
+      return;
+    }
+  }
+  if (req.method === 'GET' && url.pathname === '/api/system/status') {
+    sendJson(res, 200, await systemStatus());
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/storage') {
+    sendJson(res, 200, {disk: await diskStatus(), cleanup: await cleanupStorage({dryRun: true, activeJobIds: processingQueue.list().filter((item) => ['queued', 'running', 'cancelling'].includes(item.status)).map((item) => item.payload?.jobId).filter(Boolean)})});
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/publishing/readiness') {
+    sendJson(res, 200, publishingReadiness());
+    return;
+  }
+  if (req.method === 'POST' && url.pathname === '/api/storage/cleanup') {
+    const body = JSON.parse((await readBody(req, 64 * 1024)).toString('utf8') || '{}');
+    if (body.confirm !== true) {
+      sendJson(res, 400, {error: 'La limpieza requiere confirm=true después de revisar la simulación.'});
+      return;
+    }
+    const activeJobIds = processingQueue.list().filter((item) => ['queued', 'running', 'cancelling'].includes(item.status)).map((item) => item.payload?.jobId).filter(Boolean);
+    sendJson(res, 200, await cleanupStorage({dryRun: false, activeJobIds}));
+    return;
+  }
   if (req.method === 'GET' && url.pathname === '/api/oauth/youtube/start') {
     try {
       const state = makeOAuthState();
-      oauthStates.add(state);
+      rememberOAuthState(state);
       redirect(res, youtubeAuthUrl({state}));
     } catch (error) {
       sendJson(res, 400, {error: error.message});
@@ -196,7 +291,7 @@ async function handleApi(req, res, url) {
     try {
       const state = makeOAuthState();
       const verifier = makePkceVerifier();
-      xOauthStates.set(state, {verifier, createdAt: Date.now()});
+      rememberXOauthState(state, verifier);
       redirect(res, xAuthUrl({state, codeChallenge: makePkceChallenge(verifier)}));
     } catch (error) {
       sendJson(res, 400, {error: error.message});
@@ -292,15 +387,14 @@ No pegues estos tokens en chats, commits ni capturas.`);
         sendText(res, 200, 'OAuth correcto, pero Google no devolvio refresh_token. Revoca el acceso de la app en tu cuenta Google y vuelve a abrir /api/oauth/youtube/start con prompt=consent.');
         return;
       }
+      await persistEnvValues({YOUTUBE_REFRESH_TOKEN: refreshToken});
       sendText(res, 200, `YouTube OAuth OK.
 
-Copia esta linea en tu .env local y reinicia el servidor:
-
-YOUTUBE_REFRESH_TOKEN=${refreshToken}
+El refresh token se ha guardado en la configuracion local sin mostrarlo.
 
 Scope concedido: ${tokens.scope || 'no informado por Google'}
 
-No pegues este token en chats, commits ni capturas.`);
+Ya puedes volver a Shortsmith y revisar el estado de la cuenta.`);
     } catch (error) {
       sendText(res, 500, `No se pudo canjear el codigo OAuth: ${error.message}`);
     }
@@ -309,7 +403,7 @@ No pegues este token en chats, commits ni capturas.`);
   if (req.method === 'GET' && url.pathname === '/api/oauth/instagram/start') {
     try {
       const state = makeOAuthState();
-      oauthStates.add(state);
+      rememberOAuthState(state);
       redirect(res, instagramAuthUrl({state}));
     } catch (error) {
       sendJson(res, 400, {error: error.message});
@@ -319,7 +413,7 @@ No pegues este token en chats, commits ni capturas.`);
   if (req.method === 'GET' && url.pathname === '/api/oauth/tiktok/start') {
     try {
       const state = makeOAuthState();
-      oauthStates.add(state);
+      rememberOAuthState(state);
       redirect(res, tiktokAuthUrl({state}));
     } catch (error) {
       sendJson(res, 400, {error: error.message});
@@ -354,11 +448,11 @@ No pegues este token en chats, commits ni capturas.`);
       sendText(res, 400, `TikTok OAuth error: ${oauthErrorDescription || oauthError}`);
       return;
     }
-    if (!code || (state && !oauthStates.has(state))) {
+    if (!code || !state || !oauthStates.has(state)) {
       sendText(res, 400, 'OAuth callback TikTok invalido o expirado. Vuelve a abrir /api/oauth/tiktok/start.');
       return;
     }
-    if (state) oauthStates.delete(state);
+    oauthStates.delete(state);
     try {
       const tokens = await exchangeTiktokCode(code);
       const maskedAccess = tokens.access_token?.length > 12
@@ -367,13 +461,14 @@ No pegues este token en chats, commits ni capturas.`);
       const maskedRefresh = tokens.refresh_token?.length > 12
         ? `${tokens.refresh_token.slice(0, 6)}…${tokens.refresh_token.slice(-4)}(len=${tokens.refresh_token.length})`
         : '***';
+      await persistEnvValues({
+        TIKTOK_ACCESS_TOKEN: tokens.access_token,
+        TIKTOK_REFRESH_TOKEN: tokens.refresh_token,
+        TIKTOK_OPEN_ID: tokens.open_id
+      });
       sendText(res, 200, `TikTok OAuth OK.
 
-Copia estas lineas en tu .env local y reinicia el servidor:
-
-TIKTOK_ACCESS_TOKEN=<pega tu access token; archivo local, no lo compartas>
-TIKTOK_REFRESH_TOKEN=<pega tu refresh token; archivo local, no lo compartas>
-TIKTOK_OPEN_ID=${tokens.open_id || ''}
+Los tokens se han guardado en la configuracion local sin mostrarlos.
 
 Resumen saneado:
 access_token=${maskedAccess}
@@ -381,7 +476,7 @@ refresh_token=${maskedRefresh}
 scope=${tokens.scope || 'no informado por TikTok'}
 expires_in=${tokens.expires_in || 'no informado'}
 
-No pegues estos tokens en chats, commits ni capturas. El token completo se guarda solo en .env.`);
+Ya puedes volver a Shortsmith y revisar el estado de la cuenta.`);
     } catch (error) {
       sendText(res, 500, `No se pudo completar OAuth de TikTok: ${error.message}`);
     }
@@ -415,11 +510,11 @@ No pegues estos tokens en chats, commits ni capturas. El token completo se guard
       sendText(res, 400, `Meta OAuth error: ${oauthErrorDescription || oauthError}`);
       return;
     }
-    if (!code || (state && !oauthStates.has(state))) {
+    if (!code || !state || !oauthStates.has(state)) {
       sendText(res, 400, 'OAuth callback invalido o expirado. Vuelve a abrir /api/oauth/instagram/start.');
       return;
     }
-    if (state) oauthStates.delete(state);
+    oauthStates.delete(state);
     try {
       const shortToken = await exchangeInstagramCode(code);
       let longToken = {};
@@ -451,12 +546,13 @@ No pegues este token en chats, commits ni capturas.`);
 const maskedToken = accessToken.length <= 12
         ? '***'
         : `${accessToken.slice(0, 6)}…${accessToken.slice(-4)}(len=${accessToken.length})`;
+      await persistEnvValues({
+        META_ACCESS_TOKEN: accessToken,
+        INSTAGRAM_BUSINESS_ACCOUNT_ID: accountInfo.instagramBusinessAccount.id
+      });
       sendText(res, 200, `Instagram OAuth OK.
 
-Copia estas lineas en tu .env local y reinicia el servidor:
-
-META_ACCESS_TOKEN=<pega tu token; archivo local, no lo compartas>
-INSTAGRAM_BUSINESS_ACCOUNT_ID=${accountInfo.instagramBusinessAccount.id}
+El token y la cuenta se han guardado en la configuracion local sin mostrarlos.
 
 Resumen saneado del token: ${maskedToken}
 Cuenta detectada: ${accountInfo.instagramBusinessAccount.username || 'sin username'}.
@@ -464,7 +560,7 @@ Pagina conectada: ${accountInfo.page?.name || 'sin nombre'}.
 El token caduca en aproximadamente ${longToken.expires_in ? Math.round(longToken.expires_in / 86400) : 'varios'} dias.
 ${tokenWarning}
 
-No pegues estos tokens en chats, commits ni capturas. El token completo se guarda solo en .env.`);
+Ya puedes volver a Shortsmith y revisar el estado de la cuenta.`);
     } catch (error) {
       sendText(res, 500, `No se pudo completar OAuth de Instagram/Meta: ${error.message}`);
     }
@@ -482,16 +578,119 @@ No pegues estos tokens en chats, commits ni capturas. El token completo se guard
     return;
   }
   if (req.method === 'POST' && url.pathname === '/api/jobs') {
-    await handleCreateJob(req, res);
+    try {
+      await handleCreateJob(req, res);
+    } catch (error) {
+      const tooLarge = /límite|large|grande/i.test(error.message);
+      sendJson(res, error.status || (tooLarge ? 413 : 400), {error: error.message, code: error.code});
+    }
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/jobs') {
+    const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit') || 30)));
+    sendJson(res, 200, {jobs: await listJobSummaries(limit)});
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/queue') {
+    sendJson(res, 200, {stats: processingQueue.stats(), jobs: processingQueue.list().map(publicQueueJob)});
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/publishing-queue') {
+    sendJson(res, 200, {stats: publishingQueue.stats(), jobs: publishingQueue.list().map(publicQueueJob)});
+    return;
+  }
+  const publishQueueCancelMatch = url.pathname.match(/^\/api\/publishing-queue\/([^/]+)\/cancel$/);
+  if (req.method === 'POST' && publishQueueCancelMatch) {
+    const queued = await publishingQueue.cancel(publishQueueCancelMatch[1]);
+    if (!queued) sendJson(res, 404, {error: 'Publicación en cola no encontrada.'});
+    else sendJson(res, 202, publicQueueJob(queued));
+    return;
+  }
+  const publishQueueRetryMatch = url.pathname.match(/^\/api\/publishing-queue\/([^/]+)\/retry$/);
+  if (req.method === 'POST' && publishQueueRetryMatch) {
+    try {
+      const queued = await publishingQueue.retry(publishQueueRetryMatch[1]);
+      if (!queued) sendJson(res, 404, {error: 'Publicación en cola no encontrada.'});
+      else sendJson(res, 202, publicQueueJob(queued));
+    } catch (error) {
+      sendJson(res, 409, {error: error.message});
+    }
     return;
   }
   const jobMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)$/);
   if (req.method === 'GET' && jobMatch) {
     try {
       const state = await loadJobState(jobMatch[1]);
-      sendJson(res, 200, state);
+      const queue = processingQueue.get(state.id);
+      const publishQueue = publishingQueue.list().find((item) => item.payload?.jobId === state.id) ?? null;
+      const renderQueues = new Map((state.clips ?? []).map((clip) => [clip.renderQueueId, clip.renderQueueId ? processingQueue.get(clip.renderQueueId) : null]));
+      sendJson(res, 200, publicJobState(state, {queue, publishQueue, renderQueues}));
     } catch {
       sendJson(res, 404, {error: 'Job not found.'});
+    }
+    return;
+  }
+  const queueCancelMatch = url.pathname.match(/^\/api\/queue\/([^/]+)\/cancel$/);
+  if (req.method === 'POST' && queueCancelMatch) {
+    const queued = await processingQueue.cancel(queueCancelMatch[1]);
+    sendJson(res, queued ? 202 : 404, queued ? publicQueueJob(queued) : {error: 'Queue job not found.'});
+    return;
+  }
+  const clipEditMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/clips\/([^/]+)$/);
+  if (req.method === 'PATCH' && clipEditMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 1024 * 1024)).toString('utf8') || '{}');
+      const state = await loadJobState(clipEditMatch[1]);
+      const clip = await updateClipDecision(state, clipEditMatch[2], body.editorialStatus);
+      sendJson(res, 200, clip);
+    } catch (error) {
+      sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
+  const rerenderMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/clips\/([^/]+)\/rerender$/);
+  if (req.method === 'POST' && rerenderMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 1024 * 1024)).toString('utf8') || '{}');
+      const state = await loadJobState(rerenderMatch[1]);
+      const queued = await enqueueClipRerender(processingQueue, state, rerenderMatch[2], body);
+      sendJson(res, 202, publicQueueJob(queued));
+    } catch (error) {
+      sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
+  const cancelMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/cancel$/);
+  if (req.method === 'POST' && cancelMatch) {
+    try {
+      const queued = await processingQueue.cancel(cancelMatch[1]);
+      if (!queued) throw new Error('Job not found.');
+      if (queued.status === 'cancelled') {
+        const state = await loadJobState(cancelMatch[1]);
+        state.status = 'cancelled';
+        state.cancelledAt = new Date().toISOString();
+        state.error = null;
+        await saveJobState(state);
+      }
+      sendJson(res, 202, publicQueueJob(queued));
+    } catch (error) {
+      sendJson(res, /not found/i.test(error.message) ? 404 : 400, {error: error.message});
+    }
+    return;
+  }
+  const retryMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/retry$/);
+  if (req.method === 'POST' && retryMatch) {
+    try {
+      const queued = await processingQueue.retry(retryMatch[1]);
+      if (!queued) throw new Error('Job not found.');
+      const state = await loadJobState(retryMatch[1]);
+      state.status = 'queued';
+      state.error = null;
+      state.cancelledAt = null;
+      await saveJobState(state);
+      sendJson(res, 202, publicQueueJob(queued));
+    } catch (error) {
+      sendJson(res, /not found/i.test(error.message) ? 404 : 400, {error: error.message});
     }
     return;
   }
@@ -505,13 +704,48 @@ No pegues estos tokens en chats, commits ni capturas. El token completo se guard
     }
     return;
   }
+  const metricsMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/metrics$/);
+  if (metricsMatch && req.method === 'GET') {
+    try {
+      const state = await loadJobState(metricsMatch[1]);
+      sendJson(res, 200, {metrics: await loadMetrics(state)});
+    } catch {
+      sendJson(res, 404, {error: 'Job not found.'});
+    }
+    return;
+  }
+  if (metricsMatch && req.method === 'PATCH') {
+    try {
+      const state = await loadJobState(metricsMatch[1]);
+      const body = JSON.parse((await readBody(req, 128 * 1024)).toString('utf8') || '{}');
+      sendJson(res, 200, await recordMetrics(state, body));
+    } catch (error) {
+      sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
+  const metadataEditMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/metadata$/);
+  if (req.method === 'PATCH' && metadataEditMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 2 * 1024 * 1024)).toString('utf8') || '{}');
+      const state = await loadJobState(metadataEditMatch[1]);
+      const updated = await saveMetadataEdits(state, body);
+      sendJson(res, 200, updated);
+    } catch (error) {
+      sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
   const publishMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/publish$/);
   if (req.method === 'POST' && publishMatch) {
     try {
       const body = JSON.parse((await readBody(req, 1024 * 1024)).toString('utf8') || '{}');
+      if (body.confirm !== true) throw new Error('La publicación requiere confirmación explícita.');
       const state = await loadJobState(publishMatch[1]);
-      const run = await publishJob(state, {clipId: body.clipId, platforms: body.platforms});
-      sendJson(res, 202, run);
+      const idempotencyKey = String(body.idempotencyKey || '').slice(0, 160);
+      if (!idempotencyKey) throw new Error('Falta la clave de idempotencia de publicación.');
+      const queued = await enqueuePublishingJob(publishingQueue, state, {clipId: body.clipId, platforms: body.platforms, idempotencyKey, scheduledFor: body.scheduledFor});
+      sendJson(res, 202, publicQueueJob(queued));
     } catch (error) {
       sendJson(res, 400, {error: error.message});
     }
@@ -526,10 +760,19 @@ No pegues estos tokens en chats, commits ni capturas. El token completo se guard
         sendJson(res, 404, {error: 'Clip video not ready.'});
         return;
       }
-      res.writeHead(200, {'content-type': 'video/mp4'});
-      createReadStream(clip.files.video).pipe(res);
+      await serveVideoFile(req, res, clip.files.video);
     } catch {
       sendJson(res, 404, {error: 'Clip not found.'});
+    }
+    return;
+  }
+  const sourceVideoMatch = url.pathname.match(/^\/api\/jobs\/([^/]+)\/source\/video$/);
+  if (req.method === 'GET' && sourceVideoMatch) {
+    try {
+      const state = await loadJobState(sourceVideoMatch[1]);
+      await serveVideoFile(req, res, state.sourceVideo);
+    } catch {
+      sendJson(res, 404, {error: 'Source video not found.'});
     }
     return;
   }
@@ -538,6 +781,15 @@ No pegues estos tokens en chats, commits ni capturas. El token completo se guard
 
 async function handler(req, res) {
   try {
+    if (!requestAllowed(req, {checkSite: false})) {
+      sendJson(res, 403, {error: 'Host u origen no permitido.', code: 'ORIGIN_BLOCKED'});
+      return;
+    }
+    if (!isAuthenticated(req.headers.authorization, process.env.SHORTSMITH_AUTH_TOKEN || '')) {
+      res.writeHead(401, {...securityHeaders(), 'www-authenticate': 'Basic realm="Shortsmith", charset="UTF-8"'});
+      res.end('Authentication required');
+      return;
+    }
     const url = new URL(req.url ?? '/', `http://${req.headers.host}`);
     if (url.pathname.startsWith('/api/') || url.pathname.startsWith(`${SHORTSMITH_OAUTH_PREFIX}/`)) {
       await handleApi(req, res, url);
@@ -546,12 +798,27 @@ async function handler(req, res) {
     const file = url.pathname === '/' ? path.join(PUBLIC_DIR, 'index.html') : path.join(PUBLIC_DIR, url.pathname);
     await serveStatic(res, file);
   } catch (error) {
-    sendJson(res, 500, {error: error.message});
+    console.error(`Shortsmith request failed: ${error?.name || 'Error'} (${error?.code || 'INTERNAL_ERROR'})`);
+    sendJson(res, 500, {error: 'Error interno del servidor.', code: 'INTERNAL_ERROR'});
   }
 }
 
 await loadDotEnv();
 await ensureDataDirs();
+mutationLimiter = new FixedWindowRateLimiter({limit: Number(process.env.SHORTSMITH_MUTATION_RATE_LIMIT || 120), windowMs: 60_000});
+const releaseInstanceLock = await acquireInstanceLock(path.join(DATA_DIR, '.shortsmith.lock'));
+processingQueue = await createProcessingQueue({
+  concurrency: Number(process.env.JOB_CONCURRENCY || 1),
+  retryDelayMs: Number(process.env.JOB_RETRY_DELAY_MS || 1500)
+});
+publishingQueue = await createPublishingQueue({
+  concurrency: Number(process.env.PUBLISH_CONCURRENCY || 1),
+  retryDelayMs: Number(process.env.PUBLISH_RETRY_DELAY_MS || 3000)
+});
+await cleanupStorage({
+  dryRun: false,
+  activeJobIds: processingQueue.list().filter((item) => ['queued', 'running', 'cancelling'].includes(item.status)).map((item) => item.payload?.jobId).filter(Boolean)
+});
 try {
   await readFile(path.join(PUBLIC_DIR, 'index.html'));
 } catch {
@@ -559,7 +826,27 @@ try {
 }
 
 const port = Number(process.env.PORT || 3000);
-http.createServer(handler).listen(port, () => {
-  console.log(`Shortsmith MVP running at http://localhost:${port}`);
+const host = process.env.HOST || '127.0.0.1';
+exposure = validateExposureConfig({host, authToken: process.env.SHORTSMITH_AUTH_TOKEN || ''});
+const server = http.createServer(handler);
+server.listen(port, host, () => {
+  console.log(`Shortsmith running at http://${host}:${port}`);
 });
+
+let shuttingDown = false;
+async function shutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log(`Shortsmith stopping (${signal})...`);
+  server.close();
+  await Promise.allSettled([
+    processingQueue.close({cancelRunning: true}),
+    publishingQueue.close({cancelRunning: true})
+  ]);
+  await releaseInstanceLock();
+}
+
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.once(signal, () => shutdown(signal).finally(() => process.exit(0)));
+}
 

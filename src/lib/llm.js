@@ -1,15 +1,25 @@
+import {abortableSleep, fetchWithTimeout, retryDelay} from './network.js';
+
 const DEFAULT_SYSTEM = `Eres un editor senior de Shorts/Reels para un canal de IA, machine learning, Python e inversion/trading/bolsa. Evalua clips con criterio de retencion, claridad, emocion, payoff, cortes naturales de inicio/fin y relevancia para sistemas de IA/ML aplicados a mercados. Devuelve solo JSON valido.`;
 
 function env(name) {
   return process.env[name] && process.env[name].trim() ? process.env[name].trim() : '';
 }
 
+function firstNonEmpty(...values) {
+  for (const value of values) {
+    if (typeof value === 'string' && value.trim()) return value.trim();
+    if (value != null && typeof value !== 'string') return value;
+  }
+  return '';
+}
+
 export function getLlmConfig(overrides = {}) {
   return {
-    provider: overrides.provider ?? env('LLM_PROVIDER') ?? env('OPENCODE_PROVIDER') ?? 'off',
-    baseUrl: overrides.baseUrl ?? env('MINIMAX_API_URL') ?? env('OPENCODE_BASE_URL') ?? env('LLM_BASE_URL') ?? 'https://api.openai.com/v1',
-    apiKey: overrides.apiKey ?? env('MINIMAX_API_KEY') ?? env('OPENCODE_API_KEY') ?? env('LLM_API_KEY') ?? env('OPENAI_API_KEY'),
-    model: overrides.model ?? env('MINIMAX_MODEL') ?? env('OPENCODE_MODEL') ?? env('LLM_MODEL') ?? 'gpt-4o-mini'
+    provider: firstNonEmpty(overrides.provider, env('LLM_PROVIDER'), env('OPENCODE_PROVIDER'), 'off'),
+    baseUrl: firstNonEmpty(overrides.baseUrl, env('MINIMAX_API_URL'), env('OPENCODE_BASE_URL'), env('LLM_BASE_URL'), 'https://api.openai.com/v1'),
+    apiKey: firstNonEmpty(overrides.apiKey, env('MINIMAX_API_KEY'), env('OPENCODE_API_KEY'), env('LLM_API_KEY'), env('OPENAI_API_KEY')),
+    model: firstNonEmpty(overrides.model, env('MINIMAX_MODEL'), env('OPENCODE_MODEL'), env('LLM_MODEL'), 'gpt-4o-mini')
   };
 }
 
@@ -60,19 +70,33 @@ export async function chatCompletion(messages, options = {}) {
   if (!isLlmEnabled(config)) {
     throw new Error('LLM is not configured. Set LLM_PROVIDER, LLM_BASE_URL, LLM_API_KEY and LLM_MODEL.');
   }
-  const response = await fetch(chatUrl(config), {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      authorization: `Bearer ${config.apiKey}`
-    },
-    body: JSON.stringify(buildPayload(config, messages, options))
-  });
-  if (!response.ok) {
+  const retries = Math.max(0, Number(options.retries ?? process.env.LLM_RETRIES ?? 2));
+  const timeoutMs = Math.max(1000, Number(options.timeoutMs ?? process.env.LLM_TIMEOUT_MS ?? 120_000));
+  for (let attempt = 0; attempt <= retries; attempt += 1) {
+    let response;
+    try {
+      response = await fetchWithTimeout(chatUrl(config), {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          authorization: `Bearer ${config.apiKey}`
+        },
+        body: JSON.stringify(buildPayload(config, messages, options))
+      }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs});
+    } catch (error) {
+      if (options.signal?.aborted || error?.name === 'AbortError' || attempt >= retries) throw error;
+      await (options.sleep || abortableSleep)(retryDelay(attempt), options.signal);
+      continue;
+    }
+    if (response.ok) return extractContent(await response.json());
     const body = await response.text();
-    throw new Error(`LLM request failed (${response.status}): ${body.slice(0, 500)}`);
+    const error = new Error(`LLM request failed (${response.status}): ${body.slice(0, 500)}`);
+    error.status = response.status;
+    if (![408, 429].includes(response.status) && response.status < 500) throw error;
+    if (attempt >= retries) throw error;
+    await (options.sleep || abortableSleep)(retryDelay(attempt), options.signal);
   }
-  return extractContent(await response.json());
+  throw new Error('LLM request failed after retries.');
 }
 
 export async function chatJson(messages, options = {}) {

@@ -1,6 +1,7 @@
 import {createHash, randomBytes} from 'node:crypto';
 import {makeOAuthState} from './youtube-oauth.js';
 import {publicOAuthCallback} from './oauth-redirect.js';
+import {fetchWithTimeout} from './network.js';
 
 export const X_AUTH_URL = 'https://x.com/i/oauth2/authorize';
 export const X_TOKEN_URL = 'https://api.x.com/2/oauth2/token';
@@ -67,7 +68,7 @@ export function xAuthUrl({state, codeChallenge, config = getXOAuthConfig()} = {}
   return url.toString();
 }
 
-export async function exchangeXCode(code, codeVerifier, config = getXOAuthConfig()) {
+export async function exchangeXCode(code, codeVerifier, config = getXOAuthConfig(), options = {}) {
   const missing = validateXOAuthConfig(config);
   if (missing.length) throw new Error(`Faltan variables OAuth de X: ${missing.join(', ')}`);
   const body = new URLSearchParams({
@@ -77,14 +78,14 @@ export async function exchangeXCode(code, codeVerifier, config = getXOAuthConfig
     redirect_uri: config.redirectUri,
     code_verifier: codeVerifier
   });
-  const response = await fetch(X_TOKEN_URL, {
+  const response = await fetchWithTimeout(X_TOKEN_URL, {
     method: 'POST',
     headers: {
       authorization: `Basic ${Buffer.from(`${config.clientId}:${config.clientSecret}`).toString('base64')}`,
       'content-type': 'application/x-www-form-urlencoded'
     },
     body
-  });
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error_description || payload.error || `X token exchange failed with ${response.status}`);

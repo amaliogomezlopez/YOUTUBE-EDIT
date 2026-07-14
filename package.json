@@ -1,9 +1,9 @@
 {
   "name": "shortsmith-mvp",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "MVP pipeline for turning long videos into scored vertical shorts.",
+  "description": "Local creator workflow for transcripts, vertical clips, metadata, stories and official multi-platform publishing.",
   "scripts": {
     "process": "node src/cli.js process",
     "server": "node src/server.js",
@@ -11,9 +11,14 @@
     "smoke": "node tests/smoke-e2e.js",
     "instagram:doctor": "node scripts/instagram-doctor.js",
     "instagram:refresh-token": "node scripts/instagram-refresh-token.js",
-    "instagram:redeem-vps-code": "node scripts/instagram-redeem-vps-code.js"
+    "instagram:redeem-vps-code": "node scripts/instagram-redeem-vps-code.js",
+    "publishing:doctor": "node scripts/publishing-doctor.js"
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "busboy": "^1.6.0",
+    "onnxruntime-node": "^1.22.0"
   }
 }

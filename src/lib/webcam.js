@@ -1,6 +1,7 @@
-import {mkdir, readFile} from 'node:fs/promises';
+import {mkdir, readFile, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {clamp, run, TMP_DIR} from './utils.js';
+import {detectFacesInFrame, selectTrackedFace} from './face-detector.js';
 
 function parsePpm(buffer) {
   let offset = 0;
@@ -98,45 +99,80 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
   const sampleDir = path.join(TMP_DIR, 'webcam-detect', String(Date.now()));
   await mkdir(sampleDir, {recursive: true});
   const detections = [];
-  for (let i = 0; i < samples; i += 1) {
-    const t = start + ((end - start) * i) / Math.max(1, samples - 1);
-    const frameFile = path.join(sampleDir, `frame-${i}.ppm`);
-    await run('ffmpeg', [
-      '-y',
-      '-ss', String(t),
-      '-i', videoFile,
-      '-frames:v', '1',
-      '-vf', 'scale=640:-1',
-      '-f', 'image2',
-      frameFile
-    ]);
-    const frame = parsePpm(await readFile(frameFile));
-    const detection = detectInFrame(frame);
-    if (detection) {
-      const sx = media.width / frame.width;
-      const sy = media.height / frame.height;
-      detections.push({
-        x: detection.x * sx,
-        y: detection.y * sy,
-        w: detection.w * sx,
-        h: detection.h * sy,
-        score: detection.score,
-        density: detection.density
-      });
+  const faceFrames = [];
+  let faceDetectorAvailable = options.faceDetection !== false;
+  try {
+    for (let i = 0; i < samples; i += 1) {
+      options.signal?.throwIfAborted();
+      const t = start + ((end - start) * i) / Math.max(1, samples - 1);
+      const frameFile = path.join(sampleDir, `frame-${i}.ppm`);
+      await run('ffmpeg', [
+        '-y',
+        '-ss', String(t),
+        '-i', videoFile,
+        '-frames:v', '1',
+        '-vf', 'scale=640:-1',
+        '-f', 'image2',
+        frameFile
+      ], {signal: options.signal, timeoutMs: Number(options.frameTimeoutMs ?? 30_000)});
+      const frame = parsePpm(await readFile(frameFile));
+      if (faceDetectorAvailable) {
+        try {
+          const sx = media.width / frame.width;
+          const sy = media.height / frame.height;
+          const faces = (await detectFacesInFrame(frame, options.faceDetectionOptions ?? {})).map((face) => ({
+            x: face.x * sx, y: face.y * sy, w: face.w * sx, h: face.h * sy, score: face.score
+          })).filter((face) => {
+            const areaRatio = (face.w * face.h) / (media.width * media.height);
+            const centerX = (face.x + face.w / 2) / media.width;
+            const centerY = (face.y + face.h / 2) / media.height;
+            const edgeDistance = Math.min(centerX, 1 - centerX, centerY, 1 - centerY);
+            return areaRatio <= Number(options.maxFaceAreaRatio ?? 0.1) && edgeDistance <= Number(options.maxEdgeDistance ?? 0.34);
+          });
+          faceFrames.push(faces);
+        } catch (error) {
+          if (options.signal?.aborted) throw error;
+          faceDetectorAvailable = false;
+          faceFrames.length = 0;
+        }
+      }
+      const detection = detectInFrame(frame);
+      if (detection) {
+        const sx = media.width / frame.width;
+        const sy = media.height / frame.height;
+        detections.push({
+          x: detection.x * sx,
+          y: detection.y * sy,
+          w: detection.w * sx,
+          h: detection.h * sy,
+          score: detection.score,
+          density: detection.density
+        });
+      }
     }
+  } finally {
+    await rm(sampleDir, {recursive: true, force: true});
   }
-  if (detections.length < 2) {
-    const fallbackW = media.width * 0.24;
-    const fallbackH = fallbackW * 0.75;
-    return {
-      x: Math.round(media.width - fallbackW - media.width * 0.03),
-      y: Math.round(media.height - fallbackH - media.height * 0.04),
-      w: Math.round(fallbackW),
-      h: Math.round(fallbackH),
-      confidence: 0.25,
-      method: 'fallback-bottom-right'
+
+  const trackedFace = faceDetectorAvailable ? selectTrackedFace(faceFrames, {minimumFrames: Math.ceil(samples * 0.45)}) : null;
+  if (trackedFace) {
+    const padX = trackedFace.w * 1.6;
+    const padTop = trackedFace.h * 1.15;
+    const padBottom = trackedFace.h * 1.65;
+    const faceBox = {
+      x: Math.round(clamp(trackedFace.x - padX, 0, media.width - 24)),
+      y: Math.round(clamp(trackedFace.y - padTop, 0, media.height - 24)),
+      w: Math.round(clamp(trackedFace.w + padX * 2, 24, media.width)),
+      h: Math.round(clamp(trackedFace.h + padTop + padBottom, 24, media.height)),
+      confidence: trackedFace.confidence,
+      detectionScore: trackedFace.detectionScore,
+      method: 'yunet-face-tracking'
     };
+    faceBox.w = Math.min(faceBox.w, media.width - faceBox.x);
+    faceBox.h = Math.min(faceBox.h, media.height - faceBox.y);
+    return faceBox;
   }
+  if (detections.length < Math.ceil(samples * Number(options.minimumSkinCoverage ?? 0.6))) return null;
   const x = median(detections.map((item) => item.x));
   const y = median(detections.map((item) => item.y));
   const w = median(detections.map((item) => item.w));
@@ -154,7 +190,7 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
     y: Math.round(clamp(y - padTop, 0, media.height - 8)),
     w: Math.round(clamp(w + padX * 2, 24, media.width)),
     h: Math.round(clamp(h + padTop + padBottom, 24, media.height)),
-    confidence: Number(Math.min(0.95, detections.length / samples).toFixed(2)),
+    confidence: Number(Math.min(0.75, detections.length / samples).toFixed(2)),
     method: 'skin-window-sampling'
   };
   box.w = Math.min(box.w, media.width - box.x - 2);

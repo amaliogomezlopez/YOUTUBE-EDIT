@@ -2,6 +2,7 @@ import {manualResult, missing, validateVideoAsset} from './common.js';
 import {uploadAssetToSshHost} from '../asset-host.js';
 import {validateInstagramToken} from '../instagram-oauth.js';
 import {postForPlatform} from '../publishing.js';
+import {abortableSleep, fetchWithTimeout} from '../network.js';
 
 const REQUIRED_ENV = ['INSTAGRAM_BUSINESS_ACCOUNT_ID', 'META_ACCESS_TOKEN'];
 const INSTAGRAM_GRAPH_BASE = 'https://graph.instagram.com';
@@ -16,19 +17,19 @@ function graphUrl(path, params = {}) {
   return url;
 }
 
-async function graphPost(path, body, token) {
+async function graphPost(path, body, token, options = {}) {
   const form = new URLSearchParams();
   for (const [key, value] of Object.entries(body)) {
     if (value !== undefined && value !== null) form.set(key, String(value));
   }
-  const response = await fetch(`${INSTAGRAM_GRAPH_BASE}${path}`, {
+  const response = await fetchWithTimeout(`${INSTAGRAM_GRAPH_BASE}${path}`, {
     method: 'POST',
     headers: {
       authorization: `Bearer ${token}`,
       'content-type': 'application/x-www-form-urlencoded'
     },
     body: form
-  });
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.requestTimeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     const message = payload.error?.message || `Instagram Graph ${path} failed with ${response.status}`;
@@ -37,9 +38,9 @@ async function graphPost(path, body, token) {
   return {ok: true, payload};
 }
 
-async function graphGetMedia(mediaId, token) {
+async function graphGetMedia(mediaId, token, options = {}) {
   const url = graphUrl(`/${mediaId}`, {fields: 'id,permalink,media_type,username', access_token: token});
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url, {}, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.requestTimeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(payload.error?.message || `Instagram Graph media lookup failed with ${response.status}`);
@@ -47,11 +48,12 @@ async function graphGetMedia(mediaId, token) {
   return payload;
 }
 
-async function pollContainerStatus(containerId, token, {onLog} = {}) {
-  const deadline = Date.now() + POLL_TIMEOUT_MS;
+async function pollContainerStatus(containerId, token, {onLog, signal, fetchImpl = fetch, timeoutMs = POLL_TIMEOUT_MS, requestTimeoutMs = 30_000, sleep = abortableSleep} = {}) {
+  const deadline = Date.now() + timeoutMs;
   while (Date.now() < deadline) {
+    signal?.throwIfAborted();
     const url = graphUrl(`/${containerId}`, {fields: 'status_code,status', access_token: token});
-    const response = await fetch(url);
+    const response = await fetchWithTimeout(url, {}, {fetchImpl, signal, timeoutMs: requestTimeoutMs});
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
       throw new Error(payload.error?.message || `Instagram container status failed with ${response.status}`);
@@ -60,7 +62,7 @@ async function pollContainerStatus(containerId, token, {onLog} = {}) {
     onLog?.(`container ${containerId} status=${status || 'UNKNOWN'}`);
     if (status === 'FINISHED') return payload;
     if (status === 'ERROR') throw new Error(`Instagram container finished with ERROR. status=${JSON.stringify(payload)}`);
-    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
+    await sleep(POLL_INTERVAL_MS, signal);
   }
   throw new Error(`Instagram container polling timed out after ${POLL_TIMEOUT_MS / 1000}s`);
 }
@@ -90,10 +92,30 @@ export async function publishToInstagram({videoFile, metadata, clip, options = {
   const getMedia = options.graphGetMedia || graphGetMedia;
   const pollStatus = options.pollContainerStatus || pollContainerStatus;
   const uploadAsset = options.uploadAsset || uploadAssetToSshHost;
+  const resume = options.resumeState ?? {};
+
+  if (resume.mediaId) {
+    let media = {};
+    try {
+      media = await getMedia(resume.mediaId, token, options);
+    } catch (error) {
+      if (options.signal?.aborted || error?.name === 'AbortError') throw error;
+    }
+    return {
+      platform: 'instagram', status: 'published', officialApi: 'Instagram Graph API media lookup', asset: videoFile,
+      videoUrl: resume.videoUrl, containerId: resume.containerId, mediaId: resume.mediaId,
+      permalink: media.permalink || resume.permalink || null, reconciled: true
+    };
+  }
+  if (resume.phase === 'publishing' && resume.containerId) {
+    return manualResult('instagram', 'La publicación pudo completarse antes del reinicio, pero falta el mediaId local. Revisa la cuenta antes de reintentar para evitar un duplicado.', {
+      officialApi: 'Instagram Graph API media_publish', containerId: resume.containerId, videoUrl: resume.videoUrl
+    });
+  }
 
   let probe;
   try {
-    probe = await validateToken(token, {fields: 'id,user_id,username,account_type'});
+    probe = await validateToken(token, {fields: 'id,user_id,username,account_type', signal: options.signal, fetch: options.fetch, timeoutMs: options.requestTimeoutMs});
   } catch (error) {
     return {
       platform: 'instagram',
@@ -122,11 +144,11 @@ export async function publishToInstagram({videoFile, metadata, clip, options = {
     };
   }
 
-  let videoUrl = options.videoUrl || metadata.platform_posts?.instagram?.video_url || post.video_url;
+  let videoUrl = resume.videoUrl || options.videoUrl || metadata.platform_posts?.instagram?.video_url || post.video_url;
   if (!videoUrl || !/^https:\/\//i.test(videoUrl)) {
     let hosted;
     try {
-      hosted = await uploadAsset(videoFile, {env: process.env});
+      hosted = await uploadAsset(videoFile, {env: process.env, signal: options.signal});
     } catch (error) {
       return {
         platform: 'instagram',
@@ -138,6 +160,7 @@ export async function publishToInstagram({videoFile, metadata, clip, options = {
     }
     if (hosted.ok && /^https:\/\//i.test(hosted.publicUrl)) {
       videoUrl = hosted.publicUrl;
+      await options.onRemoteState?.({status: 'uploading', phase: 'asset-hosted', remote: {videoUrl, hostedFilename: hosted.filename || null, hostedRemotePath: hosted.remotePath || null, hostedAt: new Date().toISOString()}});
     } else {
       return manualResult('instagram', 'Instagram Graph API no acepta archivos locales: requiere una URL HTTPS publica (video_url) accesible por Meta.', {
         officialApi: 'Instagram Graph API media + media_publish',
@@ -157,26 +180,36 @@ export async function publishToInstagram({videoFile, metadata, clip, options = {
 
   const caption = String(post.caption || metadata.summary?.short || '').slice(0, 2200);
 
-  const create = await postGraph(`/${igUserId}/media`, {
-    media_type: 'REELS',
-    video_url: videoUrl,
-    caption
-  }, token);
-  if (!create.ok) {
+  let containerId = resume.containerId;
+  if (!containerId) {
+    const create = await postGraph(`/${igUserId}/media`, {
+      media_type: 'REELS',
+      video_url: videoUrl,
+      caption
+    }, token, options);
+    if (!create.ok) {
+      return {
+        platform: 'instagram', status: 'failed', officialApi: 'POST /{ig-user-id}/media (REELS)', asset: videoFile,
+        videoUrl, error: create.message, details: create.payload?.error
+      };
+    }
+    containerId = create.payload.id;
+    await options.onRemoteState?.({status: 'processing', phase: 'container-created', remote: {videoUrl, containerId}});
+  }
+  if (!containerId) {
     return {
       platform: 'instagram',
       status: 'failed',
-      officialApi: 'POST /{ig-user-id}/media (REELS)',
+      officialApi: 'POST /{ig-user-id}/media',
       asset: videoFile,
       videoUrl,
-      error: create.message,
-      details: create.payload?.error
+      error: 'Instagram no devolvió containerId.'
     };
   }
-  const containerId = create.payload.id;
   try {
-    await pollStatus(containerId, token);
+    await pollStatus(containerId, token, {...options, fetchImpl: options.fetch || fetch});
   } catch (error) {
+    if (options.signal?.aborted || error?.name === 'AbortError') throw error;
     return {
       platform: 'instagram',
       status: 'failed',
@@ -188,9 +221,10 @@ export async function publishToInstagram({videoFile, metadata, clip, options = {
     };
   }
 
+  await options.onRemoteState?.({status: 'processing', phase: 'publishing', remote: {videoUrl, containerId, phase: 'publishing'}});
   const publish = await postGraph(`/${igUserId}/media_publish`, {
     creation_id: containerId
-  }, token);
+  }, token, options);
   if (!publish.ok) {
     return {
       platform: 'instagram',
@@ -205,11 +239,12 @@ export async function publishToInstagram({videoFile, metadata, clip, options = {
   }
   let media = {};
   try {
-    media = await getMedia(publish.payload.id, token);
+    media = await getMedia(publish.payload.id, token, options);
   } catch {
     media = {};
   }
 
+  await options.onRemoteState?.({status: 'published', phase: 'published', remote: {videoUrl, containerId, mediaId: publish.payload.id, permalink: media.permalink || publish.payload.permalink || null}});
   return {
     platform: 'instagram',
     status: 'published',

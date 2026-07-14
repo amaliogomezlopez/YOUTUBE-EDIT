@@ -5,14 +5,14 @@ const TARGET_WIDTH = 1080;
 const TARGET_HEIGHT = 1920;
 const SCALE_FLAGS = 'lanczos+accurate_rnd+full_chroma_int+full_chroma_inp';
 
-export async function ffprobe(file) {
+export async function ffprobe(file, options = {}) {
   const {stdout} = await run('ffprobe', [
     '-v', 'error',
     '-print_format', 'json',
     '-show_format',
     '-show_streams',
     file
-  ]);
+  ], {signal: options.signal});
   const json = JSON.parse(stdout);
   const video = json.streams.find((stream) => stream.codec_type === 'video') ?? {};
   return {
@@ -33,7 +33,7 @@ function parseFps(value) {
   return Number(value) || 30;
 }
 
-export async function extractAudio(videoFile, outputFile) {
+export async function extractAudio(videoFile, outputFile, options = {}) {
   await ensureDir(path.dirname(outputFile));
   await run('ffmpeg', [
     '-y',
@@ -43,7 +43,7 @@ export async function extractAudio(videoFile, outputFile) {
     '-ar', '16000',
     '-c:a', 'pcm_s16le',
     outputFile
-  ]);
+  ], {signal: options.signal});
   return outputFile;
 }
 
@@ -124,7 +124,7 @@ function videoEncodeArgs(quality) {
   ];
 }
 
-export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high'}) {
+export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null}) {
   await ensureDir(path.dirname(outputFile));
   const duration = Math.max(0.5, end - start);
   const filter = buildVerticalFilter({subtitleFile, mode, webcamBox});
@@ -140,6 +140,6 @@ export async function renderVerticalClip({videoFile, outputFile, start, end, sub
     '-movflags', '+faststart',
     outputFile
   ];
-  await run('ffmpeg', args, {cwd});
+  await run('ffmpeg', args, {cwd, signal});
   return outputFile;
 }

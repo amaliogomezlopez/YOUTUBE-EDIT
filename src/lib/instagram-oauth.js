@@ -1,4 +1,5 @@
 import {publicOAuthCallback} from './oauth-redirect.js';
+import {fetchWithTimeout} from './network.js';
 
 export const META_GRAPH_VERSION = process.env.META_GRAPH_VERSION || 'v23.0';
 export const META_DIALOG_URL = 'https://www.facebook.com/dialog/oauth';
@@ -59,12 +60,12 @@ export function instagramAuthUrl({state, config = getInstagramOAuthConfig()} = {
   return url.toString();
 }
 
-async function graphGet(pathname, params = {}, base = META_GRAPH_BASE) {
+async function graphGet(pathname, params = {}, base = META_GRAPH_BASE, options = {}) {
   const url = new URL(`${base}${pathname}`);
   for (const [key, value] of Object.entries(params)) {
     if (value !== undefined && value !== null) url.searchParams.set(key, value);
   }
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url, {}, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(explainOAuthError(payload) || `Meta Graph API failed with ${response.status}`);
@@ -72,7 +73,7 @@ async function graphGet(pathname, params = {}, base = META_GRAPH_BASE) {
   return payload;
 }
 
-export async function exchangeInstagramCode(code, config = getInstagramOAuthConfig()) {
+export async function exchangeInstagramCode(code, config = getInstagramOAuthConfig(), options = {}) {
   const missing = validateInstagramOAuthConfig(config);
   if (missing.length) {
     throw new Error(`Faltan variables OAuth de Instagram/Meta: ${missing.join(', ')}`);
@@ -85,11 +86,11 @@ export async function exchangeInstagramCode(code, config = getInstagramOAuthConf
       redirect_uri: config.redirectUri,
       code
     });
-    const response = await fetch(INSTAGRAM_TOKEN_URL, {
+    const response = await fetchWithTimeout(INSTAGRAM_TOKEN_URL, {
       method: 'POST',
       headers: {'content-type': 'application/x-www-form-urlencoded'},
       body
-    });
+    }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
     const payload = await response.json().catch(() => ({}));
     if (!response.ok) {
       throw new Error(explainOAuthError(payload) || `Instagram token exchange failed with ${response.status}`);
@@ -101,7 +102,7 @@ export async function exchangeInstagramCode(code, config = getInstagramOAuthConf
     client_secret: config.appSecret,
     redirect_uri: config.redirectUri,
     code
-  });
+  }, META_GRAPH_BASE, options);
 }
 
 export async function exchangeLongLivedMetaToken(shortLivedToken, config = getInstagramOAuthConfig()) {
@@ -152,12 +153,12 @@ export function describeInstagramConfig(config = getInstagramOAuthConfig()) {
   };
 }
 
-export async function validateInstagramToken(accessToken, {fields} = {}) {
+export async function validateInstagramToken(accessToken, {fields, signal, fetch: fetchImpl, timeoutMs} = {}) {
   if (!accessToken) {
     throw new Error('Falta META_ACCESS_TOKEN para validar.');
   }
   const requestedFields = fields || 'id,user_id,username,account_type,profile_pic_url,followers_count';
-  const account = await graphGet('/me', {fields: requestedFields, access_token: accessToken}, INSTAGRAM_GRAPH_BASE);
+  const account = await graphGet('/me', {fields: requestedFields, access_token: accessToken}, INSTAGRAM_GRAPH_BASE, {signal, fetch: fetchImpl, timeoutMs});
   const accountId = account.user_id || account.id;
   const wantsProfessional = ['BUSINESS', 'CREATOR', 'MEDIA_CREATOR'].includes(account.account_type);
   return {

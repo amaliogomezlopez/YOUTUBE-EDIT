@@ -53,24 +53,85 @@ export async function publishJob(state, options = {}) {
     throw new Error('No hay plataformas validas seleccionadas.');
   }
 
-  const run = {
+  const runs = await loadRuns(state);
+  const idempotencyKey = String(options.idempotencyKey || '').trim().slice(0, 160) || null;
+  const existing = idempotencyKey
+    ? runs.find((item) => item.idempotencyKey === idempotencyKey)
+    : null;
+  if (existing && ['published', 'requires_manual_action'].includes(existing.status)) return existing;
+  if (existing?.status === 'failed' && !options.retryFailed) return existing;
+  const run = existing ?? {
     id: `publish-${new Date().toISOString().replace(/[:.]/g, '-')}`,
     createdAt: new Date().toISOString(),
     clipId: clip.id,
     asset: clip.files.video,
+    idempotencyKey,
     status: 'validating',
     platforms: Object.fromEntries(platforms.map((platform) => [platform, {status: 'pending'}]))
   };
-  const runs = await loadRuns(state);
-  await writeJson(path.join(state.jobDir, 'publish-runs.json'), [...runs, run]);
+  const nextRuns = existing ? runs : [...runs, run];
+  let persistChain = Promise.resolve();
+  const persist = () => {
+    run.updatedAt = new Date().toISOString();
+    persistChain = persistChain.catch(() => {}).then(() => writeJson(path.join(state.jobDir, 'publish-runs.json'), nextRuns));
+    return persistChain;
+  };
+  run.status = 'uploading';
+  await persist();
 
-  const results = await Promise.all(platforms.map(async (platform) => {
+  const settled = await Promise.allSettled(platforms.map(async (platform) => {
+    if (['published', 'requires_manual_action'].includes(run.platforms?.[platform]?.status)) {
+      return run.platforms[platform];
+    }
+    run.platforms[platform] = {...run.platforms[platform], platform, status: 'validating'};
+    await persist();
     try {
-      return await CONNECTORS[platform]({state, clip, videoFile: clip.files.video, metadata});
+      const connectorOptions = options.connectorOptions?.[platform] ?? {};
+      const result = await CONNECTORS[platform]({
+        state,
+        clip,
+        videoFile: clip.files.video,
+        metadata,
+        options: {
+          ...connectorOptions,
+          signal: options.signal,
+          resumeState: run.platforms[platform]?.remote ?? {},
+          onRemoteState: async (patch) => {
+            const current = run.platforms[platform] ?? {platform};
+            run.platforms[platform] = {
+              ...current,
+              status: patch.status ?? current.status ?? 'processing',
+              phase: patch.phase ?? current.phase,
+              remote: {...(current.remote ?? {}), ...(patch.remote ?? patch)}
+            };
+            await persist();
+            await connectorOptions.onRemoteState?.(patch);
+          },
+          onProgress: async (progress) => {
+            run.platforms[platform] = {...run.platforms[platform], platform, status: 'uploading', progress};
+            await persist();
+            await connectorOptions.onProgress?.(progress);
+          }
+        }
+      });
+      run.platforms[platform] = {...result, remote: run.platforms[platform]?.remote};
+      await persist();
+      return run.platforms[platform];
     } catch (error) {
-      return {platform, status: 'failed', error: error.message};
+      if (options.signal?.aborted || error?.name === 'AbortError') {
+        run.platforms[platform] = {platform, status: 'failed', error: 'Publicación cancelada.'};
+        await persist();
+        throw error;
+      }
+      const result = {platform, status: 'failed', error: error.message};
+      run.platforms[platform] = result;
+      await persist();
+      return result;
     }
   }));
+  const results = settled.map((item, index) => item.status === 'fulfilled'
+    ? item.value
+    : {platform: platforms[index], status: 'failed', error: options.signal?.aborted ? 'Publicación cancelada.' : item.reason?.message});
 
   run.completedAt = new Date().toISOString();
   run.platforms = Object.fromEntries(results.map((result) => [result.platform, result]));
@@ -80,9 +141,9 @@ export async function publishJob(state, options = {}) {
       ? 'failed'
       : 'requires_manual_action';
 
-  const nextRuns = [...runs, run];
-  await writeJson(path.join(state.jobDir, 'publish-runs.json'), nextRuns);
+  await persist();
   state.publishRuns = nextRuns;
   state.publishStatus = run.status;
+  if (options.signal?.aborted) throw options.signal.reason ?? new DOMException('Publicación cancelada.', 'AbortError');
   return run;
 }
