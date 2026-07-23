@@ -1,0 +1,4 @@
+interface:
+  display_name: "Preparar publicación de YouTube"
+  short_description: "Resumen, títulos, capítulos y 14 hashtags"
+  default_prompt: "Usa $prepare-youtube-upload con este MP4 para preparar todos los metadatos de su publicación en YouTube."

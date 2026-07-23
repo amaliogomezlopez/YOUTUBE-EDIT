@@ -1,0 +1,4 @@
+interface:
+  display_name: "Crear Shorts rankeados"
+  short_description: "Extrae, revisa y rankea Shorts verticales"
+  default_prompt: "Usa $create-ranked-shorts con este MP4 para generar y revisar Shorts verticales ordenados por potencial viral."
