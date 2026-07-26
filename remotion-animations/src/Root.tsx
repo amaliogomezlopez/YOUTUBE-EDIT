@@ -29,6 +29,14 @@ import {
   kineticNumberDemoSchema,
   lineChartDemoSchema,
 } from "./motion/DataVizDemos";
+import {
+  TextFocusJourneyDemo,
+  TextFocusJourneyProps,
+  TransversalEffectsDemo,
+  TransversalEffectsDemoProps,
+  textFocusJourneySchema,
+  transversalEffectsDemoSchema,
+} from "./motion/EffectsDemos";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -89,6 +97,39 @@ export const RemotionRoot: React.FC = () => {
           height={1080}
           schema={kineticNumberDemoSchema}
           defaultProps={kineticNumberDemoProps}
+        />
+        <Composition
+          id="Toolkit-TransversalEffects"
+          component={TransversalEffectsDemo}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={transversalEffectsDemoSchema}
+          defaultProps={transversalEffectsDemoProps}
+        />
+        <Composition
+          id="Toolkit-TransversalEffects-FinalZoom"
+          component={TransversalEffectsDemo}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={transversalEffectsDemoSchema}
+          defaultProps={{
+            ...transversalEffectsDemoProps,
+            zoomMode: "final-punch",
+          }}
+        />
+        <Composition
+          id="Toolkit-TextFocusJourney"
+          component={TextFocusJourneyDemo}
+          durationInFrames={6 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={textFocusJourneySchema}
+          defaultProps={textFocusJourneyProps}
         />
       </Folder>
       <Folder name="Ahorrar-Limites">
@@ -174,6 +215,21 @@ const kineticNumberDemoProps: KineticNumberDemoProps = {
   prefix: "",
   suffix: "%",
   decimals: 0,
+};
+
+const transversalEffectsDemoProps: TransversalEffectsDemoProps = {
+  longText: "La gráfica se construye antes de señalar la conclusión",
+  shortText: "FOCO",
+  accentColor: "#FFD43B",
+  zoomScale: 1.72,
+  zoomMode: "path-track",
+};
+
+const textFocusJourneyProps: TextFocusJourneyProps = {
+  firstText: "La atención empieza en esta idea",
+  secondText: "Después, la cámara acompaña la siguiente",
+  accentColor: "#FFD43B",
+  maxZoomScale: 1.3,
 };
 
 const ahorrarLimitesCompositions = [

@@ -5,6 +5,38 @@ vídeo normal o como overlay transparente para el editor. No sustituye al
 pipeline FFmpeg de Shortsmith: lo complementa con composiciones React
 parametrizables.
 
+## Sistema editorial para agentes
+
+El módulo incluye una capa de decisión reutilizable:
+
+- `catalog/animation-patterns.json`: 27 patrones semánticos con estado real,
+  evidencia requerida, assets compatibles, foco y sonido;
+- `catalog/animation-effects.json`: zooms, revelados, trazados, contadores,
+  texto progresivo, foco, salida y cues transversales;
+- `schemas/clip-animation-input.schema.json`: contrato opcional para clips y
+  assets adyacentes;
+- `schemas/animation-spec.schema.json`: contrato obligatorio entre el planner
+  editorial y el builder de Remotion;
+- `PROMPT_PARA_AGENTES.md`: router de lotes y prompts especializados por
+  familia;
+- `docs/remotion-animation-system.md`: arquitectura, taxonomía y fases de
+  implantación.
+
+El catálogo distingue barras categóricas de histogramas estadísticos reales.
+`RisingHistogram` conserva su nombre histórico en código, pero se registra
+como `data.bar-focus`.
+
+`src/motion/Effects.tsx` separa los efectos comunes de los patrones:
+
+- `FocusZoom`: zoom parametrizable hacia número, logo o región;
+- `TrackingZoom`: cámara que sigue una línea o recorrido mientras se construye;
+- `NarrativeCamera`: cámara por cues que acompaña bloques de texto u otros
+  focos situados en zonas distintas;
+- `ProgressiveText`: 1-3 palabras por letras y frases breves con fade por
+  palabras y desplazamiento ascendente configurable;
+- `ProgressiveReveal`: entrada de nodos, imágenes o logos;
+- `useStaggeredReveal`: aparición progresiva de una familia.
+
 ## Toolkit reutilizable
 
 El núcleo compartido vive en `src/motion/Toolkit.tsx`:
@@ -15,11 +47,14 @@ El núcleo compartido vive en `src/motion/Toolkit.tsx`:
 - `LineChartZoom`: línea trazada y zoom de cámara sobre el dato elegido.
 - `SignalPath`: recorridos animados para procesos y jerarquías.
 
-Hay tres composiciones de laboratorio editables desde Props:
+Hay composiciones de laboratorio editables desde Props:
 
 - `Toolkit-LineChartZoom`
 - `Toolkit-RisingHistogram`
 - `Toolkit-KineticNumber`
+- `Toolkit-TransversalEffects`: seguimiento continuo de línea;
+- `Toolkit-TransversalEffects-FinalZoom`: zoom únicamente al final;
+- `Toolkit-TextFocusJourney`: cámara que viaja entre bloques de texto.
 
 Sus datos son solo demostrativos. Para una pieza factual hay que sustituirlos
 por cifras de la transcripción o de una fuente aportada por el usuario.
@@ -67,6 +102,7 @@ npm run render:ahorrar-limites-v2
 npm run render:ahorrar-limites-v3-audio
 npm run render:toolkit
 npm run prepare:sfx
+npm run check:catalog
 ```
 
 Para renderizar con datos enviados desde un JSON:

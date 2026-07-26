@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/clip-animation-input.schema.json",
+  "title": "Shortsmith clip animation input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "project", "clips"],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "sourceDirectory": {
+      "type": "string"
+    },
+    "sharedAssetsDirectory": {
+      "type": ["string", "null"]
+    },
+    "language": {
+      "type": "string",
+      "default": "es"
+    },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxAnimations": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "allowedFormats": {
+          "type": "array",
+          "items": {
+            "enum": ["fullscreen", "overlay-alpha"]
+          },
+          "uniqueItems": true
+        },
+        "sound": {
+          "enum": ["silent", "with-sfx", "both"]
+        },
+        "destination": {
+          "enum": ["horizontal", "vertical", "match-source"]
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "clips": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/clip"
+      }
+    }
+  },
+  "$defs": {
+    "clip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["clipId", "sourceFile"],
+      "properties": {
+        "clipId": {
+          "type": ["string", "integer"]
+        },
+        "sourceFile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transcriptFile": {
+          "type": ["string", "null"]
+        },
+        "briefFile": {
+          "type": ["string", "null"]
+        },
+        "preferredPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]+\\.[a-z0-9-]+$"
+          },
+          "uniqueItems": true
+        },
+        "avoidPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z]+\\.[a-z0-9-]+$"
+          },
+          "uniqueItems": true
+        },
+        "notes": {
+          "type": "string"
+        },
+        "assets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/asset"
+          }
+        }
+      }
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "file"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "auto",
+            "photo",
+            "logo",
+            "screenshot",
+            "icon",
+            "texture",
+            "source-frame"
+          ],
+          "default": "auto"
+        },
+        "description": {
+          "type": "string"
+        },
+        "provenance": {
+          "enum": [
+            "user-provided",
+            "project-owned",
+            "verified-external",
+            "unknown"
+          ],
+          "default": "user-provided"
+        },
+        "licenseNote": {
+          "type": ["string", "null"]
+        },
+        "focalPoint": {
+          "$ref": "#/$defs/point"
+        },
+        "targetRegion": {
+          "$ref": "#/$defs/region"
+        },
+        "allowedUses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "foreground",
+              "background",
+              "comparison",
+              "callout",
+              "logo-mark"
+            ]
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,655 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/animation-spec.schema.json",
+  "title": "Shortsmith animation specification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "project",
+    "clipId",
+    "source",
+    "selection",
+    "editorial",
+    "visual",
+    "storyboard",
+    "sound",
+    "output",
+    "qa"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "clipId": {
+      "type": ["string", "integer"]
+    },
+    "source": {
+      "$ref": "#/$defs/source"
+    },
+    "selection": {
+      "$ref": "#/$defs/selection"
+    },
+    "editorial": {
+      "$ref": "#/$defs/editorial"
+    },
+    "dataSeries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/dataSeries"
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/selectedAsset"
+      }
+    },
+    "visual": {
+      "$ref": "#/$defs/visual"
+    },
+    "storyboard": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "$ref": "#/$defs/beat"
+      }
+    },
+    "sound": {
+      "$ref": "#/$defs/sound"
+    },
+    "output": {
+      "$ref": "#/$defs/output"
+    },
+    "qa": {
+      "$ref": "#/$defs/qa"
+    }
+  },
+  "$defs": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "videoFile",
+        "sourceInSeconds",
+        "sourceOutSeconds",
+        "evidence"
+      ],
+      "properties": {
+        "videoFile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transcriptFile": {
+          "type": ["string", "null"]
+        },
+        "sourceInSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "sourceOutSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["text", "startSeconds", "endSeconds"],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1
+              },
+              "startSeconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "endSeconds": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "patternId",
+        "rationale",
+        "clarityGain",
+        "evidenceStrength",
+        "motionPotential",
+        "assetUtility",
+        "redundancyPenalty",
+        "readingPenalty",
+        "totalScore",
+        "implementationStatus"
+      ],
+      "properties": {
+        "patternId": {
+          "type": "string",
+          "pattern": "^[a-z]+\\.[a-z0-9-]+$"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "clarityGain": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "evidenceStrength": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "motionPotential": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 5
+        },
+        "assetUtility": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "redundancyPenalty": {
+          "type": "integer",
+          "minimum": -3,
+          "maximum": 0
+        },
+        "readingPenalty": {
+          "type": "integer",
+          "minimum": -3,
+          "maximum": 0
+        },
+        "totalScore": {
+          "type": "integer",
+          "minimum": -6,
+          "maximum": 18
+        },
+        "implementationStatus": {
+          "enum": ["ready", "primitive", "planned"]
+        }
+      }
+    },
+    "editorial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim", "title", "supportingText", "language"],
+      "properties": {
+        "claim": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supportingText": {
+          "type": "string"
+        },
+        "language": {
+          "type": "string",
+          "default": "es"
+        }
+      }
+    },
+    "dataSeries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "items"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unit": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["label", "value"],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "focusIndex": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "maxValue": {
+          "type": ["number", "null"]
+        },
+        "qualitative": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "selectedAsset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "sourceFile",
+        "stagedFile",
+        "sha256",
+        "role",
+        "fit"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "sourceFile": {
+          "type": "string"
+        },
+        "stagedFile": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[a-fA-F0-9]{64}$"
+        },
+        "role": {
+          "enum": [
+            "photo",
+            "logo",
+            "screenshot",
+            "icon",
+            "texture",
+            "source-frame"
+          ]
+        },
+        "fit": {
+          "enum": ["contain", "cover"]
+        },
+        "focalPoint": {
+          "$ref": "#/$defs/point"
+        },
+        "targetRegion": {
+          "$ref": "#/$defs/region"
+        }
+      }
+    },
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "durationSeconds",
+        "fps",
+        "width",
+        "height",
+        "accentColor",
+        "backgroundMode",
+        "focusTreatments",
+        "effects",
+        "cameraPlan",
+        "motionVerb"
+      ],
+      "properties": {
+        "durationSeconds": {
+          "type": "number",
+          "minimum": 4,
+          "maximum": 12
+        },
+        "fps": {
+          "type": "number",
+          "minimum": 23,
+          "maximum": 120
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 640
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 640
+        },
+        "accentColor": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "backgroundMode": {
+          "enum": [
+            "editorial-dark",
+            "image-dimmed",
+            "source-blur",
+            "transparent-alpha"
+          ]
+        },
+        "focusTreatments": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "accent-only",
+              "desaturate-peers",
+              "camera-zoom",
+              "spotlight-mask",
+              "depth-isolation",
+              "freeze-and-callout",
+              "count-impact",
+              "path-follow",
+              "before-after-wipe"
+            ]
+          }
+        },
+        "effects": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "effectId",
+              "phase",
+              "target",
+              "startSeconds",
+              "endSeconds"
+            ],
+            "properties": {
+              "effectId": {
+                "type": "string",
+                "pattern": "^[a-z]+\\.[a-z0-9-]+$"
+              },
+              "phase": {
+                "enum": ["entry", "build", "focus", "hold", "exit"]
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "startSeconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "endSeconds": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "parameters": {
+                "type": "object",
+                "additionalProperties": true
+              }
+            }
+          }
+        },
+        "cameraPlan": {
+          "$ref": "#/$defs/cameraPlan"
+        },
+        "motionVerb": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "cameraPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "rationale", "cues"],
+      "properties": {
+        "mode": {
+          "enum": [
+            "none",
+            "final-punch",
+            "path-track",
+            "text-follow",
+            "hybrid"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cues": {
+          "type": "array",
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "effectId",
+              "target",
+              "startSeconds",
+              "endSeconds",
+              "focus",
+              "anchor",
+              "startScale",
+              "endScale"
+            ],
+            "properties": {
+              "effectId": {
+                "enum": [
+                  "camera.focus-zoom",
+                  "camera.path-track",
+                  "camera.text-follow"
+                ]
+              },
+              "target": {
+                "type": "string",
+                "minLength": 1
+              },
+              "startSeconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "endSeconds": {
+                "type": "number",
+                "exclusiveMinimum": 0
+              },
+              "focus": {
+                "$ref": "#/$defs/point"
+              },
+              "anchor": {
+                "$ref": "#/$defs/point"
+              },
+              "startScale": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 3
+              },
+              "endScale": {
+                "type": "number",
+                "minimum": 1,
+                "maximum": 3
+              }
+            }
+          }
+        }
+      }
+    },
+    "beat": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["percent", "purpose", "visibleState"],
+      "properties": {
+        "percent": {
+          "enum": [0, 15, 45, 75, 95]
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "visibleState": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "sound": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deliver", "profile", "soundMix", "cues"],
+      "properties": {
+        "deliver": {
+          "enum": ["silent", "with-sfx", "both"]
+        },
+        "profile": {
+          "enum": [
+            "none",
+            "metric-impact",
+            "trend-focus",
+            "comparison-split",
+            "process-flow",
+            "filter-compress",
+            "asset-reveal",
+            "precision-callout"
+          ]
+        },
+        "soundMix": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "cues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["event", "atSeconds", "file"],
+            "properties": {
+              "event": {
+                "type": "string"
+              },
+              "atSeconds": {
+                "type": "number",
+                "minimum": 0
+              },
+              "file": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["compositionId", "format", "propsFile", "renderFiles"],
+      "properties": {
+        "compositionId": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9-]+$"
+        },
+        "format": {
+          "enum": ["fullscreen", "overlay-alpha"]
+        },
+        "propsFile": {
+          "type": "string"
+        },
+        "renderFiles": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "qa": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "factualIntegrity",
+        "silentTest",
+        "thumbnailTest",
+        "continuityTest",
+        "targetScore"
+      ],
+      "properties": {
+        "factualIntegrity": {
+          "type": "boolean"
+        },
+        "silentTest": {
+          "type": "boolean"
+        },
+        "thumbnailTest": {
+          "type": "boolean"
+        },
+        "continuityTest": {
+          "type": "boolean"
+        },
+        "targetScore": {
+          "type": "integer",
+          "minimum": 80,
+          "maximum": 100
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "point": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "region": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

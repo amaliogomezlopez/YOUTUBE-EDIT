@@ -1,0 +1,446 @@
+{
+  "version": 1,
+  "designRule": "El patrón decide qué se cuenta; los efectos deciden cómo se construye y dónde termina la mirada.",
+  "phases": [
+    {
+      "id": "entry",
+      "purpose": "Introducir el contexto sin ocultar la estructura."
+    },
+    {
+      "id": "build",
+      "purpose": "Construir progresivamente la relación visual."
+    },
+    {
+      "id": "focus",
+      "purpose": "Aislar una única conclusión después de entender la base."
+    },
+    {
+      "id": "hold",
+      "purpose": "Mantener el resultado estable para lectura y montaje."
+    },
+    {
+      "id": "exit",
+      "purpose": "Salir de forma breve y limpia."
+    }
+  ],
+  "textPolicy": {
+    "autoMode": {
+      "lettersMaxWords": 3,
+      "wordsMinWords": 4,
+      "wordsMaxWords": 12
+    },
+    "letterReveal": {
+      "charactersPerSecond": {"min": 10, "max": 18},
+      "maxDurationSeconds": 1.4
+    },
+    "wordReveal": {
+      "wordsPerSecond": {"min": 3, "max": 5},
+      "maxDurationSeconds": 2.8
+    },
+    "rules": [
+      "Usar letras para una a tres palabras y palabras para frases de cuatro a doce.",
+      "Acortar o dividir textos de más de doce palabras.",
+      "Mantener el bloque completo reservado para que el layout no salte.",
+      "Revelar cada palabra con un fade corto y desplazamiento vertical mínimo.",
+      "No duplicar palabra por palabra la locución como sustituto de subtítulos.",
+      "Terminar el revelado antes del hold y dejar tiempo real de lectura."
+    ]
+  },
+  "zoomPolicy": {
+    "defaultScale": 1.65,
+    "recommendedScale": {"min": 1.25, "max": 1.85},
+    "absoluteMaxScale": 3,
+    "modes": [
+      {
+        "id": "final-punch",
+        "effectId": "camera.focus-zoom",
+        "purpose": "Mantener el contexto abierto y acercarse únicamente al dato o conclusión final."
+      },
+      {
+        "id": "path-track",
+        "effectId": "camera.path-track",
+        "purpose": "Seguir una línea, proceso o recorrido mientras progresa."
+      },
+      {
+        "id": "text-follow",
+        "effectId": "camera.text-follow",
+        "purpose": "Mover el foco entre bloques de texto según cambia la idea narrada."
+      }
+    ],
+    "rules": [
+      "En final-punch, construir primero el contexto y aplicar el zoom después.",
+      "En path-track, sincronizar el desplazamiento con el progreso visual.",
+      "En text-follow, llegar al nuevo bloque justo antes o mientras comienza su revelado.",
+      "Usar un único modo dominante por beat, aunque una pieza pueda encadenar varios beats.",
+      "Declarar el objetivo con coordenadas normalizadas y una ancla visible.",
+      "Mantener fuera del grupo escalado la etiqueta que debe quedar estable.",
+      "Reservar al menos 1.2 segundos de hold tras el zoom.",
+      "No encadenar zoom-in y zoom-out decorativos.",
+      "Alternar final-punch y path-track entre piezas equivalentes para evitar monotonía."
+    ]
+  },
+  "legacyFocusAliases": {
+    "accent-only": "focus.accent-only",
+    "desaturate-peers": "focus.desaturate-peers",
+    "camera-zoom": "camera.focus-zoom",
+    "spotlight-mask": "focus.spotlight-mask",
+    "depth-isolation": "focus.depth-isolation",
+    "freeze-and-callout": "focus.freeze-callout",
+    "count-impact": "focus.count-impact",
+    "path-follow": "focus.path-follow",
+    "before-after-wipe": "transition.before-after-wipe"
+  },
+  "effects": [
+    {
+      "id": "camera.focus-zoom",
+      "category": "camera",
+      "phase": "focus",
+      "status": "ready",
+      "implementation": {
+        "component": "FocusZoom",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects-FinalZoom"
+      },
+      "purpose": "Mantener el plano abierto y acercar la cámara al número, punto, logo o región que contiene la conclusión.",
+      "selectWhen": "El espectador ya ha entendido el conjunto y una parte contiene la conclusión.",
+      "constraints": [
+        "Un único objetivo dominante.",
+        "Escala habitual entre 1.25 y 1.85.",
+        "La etiqueta focal debe permanecer estable y legible.",
+        "Usar un solo whoosh o pulso sincronizado si hay sonido."
+      ]
+    },
+    {
+      "id": "camera.path-track",
+      "category": "camera",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "TrackingZoom",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Seguir una línea, recorrido o secuencia mientras se construye.",
+      "selectWhen": "La zona relevante cambia de posición a lo largo de una trayectoria con significado.",
+      "constraints": [
+        "Sincronizar el progreso de cámara con el progreso del trazado.",
+        "Usar puntos normalizados y velocidad basada en longitud de trayectoria.",
+        "Incrementar la escala de forma gradual, sin saltos ni zooms de ida y vuelta.",
+        "Terminar asentado sobre el punto que contiene la conclusión.",
+        "Mantener titulares y etiquetas persistentes fuera del grupo de cámara."
+      ]
+    },
+    {
+      "id": "camera.text-follow",
+      "category": "camera",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "NarrativeCamera",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TextFocusJourney"
+      },
+      "purpose": "Acompañar con paneo y zoom la aparición sucesiva de bloques de texto en distintas zonas.",
+      "selectWhen": "La idea narrada cambia de un bloque textual a otro y la posición forma parte de la jerarquía visual.",
+      "constraints": [
+        "Declarar cada cue con tiempo, foco, escala y ancla normalizados.",
+        "Iniciar el desplazamiento entre 0.2 y 0.5 segundos antes del nuevo texto o simultáneamente con su primera palabra.",
+        "Mantener escalas de texto normalmente entre 1.08 y 1.4.",
+        "Combinar cada frase de cuatro a doce palabras con reveal.text-words.",
+        "No mover la cámara para subtítulos continuos ni para textos que ya comparten la misma zona.",
+        "Conservar overlays persistentes, logotipo y elementos de montaje fuera del grupo de cámara."
+      ]
+    },
+    {
+      "id": "reveal.path-draw",
+      "category": "reveal",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "LineChartZoom / SignalPath",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-LineChartZoom"
+      },
+      "purpose": "Dibujar progresivamente una línea, recorrido o conector.",
+      "selectWhen": "La dirección o evolución de un camino tiene significado.",
+      "constraints": [
+        "Usar strokeDasharray y strokeDashoffset controlados por frame.",
+        "Los puntos aparecen cuando la línea llega a su posición.",
+        "No dibujar líneas decorativas sin dirección narrativa."
+      ]
+    },
+    {
+      "id": "reveal.bar-rise",
+      "category": "reveal",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "RisingHistogram",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-RisingHistogram"
+      },
+      "purpose": "Construir barras desde una base y escala comunes.",
+      "selectWhen": "Hay categorías o bins con valores comparables.",
+      "constraints": [
+        "Todas las barras parten de la misma base.",
+        "Limitar el stagger a una familia de 3 a 5 elementos visibles.",
+        "Aplicar el foco solo después de completar la comparación."
+      ]
+    },
+    {
+      "id": "reveal.number-count",
+      "category": "reveal",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "KineticNumber",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-KineticNumber"
+      },
+      "purpose": "Hacer progresar una cifra hasta un valor exacto.",
+      "selectWhen": "La cifra final es factual y el cambio aporta comprensión.",
+      "constraints": [
+        "Usar cifras tabulares.",
+        "Terminar con un único pulso controlado.",
+        "Mantener el valor final al menos 1.2 segundos."
+      ]
+    },
+    {
+      "id": "reveal.element",
+      "category": "reveal",
+      "phase": "entry",
+      "status": "ready",
+      "implementation": {
+        "component": "ProgressiveReveal",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Introducir progresivamente un nodo, logo, imagen o familia visual.",
+      "selectWhen": "La aparición establece una secuencia o jerarquía.",
+      "constraints": [
+        "Combinar opacidad, desplazamiento corto y escala leve.",
+        "No usar rebote ni overshoot por defecto.",
+        "No aplicar a cada elemento decorativo."
+      ]
+    },
+    {
+      "id": "reveal.element-stagger",
+      "category": "reveal",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "useStaggeredReveal",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Introducir miembros de una misma familia en un orden perceptible.",
+      "selectWhen": "Entre tres y cinco elementos comparten función.",
+      "constraints": [
+        "Separación habitual entre 0.08 y 0.18 segundos.",
+        "No escalonar bloques semánticos inconexos.",
+        "El último elemento debe aparecer antes de la fase de foco."
+      ]
+    },
+    {
+      "id": "reveal.text-words",
+      "category": "text",
+      "phase": "entry",
+      "status": "ready",
+      "implementation": {
+        "component": "ProgressiveText",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Revelar una frase breve palabra por palabra.",
+      "selectWhen": "El texto contiene entre cuatro y doce palabras.",
+      "constraints": [
+        "Ritmo habitual entre 3 y 5 palabras por segundo.",
+        "Cada palabra usa fade y desplazamiento vertical de unos 12 px.",
+        "Reservar el tamaño final para impedir saltos de layout.",
+        "No convertirlo en subtitulado literal de la locución."
+      ]
+    },
+    {
+      "id": "reveal.text-letters",
+      "category": "text",
+      "phase": "entry",
+      "status": "ready",
+      "implementation": {
+        "component": "ProgressiveText",
+        "source": "src/motion/Effects.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Revelar letra a letra una palabra o frase muy corta.",
+      "selectWhen": "El texto contiene entre una y tres palabras y funciona como foco.",
+      "constraints": [
+        "Usar string slicing, no opacidad independiente por carácter.",
+        "Ritmo habitual entre 10 y 18 caracteres por segundo.",
+        "Duración máxima recomendada de 1.4 segundos."
+      ]
+    },
+    {
+      "id": "focus.accent-only",
+      "category": "focus",
+      "phase": "focus",
+      "status": "primitive",
+      "implementation": {
+        "component": "Tratamiento por props de color",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Reservar el único color de acento para la conclusión.",
+      "selectWhen": "El foco se distingue sin necesidad de mover la cámara.",
+      "constraints": [
+        "El acento no debe superar aproximadamente el 12 % del área.",
+        "No combinar con un segundo color saturado sin significado semántico.",
+        "Mantener secundarios en neutros legibles."
+      ]
+    },
+    {
+      "id": "focus.desaturate-peers",
+      "category": "focus",
+      "phase": "focus",
+      "status": "primitive",
+      "implementation": {
+        "component": "Tratamiento por props de color y opacity",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Pasar los elementos secundarios a gris y menor opacidad.",
+      "selectWhen": "El conjunto debe seguir siendo visible mientras uno de sus miembros domina.",
+      "constraints": [
+        "No ocultar por completo el contexto.",
+        "Conservar contraste suficiente en el foco.",
+        "Evitar blur fuerte sobre texto o datos."
+      ]
+    },
+    {
+      "id": "focus.depth-isolation",
+      "category": "focus",
+      "phase": "focus",
+      "status": "planned",
+      "implementation": null,
+      "purpose": "Hacer retroceder secundarios mediante escala y opacidad.",
+      "selectWhen": "El foco necesita profundidad pero el contexto debe permanecer visible.",
+      "constraints": [
+        "No usar blur fuerte en texto ni datos.",
+        "Mantener continuidad espacial.",
+        "No competir con otro tratamiento dominante."
+      ]
+    },
+    {
+      "id": "focus.freeze-callout",
+      "category": "focus",
+      "phase": "focus",
+      "status": "planned",
+      "implementation": null,
+      "purpose": "Congelar un estado comprensible y añadir una anotación breve.",
+      "selectWhen": "Una región o estado concreto necesita explicación adicional.",
+      "constraints": [
+        "Máximo una anotación principal.",
+        "No tapar el elemento señalado.",
+        "Mantener el callout fuera de grupos que reciban zoom."
+      ]
+    },
+    {
+      "id": "focus.count-impact",
+      "category": "focus",
+      "phase": "focus",
+      "status": "ready",
+      "implementation": {
+        "component": "KineticNumber",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-KineticNumber"
+      },
+      "purpose": "Cerrar un contador con un único pulso de escala.",
+      "selectWhen": "La cifra final es la conclusión dominante.",
+      "constraints": [
+        "Un solo pulso sin rebote.",
+        "Mantener después el valor estable.",
+        "Sincronizar como máximo un impacto suave."
+      ]
+    },
+    {
+      "id": "focus.path-follow",
+      "category": "focus",
+      "phase": "focus",
+      "status": "ready",
+      "implementation": {
+        "component": "SignalPath",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": null
+      },
+      "purpose": "Mover un pulso a lo largo de un conector para marcar causalidad.",
+      "selectWhen": "La dirección entre origen y destino forma parte de la explicación.",
+      "constraints": [
+        "El pulso sigue una ruta visible.",
+        "No usar en conectores decorativos.",
+        "El destino responde cuando llega la señal."
+      ]
+    },
+    {
+      "id": "focus.spotlight-mask",
+      "category": "focus",
+      "phase": "focus",
+      "status": "planned",
+      "implementation": null,
+      "purpose": "Oscurecer la escena salvo una región de captura o vídeo.",
+      "selectWhen": "La evidencia ya existe en la imagen real y necesita dirección visual.",
+      "constraints": [
+        "Declarar targetRegion normalizada.",
+        "Mantener contexto suficiente para reconocer la interfaz.",
+        "No usar simultáneamente con otro foco dominante."
+      ]
+    },
+    {
+      "id": "transition.before-after-wipe",
+      "category": "transition",
+      "phase": "build",
+      "status": "planned",
+      "implementation": null,
+      "purpose": "Revelar un estado posterior sobre la misma referencia espacial.",
+      "selectWhen": "Dos imágenes o estados comparten encuadre comparable.",
+      "constraints": [
+        "Mantener una frontera limpia y dirección estable.",
+        "No comparar encuadres incompatibles.",
+        "Añadir callout solo después de completar el wipe."
+      ]
+    },
+    {
+      "id": "exit.clean-fade",
+      "category": "exit",
+      "phase": "exit",
+      "status": "ready",
+      "implementation": {
+        "component": "MotionCanvas",
+        "source": "src/motion/Toolkit.tsx",
+        "demoCompositionId": "Toolkit-TransversalEffects"
+      },
+      "purpose": "Cerrar la pieza sin competir con el hold final.",
+      "selectWhen": "La pieza es fullscreen o el editor necesita una salida limpia.",
+      "constraints": [
+        "Duración entre 0.3 y 0.6 segundos.",
+        "Usar ease-in.",
+        "No retirar el foco antes de que termine su tiempo de lectura."
+      ]
+    },
+    {
+      "id": "sound.semantic-cue",
+      "category": "sound",
+      "phase": "focus",
+      "status": "ready",
+      "implementation": {
+        "component": "Soundtrack",
+        "source": "src/motion/SoundDesign.tsx",
+        "demoCompositionId": null
+      },
+      "purpose": "Sincronizar un cue breve con una transformación visible.",
+      "selectWhen": "Un zoom, impacto, aparición o cierre necesita confirmación sonora.",
+      "constraints": [
+        "No añadir sonido a decoración.",
+        "Mantener silencios y mezcla maestra entre 0.5 y 0.7.",
+        "Entregar siempre variante silenciosa."
+      ]
+    }
+  ]
+}

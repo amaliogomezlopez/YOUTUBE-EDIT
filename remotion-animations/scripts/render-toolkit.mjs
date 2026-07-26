@@ -6,6 +6,12 @@ const renders = [
   ["Toolkit-LineChartZoom", "toolkit-line-chart-zoom.mp4"],
   ["Toolkit-RisingHistogram", "toolkit-rising-histogram.mp4"],
   ["Toolkit-KineticNumber", "toolkit-kinetic-number.mp4"],
+  ["Toolkit-TransversalEffects", "toolkit-transversal-effects.mp4"],
+  [
+    "Toolkit-TransversalEffects-FinalZoom",
+    "toolkit-transversal-effects-final-zoom.mp4",
+  ],
+  ["Toolkit-TextFocusJourney", "toolkit-text-focus-journey.mp4"],
 ];
 
 const outputRoot = path.resolve(
