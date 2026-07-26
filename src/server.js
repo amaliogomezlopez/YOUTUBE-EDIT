@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import {createReadStream, existsSync} from 'node:fs';
-import {mkdir, readFile, stat, unlink, writeFile} from 'node:fs/promises';
+import {mkdir, readFile, readdir, stat, unlink, writeFile} from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
 import {createJob, createProcessingQueue, enqueueClipRerender, enqueueProcessingJob, loadJobState, saveJobState, updateClipDecision} from './lib/pipeline.js';
 import {createPublishingQueue, enqueuePublishingJob} from './lib/publishing-queue.js';
-import {DATA_DIR, ensureDataDirs, loadDotEnv, persistEnvValues, ROOT, UPLOADS_DIR, safeFilename} from './lib/utils.js';
+import {DATA_DIR, ensureDataDirs, FONTS_DIR, loadDotEnv, persistEnvValues, ROOT, UPLOADS_DIR, safeFilename} from './lib/utils.js';
 import {listJobSummaries, publicJobState, publicQueueJob, saveMetadataEdits} from './lib/dashboard.js';
 import {getLlmConfig, isLlmEnabled} from './lib/llm.js';
 import {FixedWindowRateLimiter, hasCsrfHeader, isAuthenticated, isPathInsideRoots, isRequestAllowed, securityHeaders, validateExposureConfig} from './lib/server-security.js';
@@ -21,6 +21,15 @@ import {assertDiskCapacity, cleanupStorage, diskStatus} from './lib/storage.js';
 import {acquireInstanceLock} from './lib/instance-lock.js';
 import {publishingReadiness} from './lib/publishing-readiness.js';
 import {loadMetrics, recordMetrics} from './lib/metrics.js';
+import {CAROUSEL_FORMATS, CAROUSEL_LIMITS} from './modules/carousels/constants.js';
+import {readFontMetadata} from './lib/fonts.js';
+import {buildProgressiveCaptionPlan} from './lib/captions/planner.js';
+import {transcriptSourceKind, validateJobOptions} from './lib/job-request.js';
+import {importCarouselAsset, slideAssetDataUri} from './modules/carousels/assets.js';
+import {exportCarouselProject} from './modules/carousels/exporter.js';
+import {renderCarouselSvg} from './modules/carousels/renderer.js';
+import {carouselDir, listCarouselProjects, loadCarouselProject} from './modules/carousels/repository.js';
+import {createCarouselProject, publicCarouselProject, updateCarouselProject} from './modules/carousels/service.js';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 let processingQueue = null;
@@ -67,9 +76,58 @@ function contentType(file) {
     '.js': 'text/javascript; charset=utf-8',
     '.json': 'application/json; charset=utf-8',
     '.svg': 'image/svg+xml; charset=utf-8',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
     '.mp4': 'video/mp4',
-    '.ass': 'text/plain; charset=utf-8'
+    '.ass': 'text/plain; charset=utf-8',
+    '.ttf': 'font/ttf',
+    '.ttc': 'font/collection',
+    '.otf': 'font/otf',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2'
   }[ext] ?? 'application/octet-stream';
+}
+
+async function servePrivateFile(res, file) {
+  if (!existsSync(file)) {
+    sendText(res, 404, 'Not found');
+    return;
+  }
+  const info = await stat(file);
+  res.writeHead(200, {...securityHeaders({contentType: contentType(file), cache: true}), 'content-length': String(info.size)});
+  createReadStream(file).pipe(res);
+}
+
+function carouselRenderFile(project, format, filename) {
+  if (project.renders?.stale) return null;
+  const outputRoot = path.resolve(carouselDir(project.id), 'renders');
+  const allowed = format === 'root'
+    ? project.renders?.contactSheetName === filename
+    : (project.renders?.outputs || []).some((item) => item.format === format && [item.pngName, item.jpegName].includes(filename));
+  if (!allowed) return null;
+  const file = path.resolve(outputRoot, format === 'root' ? filename : path.join(format, filename));
+  const relative = path.relative(outputRoot, file);
+  return relative.startsWith('..') || path.isAbsolute(relative) ? null : file;
+}
+
+function sendCarouselError(res, error) {
+  const missing = error?.code === 'ENOENT';
+  if (missing) {
+    sendJson(res, 404, {error: 'Carrusel no encontrado.', code: 'CAROUSEL_NOT_FOUND'});
+    return;
+  }
+  if (error instanceof SyntaxError) {
+    sendJson(res, 400, {error: 'El cuerpo JSON no es válido.', code: 'INVALID_JSON'});
+    return;
+  }
+  if (Number(error?.status) >= 400 && Number(error?.status) < 500) {
+    sendJson(res, Number(error.status), {error: error.message, code: error.code});
+    return;
+  }
+  console.error(`Carouselsmith request failed: ${error?.name || 'Error'} (${error?.code || 'INTERNAL_ERROR'})`);
+  sendJson(res, 500, {error: 'No se pudo completar la operación de carrusel.', code: 'CAROUSEL_INTERNAL_ERROR'});
 }
 
 async function serveStatic(res, file) {
@@ -142,13 +200,76 @@ function configured(...keys) {
   return keys.every((key) => Boolean(process.env[key]));
 }
 
+const DASHBOARD_SYSTEM_FONTS = Object.freeze([
+  'Arial',
+  'Arial Black',
+  'Bahnschrift',
+  'Franklin Gothic Heavy',
+  'Segoe UI Black',
+  'Trebuchet MS'
+]);
+
+function fontFamilyFromFilename(filename) {
+  const base = path.basename(filename, path.extname(filename));
+  return base
+    .replace(/[-_](regular|medium|semibold|bold|black|italic)$/i, '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+async function dashboardFonts() {
+  const entries = await readdir(FONTS_DIR, {withFileTypes: true}).catch(() => []);
+  const local = await Promise.all(entries
+    .filter((entry) => entry.isFile() && /\.(?:ttf|otf|woff2?|ttc)$/i.test(entry.name))
+    .map(async (entry) => {
+      const fallback = fontFamilyFromFilename(entry.name);
+      const metadata = await readFontMetadata(path.join(FONTS_DIR, entry.name)).catch(() => ({}));
+      return {
+        family: metadata.family || fallback,
+        fullName: metadata.fullName || metadata.family || fallback,
+        label: metadata.fullName || metadata.family || fallback,
+        style: metadata.subfamily || 'Regular',
+        source: 'local',
+        url: `/api/fonts/file/${encodeURIComponent(entry.name)}`
+      };
+    }));
+  const fonts = DASHBOARD_SYSTEM_FONTS.map((family) => ({family, label: family, source: 'system'})).concat(local);
+  return [...new Map(fonts.filter((font) => font.family).map((font) => [font.family.toLocaleLowerCase(), font])).values()];
+}
+
+function dashboardFontFile(encodedFilename) {
+  let filename;
+  try {
+    filename = decodeURIComponent(encodedFilename);
+  } catch {
+    return null;
+  }
+  if (filename !== path.basename(filename) || !/\.(?:ttf|otf|woff2?|ttc)$/i.test(filename)) return null;
+  const file = path.resolve(FONTS_DIR, filename);
+  const relative = path.relative(FONTS_DIR, file);
+  return relative.startsWith('..') || path.isAbsolute(relative) ? null : file;
+}
+
 async function systemStatus() {
   const llm = getLlmConfig();
   const sttProvider = process.env.TRANSCRIPTION_PROVIDER || process.env.STT_PROVIDER || 'off';
+  const defaultFasterWhisperPython = process.platform === 'win32'
+    ? path.join(ROOT, '.venv-whisper', 'Scripts', 'python.exe')
+    : path.join(ROOT, '.venv-whisper', 'bin', 'python');
+  const fasterWhisperPython = process.env.FASTER_WHISPER_PYTHON?.trim() || defaultFasterWhisperPython;
+  const localSttReady = existsSync(fasterWhisperPython);
+  const packageVersion = JSON.parse(await readFile(path.join(ROOT, 'package.json'), 'utf8')).version || 'unknown';
   return {
-    app: {name: 'Shortsmith', version: '0.3.0', runningJobs: processingQueue?.stats().running ?? 0, queue: processingQueue?.stats() ?? null, publishingQueue: publishingQueue?.stats() ?? null, security: exposure},
+    app: {name: 'Shortsmith', version: packageVersion, runningJobs: processingQueue?.stats().running ?? 0, queue: processingQueue?.stats() ?? null, publishingQueue: publishingQueue?.stats() ?? null, security: exposure},
     llm: {configured: isLlmEnabled(llm), provider: llm.provider || 'off', model: isLlmEnabled(llm) ? llm.model : null},
-    transcription: {configured: sttProvider !== 'off', provider: sttProvider},
+    transcription: {
+      configured: sttProvider !== 'off' || localSttReady,
+      provider: sttProvider !== 'off' ? sttProvider : (localSttReady ? 'faster-whisper' : 'off'),
+      model: process.env.TRANSCRIPTION_MODEL || process.env.WHISPER_MODEL || null,
+      device: sttProvider === 'faster-whisper' || localSttReady ? (process.env.FASTER_WHISPER_DEVICE || 'cuda') : null,
+      local: localSttReady
+    },
     storage: await diskStatus(),
     publishing: {
       youtube: configured('YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET', 'YOUTUBE_REFRESH_TOKEN'),
@@ -156,6 +277,32 @@ async function systemStatus() {
       tiktok: configured('TIKTOK_ACCESS_TOKEN'),
       x: Boolean(process.env.X_USER_ACCESS_TOKEN || process.env.X_OAUTH2_ACCESS_TOKEN || configured('X_API_KEY', 'X_API_SECRET', 'X_ACCESS_TOKEN', 'X_ACCESS_TOKEN_SECRET'))
     }
+  };
+}
+
+function subtitleStyleFromFields(fields) {
+  const short = (value, max = 80) => String(value ?? '').replace(/[\r\n]/g, ' ').trim().slice(0, max) || undefined;
+  return {
+    preset: short(fields.subtitlePreset, 40) || 'progressive-reference',
+    font: short(fields.subtitleFont),
+    position: short(fields.subtitlePosition, 30),
+    primary: short(fields.subtitleColor, 9),
+    accent: short(fields.subtitleAccent, 9),
+    baseFontSize: short(fields.subtitleSize, 4),
+    outlineSize: short(fields.subtitleOutlineSize, 4),
+    shadow: short(fields.subtitleShadow, 4),
+    emphasis: short(fields.subtitleEmphasis, 10),
+    align: short(fields.subtitleAlign, 10),
+    uppercase: short(fields.subtitleUppercase, 8),
+    heroScale: short(fields.subtitleHeroScale, 5),
+    leadScale: short(fields.subtitleLeadScale, 5),
+    tailScale: short(fields.subtitleTailScale, 5),
+    maxWords: short(fields.subtitleMaxWords, 3),
+    maxPageDuration: short(fields.subtitleMaxPageDuration, 5),
+    pauseBreak: short(fields.subtitlePauseBreak, 5),
+    maxLineChars: short(fields.subtitleMaxLineChars, 3),
+    marginX: short(fields.subtitleMarginX, 4),
+    tracking: short(fields.subtitleTracking, 5)
   };
 }
 
@@ -206,31 +353,31 @@ async function handleCreateJob(req, res) {
       }
     }
 
-    let transcriptPath = fields.transcriptPath?.trim()
+    const transcriptSource = transcriptSourceKind({
+      pathValue: fields.transcriptPath,
+      uploadedSize: files.transcript?.size,
+      pastedText: fields.transcriptText
+    });
+    let transcriptPath = transcriptSource === 'path' && fields.transcriptPath?.trim()
       ? path.resolve(fields.transcriptPath.trim().replace(/^["']|["']$/g, ''))
       : null;
     if (transcriptPath && !existsSync(transcriptPath)) {
       sendJson(res, 400, {error: `Transcript path does not exist: ${transcriptPath}`});
       return;
     }
-    if (files.transcript?.size) {
+    if (transcriptSource === 'upload') {
       transcriptPath = files.transcript.path;
-    } else if (fields.transcriptText?.trim()) {
+    } else if (transcriptSource === 'text') {
       pastedTranscriptPath = path.join(UPLOADS_DIR, `transcript-${Date.now()}-${safeFilename('pasted.txt')}`);
       transcriptPath = pastedTranscriptPath;
       await writeFile(transcriptPath, fields.transcriptText.trim(), 'utf8');
     }
 
-    const state = await createJob({videoFile: videoPath, transcriptFile: transcriptPath});
     const options = {
-      topN: Number(fields.topN || 8),
-      minDuration: Number(fields.minDuration || 18),
-      maxDuration: Number(fields.maxDuration || 60),
-      renderMode: fields.renderMode || undefined,
-      renderQuality: fields.renderQuality || 'high',
-      subtitleMode: fields.subtitleMode || 'words',
-      useLlm: fields.useLlm === 'on'
+      ...validateJobOptions(fields),
+      subtitleStyle: subtitleStyleFromFields(fields),
     };
+    const state = await createJob({videoFile: videoPath, transcriptFile: transcriptPath});
     await enqueueProcessingJob(processingQueue, state, options, {
       maxAttempts: Number(process.env.JOB_MAX_ATTEMPTS || 2)
     });
@@ -259,12 +406,40 @@ async function handleApi(req, res, url) {
     sendJson(res, 200, await systemStatus());
     return;
   }
+  if (req.method === 'GET' && url.pathname === '/api/fonts') {
+    sendJson(res, 200, {fonts: await dashboardFonts()});
+    return;
+  }
+  if (req.method === 'POST' && url.pathname === '/api/captions/preview') {
+    try {
+      const body = JSON.parse((await readBody(req, 128 * 1024)).toString('utf8') || '{}');
+      const text = String(body.text || 'así se verá una palabra destacada hoy').replace(/\s+/g, ' ').trim().slice(0, 500);
+      if (!text) throw new Error('Escribe un texto para generar la vista previa.');
+      const wordCount = text.split(/\s+/).length;
+      const duration = Math.max(1.2, Math.min(12, wordCount * 0.38));
+      const plan = buildProgressiveCaptionPlan([{id: 'preview', start: 0, end: duration, text}], body.style || {});
+      sendJson(res, 200, {plan});
+    } catch (error) {
+      sendJson(res, 400, {error: error.message});
+    }
+    return;
+  }
+  const fontFileMatch = url.pathname.match(/^\/api\/fonts\/file\/(.+)$/);
+  if (req.method === 'GET' && fontFileMatch) {
+    const file = dashboardFontFile(fontFileMatch[1]);
+    if (!file) {
+      sendText(res, 404, 'Not found');
+      return;
+    }
+    await servePrivateFile(res, file);
+    return;
+  }
   if (req.method === 'GET' && url.pathname === '/api/storage') {
     sendJson(res, 200, {disk: await diskStatus(), cleanup: await cleanupStorage({dryRun: true, activeJobIds: processingQueue.list().filter((item) => ['queued', 'running', 'cancelling'].includes(item.status)).map((item) => item.payload?.jobId).filter(Boolean)})});
     return;
   }
   if (req.method === 'GET' && url.pathname === '/api/publishing/readiness') {
-    sendJson(res, 200, publishingReadiness());
+    sendJson(res, 200, await publishingReadiness({verify: url.searchParams.get('verify') === '1'}));
     return;
   }
   if (req.method === 'POST' && url.pathname === '/api/storage/cleanup') {
@@ -563,6 +738,128 @@ ${tokenWarning}
 Ya puedes volver a Shortsmith y revisar el estado de la cuenta.`);
     } catch (error) {
       sendText(res, 500, `No se pudo completar OAuth de Instagram/Meta: ${error.message}`);
+    }
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/carousels') {
+    const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit') || 30)));
+    sendJson(res, 200, {carousels: await listCarouselProjects({limit})});
+    return;
+  }
+  if (req.method === 'POST' && url.pathname === '/api/carousels') {
+    try {
+      const body = JSON.parse((await readBody(req, 2 * 1024 * 1024)).toString('utf8') || '{}');
+      const project = await createCarouselProject(body);
+      sendJson(res, 201, publicCarouselProject(project));
+    } catch (error) {
+      sendCarouselError(res, error);
+    }
+    return;
+  }
+  const carouselAssetMatch = url.pathname.match(/^\/api\/carousels\/([^/]+)\/assets$/);
+  if (req.method === 'POST' && carouselAssetMatch) {
+    let upload;
+    try {
+      await assertDiskCapacity(CAROUSEL_LIMITS.imageBytes * 2);
+      upload = await parseMultipartUpload(req, {
+        uploadDir: UPLOADS_DIR,
+        maxFiles: 1,
+        fileFields: {
+          asset: {
+            extensions: new Set(['.png', '.jpg', '.jpeg', '.webp']),
+            fallbackExtension: '.img',
+            maxBytes: CAROUSEL_LIMITS.imageBytes,
+            label: 'La imagen'
+          }
+        }
+      });
+      const file = upload.files.asset;
+      if (!file?.size) {
+        const error = new Error('Selecciona una imagen PNG, JPEG o WebP.'); error.status = 400; error.code = 'CAROUSEL_ASSET_REQUIRED'; throw error;
+      }
+      const project = await loadCarouselProject(carouselAssetMatch[1]);
+      await importCarouselAsset(project, {
+        file: file.path,
+        originalName: file.originalName,
+        slideId: upload.fields.slideId,
+        slotId: upload.fields.slotId,
+        provider: upload.fields.provider || 'uploaded',
+        prompt: upload.fields.prompt
+      });
+      sendJson(res, 200, publicCarouselProject(project));
+    } catch (error) {
+      if (!error.status && /multipart|demasiad|upload|límite|imagen|archivo|campos|partes/i.test(error.message)) {
+        error.status = /límite|demasiad|grande/i.test(error.message) ? 413 : 400;
+        error.code = error.status === 413 ? 'CAROUSEL_ASSET_TOO_LARGE' : 'INVALID_CAROUSEL_UPLOAD';
+      }
+      sendCarouselError(res, error);
+    } finally {
+      await upload?.cleanup?.();
+    }
+    return;
+  }
+  const carouselRenderMatch = url.pathname.match(/^\/api\/carousels\/([^/]+)\/render$/);
+  if (req.method === 'POST' && carouselRenderMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 256 * 1024)).toString('utf8') || '{}');
+      const formats = Array.isArray(body.formats) ? body.formats.filter((item) => CAROUSEL_FORMATS[item]) : Object.keys(CAROUSEL_FORMATS);
+      if (!formats.length) {
+        const error = new Error('Selecciona al menos un formato de exportación válido.'); error.status = 400; error.code = 'INVALID_CAROUSEL_FORMAT'; throw error;
+      }
+      const project = await loadCarouselProject(carouselRenderMatch[1]);
+      await exportCarouselProject(project, {formats, quality: Number(body.quality || 90)});
+      sendJson(res, 200, publicCarouselProject(project));
+    } catch (error) {
+      sendCarouselError(res, error);
+    }
+    return;
+  }
+  const carouselPreviewMatch = url.pathname.match(/^\/api\/carousels\/([^/]+)\/preview\/([^/]+)$/);
+  if (req.method === 'GET' && carouselPreviewMatch) {
+    try {
+      const project = await loadCarouselProject(carouselPreviewMatch[1]);
+      const slide = project.slides.find((item) => item.id === carouselPreviewMatch[2]);
+      if (!slide) {
+        const error = new Error('Diapositiva no encontrada.'); error.status = 404; error.code = 'CAROUSEL_SLIDE_NOT_FOUND'; throw error;
+      }
+      const format = CAROUSEL_FORMATS[url.searchParams.get('format')] ? url.searchParams.get('format') : 'instagram-feed';
+      const assetDataUri = await slideAssetDataUri(project, slide);
+      sendText(res, 200, renderCarouselSvg(project, slide.id, format, {assetDataUri}), 'image/svg+xml; charset=utf-8');
+    } catch (error) {
+      sendCarouselError(res, error);
+    }
+    return;
+  }
+  const carouselRenderFileMatch = url.pathname.match(/^\/api\/carousels\/([^/]+)\/render-files\/(?:(instagram-feed|vertical)\/)?([^/]+)$/);
+  if (req.method === 'GET' && carouselRenderFileMatch) {
+    try {
+      const project = await loadCarouselProject(carouselRenderFileMatch[1]);
+      const file = carouselRenderFile(project, carouselRenderFileMatch[2] || 'root', carouselRenderFileMatch[3]);
+      if (!file) {
+        sendText(res, 404, 'Not found');
+        return;
+      }
+      await servePrivateFile(res, file);
+    } catch (error) {
+      sendCarouselError(res, error);
+    }
+    return;
+  }
+  const carouselProjectMatch = url.pathname.match(/^\/api\/carousels\/([^/]+)$/);
+  if (req.method === 'GET' && carouselProjectMatch) {
+    try {
+      sendJson(res, 200, publicCarouselProject(await loadCarouselProject(carouselProjectMatch[1])));
+    } catch (error) {
+      sendCarouselError(res, error);
+    }
+    return;
+  }
+  if (req.method === 'PATCH' && carouselProjectMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 512 * 1024)).toString('utf8') || '{}');
+      sendJson(res, 200, publicCarouselProject(await updateCarouselProject(carouselProjectMatch[1], body)));
+    } catch (error) {
+      sendCarouselError(res, error);
     }
     return;
   }

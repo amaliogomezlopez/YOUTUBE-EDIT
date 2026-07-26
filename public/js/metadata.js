@@ -1,8 +1,9 @@
 import {$, $$, escapeHtml, platformLabel} from './core.js';
 import {readyClips} from './clips.js';
 import {store} from './store.js';
+import {restoreControlState} from './editor-state.js';
 
-export function renderMetadata(job, elements) {
+export function renderMetadata(job, elements, {draft = null} = {}) {
   const {container, saveButton, reviewButton, note} = elements;
   const metadata = job.publishingMetadata;
   const clips = readyClips(job).filter((clip) => clip.editorialStatus !== 'discarded');
@@ -31,18 +32,18 @@ export function renderMetadata(job, elements) {
       ? '<button type="button" class="secondary-action compact" data-retry-publish-queue>Reintentar publicación</button>'
       : '';
   container.innerHTML = `<div class="metadata-grid">
-      <label><span>Clip que vas a preparar</span><select id="publish-clip">${clips.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === store.selectedClipId ? 'selected' : ''}>${escapeHtml(`${item.rank || ''} · ${item.suggestedTitle || item.id}`)}</option>`).join('')}</select></label>
-      <label><span>Título del Short</span><input id="meta-clip-title" maxlength="100" value="${escapeHtml(publishing.title || clip.suggestedTitle || '')}"><small class="field-help">Máximo 100 caracteres.</small></label>
-      <label class="span-2"><span>Resumen corto</span><textarea id="meta-summary" rows="3">${escapeHtml(metadata.summary?.short || '')}</textarea></label>
-      <label class="span-2"><span>14 hashtags</span><textarea id="meta-hashtags" rows="2">${escapeHtml(publishing.hashtags || metadata.hashtags || '')}</textarea></label>
-      <label><span>Timestamps YouTube</span><textarea id="meta-timestamps" rows="7">${escapeHtml((metadata.timestamps || []).join('\n'))}</textarea></label>
-      <label><span>Descripción YouTube Shorts</span><textarea id="meta-youtube" rows="7">${escapeHtml(publishing.youtube_shorts?.description || '')}</textarea></label>
-      <label><span>Caption Instagram</span><textarea id="meta-instagram" rows="7">${escapeHtml(publishing.instagram?.caption || '')}</textarea></label>
-      <label><span>Caption TikTok</span><textarea id="meta-tiktok" rows="7">${escapeHtml(publishing.tiktok?.caption || '')}</textarea></label>
-      <label class="span-2"><span>Texto para X</span><textarea id="meta-x" maxlength="280" rows="4">${escapeHtml(publishing.x?.text || '')}</textarea><small class="field-help"><span id="x-count">${String(publishing.x?.text || '').length}</span>/280 caracteres</small></label>
-      <label class="span-2"><span>Programar publicación (opcional)</span><input id="publish-scheduled-for" type="datetime-local"><small class="field-help">La cola local publicará a esta hora aunque cierres el navegador; Shortsmith debe estar ejecutándose.</small></label>
+      <label><span>Clip que vas a preparar</span><select id="publish-clip" name="publishClip" autocomplete="off">${clips.map((item) => `<option value="${escapeHtml(item.id)}" ${item.id === store.selectedClipId ? 'selected' : ''}>${escapeHtml(`${item.rank || ''} · ${item.suggestedTitle || item.id}`)}</option>`).join('')}</select></label>
+      <label><span>Título del Short</span><input id="meta-clip-title" name="clipTitle" maxlength="100" autocomplete="off" value="${escapeHtml(publishing.title || clip.suggestedTitle || '')}"><small class="field-help">Máximo 100 caracteres.</small></label>
+      <label class="span-2"><span>Resumen corto</span><textarea id="meta-summary" name="summary" rows="3" autocomplete="off">${escapeHtml(metadata.summary?.short || '')}</textarea></label>
+      <label class="span-2"><span>14 hashtags</span><textarea id="meta-hashtags" name="hashtags" rows="2" autocomplete="off">${escapeHtml(publishing.hashtags || metadata.hashtags || '')}</textarea></label>
+      <label><span>Timestamps YouTube</span><textarea id="meta-timestamps" name="timestamps" rows="7" autocomplete="off">${escapeHtml((metadata.timestamps || []).join('\n'))}</textarea></label>
+      <label><span>Descripción YouTube Shorts</span><textarea id="meta-youtube" name="youtubeDescription" rows="7" autocomplete="off">${escapeHtml(publishing.youtube_shorts?.description || '')}</textarea></label>
+      <label><span>Caption Instagram</span><textarea id="meta-instagram" name="instagramCaption" rows="7" autocomplete="off">${escapeHtml(publishing.instagram?.caption || '')}</textarea></label>
+      <label><span>Caption TikTok</span><textarea id="meta-tiktok" name="tiktokCaption" rows="7" autocomplete="off">${escapeHtml(publishing.tiktok?.caption || '')}</textarea></label>
+      <label class="span-2"><span>Texto para X</span><textarea id="meta-x" name="xText" maxlength="280" rows="4" autocomplete="off">${escapeHtml(publishing.x?.text || '')}</textarea><small class="field-help"><span id="x-count">${String(publishing.x?.text || '').length}</span>/280 caracteres</small></label>
+      <label class="span-2"><span>Programar publicación (opcional)</span><input id="publish-scheduled-for" name="scheduledFor" type="datetime-local" autocomplete="off"><small class="field-help">La cola local publicará a esta hora aunque cierres el navegador; Shortsmith debe estar ejecutándose.</small></label>
     </div>
-    <fieldset class="platform-selector"><legend>Plataformas de esta publicación</legend>${['youtube', 'instagram', 'tiktok', 'x'].map((platform) => `<label><input type="checkbox" name="publishPlatform" value="${platform}" checked><span>${platformLabel(platform)}</span></label>`).join('')}</fieldset>
+    <fieldset class="platform-selector"><legend>Plataformas de esta publicación</legend>${['youtube', 'instagram', 'tiktok', 'x'].map((platform) => `<label><input type="checkbox" name="publishPlatform" value="${platform}" ${platform === 'x' ? '' : 'checked'}><span>${platformLabel(platform)}</span></label>`).join('')}</fieldset>
     <div class="publish-status">${statusRows}</div>${queueActions ? `<div class="publication-queue-actions">${queueActions}</div>` : ''}
     <details class="metrics-editor"><summary>Registrar rendimiento del clip</summary><div class="metrics-grid">
       <label><span>Plataforma</span><select id="metric-platform">${['youtube', 'instagram', 'tiktok', 'x'].map((platform) => `<option value="${platform}" ${metric.platform === platform ? 'selected' : ''}>${platformLabel(platform)}</option>`).join('')}</select></label>
@@ -52,6 +53,7 @@ export function renderMetadata(job, elements) {
   saveButton.disabled = false;
   reviewButton.disabled = false;
   note.textContent = 'Edita el paquete, guárdalo y revisa exactamente qué plataformas recibirán el clip.';
+  restoreControlState(container, draft);
 }
 
 export function metadataPayload(root = document) {

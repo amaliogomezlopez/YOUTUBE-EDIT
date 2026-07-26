@@ -7,9 +7,11 @@
   "scripts": {
     "process": "node src/cli.js process",
     "carousel": "node src/modules/carousels/cli.js",
+    "stt:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-faster-whisper.ps1",
     "server": "node src/server.js",
     "test": "node --test tests/*.test.js",
     "smoke": "node tests/smoke-e2e.js",
+    "smoke:captions": "node scripts/smoke-progressive-captions.js",
     "remotion:studio": "npm --prefix remotion-animations run dev",
     "remotion:check": "npm --prefix remotion-animations run check",
     "remotion:still": "npm --prefix remotion-animations run still:chart",

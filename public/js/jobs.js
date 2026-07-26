@@ -1,7 +1,9 @@
 import {$, $$, api, escapeHtml, formatTime, platformLabel, uploadForm} from './core.js';
 import {collectRerenderEdits, readyClips, renderClips, renderLayoutEditor, syncPipOverlay} from './clips.js';
+import {wireCaptionStudios} from './caption-studio.js';
 import {metadataPayload, renderMetadata, selectedPlatforms} from './metadata.js';
 import {store} from './store.js';
+import {buildPublishPayload, captureControlState, jobRenderSignatures} from './editor-state.js';
 
 const TERMINAL = new Set(['done', 'failed', 'cancelled']);
 
@@ -24,7 +26,8 @@ export function initJobs() {
     confirmPublish: $('#confirm-publish'), history: $('#job-history'), refreshHistory: $('#refresh-job-history'),
     cancelJob: $('#cancel-job'), retryJob: $('#retry-job'), uploadProgress: $('#upload-progress'),
     storageSummary: $('#storage-summary'), storagePreview: $('#storage-cleanup-preview'),
-    previewCleanup: $('#preview-cleanup'), runCleanup: $('#run-cleanup')
+    previewCleanup: $('#preview-cleanup'), runCleanup: $('#run-cleanup'),
+    publishingReadiness: $('#publishing-readiness'), refreshPublishingReadiness: $('#refresh-publishing-readiness')
   };
 
   const showWarning = (message, type = 'warning') => {
@@ -35,6 +38,29 @@ export function initJobs() {
     elements.warnings.append(node);
   };
 
+  const clearFormErrors = () => {
+    for (const error of form.querySelectorAll('.field-error')) {
+      error.hidden = true;
+      error.textContent = '';
+    }
+    for (const control of form.querySelectorAll('[aria-invalid="true"]')) control.removeAttribute('aria-invalid');
+  };
+
+  const showFormError = (control, errorId, message) => {
+    const error = $(`#${errorId}`, form);
+    if (error) {
+      error.textContent = message;
+      error.hidden = false;
+    }
+    if (control) {
+      control.setAttribute('aria-invalid', 'true');
+      const describedBy = new Set(String(control.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean));
+      describedBy.add(errorId);
+      control.setAttribute('aria-describedby', [...describedBy].join(' '));
+      control.focus({preventScroll: false});
+    }
+  };
+
   const setStatus = (status) => {
     elements.status.textContent = statusLabel(status);
     elements.status.dataset.status = status || 'idle';
@@ -42,33 +68,105 @@ export function initJobs() {
 
   const metric = (label, value) => `<div class="metric"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`;
 
-  const renderJob = (job) => {
+  const clipViewsForRender = () => {
+    const drafts = {...store.clipDrafts};
+    for (const article of elements.clips.querySelectorAll('[data-clip-id]')) {
+      const draft = captureControlState(article);
+      drafts[article.dataset.clipId] = draft;
+      if (store.isDirty(`clip:${article.dataset.clipId}`)) store.clipDrafts[article.dataset.clipId] = draft;
+    }
+    return drafts;
+  };
+
+  const layoutViewForRender = () => {
+    if (!elements.layout.querySelector('input, textarea, select, video')) return store.layoutDraft;
+    const draft = captureControlState(elements.layout);
+    if (store.isDirty('layout')) store.layoutDraft = draft;
+    return draft;
+  };
+
+  const rememberMetadataView = (clipId = store.selectedClipId) => {
+    if (!clipId || !elements.publishing.querySelector('input, textarea, select')) return;
+    const draft = captureControlState(elements.publishing);
+    draft.controls = draft.controls.filter((entry) => entry.key !== 'publish-clip');
+    store.metadataDrafts[clipId] = draft;
+  };
+
+  const publicationIntentDraft = () => {
+    const draft = captureControlState(elements.publishing);
+    if (!draft) return null;
+    draft.controls = draft.controls.filter((entry) => entry.key === 'publish-scheduled-for' || entry.key.startsWith('publishPlatform:'));
+    draft.videos = [];
+    draft.activeKey = null;
+    return draft;
+  };
+
+  const renderJob = (job, {skipCapture = []} = {}) => {
+    const sameJob = store.currentJobId === job.id;
     store.setJob(job);
+    const signatures = jobRenderSignatures(job, store.selectedClipId);
     elements.jobId.textContent = job.id || '';
-    setStatus(job.status);
-    elements.summary.innerHTML = job.media ? [
-      metric('Duración', formatTime(job.media.duration)), metric('Fuente', `${job.media.width} × ${job.media.height}`),
-      metric('Segmentos', job.transcript?.segments ?? 0), metric('Clips listos', readyClips(job).length)
-    ].join('') : '';
-    elements.warnings.innerHTML = '';
-    (job.warnings || []).forEach((warning) => showWarning(warning));
-    renderLayoutEditor(job, elements.layout);
-    renderClips(job, elements.clips);
-    renderMetadata(job, {container: elements.publishing, saveButton: elements.saveMetadata, reviewButton: elements.reviewPublish, note: elements.metadataNote});
+    if (elements.status.dataset.status !== (job.status || 'idle')) setStatus(job.status);
+    if (store.shouldRender('header', signatures.header)) {
+      elements.summary.innerHTML = job.media ? [
+        metric('Duración', formatTime(job.media.duration)), metric('Fuente', `${job.media.width} × ${job.media.height}`),
+        metric('Segmentos', job.transcript?.segments ?? 0), metric('Clips listos', readyClips(job).length)
+      ].join('') : '';
+      elements.warnings.innerHTML = '';
+      (job.warnings || []).forEach((warning) => showWarning(warning));
+    }
+    if (store.shouldRender('layout', signatures.layout)) {
+      const draft = sameJob && !skipCapture.includes('layout') ? layoutViewForRender() : store.layoutDraft;
+      renderLayoutEditor(job, elements.layout, {draft});
+    }
+    if (store.shouldRender('clips', signatures.clips)) {
+      const drafts = sameJob && !skipCapture.includes('clips') ? clipViewsForRender() : store.clipDrafts;
+      renderClips(job, elements.clips, {drafts});
+    }
+    if (store.shouldRender('metadata', signatures.metadata)) {
+      if (sameJob && !skipCapture.includes('metadata')) rememberMetadataView();
+      renderMetadata(job, {container: elements.publishing, saveButton: elements.saveMetadata, reviewButton: elements.reviewPublish, note: elements.metadataNote}, {draft: store.metadataDrafts[store.selectedClipId]});
+    }
     elements.workspace.hidden = false;
     const busy = !TERMINAL.has(job.status) || (job.clips || []).some((clip) => ['queued', 'running', 'cancelling'].includes(clip.renderQueue?.status));
+    elements.clips.setAttribute('aria-busy', String(busy));
     elements.cancelJob.disabled = !busy;
     elements.cancelJob.textContent = 'Cancelar proceso';
     elements.retryJob.hidden = !['failed', 'cancelled'].includes(job.status);
     form.querySelector('button[type="submit"]').disabled = busy;
   };
 
+  let historyJobs = [];
+
+  const historyRowMarkup = (job) => `<article class="history-row"><div><strong>${escapeHtml(job.sourceName)}</strong><span>${escapeHtml(new Intl.DateTimeFormat('es-ES', {dateStyle: 'short', timeStyle: 'short'}).format(new Date(job.createdAt)))}</span></div><div class="history-meta"><span class="status-chip is-${escapeHtml(job.status)}">${escapeHtml(statusLabel(job.status))}</span><span>${job.clipsReady} clips</span></div><button type="button" class="secondary-action compact" data-open-job="${escapeHtml(job.id)}">Abrir proyecto</button></article>`;
+
+  const renderHistory = () => {
+    const search = ($('#history-search')?.value || '').trim().toLowerCase();
+    const filter = $('#history-filter')?.value || 'all';
+    const sort = $('#history-sort')?.value || 'recent';
+    const matches = historyJobs.filter((job) => {
+      if (search && !String(job.sourceName || '').toLowerCase().includes(search)) return false;
+      if (filter === 'done') return job.status === 'done';
+      if (filter === 'attention') return ['failed', 'cancelled'].includes(job.status);
+      if (filter === 'active') return !['done', 'failed', 'cancelled'].includes(job.status);
+      return true;
+    });
+    const byDateDesc = (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    if (sort === 'oldest') matches.sort((a, b) => byDateDesc(b, a));
+    else if (sort === 'name') matches.sort((a, b) => String(a.sourceName || '').localeCompare(String(b.sourceName || ''), 'es'));
+    else if (sort === 'clips') matches.sort((a, b) => (Number(b.clipsReady) || 0) - (Number(a.clipsReady) || 0));
+    else matches.sort(byDateDesc);
+    elements.history.innerHTML = matches.length ? matches.map(historyRowMarkup).join('')
+      : historyJobs.length ? '<div class="empty-state compact-empty"><div><strong>Sin resultados</strong><p>Prueba con otro nombre o ajusta los filtros.</p></div></div>'
+        : '<div class="empty-state compact-empty"><span class="empty-index">00</span><div><strong>Todavía no hay proyectos</strong><p>El primer procesamiento aparecerá aquí automáticamente.</p></div></div>';
+  };
+
   const loadHistory = async () => {
     elements.refreshHistory.disabled = true;
     try {
       const {jobs} = await api('/api/jobs?limit=40', {timeout: 10_000});
-      elements.history.innerHTML = jobs.length ? jobs.map((job) => `<article class="history-row"><div><strong>${escapeHtml(job.sourceName)}</strong><span>${escapeHtml(new Intl.DateTimeFormat('es-ES', {dateStyle: 'short', timeStyle: 'short'}).format(new Date(job.createdAt)))}</span></div><div class="history-meta"><span class="status-chip is-${escapeHtml(job.status)}">${escapeHtml(statusLabel(job.status))}</span><span>${job.clipsReady} clips</span></div><button type="button" class="secondary-action compact" data-open-job="${escapeHtml(job.id)}">Abrir proyecto</button></article>`).join('')
-        : '<div class="empty-state compact-empty"><span class="empty-index">00</span><div><strong>Todavía no hay proyectos</strong><p>El primer procesamiento aparecerá aquí automáticamente.</p></div></div>';
+      historyJobs = jobs || [];
+      renderHistory();
     } catch (error) {
       elements.history.innerHTML = `<div class="empty-state compact-empty"><div><strong>No se pudo cargar el historial</strong><p>${escapeHtml(error.message)}</p><button type="button" class="secondary-action compact" data-retry-history>Reintentar</button></div></div>`;
     } finally {
@@ -90,12 +188,47 @@ export function initJobs() {
     }
   };
 
-  const pollJob = async (id) => {
+  const loadPublishingReadiness = async () => {
+    const oauthPaths = {
+      youtube: '/api/oauth/youtube/start',
+      instagram: '/api/oauth/instagram/start',
+      tiktok: '/api/oauth/tiktok/start',
+      x: '/api/oauth/x/start'
+    };
+    elements.refreshPublishingReadiness.disabled = true;
+    try {
+      const readiness = await api('/api/publishing/readiness?verify=1', {timeout: 40_000});
+      const labels = {
+        ready: 'Lista',
+        needs_configuration: 'Requiere configuración',
+        blocked: 'Bloqueada',
+        paid: 'De pago',
+        manual_finish: 'Acabado manual'
+      };
+      elements.publishingReadiness.innerHTML = Object.entries(readiness.platforms || {}).map(([platform, state]) => {
+        const ready = state.status === 'ready';
+        const detail = [...(state.blockers || []), ...(state.warnings || []), state.apiCost].filter(Boolean).join(' · ');
+        return `<article class="delivery-platform ${ready ? 'is-ready' : ''}">
+        <div><strong>${escapeHtml(platformLabel(platform))}</strong><span class="status-chip ${ready ? 'is-published' : 'is-requires_manual_action'}">${escapeHtml(labels[state.status] || state.status)}</span></div>
+        <p>${escapeHtml(detail || 'Credenciales y requisitos preparados.')}</p>
+        <a class="secondary-action compact" href="${oauthPaths[platform]}" target="_blank" rel="noopener">${state.configured ? 'Reconectar cuenta' : 'Conectar cuenta'}</a>
+      </article>`;
+      }).join('');
+    } catch (error) {
+      elements.publishingReadiness.innerHTML = `<div class="warning is-error" role="alert">${escapeHtml(error.message)}</div>`;
+    } finally {
+      elements.refreshPublishingReadiness.disabled = false;
+    }
+  };
+
+  const pollJob = async (id, {skipCapture = []} = {}) => {
     store.clearPolling();
+    let firstTick = true;
     const tick = async () => {
       try {
         const job = await api(`/api/jobs/${encodeURIComponent(id)}`, {timeout: 15_000});
-        renderJob(job);
+        renderJob(job, {skipCapture: firstTick ? skipCapture : []});
+        firstTick = false;
         const rerendering = (job.clips || []).some((clip) => ['queued', 'running', 'cancelling'].includes(clip.renderQueue?.status));
         const publishing = ['queued', 'running', 'cancelling'].includes(job.publishQueue?.status);
         const pollDelay = job.publishQueue?.status === 'queued' && job.publishQueue?.runAfter
@@ -116,12 +249,16 @@ export function initJobs() {
     elements.saveMetadata.disabled = true;
     elements.saveMetadata.textContent = 'Guardando…';
     try {
+      const intentDraft = publicationIntentDraft();
       const updated = await api(`/api/jobs/${encodeURIComponent(store.job.id)}/metadata`, {
         method: 'PATCH', headers: {'content-type': 'application/json'}, body: JSON.stringify(metadataPayload(elements.publishing))
       });
       updated.queue = store.job.queue;
-      renderJob(updated);
+      store.metadataDrafts[store.selectedClipId] = intentDraft;
+      store.markClean('metadata');
+      renderJob(updated, {skipCapture: ['metadata']});
       elements.metadataNote.textContent = 'Cambios guardados. La publicación usará este paquete.';
+      return updated;
     } finally {
       elements.saveMetadata.disabled = false;
       elements.saveMetadata.textContent = 'Guardar metadata';
@@ -140,14 +277,27 @@ export function initJobs() {
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    store.clearPolling();
+    clearFormErrors();
     const submit = form.querySelector('button[type="submit"]');
     const data = new FormData(form);
-    if (Number(data.get('minDuration')) > Number(data.get('maxDuration'))) return showWarning('La duración mínima no puede superar la máxima.', 'error');
+    if (Number(data.get('minDuration')) > Number(data.get('maxDuration'))) {
+      return showFormError(form.elements.minDuration, 'duration-error', 'La duración mínima no puede superar la máxima.');
+    }
     const video = data.get('video');
-    if (!data.get('sourcePath') && (!video || !video.size)) return showWarning('Selecciona un vídeo o indica una ruta local.', 'error');
+    if (!data.get('sourcePath') && (!video || !video.size)) {
+      return showFormError(form.elements.sourcePath, 'video-source-error', 'Selecciona un vídeo o indica una ruta local.');
+    }
+    const transcript = data.get('transcript');
+    const transcriptSources = [
+      String(data.get('transcriptPath') || '').trim(),
+      transcript?.size ? 'upload' : '',
+      String(data.get('transcriptText') || '').trim()
+    ].filter(Boolean);
+    if (transcriptSources.length > 1) {
+      return showFormError(form.elements.transcriptPath, 'transcript-source-error', 'Elige una sola fuente: ruta, archivo o texto pegado.');
+    }
+    store.clearPolling();
     if (data.get('sourcePath')) data.delete('video');
-    if (data.get('transcriptPath')) data.delete('transcript');
     submit.disabled = true;
     elements.cancelJob.disabled = false;
     elements.uploadProgress.hidden = !video?.size || Boolean(data.get('sourcePath'));
@@ -205,7 +355,20 @@ export function initJobs() {
     }
   });
 
-  elements.layout.addEventListener('input', () => syncPipOverlay(elements.layout));
+  elements.layout.addEventListener('input', () => {
+    syncPipOverlay(elements.layout);
+    store.layoutDraft = captureControlState(elements.layout);
+    store.markDirty('layout');
+  });
+  const rememberClipDraft = (target, {dirty = false} = {}) => {
+    const article = target.closest?.('[data-clip-id]');
+    if (!article) return;
+    store.clipDrafts[article.dataset.clipId] = captureControlState(article);
+    if (dirty) store.markDirty(`clip:${article.dataset.clipId}`);
+  };
+  elements.clips.addEventListener('input', (event) => rememberClipDraft(event.target, {dirty: true}));
+  elements.clips.addEventListener('change', (event) => rememberClipDraft(event.target, {dirty: true}));
+  elements.clips.addEventListener('toggle', (event) => rememberClipDraft(event.target), true);
   elements.clips.addEventListener('click', async (event) => {
     const article = event.target.closest('[data-clip-id]');
     if (!article || !store.job) return;
@@ -220,7 +383,11 @@ export function initJobs() {
       if (event.target.closest('[data-rerender-clip]')) {
         const edits = collectRerenderEdits(article, elements.layout);
         await api(`/api/jobs/${encodeURIComponent(store.job.id)}/clips/${encodeURIComponent(clipId)}/rerender`, {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify(edits)});
-        await pollJob(store.job.id);
+        store.markClean(`clip:${clipId}`);
+        store.markClean('layout');
+        delete store.clipDrafts[clipId];
+        store.layoutDraft = null;
+        await pollJob(store.job.id, {skipCapture: ['clips', 'layout']});
         return;
       }
       const cancelRender = event.target.closest('[data-cancel-render]')?.dataset.cancelRender;
@@ -235,8 +402,11 @@ export function initJobs() {
 
   elements.publishing.addEventListener('change', (event) => {
     if (event.target.id === 'publish-clip') {
+      rememberMetadataView(store.selectedClipId);
       store.selectedClipId = event.target.value;
-      renderMetadata(store.job, {container: elements.publishing, saveButton: elements.saveMetadata, reviewButton: elements.reviewPublish, note: elements.metadataNote});
+      store.invalidateRender('metadata');
+      renderJob(store.job, {skipCapture: ['metadata']});
+      return;
     }
     if (event.target.id === 'metric-platform') {
       const metric = (store.job?.metrics || []).find((item) => item.clipId === store.selectedClipId && item.platform === event.target.value) || {};
@@ -244,11 +414,21 @@ export function initJobs() {
         const input = $(`#metric-${field}`);
         if (input) input.value = Number(metric[field] || 0);
       }
+      rememberMetadataView();
+      return;
     }
+    rememberMetadataView();
+    if (event.target.name === 'publishPlatform' || event.target.id === 'publish-scheduled-for') store.markDirty('publishing-intent');
+    else store.markDirty('metadata');
   });
   elements.publishing.addEventListener('input', (event) => {
     if (event.target.id === 'meta-x') $('#x-count').textContent = event.target.value.length;
+    rememberMetadataView();
+    if (event.target.id.startsWith('metric-')) store.markDirty('metrics');
+    else if (event.target.name === 'publishPlatform' || event.target.id === 'publish-scheduled-for') store.markDirty('publishing-intent');
+    else store.markDirty('metadata');
   });
+  elements.publishing.addEventListener('toggle', () => rememberMetadataView(), true);
   elements.publishing.addEventListener('click', async (event) => {
     const saveMetrics = event.target.closest('[data-save-metrics]');
     if (saveMetrics) {
@@ -264,6 +444,7 @@ export function initJobs() {
             shares: $('#metric-shares').value
           })
         });
+        store.markClean('metrics');
         elements.metadataNote.textContent = 'Métricas guardadas. Se usarán para comparar el rendimiento editorial de los clips.';
         await pollJob(store.job.id);
       } catch (error) {
@@ -294,18 +475,18 @@ export function initJobs() {
     elements.confirmPublish.disabled = true;
     elements.confirmPublish.textContent = 'Publicando…';
     const platforms = selectedPlatforms(elements.publishing);
+    const clipId = store.selectedClipId;
+    const scheduledFor = $('#publish-scheduled-for')?.value || '';
     try {
+      const publishPayload = buildPublishPayload({clipId, platforms, idempotencyKey: store.publishKey, scheduledFor});
       await saveMetadata();
       await api(`/api/jobs/${encodeURIComponent(store.job.id)}/publish`, {
         method: 'POST', headers: {'content-type': 'application/json'},
-        body: JSON.stringify({
-          clipId: store.selectedClipId,
-          platforms,
-          confirm: true,
-          idempotencyKey: store.publishKey,
-          scheduledFor: $('#publish-scheduled-for')?.value ? new Date($('#publish-scheduled-for').value).toISOString() : null
-        }), timeout: 20_000
+        body: JSON.stringify(publishPayload), timeout: 20_000
       });
+      delete store.metadataDrafts[clipId];
+      store.markClean('metadata');
+      store.markClean('publishing-intent');
       elements.confirmation.hidden = true;
       elements.metadataNote.textContent = 'Publicación añadida a la cola. Puedes cerrar el navegador; el servidor continuará el trabajo.';
       await pollJob(store.job.id);
@@ -318,6 +499,15 @@ export function initJobs() {
   });
 
   elements.refreshHistory.addEventListener('click', loadHistory);
+  $('#history-search').addEventListener('input', renderHistory);
+  $('#history-filter').addEventListener('change', renderHistory);
+  $('#history-sort').addEventListener('change', renderHistory);
+  $('#clips-toolbar').addEventListener('change', () => {
+    if (!store.job) return;
+    store.invalidateRender('clips');
+    renderJob(store.job);
+  });
+  elements.refreshPublishingReadiness.addEventListener('click', loadPublishingReadiness);
   elements.previewCleanup.addEventListener('click', loadStorage);
   elements.runCleanup.addEventListener('click', async () => {
     if (!confirm('Se eliminarán únicamente temporales y proyectos que cumplan la política configurada. ¿Continuar?')) return;
@@ -340,6 +530,17 @@ export function initJobs() {
     await pollJob(button.dataset.openJob);
   });
 
+  window.addEventListener('beforeunload', (event) => {
+    if (!store.hasUnsavedChanges()) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
+  document.addEventListener('click', (event) => {
+    const navigation = event.target.closest?.('.nav-item');
+    if (!navigation || !store.hasUnsavedChanges()) return;
+    if (!confirm('Hay cambios sin guardar. ¿Quieres salir de esta vista?')) event.preventDefault();
+  }, true);
+
   async function loadSystemStatus() {
     const list = $('#system-status-list');
     try {
@@ -347,7 +548,9 @@ export function initJobs() {
       const rows = [
         ['Servidor local', true, `${state.app.runningJobs} procesos activos, ${state.app.queue?.counts?.queued || 0} en cola`],
         ['Almacenamiento', state.storage?.freePercent >= 10, state.storage ? `${state.storage.freePercent}% libre` : 'No disponible'],
-        ['Transcripción', state.transcription.configured, state.transcription.configured ? state.transcription.provider : 'Usa transcript o configura STT'],
+        ['Transcripción', state.transcription.configured, state.transcription.configured
+          ? `${state.transcription.provider}${state.transcription.model ? ` · ${state.transcription.model}` : ''}${state.transcription.device ? ` · ${state.transcription.device}` : ''}`
+          : 'Usa transcript o instala STT local'],
         ['IA editorial', state.llm.configured, state.llm.configured ? `${state.llm.provider} · ${state.llm.model}` : 'Fallback local disponible'],
         ...Object.entries(state.publishing).map(([platform, ready]) => [platformLabel(platform), ready, ready ? 'Cuenta preparada' : 'Requiere conexión'])
       ];
@@ -358,7 +561,7 @@ export function initJobs() {
   }
 
   function activateView(hash = location.hash) {
-    const target = ['#production-view', '#library-view', '#stories-view'].includes(hash) ? hash : '#production-view';
+    const target = ['#production-view', '#library-view', '#stories-view', '#carousels-view'].includes(hash) ? hash : '#production-view';
     $$('.view-section').forEach((view) => { view.hidden = `#${view.id}` !== target; });
     $$('.nav-item').forEach((item) => {
       const active = item.getAttribute('href') === target;
@@ -369,8 +572,10 @@ export function initJobs() {
   }
 
   window.addEventListener('hashchange', () => activateView());
+  wireCaptionStudios(form);
   activateView();
   loadSystemStatus();
+  loadPublishingReadiness();
   loadHistory();
   loadStorage();
 }

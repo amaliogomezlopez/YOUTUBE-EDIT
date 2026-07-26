@@ -2,9 +2,9 @@
 <html lang="es">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0d0f12">
-    <title>Shortsmith · Creator Control Room</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#0a0d14">
+    <title>Shortsmith · Estudio de edición local</title>
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
@@ -16,22 +16,26 @@
           <span class="mark" aria-hidden="true">SS</span>
           <span>
             <strong>Shortsmith</strong>
-            <small>Creator control room</small>
+            <small>Estudio de edición local</small>
           </span>
         </a>
 
         <nav class="view-nav" aria-label="Vistas del espacio de trabajo">
           <a class="nav-item is-active" id="nav-production" href="#production-view" aria-current="page">
-            <span class="nav-index" aria-hidden="true">01</span>
-            <span><strong>Producción</strong><small>Procesa y revisa</small></span>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2.5"/><path d="M3 10.5h18M7.5 6l3 4.5M13 6l3 4.5"/></svg>
+            <span><strong>Producción</strong><small>Procesa y revisa clips</small></span>
           </a>
           <a class="nav-item" id="nav-library" href="#library-view">
-            <span class="nav-index" aria-hidden="true">02</span>
-            <span><strong>Biblioteca</strong><small>Jobs y entregables</small></span>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/></svg>
+            <span><strong>Biblioteca</strong><small>Proyectos recientes</small></span>
           </a>
           <a class="nav-item" id="nav-stories" href="#stories-view">
-            <span class="nav-index" aria-hidden="true">03</span>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
             <span><strong>Stories</strong><small>Secuencias 9:16</small></span>
+          </a>
+          <a class="nav-item" id="nav-carousels" href="#carousels-view">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5 21 8.5l-9 5-9-5z"/><path d="m4.5 12.5 7.5 4.2 7.5-4.2"/></svg>
+            <span><strong>Carruseles</strong><small>Posts 4:5 y 9:16</small></span>
           </a>
         </nav>
 
@@ -43,28 +47,27 @@
           </ul>
         </section>
 
-        <p class="privacy-note">Tus vídeos se procesan localmente. Solo se conectan servicios externos cuando eliges usarlos.</p>
+        <p class="privacy-note">Tus vídeos se procesan en este ordenador. Los servicios externos solo se conectan cuando eliges usarlos.</p>
       </aside>
 
       <main id="main-content" class="main-content">
         <section id="production-view" class="view-section production-view" aria-labelledby="production-title">
           <header class="view-header">
             <div>
-              <span class="section-label">Espacio de producción</span>
               <h1 id="production-title">Convierte una grabación en contenido listo para revisar</h1>
               <p>Prepara el vídeo, genera clips verticales y revisa la metadata antes de publicar.</p>
             </div>
             <div class="local-badge"><span class="status-dot is-ready" aria-hidden="true"></span>Procesamiento local</div>
           </header>
 
-          <div class="production-layout">
-            <aside class="setup-panel" aria-labelledby="setup-title">
+          <form id="job-form" class="production-form">
+            <section class="form-zone" aria-labelledby="setup-title">
               <div class="panel-heading">
                 <span class="step-badge" aria-hidden="true">01</span>
                 <div><h2 id="setup-title">Preparar fuente</h2><p>Elige una ruta local o sube archivos.</p></div>
               </div>
 
-              <form id="job-form" class="form">
+              <div class="zone-body">
                 <fieldset>
                   <legend>Vídeo</legend>
                   <p class="field-help" id="video-source-help">Usa una de las dos opciones.</p>
@@ -77,6 +80,7 @@
                     <span>Subir vídeo</span>
                     <input name="video" type="file" accept="video/*" aria-describedby="video-source-help">
                   </label>
+                  <p id="video-source-error" class="field-error" role="alert" hidden></p>
                 </fieldset>
 
                 <fieldset>
@@ -94,32 +98,101 @@
                     <span>Pegar texto</span>
                     <textarea name="transcriptText" rows="5" aria-describedby="transcript-help" placeholder="Pega aquí una transcripción o notas…"></textarea>
                   </label>
+                  <p id="transcript-source-error" class="field-error" role="alert" hidden></p>
                 </fieldset>
 
-                <details class="advanced-settings">
-                  <summary>Configurar clips y render</summary>
-                  <div class="settings-body">
-                    <div class="grid2">
-                      <label><span>Número de clips</span><input name="topN" type="number" value="5" min="1" max="20" inputmode="numeric"></label>
-                      <label><span>Duración máxima</span><span class="input-unit"><input name="maxDuration" type="number" value="60" min="8" max="120" inputmode="numeric"><small>s</small></span></label>
+              </div>
+              <button class="primary-action zone-submit" type="submit">Procesar vídeo</button>
+            </section>
+
+            <section class="form-zone" aria-labelledby="config-title">
+              <div class="panel-heading">
+                <span class="step-badge" aria-hidden="true">02</span>
+                <div><h2 id="config-title">Selección, render y voz</h2><p>Momentos, composición y transcripción local.</p></div>
+              </div>
+              <div class="zone-body">
+                <div class="grid2">
+                  <label><span>Número de clips</span><input name="topN" type="number" value="5" min="1" max="20" inputmode="numeric"></label>
+                  <label><span>Duración máxima</span><span class="input-unit"><input name="maxDuration" type="number" value="60" min="8" max="120" inputmode="numeric"><small>s</small></span></label>
+                </div>
+                <div class="grid2">
+                  <label><span>Duración mínima</span><span class="input-unit"><input name="minDuration" type="number" value="18" min="4" max="90" inputmode="numeric"><small>s</small></span></label>
+                  <label><span>Composición</span><select name="renderMode"><option value="">Automática</option><option value="pip">Webcam + pantalla</option><option value="fit">Pantalla completa</option><option value="crop">Recorte vertical</option></select></label>
+                </div>
+                <p id="duration-error" class="field-error" role="alert" hidden></p>
+                <div class="grid2">
+                  <label><span>Calidad</span><select name="renderQuality"><option value="high">Alta</option><option value="standard">Estándar</option><option value="draft">Borrador</option></select></label>
+                  <label><span>Subtítulos</span><select name="subtitleMode"><option value="progressive" selected>Editorial progresivo</option><option value="words">Una palabra</option><option value="lines">Por frases</option></select></label>
+                </div>
+                <fieldset class="local-engine-settings">
+                  <legend>Motor local de voz</legend>
+                  <div class="grid2">
+                    <label><span>Transcripción</span><select name="sttProvider"><option value="faster-whisper" selected>Faster-Whisper · GPU local</option><option value="whisper-cli">Whisper clásico · GPU local</option><option value="off">Solo transcript aportado</option></select></label>
+                    <label><span>Modelo</span><select name="sttModel"><option value="large-v3-turbo" selected>Large v3 Turbo · recomendado</option><option value="small">Small · rápido</option><option value="medium">Medium · equilibrado</option><option value="large-v3">Large v3 · máxima calidad</option></select></label>
+                  </div>
+                  <label><span>Idioma</span><select name="sttLanguage"><option value="auto" selected>Detectar automáticamente</option><option value="es">Español</option><option value="en">Inglés</option></select></label>
+                  <label><span>Vocabulario o contexto</span><input name="sttPrompt" type="text" maxlength="1200" autocomplete="off" placeholder="Kimi K3, GPT-5, OpenAI, Claude Opus…"><small>Nombres propios que el modelo debe reconocer; se procesa únicamente en local.</small></label>
+                  <p>El audio, el modelo y los timestamps permanecen en este ordenador.</p>
+                </fieldset>
+                <label class="switch"><input name="useLlm" type="checkbox"><span><strong>Usar análisis editorial con IA</strong><small>Mejora el scoring, títulos y metadata si el proveedor está configurado.</small></span></label>
+              </div>
+            </section>
+
+            <section class="form-zone" aria-labelledby="captions-title">
+              <div class="panel-heading">
+                <span class="step-badge" aria-hidden="true">03</span>
+                <div><h2 id="captions-title">Estudio de subtítulos</h2><p>Vista 9:16 con jerarquía, fuente, posición y contraste.</p></div>
+              </div>
+              <div class="zone-body caption-body" data-caption-studio data-caption-preview-text="donde por primera vez todo cambia">
+                <figure class="caption-preview" data-caption-preview>
+                  <div class="caption-preview-frame" data-caption-preview-frame data-position="lower-middle" data-align="center">
+                    <div class="caption-safe-area" aria-hidden="true"></div>
+                    <div class="caption-preview-copy" data-caption-preview-copy aria-label="Previsualización del subtítulo">
+                    <span class="caption-preview-lead" data-preview-line data-role="lead">así se verá</span>
+                    <strong class="caption-preview-hero" data-preview-line data-role="hero">PALABRA</strong>
+                    <span class="caption-preview-tail" data-preview-line data-role="tail">DESTACADA HOY</span>
                     </div>
-                    <div class="grid2">
-                      <label><span>Duración mínima</span><span class="input-unit"><input name="minDuration" type="number" value="18" min="4" max="90" inputmode="numeric"><small>s</small></span></label>
-                      <label><span>Composición</span><select name="renderMode"><option value="">Automática</option><option value="pip">Webcam + pantalla</option><option value="fit">Pantalla completa</option><option value="crop">Recorte vertical</option></select></label>
-                    </div>
-                    <div class="grid2">
-                      <label><span>Calidad</span><select name="renderQuality"><option value="high">Alta</option><option value="standard">Estándar</option><option value="draft">Borrador</option></select></label>
-                      <label><span>Subtítulos</span><select name="subtitleMode"><option value="words">Palabra a palabra</option><option value="lines">Por frases</option></select></label>
-                    </div>
-                    <label class="switch"><input name="useLlm" type="checkbox"><span><strong>Usar análisis editorial con IA</strong><small>Mejora el scoring, títulos y metadata si el proveedor está configurado.</small></span></label>
+                  </div>
+                  <figcaption data-caption-readout>Arial · 86 px · centro inferior</figcaption>
+                </figure>
+                <div class="caption-preset-row">
+                  <label><span>Preset</span><select name="subtitlePreset" data-caption-control="preset"><option value="progressive-reference" selected>Referencia · bloque centrado</option><option value="progressive-punchy">Dinámico · menos palabras</option><option value="progressive-editorial">Editorial · palabra protagonista</option><option value="progressive-clean">Clean · acento activo</option><option value="karaoke-highlight">Karaoke · seguimiento</option></select></label>
+                  <label><span>Posición</span><select name="subtitlePosition" data-caption-control="position"><option value="lower">Abajo</option><option value="lower-middle" selected>Centro inferior</option><option value="center">Centro</option><option value="upper-middle">Centro superior</option></select></label>
+                </div>
+                <label><span>Familia tipográfica local</span><input name="subtitleFont" data-caption-control="font" type="text" list="caption-font-options" value="Arial" maxlength="80" autocomplete="off"><small>Incluye fuentes del sistema y archivos guardados en <code>data/fonts</code>.</small></label>
+                <div class="caption-font-options" data-caption-font-options aria-label="Previsualizaciones de fuentes"><span>Cargando fuentes locales…</span></div>
+                <div class="caption-color-row">
+                  <label><span>Texto</span><input name="subtitleColor" data-caption-control="primary" type="color" value="#ffffff"></label>
+                  <label><span>Acento</span><input name="subtitleAccent" data-caption-control="accent" type="color" value="#ffffff"></label>
+                  <label><span>Tamaño</span><span class="input-unit"><input name="subtitleSize" data-caption-control="baseFontSize" type="number" min="48" max="132" value="86"><small>px</small></span></label>
+                </div>
+                <div class="grid2">
+                  <label><span>Reborde</span><span class="input-unit"><input name="subtitleOutlineSize" data-caption-control="outlineSize" type="number" min="0" max="12" step="0.5" value="0"><small>px</small></span></label>
+                  <label><span>Sombra</span><span class="input-unit"><input name="subtitleShadow" data-caption-control="shadow" type="number" min="0" max="8" step="0.5" value="0"><small>px</small></span></label>
+                </div>
+                <p class="field-help">Para texto de un solo color, establece reborde y sombra en 0.</p>
+                <label><span>Jerarquía</span><select name="subtitleEmphasis" data-caption-control="emphasis"><option value="auto">Elegir palabra protagonista</option><option value="off">Tamaño uniforme</option></select></label>
+                <details class="caption-fine-tune">
+                  <summary>Ajustar ritmo y composición</summary>
+                  <div class="caption-fine-grid">
+                    <label><span>Alineación</span><select name="subtitleAlign" data-caption-control="align"><option value="center" selected>Centrada</option><option value="left">Izquierda</option></select></label>
+                    <label><span>Capitalización</span><select name="subtitleUppercase" data-caption-control="uppercase"><option value="false" selected>Mixta según preset</option><option value="true">Todo en mayúsculas</option></select></label>
+                    <label><span>Escala protagonista</span><input name="subtitleHeroScale" data-caption-control="heroScale" type="number" min="1" max="2.6" step="0.01" value="2.12"></label>
+                    <label><span>Escala primera línea</span><input name="subtitleLeadScale" data-caption-control="leadScale" type="number" min="0.7" max="1.5" step="0.01" value="1"></label>
+                    <label><span>Escala última línea</span><input name="subtitleTailScale" data-caption-control="tailScale" type="number" min="0.7" max="1.5" step="0.01" value="1.12"></label>
+                    <label><span>Palabras por bloque</span><input name="subtitleMaxWords" data-caption-control="maxWords" type="number" min="3" max="12" step="1" value="6"></label>
+                    <label><span>Duración del bloque</span><span class="input-unit"><input name="subtitleMaxPageDuration" data-caption-control="maxPageDuration" type="number" min="1.2" max="6" step="0.05" value="3.05"><small>s</small></span></label>
+                    <label><span>Corte por pausa</span><span class="input-unit"><input name="subtitlePauseBreak" data-caption-control="pauseBreak" type="number" min="0.12" max="1.5" step="0.01" value="0.34"><small>s</small></span></label>
+                    <label><span>Caracteres por línea</span><input name="subtitleMaxLineChars" data-caption-control="maxLineChars" type="number" min="10" max="30" step="1" value="16"></label>
+                    <label><span>Margen lateral</span><span class="input-unit"><input name="subtitleMarginX" data-caption-control="marginX" type="number" min="70" max="260" step="1" value="120"><small>px</small></span></label>
+                    <label><span>Espaciado de letras</span><span class="input-unit"><input name="subtitleTracking" data-caption-control="tracking" type="number" min="-2" max="12" step="0.1" value="-1"><small>px</small></span></label>
                   </div>
                 </details>
+              </div>
+            </section>
+          </form>
 
-                <button class="primary-action" type="submit">Procesar vídeo</button>
-              </form>
-            </aside>
-
-            <section class="results" aria-labelledby="results-title">
+          <section class="results" aria-labelledby="results-title">
               <div class="statusbar" role="status" aria-live="polite" aria-atomic="true">
                 <div>
                   <span class="section-label">Estado del proceso</span>
@@ -137,14 +210,43 @@
               <div id="summary" class="summary" aria-label="Resumen del vídeo"></div>
               <div id="warnings" class="warnings" aria-live="polite" aria-label="Avisos del proceso"></div>
               <section id="layout-editor" class="layout-editor" aria-label="Editor de composición PIP" hidden></section>
-              <div id="clips" class="clips" aria-live="polite">
+
+              <div class="clips-toolbar" id="clips-toolbar" hidden>
+                <div class="toolbar-controls" role="group" aria-label="Filtrar y ordenar clips">
+                  <label class="toolbar-field"><span>Filtrar</span>
+                    <select id="clips-filter">
+                      <option value="all" selected>Todos</option>
+                      <option value="pending">Pendientes</option>
+                      <option value="accepted">Aceptados</option>
+                      <option value="discarded">Descartados</option>
+                    </select>
+                  </label>
+                  <label class="toolbar-field"><span>Ordenar</span>
+                    <select id="clips-sort">
+                      <option value="score" selected>Mejor puntuación</option>
+                      <option value="duration">Más largos</option>
+                      <option value="timeline">Orden del vídeo</option>
+                    </select>
+                  </label>
+                </div>
+                <span class="toolbar-count" id="clips-count" aria-live="polite"></span>
+              </div>
+
+              <div id="clips" class="clips" aria-label="Clips generados">
                 <div class="empty-state">
-                  <span class="empty-index" aria-hidden="true">02</span>
-                  <div><strong>Los clips aparecerán aquí</strong><p>Procesa un vídeo para revisar sus momentos, puntuación y render vertical.</p></div>
+                  <div><strong>Aquí aparecerán los clips</strong><p>Procesa un vídeo y revisa cada momento con su puntuación, encuadre vertical y subtítulos. Acepta los que te convenzan y descarta el resto.</p></div>
                 </div>
               </div>
 
-              <section class="metadata-workspace" id="metadata-workspace" aria-labelledby="metadata-title">
+              <section class="delivery-hub" aria-labelledby="delivery-title">
+                <div class="delivery-heading">
+                  <div><h3 id="delivery-title">Conexiones de distribución</h3><p>Comprueba qué plataformas están listas antes de publicar.</p></div>
+                  <button id="refresh-publishing-readiness" class="secondary-action compact" type="button">Actualizar estado</button>
+                </div>
+                <div id="publishing-readiness" class="publishing-readiness" aria-live="polite"><p>Comprobando conexiones…</p></div>
+              </section>
+
+              <section class="metadata-workspace" id="metadata-workspace" aria-labelledby="metadata-title" hidden>
                 <div class="workspace-heading">
                   <div><span class="section-label">Revisión humana</span><h2 id="metadata-title">Metadata y publicación</h2></div>
                   <div class="metadata-actions" id="metadata-actions">
@@ -164,17 +266,35 @@
                   </div>
                 </section>
               </section>
-            </section>
-          </div>
+          </section>
         </section>
 
-        <section id="library-view" class="view-section library-view" aria-labelledby="library-title">
+        <section id="library-view" class="view-section library-view" aria-labelledby="library-title" hidden>
           <header class="section-header">
-            <div><span class="section-label">Biblioteca</span><h2 id="library-title">Jobs y entregables</h2><p>Recupera trabajos recientes y continúa donde lo dejaste.</p></div>
+            <div><h2 id="library-title">Proyectos y entregables</h2><p>Recupera trabajos recientes y continúa donde lo dejaste.</p></div>
             <button id="refresh-job-history" class="secondary-action" type="button" disabled>Actualizar historial</button>
           </header>
+          <div class="list-toolbar">
+            <label class="toolbar-field toolbar-search"><span>Buscar</span><input id="history-search" type="search" placeholder="Nombre del vídeo…" autocomplete="off"></label>
+            <label class="toolbar-field"><span>Estado</span>
+              <select id="history-filter">
+                <option value="all" selected>Todos</option>
+                <option value="done">Listos</option>
+                <option value="active">En proceso</option>
+                <option value="attention">Con incidencias</option>
+              </select>
+            </label>
+            <label class="toolbar-field"><span>Ordenar</span>
+              <select id="history-sort">
+                <option value="recent" selected>Más recientes</option>
+                <option value="oldest">Más antiguos</option>
+                <option value="name">Nombre (A–Z)</option>
+                <option value="clips">Más clips</option>
+              </select>
+            </label>
+          </div>
           <div id="job-history" class="job-history" aria-live="polite">
-            <div class="empty-state compact-empty"><span class="empty-index" aria-hidden="true">00</span><div><strong>Aún no hay historial disponible</strong><p>Los jobs procesados aparecerán aquí cuando el servidor exponga el listado.</p></div></div>
+            <div class="empty-state compact-empty"><div><strong>Cargando historial…</strong><p>Estamos consultando los proyectos de este ordenador.</p></div></div>
           </div>
           <section class="storage-manager" aria-labelledby="storage-title">
             <div><h3 id="storage-title">Almacenamiento local</h3><p id="storage-summary">Calculando espacio disponible…</p></div>
@@ -186,7 +306,7 @@
           </section>
         </section>
 
-        <section id="stories-view" class="view-section stories-view" aria-labelledby="stories-title">
+        <section id="stories-view" class="view-section stories-view" aria-labelledby="stories-title" hidden>
           <header class="section-header stories-header">
             <div><span class="section-label">Storysmith · 1080 × 1920</span><h2 id="stories-title">Convierte una fuente en una secuencia editorial</h2><p>La IA estructura el relato; el renderer compone cada pieza sin deformar textos.</p></div>
             <span class="evidence-badge">Solo usa tu fuente</span>
@@ -212,8 +332,57 @@
             </div>
           </div>
         </section>
+
+        <section id="carousels-view" class="view-section carousels-view" aria-labelledby="carousels-title" hidden>
+          <header class="section-header carousel-header">
+            <div><span class="section-label">Carouselsmith · componente independiente</span><h2 id="carousels-title">Carruseles editoriales con imágenes y overlays</h2><p>Planifica desde una fuente verificable, revisa cada pieza y exporta un master adaptable a Instagram, TikTok y Stories.</p></div>
+            <span class="evidence-badge">5–10 piezas · revisión humana</span>
+          </header>
+          <div class="carousel-studio">
+            <aside class="carousel-sidebar">
+              <form id="carousel-create-form" class="carousel-create-form">
+                <label><span>Título</span><input name="title" maxlength="90" autocomplete="off" placeholder="Qué cambia con…"></label>
+                <label><span>Fuente verificable</span><textarea name="source" rows="8" maxlength="30000" required placeholder="Pega una noticia, transcripción o notas con hechos verificables…"></textarea></label>
+                <div class="grid2">
+                  <label><span>Piezas</span><select name="slideCount"><option>5</option><option>6</option><option selected>7</option><option>8</option><option>9</option><option>10</option></select></label>
+                  <label><span>Tema</span><select name="theme"><option value="forge">Forge</option><option value="cobalt">Cobalt</option><option value="signal">Signal</option><option value="night">Night</option></select></label>
+                </div>
+                <label class="switch"><input name="useLlm" type="checkbox" checked><span><strong>Usar IA para el guion</strong><small>Solo puede apoyarse en la fuente.</small></span></label>
+                <button class="primary-action" type="submit">Crear carrusel</button>
+              </form>
+              <div class="carousel-library-head"><strong>Proyectos</strong><button id="refresh-carousels" class="text-action" type="button">Actualizar</button></div>
+              <div class="carousel-library-tools">
+                <input id="carousel-search" type="search" placeholder="Buscar carrusel…" autocomplete="off" aria-label="Buscar carrusel por título">
+                <select id="carousel-sort" aria-label="Ordenar carruseles">
+                  <option value="recent" selected>Recientes</option>
+                  <option value="title">Título (A–Z)</option>
+                </select>
+              </div>
+              <div id="carousel-library" class="carousel-library" aria-live="polite"></div>
+            </aside>
+            <div id="carousel-editor" class="carousel-editor" aria-live="polite">
+              <div class="carousel-empty"><span>04</span><h3>Selecciona o crea un carrusel</h3><p>Aquí podrás revisar el relato, incorporar imágenes y exportar todas las piezas.</p></div>
+            </div>
+          </div>
+          <p id="carousel-note" class="story-note" aria-live="polite">Los proyectos se guardan localmente y pueden reabrirse.</p>
+        </section>
       </main>
     </div>
+
+    <datalist id="caption-font-options">
+      <option value="Arial" label="Referencia limpia en negrita"></option>
+      <option value="Bahnschrift" label="Limpia y condensada"></option>
+      <option value="Segoe UI Black" label="Moderna y profesional"></option>
+      <option value="Franklin Gothic Heavy" label="Editorial y contundente"></option>
+      <option value="Arial Black" label="Neutra y muy legible"></option>
+      <option value="Impact" label="Máximo impacto"></option>
+      <option value="Agency FB" label="Estrecha y técnica"></option>
+      <option value="Century Gothic" label="Geométrica"></option>
+      <option value="Bauman" label="Futurista"></option>
+      <option value="Geoparody Heavy" label="Geométrica pesada"></option>
+      <option value="HEY LOUIE" label="Personalizada"></option>
+      <option value="OMEGLE" label="Personalizada"></option>
+    </datalist>
 
     <script type="module" src="/app.js"></script>
   </body>
