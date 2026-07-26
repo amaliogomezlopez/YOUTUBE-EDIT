@@ -11,13 +11,15 @@ export const UPLOADS_DIR = path.join(DATA_DIR, 'uploads');
 export const JOBS_DIR = path.join(DATA_DIR, 'jobs');
 export const OUTPUT_DIR = path.join(DATA_DIR, 'output');
 export const TMP_DIR = path.join(DATA_DIR, 'tmp');
+export const CAROUSELS_DIR = path.join(DATA_DIR, 'carousels');
+export const FONTS_DIR = path.join(DATA_DIR, 'fonts');
 
 export async function ensureDir(dir) {
   await mkdir(dir, {recursive: true});
 }
 
 export async function ensureDataDirs() {
-  await Promise.all([UPLOADS_DIR, JOBS_DIR, OUTPUT_DIR, TMP_DIR].map(ensureDir));
+  await Promise.all([UPLOADS_DIR, JOBS_DIR, OUTPUT_DIR, TMP_DIR, CAROUSELS_DIR, FONTS_DIR].map(ensureDir));
 }
 
 export async function loadDotEnv(file = path.join(ROOT, '.env')) {

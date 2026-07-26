@@ -92,6 +92,38 @@ function median(values) {
   return sorted[Math.floor(sorted.length / 2)];
 }
 
+export function webcamBoxForTrackedFace(trackedFace, media) {
+  const centerX = (trackedFace.x + trackedFace.w / 2) / media.width;
+  const anchoredRight = centerX >= 0.72;
+  const anchoredLeft = centerX <= 0.28;
+  const padTop = trackedFace.h * 0.9;
+  const padBottom = trackedFace.h * 0.65;
+  let x;
+  let w;
+  if (anchoredRight) {
+    x = clamp(trackedFace.x - trackedFace.w * 0.25, 0, media.width - 24);
+    w = media.width - x;
+  } else if (anchoredLeft) {
+    x = 0;
+    w = clamp(trackedFace.x + trackedFace.w * 1.25, 24, media.width);
+  } else {
+    const padX = trackedFace.w * 0.85;
+    x = clamp(trackedFace.x - padX, 0, media.width - 24);
+    w = clamp(trackedFace.w + padX * 2, 24, media.width - x);
+  }
+  const y = clamp(trackedFace.y - padTop, 0, media.height - 24);
+  const h = clamp(trackedFace.h + padTop + padBottom, 24, media.height - y);
+  return {
+    x: Math.round(x),
+    y: Math.round(y),
+    w: Math.round(Math.min(w, media.width - x)),
+    h: Math.round(Math.min(h, media.height - y)),
+    confidence: trackedFace.confidence,
+    detectionScore: trackedFace.detectionScore,
+    method: 'yunet-face-tracking'
+  };
+}
+
 export async function detectWebcamBox(videoFile, media, options = {}) {
   const samples = Number(options.samples ?? 7);
   const start = Math.max(8, media.duration * 0.08);
@@ -156,21 +188,7 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
 
   const trackedFace = faceDetectorAvailable ? selectTrackedFace(faceFrames, {minimumFrames: Math.ceil(samples * 0.45)}) : null;
   if (trackedFace) {
-    const padX = trackedFace.w * 1.6;
-    const padTop = trackedFace.h * 1.15;
-    const padBottom = trackedFace.h * 1.65;
-    const faceBox = {
-      x: Math.round(clamp(trackedFace.x - padX, 0, media.width - 24)),
-      y: Math.round(clamp(trackedFace.y - padTop, 0, media.height - 24)),
-      w: Math.round(clamp(trackedFace.w + padX * 2, 24, media.width)),
-      h: Math.round(clamp(trackedFace.h + padTop + padBottom, 24, media.height)),
-      confidence: trackedFace.confidence,
-      detectionScore: trackedFace.detectionScore,
-      method: 'yunet-face-tracking'
-    };
-    faceBox.w = Math.min(faceBox.w, media.width - faceBox.x);
-    faceBox.h = Math.min(faceBox.h, media.height - faceBox.y);
-    return faceBox;
+    return webcamBoxForTrackedFace(trackedFace, media);
   }
   if (detections.length < Math.ceil(samples * Number(options.minimumSkinCoverage ?? 0.6))) return null;
   const x = median(detections.map((item) => item.x));

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp, readFile, rm, writeFile} from 'node:fs/promises';
+import {mkdtemp, readFile, readdir, rm, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {tmpdir} from 'node:os';
 import {rerenderClip, saveJobState, updateClipDecision} from '../src/lib/pipeline.js';
@@ -53,6 +53,64 @@ test('clip editor validates range and rerenders with normalized webcam override'
     assert.equal(clip.duration, 14);
     assert.equal(clip.status, 'ready');
     assert.equal(await readFile(clip.files.video, 'utf8'), 'new');
+  } finally {
+    await rm(root, {recursive: true, force: true});
+  }
+});
+
+test('switching caption preset resets inherited visual defaults', async () => {
+  const {root, state} = await fixture();
+  try {
+    state.clips[0].renderSettings = {
+      subtitleMode: 'progressive',
+      subtitleStyle: {preset: 'progressive-punchy', font: 'Bahnschrift', align: 'left', uppercase: true, outlineSize: 3, shadow: 2}
+    };
+    const clip = await rerenderClip(state, 'clip-1', {
+      subtitleStyle: {preset: 'progressive-reference'}
+    }, {
+      renderClip: async ({outputFile}) => writeFile(outputFile, 'new-reference')
+    });
+    assert.equal(clip.renderSettings.subtitleStyle.preset, 'progressive-reference');
+    assert.equal(clip.renderSettings.subtitleStyle.font, 'Arial');
+    assert.equal(clip.renderSettings.subtitleStyle.align, 'center');
+    assert.equal(clip.renderSettings.subtitleStyle.uppercase, false);
+    assert.equal(clip.renderSettings.subtitleStyle.outlineSize, 0);
+    assert.equal(clip.renderSettings.subtitleStyle.shadow, 0);
+  } finally {
+    await rm(root, {recursive: true, force: true});
+  }
+});
+
+test('failed rerender rolls back clip settings and removes staged artifacts', async () => {
+  const {root, state} = await fixture();
+  try {
+    const before = structuredClone(state.clips[0]);
+    await assert.rejects(() => rerenderClip(state, 'clip-1', {
+      start: 12,
+      end: 26,
+      renderMode: 'fit',
+      subtitleStyle: {preset: 'progressive-reference'}
+    }, {
+      renderClip: async ({outputFile}) => {
+        await writeFile(outputFile, 'partial');
+        throw new Error('FFmpeg simulated failure');
+      }
+    }), /simulated failure/i);
+
+    const failed = state.clips[0];
+    assert.equal(failed.start, before.start);
+    assert.equal(failed.end, before.end);
+    assert.deepEqual(failed.renderSettings, before.renderSettings);
+    assert.deepEqual(failed.files, before.files);
+    assert.equal(failed.status, 'render_failed');
+    assert.match(failed.renderError, /simulated failure/i);
+    assert.equal(await readFile(before.files.video, 'utf8'), 'old');
+    assert.deepEqual((await readdir(path.dirname(before.files.video))).sort(), ['short-old.mp4']);
+
+    const persisted = JSON.parse(await readFile(path.join(state.jobDir, 'job.json'), 'utf8')).clips[0];
+    assert.equal(persisted.start, before.start);
+    assert.deepEqual(persisted.files, before.files);
+    assert.equal(persisted.status, 'render_failed');
   } finally {
     await rm(root, {recursive: true, force: true});
   }

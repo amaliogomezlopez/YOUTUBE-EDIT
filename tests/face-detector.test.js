@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {decodeYuNetOutputs, selectTrackedFace} from '../src/lib/face-detector.js';
+import {webcamBoxForTrackedFace} from '../src/lib/webcam.js';
 
 test('YuNet decoder converts grid outputs into source coordinates', () => {
   const cls = new Float32Array(400);
@@ -34,4 +35,15 @@ test('face tracking requires a stable cluster across sampled frames', () => {
   assert.equal(tracked.x, 102);
   assert.equal(tracked.confidence, 0.8);
   assert.equal(selectTrackedFace([[{x: 1, y: 1, w: 10, h: 10, score: 1}], [], []], {minimumFrames: 2}), null);
+});
+
+test('right-edge webcam crop follows the panel edge without excessive screen padding', () => {
+  const box = webcamBoxForTrackedFace(
+    {x: 3218, y: 486, w: 239, h: 365, confidence: 0.9, detectionScore: 0.95},
+    {width: 3840, height: 2160}
+  );
+  assert.deepEqual(box, {
+    x: 3158, y: 158, w: 682, h: 931,
+    confidence: 0.9, detectionScore: 0.95, method: 'yunet-face-tracking'
+  });
 });

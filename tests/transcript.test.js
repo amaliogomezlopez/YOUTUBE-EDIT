@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {parseJsonTranscript, parseSrtTranscript, parseTranscriptText} from '../src/lib/transcript.js';
+import {parseJsonTranscript, parseSrtTranscript, parseTranscriptText, sliceCaptions} from '../src/lib/transcript.js';
 
 test('parses SRT captions with timestamps', () => {
   const captions = parseSrtTranscript(`1
@@ -26,6 +26,21 @@ test('parses JSON captions in remotion-like shape', () => {
   }));
   assert.equal(captions.length, 2);
   assert.equal(captions[1].start, 1.2);
+});
+
+test('preserves and slices word-level JSON timestamps', () => {
+  const captions = parseJsonTranscript(JSON.stringify({segments: [{
+    start: 10, end: 12, text: 'Hola mundo', words: [
+      {start: 10, end: 10.6, word: ' Hola', probability: 0.98},
+      {start: 10.6, end: 12, word: ' mundo', probability: 0.96}
+    ]
+  }]}));
+  assert.equal(captions[0].words.length, 2);
+  assert.equal(captions[0].words[0].text, 'Hola');
+  assert.equal(captions[0].words[0].confidence, 0.98);
+  const sliced = sliceCaptions(captions, 10.5, 11.5);
+  assert.equal(sliced[0].words[0].start, 0);
+  assert.equal(sliced[0].words[1].end, 1);
 });
 
 test('approximates plain text when no timestamps exist', () => {

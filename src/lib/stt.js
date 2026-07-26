@@ -1,13 +1,24 @@
+import {existsSync, readdirSync} from 'node:fs';
 import {mkdtemp, readFile, rm} from 'node:fs/promises';
-import {tmpdir} from 'node:os';
+import {homedir, tmpdir} from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import {ffprobe} from './ffmpeg.js';
-import {run} from './utils.js';
+import {ROOT, run} from './utils.js';
 
 const DEFAULT_CHUNK_SECONDS = 10 * 60;
 const DEFAULT_OVERLAP_SECONDS = 3;
 const DEFAULT_TIMEOUT_MS = 2 * 60 * 1000;
+const DEFAULT_LOCAL_TIMEOUT_MS = 60 * 60 * 1000;
 const DEFAULT_RETRIES = 2;
+const FASTER_WHISPER_SCRIPT = fileURLToPath(new URL('../../scripts/faster-whisper-local.py', import.meta.url));
+const HF_MODEL_CACHE_KEYS = Object.freeze({
+  small: 'models--Systran--faster-whisper-small',
+  medium: 'models--Systran--faster-whisper-medium',
+  'large-v3': 'models--Systran--faster-whisper-large-v3',
+  'large-v3-turbo': 'models--mobiuslabsgmbh--faster-whisper-large-v3-turbo',
+  turbo: 'models--mobiuslabsgmbh--faster-whisper-large-v3-turbo'
+});
 
 function env(name) {
   return process.env[name] && process.env[name].trim() ? process.env[name].trim() : '';
@@ -43,6 +54,7 @@ export function getSttConfig(overrides = {}) {
 }
 
 export function getSttRuntimeConfig(overrides = {}) {
+  const stt = getSttConfig(overrides);
   const chunkSeconds = positiveNumber(
     firstNonEmpty(overrides.chunkSeconds, env('TRANSCRIPTION_CHUNK_SECONDS'), env('STT_CHUNK_SECONDS')),
     DEFAULT_CHUNK_SECONDS
@@ -53,12 +65,12 @@ export function getSttRuntimeConfig(overrides = {}) {
     {allowZero: true}
   );
   return {
-    ...getSttConfig(overrides),
+    ...stt,
     chunkSeconds,
     overlapSeconds: Math.min(requestedOverlap, Math.max(0, chunkSeconds - 0.1)),
     timeoutMs: positiveNumber(
       firstNonEmpty(overrides.timeoutMs, env('TRANSCRIPTION_TIMEOUT_MS'), env('STT_TIMEOUT_MS')),
-      DEFAULT_TIMEOUT_MS
+      stt.provider === 'faster-whisper' || stt.provider === 'whisper-cli' ? DEFAULT_LOCAL_TIMEOUT_MS : DEFAULT_TIMEOUT_MS
     ),
     retries: nonNegativeInteger(
       firstNonEmpty(overrides.retries, env('TRANSCRIPTION_RETRIES'), env('STT_RETRIES')),
@@ -99,9 +111,27 @@ function trimRepeatedPrefix(previousText, currentText) {
   for (let count = max; count >= 3; count -= 1) {
     const suffix = normalizeText(previousWords.slice(-count).join(' '));
     const prefix = normalizeText(currentWords.slice(0, count).join(' '));
-    if (suffix === prefix) return currentWords.slice(count).join(' ');
+    if (suffix === prefix) return {text: currentWords.slice(count).join(' '), removedWords: count};
   }
-  return String(currentText ?? '').trim();
+  return {text: String(currentText ?? '').trim(), removedWords: 0};
+}
+
+function rebaseWords(words, offset) {
+  if (!Array.isArray(words)) return undefined;
+  const rebased = words.map((word, index) => {
+    const start = Number(word.start);
+    const end = Number(word.end);
+    const text = String(word.text ?? word.word ?? '').trim();
+    if (!Number.isFinite(start) || !Number.isFinite(end) || end <= start || !text) return null;
+    return {
+      ...word,
+      id: word.id ?? `word-${index + 1}`,
+      start: Math.max(0, start + offset),
+      end: Math.max(0, end + offset),
+      text
+    };
+  }).filter(Boolean);
+  return rebased.length ? rebased : undefined;
 }
 
 export function mergeTranscriptChunks(results, {overlapSeconds = DEFAULT_OVERLAP_SECONDS} = {}) {
@@ -113,7 +143,14 @@ export function mergeTranscriptChunks(results, {overlapSeconds = DEFAULT_OVERLAP
       const localEnd = Number(raw.end);
       const text = String(raw.text ?? '').trim();
       if (!Number.isFinite(localStart) || !Number.isFinite(localEnd) || localEnd <= localStart || !text) continue;
-      const segment = {...raw, start: Math.max(0, localStart + offset), end: Math.max(0, localEnd + offset), text};
+      const words = rebaseWords(raw.words, offset);
+      const segment = {
+        ...raw,
+        start: Math.max(0, localStart + offset),
+        end: Math.max(0, localEnd + offset),
+        text,
+        ...(words ? {words} : {})
+      };
       const recent = merged.slice(-8);
       const duplicate = recent.find((candidate) => {
         const nearby = segment.start <= candidate.end + overlapSeconds + 1 && segment.end >= candidate.start - overlapSeconds - 1;
@@ -126,13 +163,18 @@ export function mergeTranscriptChunks(results, {overlapSeconds = DEFAULT_OVERLAP
       const previous = merged.at(-1);
       if (previous && segment.start <= previous.end + overlapSeconds + 1) {
         const trimmed = trimRepeatedPrefix(previous.text, segment.text);
-        if (!trimmed) continue;
-        if (trimmed !== segment.text) {
+        if (!trimmed.text) continue;
+        if (trimmed.text !== segment.text) {
           const originalWords = segment.text.split(/\s+/).length;
-          const remainingWords = trimmed.split(/\s+/).length;
+          const remainingWords = trimmed.text.split(/\s+/).length;
           const removedRatio = (originalWords - remainingWords) / originalWords;
-          segment.start = Math.min(segment.end, segment.start + ((segment.end - segment.start) * removedRatio));
-          segment.text = trimmed;
+          if (segment.words?.length) {
+            segment.words = segment.words.slice(trimmed.removedWords);
+            segment.start = segment.words[0]?.start ?? Math.min(segment.end, segment.start + ((segment.end - segment.start) * removedRatio));
+          } else {
+            segment.start = Math.min(segment.end, segment.start + ((segment.end - segment.start) * removedRatio));
+          }
+          segment.text = trimmed.text;
         }
       }
       merged.push(segment);
@@ -140,7 +182,13 @@ export function mergeTranscriptChunks(results, {overlapSeconds = DEFAULT_OVERLAP
   }
   return merged
     .sort((a, b) => a.start - b.start || a.end - b.end)
-    .map((segment, index) => ({...segment, id: `seg-${index + 1}`}));
+    .map((segment, index) => ({
+      ...segment,
+      id: `seg-${index + 1}`,
+      ...(segment.words?.length ? {
+        words: segment.words.map((word, wordIndex) => ({...word, id: `seg-${index + 1}-word-${wordIndex + 1}`}))
+      } : {})
+    }));
 }
 
 function retryableStatus(status) {
@@ -230,6 +278,7 @@ async function createAudioChunk(audioFile, outputFile, chunk, options = {}) {
 
 function transcribeWithProvider(audioFile, options) {
   if (options.provider === 'openai') return transcribeOpenAi(audioFile, options);
+  if (options.provider === 'faster-whisper' && !options.command) return transcribeFasterWhisperLocal(audioFile, options);
   if (options.provider === 'whisper-cli' || options.provider === 'faster-whisper') return transcribeWhisperCli(audioFile, options);
   return transcribeNemotron(audioFile, options);
 }
@@ -269,8 +318,85 @@ async function transcribeWhisperCli(audioFile, options = {}) {
   const args = [audioFile, '--output_format', 'json', '--output_dir', outDir];
   if (config.model) args.push('--model', config.model);
   if (config.language && config.language !== 'auto') args.push('--language', config.language);
+  args.push('--word_timestamps', 'True');
   await withRetries(() => (options.runCommand ?? run)(command, args, {timeoutMs: config.timeoutMs, signal: options.signal}), config);
   const output = path.join(outDir, `${path.basename(audioFile, path.extname(audioFile))}.json`);
+  const {parseJsonTranscript} = await import('./transcript.js');
+  return parseJsonTranscript(await readFile(output, 'utf8'));
+}
+
+function fasterWhisperPython(options = {}) {
+  const configured = firstNonEmpty(options.python, env('FASTER_WHISPER_PYTHON'));
+  if (configured) return configured;
+  const local = process.platform === 'win32'
+    ? path.join(ROOT, '.venv-whisper', 'Scripts', 'python.exe')
+    : path.join(ROOT, '.venv-whisper', 'bin', 'python');
+  return existsSync(local) ? local : (process.platform === 'win32' ? 'python' : 'python3');
+}
+
+function isCompleteFasterWhisperModel(directory) {
+  const requiredFiles = ['model.bin', 'config.json', 'tokenizer.json'];
+  const hasVocabulary = existsSync(path.join(directory, 'vocabulary.txt')) || existsSync(path.join(directory, 'vocabulary.json'));
+  return hasVocabulary && requiredFiles.every((file) => existsSync(path.join(directory, file)));
+}
+
+function cachedHuggingFaceModel(model, options = {}) {
+  const cacheKey = HF_MODEL_CACHE_KEYS[model];
+  if (!cacheKey) return null;
+  const hfHome = firstNonEmpty(env('HF_HOME'), path.join(homedir(), '.cache', 'huggingface'));
+  const hubRoot = firstNonEmpty(options.hfHubRoot, env('HF_HUB_CACHE'), env('HUGGINGFACE_HUB_CACHE'), path.join(hfHome, 'hub'));
+  const snapshotsRoot = path.join(hubRoot, cacheKey, 'snapshots');
+  if (!existsSync(snapshotsRoot)) return null;
+  try {
+    const snapshots = readdirSync(snapshotsRoot, {withFileTypes: true})
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => path.join(snapshotsRoot, entry.name));
+    return snapshots.find(isCompleteFasterWhisperModel) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function resolveFasterWhisperModel(model, downloadRoot, options = {}) {
+  if (!model || path.isAbsolute(model) || model.includes('/') || model.includes('\\')) return model;
+  const localModel = path.join(downloadRoot, model);
+  if (isCompleteFasterWhisperModel(localModel)) return localModel;
+  return cachedHuggingFaceModel(model, options) ?? model;
+}
+
+async function transcribeFasterWhisperLocal(audioFile, options = {}) {
+  const config = getSttRuntimeConfig(options);
+  const outDir = options.outDir ?? path.dirname(audioFile);
+  const output = path.join(outDir, `${path.basename(audioFile, path.extname(audioFile))}.faster-whisper.json`);
+  const requestedModel = config.model || env('FASTER_WHISPER_MODEL') || 'small';
+  const downloadRoot = firstNonEmpty(options.downloadRoot, env('FASTER_WHISPER_MODEL_DIR'), path.join(ROOT, 'data', 'models', 'faster-whisper'));
+  const model = resolveFasterWhisperModel(requestedModel, downloadRoot, options);
+  const device = firstNonEmpty(options.device, env('FASTER_WHISPER_DEVICE'), 'cuda');
+  const computeType = firstNonEmpty(options.computeType, env('FASTER_WHISPER_COMPUTE_TYPE'), device === 'cpu' ? 'int8' : 'float16');
+  const args = [
+    FASTER_WHISPER_SCRIPT,
+    '--audio', audioFile,
+    '--output', output,
+    '--model', model,
+    '--device', device,
+    '--compute-type', computeType,
+    '--beam-size', String(nonNegativeInteger(firstNonEmpty(options.beamSize, env('FASTER_WHISPER_BEAM_SIZE')), 5))
+  ];
+  if (config.language && config.language !== 'auto') args.push('--language', config.language);
+  const initialPrompt = firstNonEmpty(options.initialPrompt, env('FASTER_WHISPER_INITIAL_PROMPT'));
+  if (initialPrompt) args.push('--initial-prompt', initialPrompt.slice(0, 1200));
+  args.push('--download-root', downloadRoot);
+  if (options.vadFilter !== false) args.push('--vad-filter');
+  try {
+    await (options.runCommand ?? run)(fasterWhisperPython(options), args, {
+      timeoutMs: config.timeoutMs,
+      signal: options.signal,
+      env: {PYTHONIOENCODING: 'utf-8'}
+    });
+  } catch (error) {
+    const detail = String(error.stderr || error.message || '').trim().split(/\r?\n/).filter(Boolean).slice(-3).join(' · ');
+    throw new Error(`Faster-Whisper local failed${detail ? `: ${detail}` : ''}`);
+  }
   const {parseJsonTranscript} = await import('./transcript.js');
   return parseJsonTranscript(await readFile(output, 'utf8'));
 }

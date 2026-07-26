@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp, rm, writeFile} from 'node:fs/promises';
+import {mkdir, mkdtemp, rm, writeFile} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {buildAudioChunks, getSttRuntimeConfig, mergeTranscriptChunks, transcribeAudio} from '../src/lib/stt.js';
@@ -157,7 +157,45 @@ test('Whisper CLI preserves model/language contract and parses mocked JSON', asy
     assert.equal(invocation.command, 'mock-whisper');
     assert.ok(invocation.args.includes('small'));
     assert.ok(invocation.args.includes('es'));
+    assert.ok(invocation.args.includes('--word_timestamps'));
     assert.equal(segments[0].text, 'hola');
+  } finally {
+    await rm(dir, {recursive: true, force: true});
+  }
+});
+
+test('Faster-Whisper adapter uses isolated Python and preserves word timestamps', async () => {
+  const dir = await mkdtemp(path.join(tmpdir(), 'shortsmith-stt-test-'));
+  const audioFile = path.join(dir, 'audio.wav');
+  const downloadRoot = path.join(dir, 'models');
+  const localModel = path.join(downloadRoot, 'small');
+  await mkdir(localModel, {recursive: true});
+  await writeFile(audioFile, 'mock audio');
+  await Promise.all(['model.bin', 'config.json', 'tokenizer.json', 'vocabulary.json'].map((file) => writeFile(path.join(localModel, file), 'mock model')));
+  let invocation;
+  try {
+    const segments = await transcribeAudio(audioFile, {
+      provider: 'faster-whisper', python: 'mock-python', model: 'small', language: 'es', initialPrompt: 'Kimi K3, GPT-5', outDir: dir, downloadRoot,
+      probe: async () => ({duration: 1}),
+      runCommand: async (command, args, options) => {
+        invocation = {command, args, options};
+        const output = args[args.indexOf('--output') + 1];
+        await writeFile(output, JSON.stringify({segments: [{
+          start: 0, end: 1, text: 'hola mundo', words: [
+            {start: 0, end: 0.4, text: 'hola', confidence: 0.9},
+            {start: 0.4, end: 1, text: 'mundo', confidence: 0.8}
+          ]
+        }]}));
+        return {stdout: '', stderr: ''};
+      }
+    });
+    assert.equal(invocation.command, 'mock-python');
+    assert.ok(invocation.args.some((arg) => arg.endsWith('faster-whisper-local.py')));
+    assert.ok(invocation.args.includes('--device'));
+    assert.equal(invocation.args[invocation.args.indexOf('--initial-prompt') + 1], 'Kimi K3, GPT-5');
+    assert.equal(invocation.args[invocation.args.indexOf('--model') + 1], localModel);
+    assert.equal(segments[0].words.length, 2);
+    assert.equal(segments[0].words[1].start, 0.4);
   } finally {
     await rm(dir, {recursive: true, force: true});
   }

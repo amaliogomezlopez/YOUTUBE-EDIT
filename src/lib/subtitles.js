@@ -1,5 +1,6 @@
 import {writeFile} from 'node:fs/promises';
 import {secondsToAssTime} from './utils.js';
+import {buildProgressiveCaptionPlan, captionsToTimedWords} from './captions/planner.js';
 
 function escapeAss(text) {
   return text
@@ -11,28 +12,13 @@ function escapeAss(text) {
 }
 
 function wordCaptions(captions) {
-  const words = [];
-  for (const caption of captions) {
-    const parts = caption.text.split(/\s+/).map((word) => word.trim()).filter(Boolean);
-    if (parts.length === 0) continue;
-    const duration = Math.max(0.1, caption.end - caption.start);
-    const weights = parts.map((word) => Math.max(1, word.replace(/[^\p{L}\p{N}]/gu, '').length));
-    const total = weights.reduce((sum, weight) => sum + weight, 0);
-    let cursor = caption.start;
-    for (const [index, word] of parts.entries()) {
-      const isLast = index === parts.length - 1;
-      const span = isLast ? caption.end - cursor : duration * (weights[index] / total);
-      const end = isLast ? caption.end : Math.min(caption.end, cursor + Math.max(0.16, span));
-      words.push({
-        ...caption,
-        text: word,
-        start: cursor,
-        end
-      });
-      cursor = end;
-    }
-  }
-  return words;
+  return captionsToTimedWords(captions).map((word) => ({
+    id: word.id,
+    text: word.text,
+    start: word.start,
+    end: word.end,
+    confidence: word.confidence
+  }));
 }
 
 function wrapCaption(text, maxChars = 34) {
@@ -52,7 +38,63 @@ function wrapCaption(text, maxChars = 34) {
   return lines.slice(0, 2).join('\\N');
 }
 
-export function captionsToAss(captions, options = {}) {
+function hexToAss(value, fallback = '#FFFFFF', includeAlpha = true) {
+  const normalized = /^#[0-9A-F]{6}$/i.test(String(value ?? '')) ? String(value).slice(1) : fallback.slice(1);
+  const [rr, gg, bb] = [normalized.slice(0, 2), normalized.slice(2, 4), normalized.slice(4, 6)];
+  return `&H${includeAlpha ? '00' : ''}${bb}${gg}${rr}${includeAlpha ? '' : '&'}`.toUpperCase();
+}
+
+function progressiveAss(plan) {
+  const {style} = plan;
+  const primary = hexToAss(style.primary);
+  const accent = hexToAss(style.accent);
+  const activeTag = hexToAss(style.activeColor, style.accent, false);
+  const primaryTag = hexToAss(style.primary, '#FFFFFF', false);
+  const header = `[Script Info]
+ScriptType: v4.00+
+PlayResX: 1080
+PlayResY: 1920
+ScaledBorderAndShadow: yes
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Progressive,${style.font},${style.baseFontSize},${primary},${accent},&H00000000,&H70000000,-1,0,0,0,100,100,${style.tracking},0,1,${style.outlineSize},${style.shadow},7,0,0,0,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`;
+  const events = [];
+  for (const page of plan.pages) {
+    for (const line of page.lines) {
+      const alignment = line.align === 'center' ? 8 : 7;
+      for (const [index, word] of line.words.entries()) {
+        const next = line.words[index + 1];
+        const start = word.start;
+        const end = next ? Math.max(start + 0.03, next.start) : Math.max(start + 0.03, page.end);
+        const visible = line.words.slice(0, index + 1).map((item) => {
+          const text = line.case === 'lower'
+            ? item.text.toLocaleLowerCase('es-ES')
+            : (line.case === 'upper' || style.uppercase ? item.text.toLocaleUpperCase('es-ES') : item.text);
+          return escapeAss(text);
+        });
+        const active = visible.pop();
+        const previous = visible.join(' ');
+        const colorized = activeTag === primaryTag
+          ? [previous, active].filter(Boolean).join(' ')
+          : `${previous ? `${previous} ` : ''}{\\1c${activeTag}}${active}`;
+        const tags = `{\\an${alignment}\\pos(${line.x},${line.y})\\fn${style.font}\\fs${line.fontSize}\\fsp${style.tracking}\\bord${style.outlineSize}\\shad${style.shadow}\\q2}`;
+        events.push(`Dialogue: 1,${secondsToAssTime(start)},${secondsToAssTime(end)},Progressive,,0,0,0,,${tags}${colorized}`);
+      }
+    }
+  }
+  return `${header}\n${events.join('\n')}\n`;
+}
+
+export function buildSubtitleDocument(captions, options = {}) {
+  if (options.mode === 'progressive' || String(options.preset ?? '').startsWith('progressive') || options.preset === 'karaoke-highlight') {
+    const plan = buildProgressiveCaptionPlan(captions, options);
+    return {ass: progressiveAss(plan), plan};
+  }
   const oneWord = options.mode === 'words' || options.wordByWord === true;
   const sourceCaptions = oneWord ? wordCaptions(captions) : captions;
   const font = options.font ?? 'Arial Black';
@@ -81,9 +123,15 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`
     const text = oneWord ? escapeAss(rawText) : wrapCaption(escapeAss(rawText));
     return `Dialogue: 0,${secondsToAssTime(caption.start)},${secondsToAssTime(caption.end)},Default,,0,0,0,,${text}`;
   });
-  return `${header}\n${events.join('\n')}\n`;
+  return {ass: `${header}\n${events.join('\n')}\n`, plan: null};
+}
+
+export function captionsToAss(captions, options = {}) {
+  return buildSubtitleDocument(captions, options).ass;
 }
 
 export async function writeAssFile(file, captions, options = {}) {
-  await writeFile(file, captionsToAss(captions, options), 'utf8');
+  const document = buildSubtitleDocument(captions, options);
+  await writeFile(file, document.ass, 'utf8');
+  return document;
 }

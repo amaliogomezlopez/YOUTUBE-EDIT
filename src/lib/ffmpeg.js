@@ -68,8 +68,16 @@ function pipLayoutForWebcamBox(box) {
   return {camWidth, camY, screenY, camSharpness};
 }
 
-function buildVerticalFilter({subtitleFile = null, mode = 'crop', webcamBox = null}) {
-  const subtitle = subtitleFile ? `subtitles=${path.basename(subtitleFile).replace(/\\/g, '/')}` : null;
+function filterPath(value) {
+  return String(value).replace(/\\/g, '/').replace(/'/g, "\\'").replace(/:/g, '\\:');
+}
+
+function buildVerticalFilter({subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null}) {
+  const subtitleName = subtitleFile ? filterPath(path.basename(subtitleFile)) : null;
+  const relativeFontDir = fontDir ? filterPath(path.relative(cwd, fontDir) || '.') : null;
+  const subtitle = subtitleName
+    ? `subtitles='${subtitleName}'${relativeFontDir ? `:fontsdir='${relativeFontDir}'` : ''}`
+    : null;
   if (mode === 'pip' && webcamBox) {
     const x = Math.max(0, Math.round(webcamBox.x));
     const y = Math.max(0, Math.round(webcamBox.y));
@@ -124,10 +132,10 @@ function videoEncodeArgs(quality) {
   ];
 }
 
-export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null}) {
+export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null}) {
   await ensureDir(path.dirname(outputFile));
   const duration = Math.max(0.5, end - start);
-  const filter = buildVerticalFilter({subtitleFile, mode, webcamBox});
+  const filter = buildVerticalFilter({subtitleFile, fontDir, cwd, mode, webcamBox});
   const args = [
     '-y',
     '-ss', String(start),

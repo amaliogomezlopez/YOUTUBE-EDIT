@@ -5,7 +5,7 @@ import {enrichCandidatesWithLlm} from './llm.js';
 import {findCandidates} from './scoring.js';
 import {loadTranscript, sliceCaptions} from './transcript.js';
 import {transcribeAudio} from './stt.js';
-import {ensureDir, JOBS_DIR, makeId, OUTPUT_DIR, readJson, round, safeFilename, writeJson} from './utils.js';
+import {ensureDir, FONTS_DIR, JOBS_DIR, makeId, OUTPUT_DIR, readJson, round, safeFilename, writeJson} from './utils.js';
 import {writeAssFile} from './subtitles.js';
 import {detectWebcamBox} from './webcam.js';
 import {buildClipPublishing, generatePublishingMetadata} from './publishing.js';
@@ -123,6 +123,11 @@ export async function processJob(state, options = {}) {
         provider: options.sttProvider,
         model: options.sttModel,
         language: options.sttLanguage,
+        device: options.sttDevice,
+        computeType: options.sttComputeType,
+        python: options.sttPython,
+        hfHubRoot: options.sttHfHubRoot,
+        initialPrompt: options.sttInitialPrompt,
         chunkSeconds: options.sttChunkSeconds,
         overlapSeconds: options.sttChunkOverlapSeconds,
         timeoutMs: options.sttTimeoutMs,
@@ -132,7 +137,8 @@ export async function processJob(state, options = {}) {
     }
     throwIfCancelled(signal);
     await writeJson(path.join(state.jobDir, 'transcript.json'), captions);
-    state.transcript = {segments: captions.length};
+    const timedWords = captions.reduce((sum, caption) => sum + (Array.isArray(caption.words) ? caption.words.length : 0), 0);
+    state.transcript = {segments: captions.length, words: timedWords, wordTiming: timedWords > 0};
 
     state.status = 'generating-metadata';
     await saveJobState(state);
@@ -183,10 +189,18 @@ export async function processJob(state, options = {}) {
       await ensureDir(clipDir);
       const clipCaptions = sliceCaptions(captions, candidate.start, candidate.end);
       const assFile = path.join(clipDir, 'captions.ass');
-      await writeAssFile(assFile, clipCaptions, {
-        mode: options.subtitleMode ?? 'words',
+      const captionPlanFile = path.join(clipDir, 'caption-plan.json');
+      const subtitleMode = options.subtitleMode ?? 'progressive';
+      const subtitleStyle = options.subtitleStyle ?? {};
+      const subtitleDocument = await writeAssFile(assFile, clipCaptions, {
+        mode: subtitleMode,
         ...(options.subtitleStyle ?? {})
       });
+      if (subtitleDocument.plan) await writeJson(captionPlanFile, subtitleDocument.plan);
+      if (subtitleDocument.plan?.timing.source !== 'word') {
+        const timingWarning = 'Los subtítulos progresivos usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
+        if (!(state.warnings ?? []).includes(timingWarning)) state.warnings = [...(state.warnings ?? []), timingWarning];
+      }
       const metadataFile = path.join(clipDir, 'metadata.json');
       const outputFile = path.join(clipDir, 'short.mp4');
       await renderVerticalClip({
@@ -195,6 +209,7 @@ export async function processJob(state, options = {}) {
         start: candidate.start,
         end: candidate.end,
         subtitleFile: assFile,
+        fontDir: FONTS_DIR,
         cwd: clipDir,
         mode: renderMode,
         webcamBox,
@@ -203,9 +218,18 @@ export async function processJob(state, options = {}) {
       });
       const metadata = {
         ...candidate,
+        renderSettings: {
+          mode: renderMode,
+          quality: options.renderQuality ?? 'high',
+          subtitleMode,
+          subtitleStyle: subtitleDocument.plan?.style ?? subtitleStyle,
+          captionTiming: subtitleDocument.plan?.timing ?? null,
+          webcamBox
+        },
         files: {
           video: outputFile,
           subtitles: assFile,
+          ...(subtitleDocument.plan ? {captionPlan: captionPlanFile} : {}),
           metadata: metadataFile
         }
       };
@@ -274,45 +298,82 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
   const captions = await readJson(path.join(state.jobDir, 'transcript.json'));
   const clipDir = path.dirname(clip.files?.metadata || path.join(state.outputDir, clip.id, 'metadata.json'));
   await ensureDir(clipDir);
-  const assFile = path.join(clipDir, 'captions.ass');
-  await writeAssFile(assFile, sliceCaptions(captions, start, end), {
-    mode: edits.subtitleMode || 'words',
-    ...(edits.subtitleStyle ?? {})
-  });
-  const outputFile = path.join(clipDir, `short-${Date.now()}.mp4`);
-  const previousVideo = clip.files?.video;
+  const renderId = makeId('render');
+  const assFile = path.join(clipDir, `captions-${renderId}.ass`);
+  const captionPlanFile = path.join(clipDir, `caption-plan-${renderId}.json`);
+  const metadataFile = path.join(clipDir, `metadata-${renderId}.json`);
+  const outputFile = path.join(clipDir, `short-${renderId}.mp4`);
+  const subtitleMode = edits.subtitleMode || clip.renderSettings?.subtitleMode || 'progressive';
+  const previousSubtitleStyle = clip.renderSettings?.subtitleStyle ?? {};
+  const requestedSubtitleStyle = edits.subtitleStyle ?? {};
+  const presetChanged = requestedSubtitleStyle.preset && requestedSubtitleStyle.preset !== previousSubtitleStyle.preset;
+  const subtitleStyle = presetChanged
+    ? requestedSubtitleStyle
+    : {...previousSubtitleStyle, ...requestedSubtitleStyle};
+  const previousClip = structuredClone(clip);
   clip.status = 'rendering';
   clip.renderError = null;
-  clip.start = start;
-  clip.end = end;
-  clip.duration = round(end - start, 3);
-  clip.renderSettings = {mode, quality: edits.renderQuality || 'high', subtitleMode: edits.subtitleMode || 'words', webcamBox};
-  await saveJobState(state);
   try {
+    await saveJobState(state);
+    const subtitleDocument = await writeAssFile(assFile, sliceCaptions(captions, start, end), {
+      mode: subtitleMode,
+      ...subtitleStyle
+    });
+    if (subtitleDocument.plan) await writeJson(captionPlanFile, subtitleDocument.plan);
     await (options.renderClip || renderVerticalClip)({
       videoFile: state.sourceVideo,
       outputFile,
       start,
       end,
       subtitleFile: assFile,
+      fontDir: FONTS_DIR,
       cwd: clipDir,
       mode,
       webcamBox,
       quality: edits.renderQuality || 'high',
       signal
     });
-    clip.files = {...(clip.files ?? {}), video: outputFile, subtitles: assFile, metadata: path.join(clipDir, 'metadata.json')};
-    clip.status = 'ready';
-    clip.renderedAt = new Date().toISOString();
-    await writeJson(clip.files.metadata, clip);
+    const nextFiles = {
+      ...(previousClip.files ?? {}),
+      video: outputFile,
+      subtitles: assFile,
+      metadata: metadataFile
+    };
+    if (subtitleDocument.plan) nextFiles.captionPlan = captionPlanFile;
+    else delete nextFiles.captionPlan;
+    const nextClip = {
+      ...previousClip,
+      start,
+      end,
+      duration: round(end - start, 3),
+      status: 'ready',
+      renderError: null,
+      renderedAt: new Date().toISOString(),
+      renderSettings: {
+        mode,
+        quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high',
+        subtitleMode,
+        subtitleStyle: subtitleDocument.plan?.style ?? subtitleStyle,
+        captionTiming: subtitleDocument.plan?.timing ?? null,
+        webcamBox
+      },
+      files: nextFiles
+    };
+    await writeJson(metadataFile, nextClip);
+    Object.keys(clip).forEach((key) => delete clip[key]);
+    Object.assign(clip, nextClip);
     await saveJobState(state);
-    if (previousVideo && previousVideo !== outputFile) await unlink(previousVideo).catch(() => {});
+    const currentFiles = new Set(Object.values(nextFiles));
+    const obsoleteFiles = Object.values(previousClip.files ?? {}).filter((file) => file && !currentFiles.has(file));
+    await Promise.all(obsoleteFiles.map((file) => unlink(file).catch(() => {})));
     return clip;
   } catch (error) {
+    Object.keys(clip).forEach((key) => delete clip[key]);
+    Object.assign(clip, previousClip);
     clip.status = signal?.aborted ? 'cancelled' : 'render_failed';
     clip.renderError = signal?.aborted ? null : error.message;
-    await saveJobState(state);
-    await unlink(outputFile).catch(() => {});
+    await saveJobState(state).catch(() => {});
+    await Promise.all([outputFile, assFile, captionPlanFile, metadataFile].map((file) => unlink(file).catch(() => {})));
     throw error;
   }
 }

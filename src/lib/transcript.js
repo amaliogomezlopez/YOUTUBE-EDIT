@@ -13,6 +13,28 @@ function parseTimecode(raw) {
   return Number(normalized);
 }
 
+function normalizeWord(item, index, captionStart, captionEnd) {
+  const start =
+    item.start ??
+    item.startSeconds ??
+    (Number.isFinite(item.startMs) ? item.startMs / 1000 : undefined);
+  const end =
+    item.end ??
+    item.endSeconds ??
+    (Number.isFinite(item.endMs) ? item.endMs / 1000 : undefined);
+  const text = String(item.word ?? item.text ?? item.token ?? '').replace(/\s+/g, ' ').trim();
+  if (!Number.isFinite(start) || !Number.isFinite(end) || Number(end) <= Number(start) || !text) return null;
+  return {
+    id: item.id ?? `word-${index + 1}`,
+    start: round(Math.max(Number(captionStart), Number(start)), 3),
+    end: round(Math.min(Number(captionEnd), Math.max(Number(end), Number(start) + 0.04)), 3),
+    text,
+    confidence: Number.isFinite(item.confidence)
+      ? item.confidence
+      : (Number.isFinite(item.probability) ? item.probability : null)
+  };
+}
+
 function normalizeCaption(item, index = 0) {
   const start =
     item.start ??
@@ -27,13 +49,19 @@ function normalizeCaption(item, index = 0) {
   if (!Number.isFinite(start) || !Number.isFinite(end) || !text) {
     return null;
   }
+  const normalizedStart = round(Number(start), 3);
+  const normalizedEnd = round(Math.max(Number(end), Number(start) + 0.2), 3);
+  const words = Array.isArray(item.words)
+    ? item.words.map((word, wordIndex) => normalizeWord(word, wordIndex, normalizedStart, normalizedEnd)).filter((word) => word && word.end > word.start)
+    : [];
   return {
     id: item.id ?? `seg-${index + 1}`,
-    start: round(Number(start), 3),
-    end: round(Math.max(Number(end), Number(start) + 0.2), 3),
+    start: normalizedStart,
+    end: normalizedEnd,
     text,
     speaker: item.speaker ?? item.speakerLabel ?? null,
-    confidence: Number.isFinite(item.confidence) ? item.confidence : null
+    confidence: Number.isFinite(item.confidence) ? item.confidence : null,
+    ...(words.length ? {words} : {})
   };
 }
 
@@ -213,6 +241,16 @@ export function sliceCaptions(captions, start, end) {
     .map((caption) => ({
       ...caption,
       start: round(Math.max(0, caption.start - start), 3),
-      end: round(Math.min(end - start, caption.end - start), 3)
+      end: round(Math.min(end - start, caption.end - start), 3),
+      ...(Array.isArray(caption.words) ? {
+        words: caption.words
+          .filter((word) => word.end > start && word.start < end)
+          .map((word) => ({
+            ...word,
+            start: round(Math.max(0, word.start - start), 3),
+            end: round(Math.min(end - start, word.end - start), 3)
+          }))
+          .filter((word) => word.end > word.start)
+      } : {})
     }));
 }
