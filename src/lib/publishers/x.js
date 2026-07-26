@@ -3,6 +3,8 @@ import {open, stat} from 'node:fs/promises';
 import {manualResult, missing, validateVideoAsset} from './common.js';
 import {postForPlatform} from '../publishing.js';
 import {abortableSleep, fetchWithTimeout} from '../network.js';
+import {refreshXAccessToken} from '../x-oauth.js';
+import {persistEnvValues} from '../utils.js';
 
 const X_API_BASE = 'https://api.x.com';
 const X_API_1_1_BASE = 'https://api.twitter.com';
@@ -37,6 +39,28 @@ function oauth1Credentials() {
     token: value('X_ACCESS_TOKEN'),
     tokenSecret: value('X_ACCESS_TOKEN_SECRET')
   };
+}
+
+async function currentAccessToken(options = {}) {
+  if (options.accessToken) return options.accessToken;
+  const existing = envToken();
+  if (!process.env.X_REFRESH_TOKEN) return existing;
+  const refresh = options.refreshAccessToken || refreshXAccessToken;
+  let tokens;
+  try {
+    tokens = await refresh(process.env.X_REFRESH_TOKEN, undefined, options);
+  } catch (error) {
+    if (existing) return existing;
+    throw error;
+  }
+  if (!tokens?.access_token) throw new Error('X refrescó OAuth sin devolver access_token.');
+  await (options.persistTokens || persistEnvValues)({
+    X_USER_ACCESS_TOKEN: tokens.access_token,
+    X_REFRESH_TOKEN: tokens.refresh_token || process.env.X_REFRESH_TOKEN,
+    X_SCOPES: tokens.scope || process.env.X_SCOPES || '',
+    X_TOKEN_EXPIRES_IN: tokens.expires_in || process.env.X_TOKEN_EXPIRES_IN || ''
+  });
+  return tokens.access_token;
 }
 
 function sanitizeApiError(error) {
@@ -427,7 +451,6 @@ export async function publishToX({videoFile, metadata, clip, options = {}}) {
     });
   }
 
-  const token = options.accessToken || envToken();
   const oauth1 = options.oauth1Credentials || oauth1Credentials();
   const getSize = options.stat || stat;
   const upload = options.uploadVideo || uploadVideo;
@@ -451,6 +474,12 @@ export async function publishToX({videoFile, metadata, clip, options = {}}) {
 
   try {
     options.signal?.throwIfAborted();
+    let token = '';
+    try {
+      token = await currentAccessToken(options);
+    } catch (error) {
+      if (!oauth1) throw error;
+    }
     const videoSize = (await getSize(videoFile)).size;
     let uploadResult;
     let uploadMode = resume.uploadMode || 'oauth2_v2';

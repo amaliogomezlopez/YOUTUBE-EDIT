@@ -12,9 +12,11 @@ import {makePkceChallenge, xAuthUrl} from '../src/lib/x-oauth.js';
 const PUBLISHER_ENV_KEYS = [
   'YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET', 'YOUTUBE_REFRESH_TOKEN',
   'META_ACCESS_TOKEN', 'INSTAGRAM_BUSINESS_ACCOUNT_ID',
-  'TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET', 'TIKTOK_ACCESS_TOKEN',
+  'TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_SECRET', 'TIKTOK_ACCESS_TOKEN', 'TIKTOK_REFRESH_TOKEN',
+  'TIKTOK_SCOPES', 'TIKTOK_PUBLISH_MODE', 'TIKTOK_PRIVACY_LEVEL',
   'X_API_KEY', 'X_API_SECRET', 'X_ACCESS_TOKEN', 'X_ACCESS_TOKEN_SECRET',
-  'X_BEARER_TOKEN', 'X_CLIENT_ID', 'X_CLIENT_SECRET', 'X_REFRESH_TOKEN',
+  'X_BEARER_TOKEN', 'X_CLIENT_ID', 'X_CLIENT_SECRET', 'X_REDIRECT_URI',
+  'X_REFRESH_TOKEN', 'X_SCOPES', 'X_TOKEN_EXPIRES_IN',
   'X_USER_ACCESS_TOKEN', 'X_OAUTH2_ACCESS_TOKEN',
   'X_CLIENT_ID_NEW_APP', 'X_CLIENT_SECRET_NEW_APP', 'X_REDIRECT_URI_NEW_APP', 'X_SCOPES_NEW_APP'
 ];
@@ -154,6 +156,109 @@ test('tiktok publisher initializes and uploads draft video', async () => {
     assert.equal(result.mode, 'draft_upload');
     assert.equal(result.publishId, 'publish-1');
     assert.equal(calls[0].accessToken, 'access-token');
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test('tiktok publisher queries creator settings and completes Direct Post', async () => {
+  const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
+  process.env.TIKTOK_ACCESS_TOKEN = 'access-token';
+  delete process.env.TIKTOK_REFRESH_TOKEN;
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-tiktok-direct-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, 'fake video');
+    const result = await publishToTiktok({
+      videoFile,
+      clip: {start: 10, end: 40},
+      metadata: {
+        summary: {short: 'Resumen'},
+        platform_posts: {tiktok: {caption: 'Caption TikTok'}}
+      },
+      options: {
+        mode: 'direct',
+        privacyLevel: 'SELF_ONLY',
+        queryCreatorInfo: async (token) => {
+          assert.equal(token, 'access-token');
+          return {
+            creator_username: 'creator',
+            creator_nickname: 'Creator',
+            privacy_level_options: ['SELF_ONLY'],
+            max_video_post_duration_sec: 180,
+            stitch_disabled: true
+          };
+        },
+        initDirectUpload: async ({postInfo}) => {
+          assert.equal(postInfo.privacy_level, 'SELF_ONLY');
+          assert.equal(postInfo.disable_stitch, true);
+          return {data: {upload_url: 'https://upload.example.com/direct', publish_id: 'publish-direct'}};
+        },
+        uploadVideoFile: async () => {},
+        pollPostStatus: async () => ({
+          status: 'published',
+          tiktokStatus: 'PUBLISH_COMPLETE',
+          terminal: true,
+          polls: 1,
+          timedOut: false,
+          postIds: ['post-direct']
+        })
+      }
+    });
+    assert.equal(result.status, 'published');
+    assert.equal(result.mode, 'direct_post');
+    assert.equal(result.privacyLevel, 'SELF_ONLY');
+    assert.equal(result.creator.username, 'creator');
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test('tiktok publisher refreshes and persists rotating OAuth tokens', async () => {
+  const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
+  process.env.TIKTOK_CLIENT_KEY = 'client-key';
+  process.env.TIKTOK_CLIENT_SECRET = 'client-secret';
+  process.env.TIKTOK_ACCESS_TOKEN = 'access-old';
+  process.env.TIKTOK_REFRESH_TOKEN = 'refresh-old';
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-tiktok-refresh-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, 'fake video');
+    let persisted;
+    const result = await publishToTiktok({
+      videoFile,
+      metadata: {summary: {short: 'Resumen'}, platform_posts: {tiktok: {caption: 'Caption'}}},
+      options: {
+        refreshAccessToken: async () => ({
+          access_token: 'access-new',
+          refresh_token: 'refresh-new',
+          scope: 'video.upload'
+        }),
+        persistTokens: async (values) => { persisted = values; },
+        initUpload: async ({accessToken}) => {
+          assert.equal(accessToken, 'access-new');
+          return {data: {upload_url: 'https://upload.example.com/video', publish_id: 'publish-refresh'}};
+        },
+        uploadVideoFile: async () => {},
+        pollPostStatus: async () => ({
+          status: 'requires_manual_action',
+          tiktokStatus: 'SEND_TO_USER_INBOX',
+          terminal: true,
+          polls: 1
+        })
+      }
+    });
+    assert.equal(result.status, 'requires_manual_action');
+    assert.equal(persisted.TIKTOK_ACCESS_TOKEN, 'access-new');
+    assert.equal(persisted.TIKTOK_REFRESH_TOKEN, 'refresh-new');
   } finally {
     await rm(jobDir, {recursive: true, force: true});
     for (const [key, value] of Object.entries(saved)) {
@@ -380,6 +485,7 @@ test('x publisher returns manual action without OAuth2 user token', async () => 
 test('x publisher uploads video and creates post', async () => {
   const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
   process.env.X_USER_ACCESS_TOKEN = 'x-user-token';
+  delete process.env.X_REFRESH_TOKEN;
   const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-x-publish-'));
   try {
     const videoFile = path.join(jobDir, 'short.mp4');
@@ -421,9 +527,54 @@ test('x publisher uploads video and creates post', async () => {
   }
 });
 
+test('x publisher refreshes and persists OAuth2 tokens before upload', async () => {
+  const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
+  process.env.X_USER_ACCESS_TOKEN = 'x-old';
+  process.env.X_REFRESH_TOKEN = 'refresh-old';
+  process.env.X_CLIENT_ID = 'client-id';
+  process.env.X_CLIENT_SECRET = 'client-secret';
+  const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-x-refresh-'));
+  try {
+    const videoFile = path.join(jobDir, 'short.mp4');
+    await writeFile(videoFile, 'fake video');
+    let persisted;
+    const result = await publishToX({
+      videoFile,
+      metadata: {summary: {short: 'Resumen'}, platform_posts: {x: {text: 'Post X'}}},
+      options: {
+        refreshAccessToken: async () => ({
+          access_token: 'x-new',
+          refresh_token: 'refresh-new',
+          scope: 'tweet.write media.write offline.access',
+          expires_in: 7200
+        }),
+        persistTokens: async (values) => { persisted = values; },
+        uploadVideo: async ({token}) => {
+          assert.equal(token, 'x-new');
+          return {mediaId: 'media-refresh'};
+        },
+        createPost: async ({token}) => {
+          assert.equal(token, 'x-new');
+          return {data: {id: 'tweet-refresh'}};
+        }
+      }
+    });
+    assert.equal(result.status, 'published');
+    assert.equal(persisted.X_USER_ACCESS_TOKEN, 'x-new');
+    assert.equal(persisted.X_REFRESH_TOKEN, 'refresh-new');
+  } finally {
+    await rm(jobDir, {recursive: true, force: true});
+    for (const [key, value] of Object.entries(saved)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
 test('x publisher returns failed with sanitized API error', async () => {
   const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
   process.env.X_USER_ACCESS_TOKEN = 'x-user-token';
+  delete process.env.X_REFRESH_TOKEN;
   const jobDir = await mkdtemp(path.join(tmpdir(), 'shortsmith-x-error-'));
   try {
     const videoFile = path.join(jobDir, 'short.mp4');
@@ -455,6 +606,7 @@ test('x publisher returns failed with sanitized API error', async () => {
 test('x publisher falls back to OAuth1 media upload and post', async () => {
   const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
   process.env.X_USER_ACCESS_TOKEN = 'x-user-token';
+  delete process.env.X_REFRESH_TOKEN;
   process.env.X_API_KEY = 'api-key';
   process.env.X_API_SECRET = 'api-secret';
   process.env.X_ACCESS_TOKEN = 'access-token';

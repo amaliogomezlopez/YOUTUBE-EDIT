@@ -2,9 +2,12 @@ import {open, stat} from 'node:fs/promises';
 import {manualResult, missing, validateVideoAsset} from './common.js';
 import {postForPlatform} from '../publishing.js';
 import {abortableSleep, fetchWithTimeout, throwIfAborted} from '../network.js';
+import {queryTiktokCreatorInfo, refreshTiktokAccessToken} from '../tiktok-oauth.js';
+import {persistEnvValues} from '../utils.js';
 
 const REQUIRED_ENV = ['TIKTOK_ACCESS_TOKEN'];
 const TIKTOK_INBOX_INIT_URL = 'https://open.tiktokapis.com/v2/post/publish/inbox/video/init/';
+const TIKTOK_DIRECT_INIT_URL = 'https://open.tiktokapis.com/v2/post/publish/video/init/';
 const TIKTOK_STATUS_URL = 'https://open.tiktokapis.com/v2/post/publish/status/fetch/';
 const TIKTOK_MAX_SINGLE_CHUNK_BYTES = 64_000_000;
 const TIKTOK_MULTI_CHUNK_BYTES = 32_000_000;
@@ -12,6 +15,13 @@ const TIKTOK_UPLOAD_RETRIES = 3;
 const TIKTOK_STATUS_TIMEOUT_MS = 30_000;
 const TIKTOK_STATUS_INITIAL_DELAY_MS = 2_000;
 const TIKTOK_STATUS_REQUEST_TIMEOUT_MS = 15_000;
+const TIKTOK_MODES = new Set(['inbox', 'direct']);
+const TIKTOK_PRIVACY_LEVELS = new Set([
+  'PUBLIC_TO_EVERYONE',
+  'FOLLOWER_OF_CREATOR',
+  'MUTUAL_FOLLOW_FRIENDS',
+  'SELF_ONLY'
+]);
 
 const STATUS_MAP = Object.freeze({
   PROCESSING_UPLOAD: {status: 'processing', terminal: false},
@@ -80,10 +90,71 @@ async function initInboxUpload({accessToken, videoSize, chunkSize = videoSize, t
     })
   }, {fetchImpl, signal, timeoutMs: requestTimeoutMs});
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok || payload.error?.code) {
+  if (!response.ok || (payload.error?.code && payload.error.code !== 'ok')) {
     throw new Error(payload.error?.message || payload.error_description || `TikTok inbox init failed with ${response.status}`);
   }
   return payload;
+}
+
+async function initDirectUpload({accessToken, videoSize, chunkSize = videoSize, totalChunkCount = 1, postInfo = {}, signal, fetchImpl = fetch, requestTimeoutMs = 30_000}) {
+  const response = await fetchWithTimeout(TIKTOK_DIRECT_INIT_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json; charset=utf-8'
+    },
+    body: JSON.stringify({
+      post_info: postInfo,
+      source_info: {
+        source: 'FILE_UPLOAD',
+        video_size: videoSize,
+        chunk_size: chunkSize,
+        total_chunk_count: totalChunkCount
+      }
+    })
+  }, {fetchImpl, signal, timeoutMs: requestTimeoutMs});
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || (payload.error?.code && payload.error.code !== 'ok')) {
+    const error = new Error(payload.error?.message || payload.error_description || `TikTok direct post init failed with ${response.status}`);
+    error.code = payload.error?.code || '';
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
+function publishMode(post, options = {}) {
+  const mode = String(options.mode || post.mode || process.env.TIKTOK_PUBLISH_MODE || 'inbox').trim().toLowerCase();
+  if (!TIKTOK_MODES.has(mode)) throw new Error('TIKTOK_PUBLISH_MODE debe ser inbox o direct.');
+  return mode;
+}
+
+function privacyLevel(post, options = {}) {
+  const privacy = String(options.privacyLevel || post.privacyLevel || process.env.TIKTOK_PRIVACY_LEVEL || 'SELF_ONLY').trim().toUpperCase();
+  if (!TIKTOK_PRIVACY_LEVELS.has(privacy)) throw new Error(`Privacidad TikTok no válida: ${privacy}.`);
+  return privacy;
+}
+
+async function currentAccessToken(options = {}) {
+  if (options.accessToken) return options.accessToken;
+  const existing = process.env.TIKTOK_ACCESS_TOKEN || '';
+  if (!process.env.TIKTOK_REFRESH_TOKEN) return existing;
+  const refresh = options.refreshAccessToken || refreshTiktokAccessToken;
+  let tokens;
+  try {
+    tokens = await refresh(process.env.TIKTOK_REFRESH_TOKEN, undefined, options);
+  } catch (error) {
+    if (existing) return existing;
+    throw error;
+  }
+  if (!tokens?.access_token) throw new Error('TikTok refrescó OAuth sin devolver access_token.');
+  await (options.persistTokens || persistEnvValues)({
+    TIKTOK_ACCESS_TOKEN: tokens.access_token,
+    TIKTOK_REFRESH_TOKEN: tokens.refresh_token || process.env.TIKTOK_REFRESH_TOKEN,
+    TIKTOK_OPEN_ID: tokens.open_id || process.env.TIKTOK_OPEN_ID || '',
+    TIKTOK_SCOPES: tokens.scope || process.env.TIKTOK_SCOPES || ''
+  });
+  return tokens.access_token;
 }
 
 export function mapTikTokPostStatus(data = {}) {
@@ -292,41 +363,78 @@ export async function publishToTiktok({videoFile, metadata, clip, options = {}})
   }
 
   const post = postForPlatform(metadata, clip, 'tiktok');
-  const missingEnv = missing(REQUIRED_ENV);
-  if (missingEnv.length) {
+  const hasAccess = Boolean(options.accessToken || process.env.TIKTOK_ACCESS_TOKEN);
+  const hasRefresh = Boolean(process.env.TIKTOK_REFRESH_TOKEN && process.env.TIKTOK_CLIENT_KEY && process.env.TIKTOK_CLIENT_SECRET);
+  if (!hasAccess && !hasRefresh) {
     return manualResult('tiktok', 'Faltan credenciales de TikTok Content Posting API y scopes de publicacion.', {
-      missingEnv,
+      missingEnv: missing(REQUIRED_ENV),
       officialApi: 'TikTok Content Posting API',
       asset: videoFile,
       caption: post.caption || metadata.summary?.short
     });
   }
 
-  const initUpload = options.initUpload || initInboxUpload;
   const putVideo = options.uploadVideoFile || uploadVideoFile;
-  const accessToken = process.env.TIKTOK_ACCESS_TOKEN;
   const caption = String(post.caption || metadata.summary?.short || '').slice(0, 2200);
   const signal = options.signal;
 
   try {
     signal?.throwIfAborted();
+    const mode = publishMode(post, options);
+    const accessToken = await currentAccessToken(options);
+    if (!accessToken) throw new Error('TikTok no dispone de un access_token utilizable.');
     const videoSize = (await stat(videoFile)).size;
     const uploadPlan = planTikTokUpload(videoSize);
     let uploadUrl = options.resumeState?.uploadUrl;
     let publishId = options.resumeState?.publishId;
+    let creatorInfo = null;
+    let selectedPrivacy = options.resumeState?.privacyLevel || (mode === 'direct' ? privacyLevel(post, options) : null);
     if (!publishId) {
+      let initUpload = options.initUpload || initInboxUpload;
+      let postInfo = {title: caption};
+      if (mode === 'direct') {
+        creatorInfo = await (options.queryCreatorInfo || queryTiktokCreatorInfo)(accessToken, {
+          signal,
+          fetch: options.fetch || fetch,
+          timeoutMs: options.requestTimeoutMs
+        });
+        const allowedPrivacy = Array.isArray(creatorInfo.privacy_level_options)
+          ? creatorInfo.privacy_level_options.map((value) => String(value).toUpperCase())
+          : [];
+        if (!allowedPrivacy.includes(selectedPrivacy)) {
+          throw new Error(`TikTok no permite ${selectedPrivacy} para esta cuenta. Opciones actuales: ${allowedPrivacy.join(', ') || 'ninguna'}.`);
+        }
+        const clipDuration = Number(clip?.end) - Number(clip?.start);
+        const maxDuration = Number(creatorInfo.max_video_post_duration_sec);
+        if (Number.isFinite(clipDuration) && Number.isFinite(maxDuration) && clipDuration > maxDuration) {
+          throw new Error(`El clip dura ${Math.ceil(clipDuration)}s y la cuenta TikTok permite un máximo de ${maxDuration}s.`);
+        }
+        initUpload = options.initDirectUpload || initDirectUpload;
+        postInfo = {
+          title: caption,
+          privacy_level: selectedPrivacy,
+          disable_duet: Boolean(creatorInfo.duet_disabled || post.disableDuet),
+          disable_comment: Boolean(creatorInfo.comment_disabled || post.disableComment),
+          disable_stitch: Boolean(creatorInfo.stitch_disabled || post.disableStitch),
+          brand_content_toggle: Boolean(post.brandContentToggle),
+          brand_organic_toggle: Boolean(post.brandOrganicToggle),
+          is_aigc: Boolean(post.isAigc)
+        };
+      }
       const init = await initUpload({
         accessToken,
         videoSize,
         ...uploadPlan,
-        postInfo: {title: caption},
+        postInfo,
         signal,
         fetchImpl: options.fetch || fetch,
         requestTimeoutMs: options.requestTimeoutMs
       });
       uploadUrl = init.data?.upload_url || init.upload_url;
       publishId = init.data?.publish_id || init.publish_id;
-      await options.onRemoteState?.({status: 'uploading', phase: 'session-created', remote: {uploadUrl, publishId, videoSize, bytesUploaded: 0, uploadPlan}});
+      await options.onRemoteState?.({status: 'uploading', phase: 'session-created', remote: {
+        uploadUrl, publishId, videoSize, bytesUploaded: 0, uploadPlan, mode, privacyLevel: selectedPrivacy
+      }});
     }
     if (!uploadUrl || !publishId) {
       throw new Error('TikTok no devolvio upload_url/publish_id.');
@@ -339,11 +447,15 @@ export async function publishToTiktok({videoFile, metadata, clip, options = {}})
         fetch: options.fetch || fetch,
         sleep: options.sleep,
         onProgress: async (progress) => {
-          await options.onRemoteState?.({status: 'uploading', phase: progress.phase, remote: {uploadUrl, publishId, videoSize, bytesUploaded: progress.bytesUploaded, uploadPlan}});
+          await options.onRemoteState?.({status: 'uploading', phase: progress.phase, remote: {
+            uploadUrl, publishId, videoSize, bytesUploaded: progress.bytesUploaded, uploadPlan, mode, privacyLevel: selectedPrivacy
+          }});
           await options.onProgress?.(progress);
         }
       });
-      await options.onRemoteState?.({status: 'processing', phase: 'uploaded', remote: {uploadUrl, publishId, videoSize, bytesUploaded: videoSize, uploadPlan}});
+      await options.onRemoteState?.({status: 'processing', phase: 'uploaded', remote: {
+        uploadUrl, publishId, videoSize, bytesUploaded: videoSize, uploadPlan, mode, privacyLevel: selectedPrivacy
+      }});
     }
     const reconcile = options.pollPostStatus || pollTikTokPostStatus;
     const postStatus = await reconcile({
@@ -363,19 +475,31 @@ export async function publishToTiktok({videoFile, metadata, clip, options = {}})
     const result = {
       platform: 'tiktok',
       status: postStatus.status,
-      officialApi: 'TikTok Content Posting API inbox video init + upload + status fetch',
-      mode: 'draft_upload',
+      officialApi: mode === 'direct'
+        ? 'TikTok Content Posting API Direct Post + upload + status fetch'
+        : 'TikTok Content Posting API inbox video init + upload + status fetch',
+      mode: mode === 'direct' ? 'direct_post' : 'draft_upload',
       asset: videoFile,
       caption,
+      privacyLevel: selectedPrivacy,
+      creator: creatorInfo ? {
+        username: creatorInfo.creator_username || null,
+        nickname: creatorInfo.creator_nickname || null
+      } : null,
       publishId,
       tiktokStatus: postStatus.tiktokStatus,
       statusPolls: postStatus.polls,
       timedOut: postStatus.timedOut,
       postIds: postStatus.postIds ?? []
     };
-    await options.onRemoteState?.({status: result.status, phase: 'reconciled', remote: {publishId, postIds: result.postIds, tiktokStatus: result.tiktokStatus, bytesUploaded: videoSize, videoSize}});
-    if (postStatus.status === 'requires_manual_action') {
+    await options.onRemoteState?.({status: result.status, phase: 'reconciled', remote: {
+      publishId, postIds: result.postIds, tiktokStatus: result.tiktokStatus,
+      bytesUploaded: videoSize, videoSize, mode, privacyLevel: selectedPrivacy
+    }});
+    if (postStatus.status === 'requires_manual_action' && mode === 'inbox') {
       result.nextStep = 'Revisa el borrador/inbox en TikTok y completa la publicacion manualmente.';
+    } else if (postStatus.status === 'requires_manual_action') {
+      result.nextStep = 'TikTok recibió el Direct Post, pero requiere revisión en la cuenta o la app todavía no está auditada.';
     } else if (postStatus.status === 'processing') {
       result.nextStep = 'TikTok sigue procesando el video; consulta de nuevo el estado mas tarde.';
     } else if (postStatus.status === 'failed') {

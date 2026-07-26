@@ -93,6 +93,37 @@ export async function exchangeXCode(code, codeVerifier, config = getXOAuthConfig
   return payload;
 }
 
+export async function refreshXAccessToken(
+  refreshToken = process.env.X_REFRESH_TOKEN,
+  config = getXOAuthConfig(),
+  options = {}
+) {
+  const missing = validateXOAuthConfig(config).filter((key) => key !== 'X_REDIRECT_URI');
+  if (missing.length) throw new Error(`Faltan variables OAuth de X: ${missing.join(', ')}`);
+  if (!refreshToken) throw new Error('Falta X_REFRESH_TOKEN.');
+  const body = new URLSearchParams({
+    refresh_token: refreshToken,
+    grant_type: 'refresh_token'
+  });
+  const response = await fetchWithTimeout(X_TOKEN_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `Basic ${Buffer.from(`${config.clientId}:${config.clientSecret}`).toString('base64')}`,
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    body
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const code = payload.error || '';
+    const error = new Error(payload.error_description || code || `X token refresh failed with ${response.status}`);
+    error.code = code;
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
 export function describeXConfig(config = getXOAuthConfig()) {
   return {
     hasClientId: Boolean(config.clientId),

@@ -6,6 +6,18 @@ export const YOUTUBE_UPLOAD_SCOPE = 'https://www.googleapis.com/auth/youtube.upl
 export const GOOGLE_AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
 export const GOOGLE_TOKEN_URL = 'https://oauth2.googleapis.com/token';
 
+function oauthError(payload, fallback, status) {
+  const code = payload.error || '';
+  const description = payload.error_description || '';
+  const message = description && description.toLowerCase() !== 'bad request'
+    ? description
+    : [code, description].filter(Boolean).join(': ') || `${fallback} (${status})`;
+  const error = new Error(message);
+  error.code = code;
+  error.status = status;
+  return error;
+}
+
 export function youtubeRedirectUri() {
   return process.env.YOUTUBE_REDIRECT_URI || publicOAuthCallback('youtube') || `http://localhost:${process.env.PORT || 3000}/api/oauth/youtube/callback`;
 }
@@ -65,7 +77,7 @@ export async function exchangeYoutubeCode(code, config = getYoutubeOAuthConfig()
   }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(payload.error_description || payload.error || `Google token exchange failed with ${response.status}`);
+    throw oauthError(payload, 'Google token exchange failed', response.status);
   }
   return payload;
 }
@@ -91,7 +103,7 @@ export async function refreshYoutubeAccessToken(config = getYoutubeOAuthConfig()
   }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(payload.error_description || payload.error || `Google refresh failed with ${response.status}`);
+    throw oauthError(payload, 'Google refresh failed', response.status);
   }
   return payload;
 }

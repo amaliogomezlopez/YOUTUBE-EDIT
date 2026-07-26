@@ -6,10 +6,26 @@ Este documento recoge el contrato operativo para subir clips generados por Short
 
 - YouTube: subida resumible por chunks desde disco mediante YouTube Data API.
 - Instagram: preparado para publicar Reels mediante Instagram Graph API, pero requiere una URL HTTPS publica del MP4.
-- TikTok: Content Posting API con upload por chunks y reconciliación del estado oficial hasta resultado terminal o timeout controlado.
-- X: conector preparado para X API v2 media upload + `POST /2/tweets`, condicionado a plan/API con escritura y subida de media habilitadas.
+- TikTok: Content Posting API con upload por chunks, modo Direct Post o inbox y reconciliación del estado oficial hasta resultado terminal o timeout controlado.
+- X: conector preparado para X API v2 media upload + `POST /2/tweets`, condicionado a créditos de pago por uso y a escritura/subida de media habilitadas.
 
 Shortsmith no debe usar scraping para publicar. Si una API, cuenta, scope, plan o revision impide publicar automaticamente, el conector debe devolver `requires_manual_action` y exportar caption/assets.
+
+### Auditoría operativa del 23 de julio de 2026
+
+| Plataforma | Conector | Coste API | Estado local comprobado | Bloqueo actual |
+| --- | --- | --- | --- | --- |
+| YouTube Shorts | Completo, resumible y con refresh OAuth | Sin tarifa por upload; cuota predeterminada de 100 uploads/día | Credenciales presentes, pero el refresh devuelve `invalid_grant` | Reconectar la cuenta desde `/api/oauth/youtube/start` |
+| Instagram Reels | Completo, con hosting HTTPS y publicación de contenedor | Sin tarifa por publicación | Asset host preparado; Meta rechaza el token con `Invalid platform app` | Corregir Instagram Login/redirect y reautorizar |
+| TikTok | Inbox y Direct Post implementados | Sin tarifa por publicación | La revisión de producción rechazó las URLs antiguas porque contenían `YOUTUBE-EDIT`; el sitio neutral ya está publicado | Sustituir las cuatro URLs, reenviar cambios, aprobar `video.publish` y conectar la cuenta |
+| X | Completo, media upload y creación del post | Pago por uso; `Content Create` cuesta actualmente 0,015 USD por solicitud | OAuth renovado correctamente con `tweet.write` y `media.write`; saldo no comprobado | Comprar créditos; no existe una ruta oficial totalmente gratuita |
+
+Fuentes oficiales consultadas:
+
+- [YouTube Data API: `videos.insert`](https://developers.google.com/youtube/v3/docs/videos/insert)
+- [Instagram API oficial de Meta en Postman](https://www.postman.com/meta/instagram/documentation/23987686-9386f468-7714-490f-9bfc-9442db5c8f00)
+- [TikTok Direct Post](https://developers.tiktok.com/doc/content-posting-api-reference-direct-post)
+- [Precios de X API](https://docs.x.com/x-api/getting-started/pricing)
 
 ## Flujo comun
 
@@ -46,7 +62,56 @@ La cola deduplica por `jobId + idempotencyKey`, limita concurrencia con `PUBLISH
 
 Las sesiones resumibles, offsets, `publish_id`, contenedores y media IDs se guardan antes de continuar cada efecto remoto. YouTube reemplaza una sesión caducada; TikTok retoma el upload/poll; Instagram y X detienen una creación ambigua como `requires_manual_action` cuando no existe una consulta oficial suficientemente segura para deduplicarla.
 
-`npm run publishing:doctor` inspecciona credenciales y capacidades declaradas sin imprimir secretos ni publicar contenido. La certificación real sigue requiriendo una subida privada/de prueba autorizada en las cuentas de cada plataforma.
+`npm run publishing:doctor` inspecciona credenciales y valida remotamente los tokens de YouTube, Instagram y TikTok sin imprimir secretos ni publicar contenido. X no se sondea porque una lectura de usuario puede ser facturable. La certificación real sigue requiriendo una subida privada/de prueba autorizada en las cuentas de cada plataforma.
+
+## Publicación única y coordinada
+
+El dashboard ya permite seleccionar YouTube, Instagram, TikTok y X, revisar una sola vez la metadata y enviar una única operación. `publishJob()` arranca los conectores seleccionados en paralelo. Si se indica `scheduledFor`, la cola local espera hasta esa fecha y entonces inicia todos los conectores; Shortsmith debe permanecer ejecutándose.
+
+La hora configurada es la hora de inicio coordinado, no una garantía de que las cuatro publicaciones sean visibles en el mismo segundo: cada plataforma tarda un tiempo distinto en subir y procesar el vídeo. YouTube puede programar visibilidad nativa con `publishAt`, mientras que Instagram, TikTok y X se hacen visibles cuando finalizan sus respectivas llamadas y procesado.
+
+## YouTube Shorts
+
+La YouTube Data API no cobra por publicar. Desde junio de 2026 el bucket predeterminado permite 100 llamadas diarias a `videos.insert`. Los proyectos de API no auditados creados después del 28 de julio de 2020 solo pueden publicar vídeos privados; la auditoría de Google levanta esa restricción.
+
+Shortsmith renueva el access token en cada subida usando `YOUTUBE_REFRESH_TOKEN`. Un error `invalid_grant` indica que el refresh token fue revocado, caducó o ya no corresponde al cliente OAuth:
+
+```text
+http://localhost:3000/api/oauth/youtube/start
+```
+
+Después de reautorizar, ejecutar `npm run publishing:doctor`.
+
+## TikTok
+
+Modos disponibles:
+
+- `inbox`: sube un borrador con `video.upload`; el creador termina la publicación dentro de TikTok.
+- `direct`: consulta primero `creator_info/query`, valida la privacidad disponible y publica con `video.publish` sin el segundo paso manual.
+
+Configuración recomendada:
+
+```text
+TIKTOK_SCOPES=user.info.basic,user.info.profile,video.upload,video.publish
+TIKTOK_PUBLISH_MODE=direct
+TIKTOK_PRIVACY_LEVEL=SELF_ONLY
+TIKTOK_REDIRECT_URI=https://sibelion.ddns.net:8443/shortsmith/oauth/app/tiktok/callback/
+```
+
+La ficha de la aplicación no debe usar la antigua ruta de GitHub Pages que contiene `YOUTUBE-EDIT`, porque TikTok la interpreta como el nombre de otra aplicación conocida. La configuración de revisión actual usa:
+
+```text
+Web/Desktop URL: https://sibelion.ddns.net:8443/shortsmith/oauth/app/
+Terms of Service URL: https://sibelion.ddns.net:8443/shortsmith/oauth/app/terms.html
+Privacy Policy URL: https://sibelion.ddns.net:8443/shortsmith/oauth/app/privacy.html
+Login Kit Redirect URI: https://sibelion.ddns.net:8443/shortsmith/oauth/app/tiktok/callback/
+```
+
+Las cuatro rutas deben responder por HTTPS con estado 200 y tipo `text/html`; el servicio OAuth del VPS las sirve desde `/home/amalio/shortsmith-oauth/site`.
+
+El access token dura 24 horas. Si existen `TIKTOK_REFRESH_TOKEN`, `TIKTOK_CLIENT_KEY` y `TIKTOK_CLIENT_SECRET`, Shortsmith lo renueva antes de publicar y guarda de forma local el nuevo access/refresh token sin imprimirlo.
+
+Direct Post no equivale todavía a publicación pública para una app sin auditar. TikTok limita los clientes no auditados a `SELF_ONLY` y a cuentas privadas; para visibilidad pública hay que solicitar la auditoría de Content Posting API. Tras aprobarla, `TIKTOK_PRIVACY_LEVEL=PUBLIC_TO_EVERYONE` solo se usa si `creator_info/query` confirma que esa opción está disponible para la cuenta.
 
 ## Instagram Reels
 
@@ -274,6 +339,7 @@ Variables:
 
 ```text
 X_USER_ACCESS_TOKEN=
+X_REFRESH_TOKEN=
 ```
 
 Alias aceptado:
@@ -306,6 +372,8 @@ Scopes recomendados para el token de usuario OAuth 2.0:
 tweet.write tweet.read users.read media.write offline.access
 ```
 
+Cuando existe `X_REFRESH_TOKEN`, Shortsmith renueva y persiste el token OAuth 2.0 antes de subir el vídeo. Esto evita que el access token de dos horas caduque entre una programación y su ejecución.
+
 Shortsmith puede generar una URL OAuth 2.0 con `media.write` aunque el portal no muestre ese scope:
 
 ```text
@@ -327,6 +395,7 @@ X_SCOPES_NEW_APP=tweet.read tweet.write users.read offline.access media.write
 
 Notas:
 - `X_BEARER_TOKEN` suele ser token app-only y no basta para publicar como usuario.
+- X API usa créditos de pago por uso. A julio de 2026 no hay una vía oficial de escritura totalmente gratuita; `POST /2/tweets` consume al menos una operación `Content Create`.
 - Los tokens OAuth 1.0a (`X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_TOKEN_SECRET`) se usan como fallback oficial mediante `upload.twitter.com/1.1/media/upload.json` (`INIT`, `APPEND`, `FINALIZE`, `STATUS`) y `POST /1.1/statuses/update.json` si X API v2 bloquea `media.write`.
 - X no ofrece programacion nativa del post en `POST /2/tweets`; si Shortsmith necesita publicar en una fecha futura, debe guardar un job local `pending` y ejecutarlo con scheduler propio.
 - Si el plan, app, scope o acceso de la cuenta no permite `media.write` o escritura de posts, el conector debe devolver `requires_manual_action` cuando pueda detectarlo antes de publicar, o `failed` con mensaje saneado si X rechaza una llamada API.

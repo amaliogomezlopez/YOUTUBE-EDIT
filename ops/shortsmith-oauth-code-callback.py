@@ -13,6 +13,16 @@ CODE_FILE = Path(os.environ.get(
     "SHORTSMITH_OAUTH_CODE_FILE",
     "/home/amalio/shortsmith-oauth/instagram-code.json"
 ))
+PUBLIC_SITE_DIR = Path(os.environ.get(
+    "SHORTSMITH_PUBLIC_SITE_DIR",
+    "/home/amalio/shortsmith-oauth/site"
+))
+PUBLIC_SITE_PREFIX = "/shortsmith/oauth/app/"
+PUBLIC_CONTENT_TYPES = {
+    ".css": "text/css; charset=utf-8",
+    ".html": "text/html; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+}
 
 
 def write_private_json(path, payload):
@@ -37,8 +47,35 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(encoded)
 
+    def send_public_site_file(self, parsed_path):
+        relative_path = parsed_path.removeprefix(PUBLIC_SITE_PREFIX)
+        if not relative_path or relative_path.endswith("/"):
+            relative_path += "index.html"
+        site_root = PUBLIC_SITE_DIR.resolve()
+        requested = (site_root / relative_path).resolve()
+        try:
+            requested.relative_to(site_root)
+        except ValueError:
+            self.send_text(403, "forbidden\n")
+            return
+        if not requested.is_file() or requested.suffix not in PUBLIC_CONTENT_TYPES:
+            self.send_text(404, "not found\n")
+            return
+        encoded = requested.read_bytes()
+        self.send_response(200)
+        self.send_header("content-type", PUBLIC_CONTENT_TYPES[requested.suffix])
+        self.send_header("content-length", str(len(encoded)))
+        self.send_header("cache-control", "public, max-age=300")
+        self.send_header("content-security-policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self' data:; base-uri 'none'; frame-ancestors 'none'")
+        self.send_header("x-content-type-options", "nosniff")
+        self.end_headers()
+        self.wfile.write(encoded)
+
     def do_GET(self):
         parsed = urlparse(self.path)
+        if parsed.path.startswith(PUBLIC_SITE_PREFIX):
+            self.send_public_site_file(parsed.path)
+            return
         if parsed.path == "/shortsmith/oauth/instagram/health":
             self.send_text(200, "ok\n")
             return
