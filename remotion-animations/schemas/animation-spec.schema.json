@@ -356,6 +356,7 @@
               "freeze-and-callout",
               "count-impact",
               "path-follow",
+              "radial-orbit",
               "before-after-wipe"
             ]
           }

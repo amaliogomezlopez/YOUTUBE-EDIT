@@ -6,6 +6,43 @@
     "primitive": "Hay primitivas útiles, pero falta una composición genérica completa.",
     "planned": "El patrón está especificado y necesita implementación."
   },
+  "selectionPolicy": {
+    "rule": "Elegir por significado, evidencia y verbo de movimiento; no por preferencia estética.",
+    "steps": [
+      "Extraer la afirmación exacta y su evidencia.",
+      "Descartar patrones cuyo rejectWhen se cumpla.",
+      "Comparar communicates, selectWhen y evidenceRequired.",
+      "Preferir una entrada ready que resuelva la relación semántica.",
+      "Elegir un solo patrón dominante por beat y documentar alternativas rechazadas.",
+      "Derivar efectos y sonido después de fijar el patrón."
+    ],
+    "readyRouting": [
+      {
+        "intent": "single-exact-metric",
+        "patternId": "data.hero-metric"
+      },
+      {
+        "intent": "quantitative-categories",
+        "patternId": "data.bar-focus"
+      },
+      {
+        "intent": "ordered-trend",
+        "patternId": "data.line-trend-zoom"
+      },
+      {
+        "intent": "exact-part-to-whole",
+        "patternId": "data.part-to-whole"
+      },
+      {
+        "intent": "causal-stages",
+        "patternId": "process.signal-flow"
+      },
+      {
+        "intent": "qualitative-scale",
+        "patternId": "concept.scale-proportion"
+      }
+    ]
+  },
   "focusTreatments": [
     {
       "id": "accent-only",
@@ -38,6 +75,10 @@
     {
       "id": "path-follow",
       "description": "Un pulso recorre un camino y conserva continuidad espacial."
+    },
+    {
+      "id": "radial-orbit",
+      "description": "Una señal recorre un anillo y activa etiquetas o salidas relacionadas."
     },
     {
       "id": "before-after-wipe",
@@ -152,15 +193,19 @@
       "id": "data.part-to-whole",
       "family": "data",
       "label": "Parte de un total",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "RadialOrbitSummary",
+        "compositionId": "Scout-RadialOrbitSummary",
+        "source": "src/motion/ScoutedPatterns.tsx"
+      },
       "communicates": "Proporción exacta respecto de un total conocido.",
       "selectWhen": "La fuente aporta porcentaje o parte y total verificables.",
       "rejectWhen": "La fuente solo dice 'la mayoría' o 'una parte importante'.",
       "evidenceRequired": ["parte y total o porcentaje exacto", "unidad", "etiqueta"],
       "acceptedAssets": [],
       "motionVerb": "completar y separar",
-      "focusTreatments": ["accent-only", "count-impact", "desaturate-peers"],
+      "focusTreatments": ["accent-only", "count-impact", "desaturate-peers", "radial-orbit"],
       "soundProfile": "metric-impact",
       "durationSeconds": {"min": 6, "max": 8},
       "defaultFormat": "fullscreen",
@@ -296,11 +341,12 @@
       "id": "process.signal-flow",
       "family": "process",
       "label": "Flujo de señal",
-      "status": "primitive",
+      "status": "ready",
       "implementation": {
-        "component": "SignalPath",
-        "compositionId": null,
-        "source": "src/motion/Toolkit.tsx"
+        "component": "ConnectedCardChain",
+        "compositionId": "Scout-ConnectedCardChain",
+        "source": "src/motion/ScoutedPatterns.tsx",
+        "primitive": "SignalPath"
       },
       "communicates": "Cadena causal o pipeline con dirección clara.",
       "selectWhen": "La explicación contiene entre 2 y 6 etapas conectadas.",
@@ -462,8 +508,12 @@
       "id": "concept.scale-proportion",
       "family": "concept",
       "label": "Escala y proporción cualitativa",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "CapacityMatrix",
+        "compositionId": "Scout-CapacityMatrix",
+        "source": "src/motion/ScoutedPatterns.tsx"
+      },
       "communicates": "Diferencia de magnitud sin atribuir cifras inexistentes.",
       "selectWhen": "La fuente usa 'más', 'menos', 'enorme' o 'pequeño' de forma cualitativa.",
       "rejectWhen": "Hay cifras suficientes para una representación cuantitativa.",

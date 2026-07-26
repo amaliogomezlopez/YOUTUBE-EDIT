@@ -35,7 +35,11 @@
     "render:ahorrar-limites": "node scripts/render-ahorrar-limites.mjs",
     "render:ahorrar-limites-v2": "node scripts/render-ahorrar-limites-v2.mjs",
     "render:ahorrar-limites-v3-audio": "node scripts/render-ahorrar-limites-v3-audio.mjs",
+    "render:ahorrar-limites-v4": "node scripts/render-ahorrar-limites-v4.mjs",
+    "stills:ahorrar-limites-v4": "node scripts/render-ahorrar-limites-v4-stills.mjs",
     "render:toolkit": "node scripts/render-toolkit.mjs",
+    "render:scout-catalog": "node scripts/render-scout-catalog.mjs",
+    "stills:scout-catalog": "node scripts/render-scout-catalog-stills.mjs",
     "prepare:sfx": "node scripts/prepare-sfx.mjs"
   },
   "sideEffects": [

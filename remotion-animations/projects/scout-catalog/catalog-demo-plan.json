@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "project": "scout-catalog",
+  "sourceReference": {
+    "url": "https://www.youtube.com/watch?v=QNFLN6IvB88",
+    "analysis": "data/review/animation-scout/QNFLN6IvB88-survey/manual-visual-analysis.json",
+    "catalogProposal": "data/review/animation-scout/QNFLN6IvB88-survey/catalog-proposal.json",
+    "imagesSentToExternalModel": false
+  },
+  "editorialStatus": "catalog-demos-only",
+  "animations": [
+    {
+      "compositionId": "Scout-RadialOrbitSummary",
+      "durationSeconds": 8,
+      "patternId": "data.part-to-whole",
+      "effectIds": ["focus.radial-orbit", "reveal.path-draw"],
+      "sourceWindowSeconds": [449, 468],
+      "renderFile": "radial-orbit-summary.mp4"
+    },
+    {
+      "compositionId": "Scout-ConnectedCardChain",
+      "durationSeconds": 8,
+      "patternId": "process.signal-flow",
+      "effectIds": ["focus.path-follow", "reveal.element"],
+      "sourceWindowSeconds": [474, 490.5],
+      "renderFile": "connected-card-chain.mp4"
+    },
+    {
+      "compositionId": "Scout-CapacityMatrix",
+      "durationSeconds": 8,
+      "patternId": "concept.scale-proportion",
+      "effectIds": ["reveal.element-stagger", "focus.accent-only"],
+      "sourceWindowSeconds": [493.5, 496.4],
+      "renderFile": "capacity-matrix.mp4"
+    }
+  ],
+  "rightsBoundary": "Solo se reutilizan mecánica, ritmo y jerarquía. No se copian textos, datos, logotipos, iconos, tipografías ni colores de la referencia."
+}

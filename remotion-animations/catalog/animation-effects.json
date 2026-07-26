@@ -23,6 +23,118 @@
       "purpose": "Salir de forma breve y limpia."
     }
   ],
+  "soundDesignPolicy": {
+    "decision": "required",
+    "defaultDelivery": "both",
+    "rules": [
+      "Analizar cada transformación significativa y asignar un cue o silencio intencional.",
+      "Elegir la familia sonora desde el soundProfile del patrón.",
+      "Sincronizar cues con eventos visuales, no con decoración.",
+      "Preferir efectos amaliometria-* de procedencia propia.",
+      "Entregar variante sonorizada y variante silenciosa.",
+      "Exponer soundEnabled y soundMix como props."
+    ]
+  },
+  "soundProfiles": [
+    {
+      "id": "metric-impact",
+      "purpose": "Fijar una cifra o proporción exacta.",
+      "defaultFiles": [
+        "sfx/amaliometria-data-tick.wav",
+        "sfx/amaliometria-soft-impact.wav",
+        "sfx/amaliometria-success-chime.wav"
+      ],
+      "maxCues": 5,
+      "rules": [
+        "Usar ticks solo en hitos legibles.",
+        "Reservar un impacto para el valor final.",
+        "Usar chime únicamente si existe resolución positiva."
+      ]
+    },
+    {
+      "id": "trend-focus",
+      "purpose": "Acompañar un trazado y confirmar su punto focal.",
+      "defaultFiles": [
+        "sfx/amaliometria-rise-whoosh.wav",
+        "sfx/amaliometria-ui-pulse.wav",
+        "sfx/amaliometria-soft-impact.wav"
+      ],
+      "maxCues": 4,
+      "rules": [
+        "Acompañar el recorrido con un whoosh ligero.",
+        "Usar un pulso en el punto focal.",
+        "Evitar impactos durante cada punto de la serie."
+      ]
+    },
+    {
+      "id": "comparison-split",
+      "purpose": "Distinguir estados o lados y confirmar la diferencia.",
+      "defaultFiles": [
+        "sfx/amaliometria-ui-pulse.wav",
+        "sfx/amaliometria-rise-whoosh.wav",
+        "sfx/amaliometria-soft-impact.wav"
+      ],
+      "maxCues": 5,
+      "rules": [
+        "Separar temporalmente los pulsos de cada lado.",
+        "Usar un único impacto al revelar la conclusión."
+      ]
+    },
+    {
+      "id": "process-flow",
+      "purpose": "Hacer audible el viaje entre etapas y la llegada al resultado.",
+      "defaultFiles": [
+        "sfx/amaliometria-rise-whoosh.wav",
+        "sfx/amaliometria-ui-pulse.wav",
+        "sfx/amaliometria-success-chime.wav"
+      ],
+      "maxCues": 6,
+      "rules": [
+        "Usar whoosh durante un recorrido visible.",
+        "Activar solo nodos semánticos con pulsos.",
+        "Confirmar el resultado sin sonorizar cada frame."
+      ]
+    },
+    {
+      "id": "filter-compress",
+      "purpose": "Subrayar la reducción de muchas entradas a una salida.",
+      "defaultFiles": [
+        "sfx/amaliometria-rise-whoosh.wav",
+        "sfx/amaliometria-soft-impact.wav"
+      ],
+      "maxCues": 4,
+      "rules": [
+        "Acompañar la convergencia con un whoosh.",
+        "Usar un impacto al consolidar la salida."
+      ]
+    },
+    {
+      "id": "asset-reveal",
+      "purpose": "Introducir un asset y fijar una región relevante.",
+      "defaultFiles": [
+        "sfx/amaliometria-rise-whoosh.wav",
+        "sfx/amaliometria-ui-pulse.wav"
+      ],
+      "maxCues": 3,
+      "rules": [
+        "Sonorizar el revelado principal.",
+        "Usar pulso solo cuando aparece el foco."
+      ]
+    },
+    {
+      "id": "precision-callout",
+      "purpose": "Anclar una palabra, etiqueta o anotación precisa.",
+      "defaultFiles": [
+        "sfx/amaliometria-data-tick.wav",
+        "sfx/amaliometria-ui-pulse.wav"
+      ],
+      "maxCues": 4,
+      "rules": [
+        "Usar un tick o pulso breve al anclar.",
+        "Evitar impactos fuertes sobre una etiqueta simple."
+      ]
+    }
+  ],
   "textPolicy": {
     "autoMode": {
       "lettersMaxWords": 3,
@@ -88,6 +200,7 @@
     "freeze-and-callout": "focus.freeze-callout",
     "count-impact": "focus.count-impact",
     "path-follow": "focus.path-follow",
+    "radial-orbit": "focus.radial-orbit",
     "before-after-wipe": "transition.before-after-wipe"
   },
   "effects": [
@@ -376,6 +489,25 @@
         "El pulso sigue una ruta visible.",
         "No usar en conectores decorativos.",
         "El destino responde cuando llega la señal."
+      ]
+    },
+    {
+      "id": "focus.radial-orbit",
+      "category": "focus",
+      "phase": "focus",
+      "status": "ready",
+      "implementation": {
+        "component": "RadialOrbitSummary",
+        "source": "src/motion/ScoutedPatterns.tsx",
+        "demoCompositionId": "Scout-RadialOrbitSummary"
+      },
+      "purpose": "Recorrer un anillo para relacionar una parte central con etapas o salidas periféricas.",
+      "selectWhen": "Una proporción, ciclo o núcleo conecta con entre tres y cinco elementos relacionados.",
+      "constraints": [
+        "Mantener una única dirección de recorrido.",
+        "Limitar las etiquetas orbitales a cinco.",
+        "No usar el anillo como decoración sin relación parte-total o cíclica.",
+        "Reservar el acento completo para la señal y la conclusión."
       ]
     },
     {

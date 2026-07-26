@@ -1,5 +1,16 @@
 # Diseño sonoro para animaciones Remotion
 
+## Decisión obligatoria
+
+Analizar el sonido en toda animación que vaya a implementarse o renderizarse,
+aunque el usuario no lo mencione. Para cada transformación significativa,
+elegir un cue sincronizado o registrar silencio intencional. Entregar por
+defecto versión sonorizada y versión silenciosa.
+
+La IA debe decidir los cues a partir del `soundProfile` del patrón, el verbo de
+movimiento y los frames exactos. El sonido confirma una causa visual; no crea
+una importancia que la imagen no tiene.
+
 ## Recursos del proyecto
 
 - Biblioteca maestra local: `assets/audio-effects/source-library/`.
@@ -36,6 +47,42 @@ los WAV normalizados y los efectos propios.
 - En Remotion 4.0.499 del proyecto, `Sequence` no expone `premountFor`; no
   introducir esa prop hasta actualizar y verificar la versión.
 
+## Mapa de eventos a sonidos propios
+
+Preferir estos archivos de procedencia propia:
+
+| Evento visual | Archivo inicial recomendado |
+| --- | --- |
+| Inicio de recorrido, ascenso o wipe | `amaliometria-rise-whoosh.wav` |
+| Aparición de nodo o activación breve | `amaliometria-ui-pulse.wav` |
+| Tick de dato o checkpoint | `amaliometria-data-tick.wav` |
+| Bloqueo, selección o conclusión con peso | `amaliometria-soft-impact.wav` |
+| Resultado positivo o cierre resuelto | `amaliometria-success-chime.wav` |
+
+Adaptar por patrón:
+
+- `metric-impact`: tick durante hitos relevantes; un impacto al fijar la cifra;
+  chime solo si existe una resolución positiva.
+- `trend-focus`: whoosh suave durante el trazado; pulso en el punto focal;
+  impacto discreto al concluir el zoom.
+- `comparison-split`: un pulso por lado o estado, separados en el tiempo; un
+  único impacto al revelar la diferencia.
+- `process-flow`: whoosh durante el viaje, pulsos al activar nodos y chime al
+  llegar al resultado. No sonorizar cada frame del recorrido.
+- `filter-compress`: whoosh de entrada y un impacto al consolidar la salida.
+- `asset-reveal`: whoosh breve de revelado y pulso solo en el foco.
+- `precision-callout`: tick o pulso al anclar la anotación; evitar impacto
+  fuerte sobre una simple etiqueta.
+
+Casos Scout:
+
+- `RadialOrbitSummary`: whoosh ligero al iniciar el anillo, ticks en un máximo
+  de dos hitos y chime o impacto cuando las salidas quedan conectadas.
+- `ConnectedCardChain`: pulso al entrar cada nodo significativo, whoosh durante
+  el conector y confirmación al llegar al resultado.
+- `CapacityMatrix`: un tick por oleada, no por icono; impacto suave en la
+  selección final.
+
 ## Mezcla
 
 - Diseñar para convivir con locución. Como referencia, entregar efectos con
@@ -63,3 +110,5 @@ el comando en `prepare-sfx.mjs`; no crear binarios sin documentar su síntesis.
 5. Generar waveforms para comprobar presencia, silencios y sincronía.
 6. Ajustar escenas claramente más fuertes o débiles que el resto.
 7. Confirmar que la pieza sigue entendiéndose con `soundEnabled=false`.
+8. Confirmar que cada cue aparece en el plan con evento visual, tiempo, archivo
+   y razón; eliminar cualquier sonido sin causa visible.

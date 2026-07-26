@@ -1,4 +1,4 @@
 interface:
   display_name: "Crear animaciones con Remotion"
-  short_description: "Diseña y renderiza motion graphics para YouTube"
-  default_prompt: "Usa $create-remotion-animations para analizar estos clips y crear las animaciones Remotion que mejor expliquen sus ideas."
+  short_description: "Elige patrones y sonoriza motion graphics"
+  default_prompt: "Usa $create-remotion-animations para analizar estos clips, elegir el patrón del catálogo y sincronizar los efectos de sonido que mejor expliquen cada idea."

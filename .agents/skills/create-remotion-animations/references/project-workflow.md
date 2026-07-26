@@ -23,6 +23,20 @@ Buscar de forma recursiva `*.mp4`, `*.mkv`, `*.mov`, `*.webm`, `*.srt`, `*.vtt`,
 
 Mantener los originales en modo solo lectura durante todo el trabajo.
 
+## Referencias visuales externas
+
+Si un vídeo se aporta para localizar o reconstruir una animación, usar
+`$scout-animations` antes de programar. Esa skill se encarga de:
+
+1. `survey` sobre el vídeo completo para localizar ventanas;
+2. `study` a 8-12 fps sobre cada ventana seleccionada;
+3. revisión de hojas, análisis y propuesta de catálogo;
+4. handoff de la mecánica elegida a esta skill.
+
+Este flujo no requiere transcripción. El scouting describe píxeles, ritmo y
+transformaciones; la transcripción de la pieza final sigue siendo la fuente de
+hechos, cifras y claims.
+
 ## Transcripción
 
 Priorizar, por este orden:
@@ -72,11 +86,19 @@ Preparar una fila por propuesta con:
 | `durationSeconds` | Duración de la animación |
 | `concept` | Idea visual en una frase |
 | `evidence` | Cita breve o paráfrasis fiel de la transcripción |
+| `patternId` | Patrón elegido por significado y evidencia |
+| `effectIds` | Efectos necesarios para construir y enfocar |
+| `soundProfile` | Perfil sonoro declarado por el patrón |
+| `soundCues` | Eventos visuales que reciben cue o silencio intencional |
 | `compositionId` | ID Remotion estable |
 | `format` | `fullscreen` u `overlay-alpha` |
 | `priority` | Alta, media o baja |
 
 No programar todas las ideas posibles. Elegir las que mejoran materialmente la comprensión y aportan variedad visual.
+
+Aplicar [catalog-selection.md](catalog-selection.md) antes de crear una
+composición. La selección del patrón y la propuesta sonora corresponden al
+agente: no esperar a que el usuario nombre un componente o un efecto de sonido.
 
 ## Coordinación con otras skills
 

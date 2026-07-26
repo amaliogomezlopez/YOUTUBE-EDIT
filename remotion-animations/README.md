@@ -87,6 +87,17 @@ npm run remotion:render
 npm run remotion:overlay
 ```
 
+Para estudiar primero una animación de referencia:
+
+```powershell
+npm run scout:animations -- --source "D:\videos\referencia.mp4" --mode survey
+npm run scout:animations -- --source "D:\videos\referencia.mp4" --mode study --start 42 --end 50 --fps 12 --analyze
+```
+
+El resultado `remotion-handoff.json` enlaza las hojas de contacto y las
+recomendaciones visuales con este catálogo. No es todavía un
+`animation-spec.json`: la pieza final debe aportar su evidencia editorial.
+
 Los renders quedan en `remotion-animations\out\` y no se versionan.
 
 ## Uso directo

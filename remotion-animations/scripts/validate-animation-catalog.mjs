@@ -42,12 +42,53 @@ const effectIds = new Set();
 const effectPhases = new Set(
   effectsCatalog.phases?.map((phase) => phase.id) ?? [],
 );
+const soundProfileIds = new Set();
 
 if (catalog.version !== 1) {
   errors.push("catalog.version debe ser 1");
 }
 if (!Array.isArray(catalog.patterns) || catalog.patterns.length === 0) {
   errors.push("catalog.patterns debe contener al menos un patrón");
+}
+if (
+  effectsCatalog.soundDesignPolicy?.decision !== "required" ||
+  effectsCatalog.soundDesignPolicy?.defaultDelivery !== "both"
+) {
+  errors.push(
+    "animation-effects.soundDesignPolicy debe exigir decisión sonora y entrega both",
+  );
+}
+if (
+  !Array.isArray(effectsCatalog.soundProfiles) ||
+  effectsCatalog.soundProfiles.length === 0
+) {
+  errors.push("animation-effects.soundProfiles debe contener perfiles");
+}
+for (const [index, profile] of (
+  effectsCatalog.soundProfiles ?? []
+).entries()) {
+  const location = `soundProfiles[${index}]`;
+  if (!/^[a-z]+(?:-[a-z]+)*$/.test(profile.id ?? "")) {
+    errors.push(`${location}.id no es válido`);
+  } else if (soundProfileIds.has(profile.id)) {
+    errors.push(`${location}.id está duplicado: ${profile.id}`);
+  } else {
+    soundProfileIds.add(profile.id);
+  }
+  if (!Number.isInteger(profile.maxCues) || profile.maxCues < 1) {
+    errors.push(`${location}.maxCues debe ser un entero positivo`);
+  }
+  if (
+    !Array.isArray(profile.defaultFiles) ||
+    profile.defaultFiles.length === 0 ||
+    profile.defaultFiles.some(
+      (file) => !/^sfx\/amaliometria-[a-z-]+\.wav$/.test(file),
+    )
+  ) {
+    errors.push(
+      `${location}.defaultFiles debe usar WAV propios sfx/amaliometria-*`,
+    );
+  }
 }
 
 for (const [index, pattern] of (catalog.patterns ?? []).entries()) {
@@ -95,6 +136,31 @@ for (const [index, pattern] of (catalog.patterns ?? []).entries()) {
   }
   if (pattern.status === "planned" && pattern.implementation !== null) {
     errors.push(`${location} está planned pero implementation no es null`);
+  }
+  if (!soundProfileIds.has(pattern.soundProfile)) {
+    errors.push(
+      `${location}.soundProfile referencia un perfil desconocido: ${pattern.soundProfile}`,
+    );
+  }
+}
+
+if (
+  !Array.isArray(catalog.selectionPolicy?.readyRouting) ||
+  catalog.selectionPolicy.readyRouting.length === 0
+) {
+  errors.push("catalog.selectionPolicy.readyRouting debe contener rutas");
+}
+for (const [index, route] of (
+  catalog.selectionPolicy?.readyRouting ?? []
+).entries()) {
+  const location = `selectionPolicy.readyRouting[${index}]`;
+  const pattern = (catalog.patterns ?? []).find(
+    (candidate) => candidate.id === route.patternId,
+  );
+  if (!pattern) {
+    errors.push(`${location}.patternId no existe: ${route.patternId}`);
+  } else if (pattern.status !== "ready") {
+    errors.push(`${location}.patternId no está ready: ${route.patternId}`);
   }
 }
 
@@ -179,5 +245,6 @@ console.log(
   `Catálogo válido: ${catalog.patterns.length} patrones ` +
     `(${Object.entries(statusCounts)
       .map(([status, count]) => `${status}=${count}`)
-      .join(", ")}), ${effectsCatalog.effects.length} efectos transversales.`,
+      .join(", ")}), ${effectsCatalog.effects.length} efectos transversales, ` +
+    `${soundProfileIds.size} perfiles sonoros.`,
 );

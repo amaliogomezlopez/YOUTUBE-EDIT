@@ -1,0 +1,4 @@
+interface:
+  display_name: "Scout Animations"
+  short_description: "Explora vídeos y cataloga motion reutilizable"
+  default_prompt: "Usa $scout-animations para analizar este vídeo de referencia, estudiar sus mejores animaciones a 8-12 fps y preparar su integración en el catálogo Remotion."

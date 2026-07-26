@@ -43,6 +43,12 @@ El sistema añade cuatro capas para escalar:
 4. **Prompts especializados**: router, familias visuales, efectos, sonido y
    auditoría.
 
+Como capa previa opcional, `Animation Scout` convierte vídeos de referencia en
+hojas de contacto, perfil de movimiento e informes multimodales sin
+transcripción. Su salida `remotion-handoff.json` aporta lenguaje visual y
+mecánica observada al planner, pero no sustituye la evidencia editorial ni el
+`animation-spec.json`. Consulta `docs/animation-scouting.md`.
+
 También conviene corregir una ambigüedad: el componente
 `RisingHistogram` actual representa barras categóricas. Un histograma real
 representa una distribución mediante intervalos continuos. El catálogo usa

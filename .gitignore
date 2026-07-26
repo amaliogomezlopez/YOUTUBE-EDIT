@@ -17,6 +17,7 @@ data/secrets/*
 __pycache__/
 *.pyc
 .venv-whisper/
+.tools/
 .impeccable/
 assets/audio-effects/source-library/
 tiktok-verification-site/

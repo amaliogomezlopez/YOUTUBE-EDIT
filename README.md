@@ -17,6 +17,7 @@ Herramienta local para convertir un vídeo largo en transcripción, clips vertic
 - Subtítulos progresivos editables: presets, jerarquía visual, palabras acumulativas, fuentes locales y fallback por palabra o línea.
 - Dashboard local organizado en Producción, Biblioteca, Storysmith y Carouselsmith.
 - Carouselsmith independiente: 10 layouts, imágenes importadas o generadas, overlays SVG, edición persistente y exportación PNG/JPEG 4:5 y 9:16.
+- Animation Scout local: muestreo visual denso, hojas de contacto, perfil de movimiento y análisis multimodal opcional para llevar referencias a Remotion.
 - Historial persistente de jobs, recuperación tras recargar y estado seguro de proveedores.
 - Edición real y persistente de título, resumen, hashtags, timestamps y copy por plataforma.
 - Confirmación explícita e idempotencia antes de publicar en plataformas externas.
@@ -93,6 +94,31 @@ Los resultados quedan en:
 data/output/<job-id>/<clip-id>/short.mp4
 data/output/<job-id>/<clip-id>/metadata.json
 ```
+
+## Scouting visual de animaciones
+
+Para recorrer un vídeo y localizar tratamientos visuales interesantes sin
+transcribirlo:
+
+```bash
+npm run scout:animations -- --source "D:\videos\referencia.mp4" --mode survey
+```
+
+Después, estudia un rango concreto a más de dos fotogramas por segundo:
+
+```bash
+npm run scout:animations -- --source "D:\videos\referencia.mp4" --mode study --start 00:42 --end 00:50 --fps 12 --analyze
+```
+
+El modo `study` usa 8 fps por defecto y admite hasta 60 fps, limitado por los
+fps de la fuente y por `--max-frames`. Los resultados quedan en
+`data/review/animation-scout/` e incluyen hojas de contacto, perfil heurístico,
+informe visual y `remotion-handoff.json`. Solo `--analyze` envía las hojas de
+contacto al proveedor configurado con `VISION_LLM_*`; nunca envía audio ni
+transcripción. Las URLs requieren `yt-dlp`.
+
+Consulta [docs/animation-scouting.md](docs/animation-scouting.md) para el flujo
+de dos pasadas y la configuración del modelo multimodal.
 
 ## Formato transcript recomendado
 

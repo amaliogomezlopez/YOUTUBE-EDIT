@@ -10,14 +10,9 @@ import {
   AhorrarLimitesAnimation,
   ahorrarLimitesSchema,
 } from "./AhorrarLimites";
-import {
-  AhorrarLimitesV2,
-  ahorrarLimitesV2Schema,
-} from "./AhorrarLimitesV2";
-import {
-  AhorrarLimitesV3,
-  ahorrarLimitesV3Schema,
-} from "./AhorrarLimitesV3";
+import { AhorrarLimitesV2, ahorrarLimitesV2Schema } from "./AhorrarLimitesV2";
+import { AhorrarLimitesV3, ahorrarLimitesV3Schema } from "./AhorrarLimitesV3";
+import { AhorrarLimitesV4, ahorrarLimitesV4Schema } from "./AhorrarLimitesV4";
 import {
   HistogramDemoProps,
   KineticNumberDemo,
@@ -37,6 +32,17 @@ import {
   textFocusJourneySchema,
   transversalEffectsDemoSchema,
 } from "./motion/EffectsDemos";
+import {
+  CapacityMatrixDemo,
+  ConnectedCardChainDemo,
+  RadialOrbitSummaryDemo,
+  capacityMatrixDemoProps,
+  capacityMatrixDemoSchema,
+  connectedCardChainDemoProps,
+  connectedCardChainDemoSchema,
+  radialOrbitDemoProps,
+  radialOrbitDemoSchema,
+} from "./motion/ScoutedPatternDemos";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -132,6 +138,38 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={textFocusJourneyProps}
         />
       </Folder>
+      <Folder name="Scout-Catalog">
+        <Composition
+          id="Scout-RadialOrbitSummary"
+          component={RadialOrbitSummaryDemo}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={radialOrbitDemoSchema}
+          defaultProps={radialOrbitDemoProps}
+        />
+        <Composition
+          id="Scout-ConnectedCardChain"
+          component={ConnectedCardChainDemo}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={connectedCardChainDemoSchema}
+          defaultProps={connectedCardChainDemoProps}
+        />
+        <Composition
+          id="Scout-CapacityMatrix"
+          component={CapacityMatrixDemo}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={capacityMatrixDemoSchema}
+          defaultProps={capacityMatrixDemoProps}
+        />
+      </Folder>
       <Folder name="Ahorrar-Limites">
         {ahorrarLimitesCompositions.map((composition) => (
           <Composition
@@ -177,6 +215,21 @@ export const RemotionRoot: React.FC = () => {
           />
         ))}
       </Folder>
+      <Folder name="Ahorrar-Limites-V4">
+        {ahorrarLimitesV4Compositions.map((composition) => (
+          <Composition
+            key={composition.id}
+            id={composition.id}
+            component={AhorrarLimitesV4}
+            durationInFrames={composition.durationSeconds * 60}
+            fps={60}
+            width={1920}
+            height={1080}
+            schema={ahorrarLimitesV4Schema}
+            defaultProps={composition.props}
+          />
+        ))}
+      </Folder>
     </>
   );
 };
@@ -184,11 +237,11 @@ export const RemotionRoot: React.FC = () => {
 const lineChartDemoProps: LineChartDemoProps = {
   title: "Gráfica de línea con foco",
   data: [
-    {label: "ENE", value: 42},
-    {label: "FEB", value: 51},
-    {label: "MAR", value: 64},
-    {label: "ABR", value: 72},
-    {label: "MAY", value: 91},
+    { label: "ENE", value: 42 },
+    { label: "FEB", value: 51 },
+    { label: "MAR", value: 64 },
+    { label: "ABR", value: 72 },
+    { label: "MAY", value: 91 },
   ],
   focusIndex: 4,
   accentColor: "#42C7F5",
@@ -198,10 +251,10 @@ const lineChartDemoProps: LineChartDemoProps = {
 const histogramDemoProps: HistogramDemoProps = {
   title: "Histograma proporcional",
   data: [
-    {label: "A", value: 32},
-    {label: "B", value: 54},
-    {label: "C", value: 77},
-    {label: "D", value: 91},
+    { label: "A", value: 32 },
+    { label: "B", value: 54 },
+    { label: "C", value: 77 },
+    { label: "D", value: 91 },
   ],
   highlightIndex: 3,
   accentColor: "#45E1A4",
@@ -262,7 +315,8 @@ const ahorrarLimitesCompositions = [
       scene: "harness-compare",
       clipNumber: 10,
       title: "Mismo modelo, distinta carga de entrada",
-      kicker: "Un harness configurable permite ajustar lo que acompaña a cada prompt.",
+      kicker:
+        "Un harness configurable permite ajustar lo que acompaña a cada prompt.",
       accentColor: "#45E1A4",
     },
   },
@@ -284,7 +338,8 @@ const ahorrarLimitesCompositions = [
       scene: "batch-prompts",
       clipNumber: 17,
       title: "Agrupa tareas en un solo prompt",
-      kicker: "Una entrada de contexto puede resolver varias tareas relacionadas.",
+      kicker:
+        "Una entrada de contexto puede resolver varias tareas relacionadas.",
       accentColor: "#45E1A4",
     },
   },
@@ -295,7 +350,8 @@ const ahorrarLimitesCompositions = [
       scene: "skills-range",
       clipNumber: 22,
       title: "Entre 10 y 30 skills es un buen rango",
-      kicker: "Más de 30 empieza a introducir ruido: sintetiza lo imprescindible.",
+      kicker:
+        "Más de 30 empieza a introducir ruido: sintetiza lo imprescindible.",
       accentColor: "#FFD43B",
     },
   },
@@ -306,7 +362,8 @@ const ahorrarLimitesCompositions = [
       scene: "fresh-chat",
       clipNumber: 24,
       title: "Cuando se atasca, abre un chat nuevo",
-      kicker: "Entrega la implementación y pide una revisión crítica desde cero.",
+      kicker:
+        "Entrega la implementación y pide una revisión crítica desde cero.",
       accentColor: "#45E1A4",
     },
   },
@@ -418,9 +475,109 @@ const ahorrarLimitesV3Compositions = ahorrarLimitesV2Compositions.map(
   }),
 );
 
-const overlayMetadata: CalculateMetadataFunction<
-  ChartHighlightProps
-> = () => ({
+const ahorrarLimitesV4Compositions = [
+  {
+    id: "ALV4-01-Coste",
+    durationSeconds: 7,
+    props: {
+      scene: "rising-cost",
+      clipNumber: 1,
+      title: "El cuarto mensaje cuesta más que el primero",
+      kicker: "Cada turno en el mismo chat dispara el consumo.",
+      accentColor: "#FFD43B",
+    },
+  },
+  {
+    id: "ALV4-09-Tokens",
+    durationSeconds: 8,
+    props: {
+      scene: "token-breakdown",
+      clipNumber: 9,
+      title: "Miles de tokens antes de tu pregunta",
+      kicker: "System prompt y herramientas consumen antes de responder.",
+      accentColor: "#42C7F5",
+    },
+  },
+  {
+    id: "ALV4-12-Ventana",
+    durationSeconds: 6,
+    props: {
+      scene: "context-window",
+      clipNumber: 12,
+      title: "La ventana de contexto se llena",
+      kicker: "Cada prompt arrastra toda la conversación anterior.",
+      accentColor: "#45E1A4",
+    },
+  },
+  {
+    id: "ALV4-15-Atencion",
+    durationSeconds: 8,
+    props: {
+      scene: "sparse-attention",
+      clipNumber: 15,
+      title: "Atención dispersa: índices en vez de releer todo",
+      kicker: "El modelo busca la parte relevante con índices.",
+      accentColor: "#42C7F5",
+    },
+  },
+  {
+    id: "ALV4-19-Skills",
+    durationSeconds: 8,
+    props: {
+      scene: "three-skills",
+      clipNumber: 19,
+      title: "Una skill para cada cosa",
+      kicker: "Servidores, arquitectura y rol del agente.",
+      accentColor: "#FFD43B",
+    },
+  },
+  {
+    id: "ALV4-21-Markdown",
+    durationSeconds: 9,
+    props: {
+      scene: "md-clutter",
+      clipNumber: 21,
+      title: "Los .md acumulan y contaminan el contexto",
+      kicker: "Más tokens, peores resultados.",
+      accentColor: "#FF6B78",
+    },
+  },
+  {
+    id: "ALV4-23-Bucle",
+    durationSeconds: 8,
+    props: {
+      scene: "review-loop",
+      clipNumber: 23,
+      title: "El bucle de revisión que no termina",
+      kicker: "Corregir en el mismo chat empeora el resultado.",
+      accentColor: "#FF6B78",
+    },
+  },
+  {
+    id: "ALV4-26-Memoria",
+    durationSeconds: 8,
+    props: {
+      scene: "memory-cost",
+      clipNumber: 26,
+      title: "La memoria guarda preferencias que no viajan entre repos",
+      kicker: "Desactívala si trabajas en varios proyectos.",
+      accentColor: "#42C7F5",
+    },
+  },
+  {
+    id: "ALV4-29-Pico",
+    durationSeconds: 7,
+    props: {
+      scene: "off-peak",
+      clipNumber: 29,
+      title: "Fuera de horas pico, el límite estira más",
+      kicker: "Trabaja en horas valle de tu proveedor.",
+      accentColor: "#45E1A4",
+    },
+  },
+] as const;
+
+const overlayMetadata: CalculateMetadataFunction<ChartHighlightProps> = () => ({
   defaultCodec: "prores",
   defaultVideoImageFormat: "png",
   defaultPixelFormat: "yuva444p10le",
