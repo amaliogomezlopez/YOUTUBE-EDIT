@@ -1,0 +1,4 @@
+interface:
+  display_name: "Carouselsmith"
+  short_description: "Crea carruseles editoriales con imágenes y overlays"
+  default_prompt: "Usa $carouselsmith para crear un carrusel informativo verificable y listo para revisar."

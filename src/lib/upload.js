@@ -7,10 +7,11 @@ import Busboy from 'busboy';
 const VIDEO_EXTENSIONS = new Set(['.mp4', '.mov', '.mkv', '.webm', '.m4v']);
 const TRANSCRIPT_EXTENSIONS = new Set(['.srt', '.vtt', '.json', '.txt']);
 
-function extensionFor(field, filename) {
+function extensionFor(field, filename, config) {
   const extension = path.extname(String(filename || '')).toLowerCase();
-  const allowed = field === 'video' ? VIDEO_EXTENSIONS : TRANSCRIPT_EXTENSIONS;
-  return allowed.has(extension) ? extension : field === 'video' ? '.mp4' : '.txt';
+  const allowed = config?.extensions ?? (field === 'video' ? VIDEO_EXTENSIONS : TRANSCRIPT_EXTENSIONS);
+  const fallback = config?.fallbackExtension ?? (field === 'video' ? '.mp4' : '.txt');
+  return allowed.has(extension) ? extension : fallback;
 }
 
 async function removeFiles(files) {
@@ -22,9 +23,16 @@ export async function parseMultipartUpload(req, options = {}) {
   if (!uploadDir) throw new Error('uploadDir is required.');
   const maxVideoBytes = Number(options.maxVideoBytes ?? 20 * 1024 * 1024 * 1024);
   const maxTranscriptBytes = Number(options.maxTranscriptBytes ?? 20 * 1024 * 1024);
+  const fileFields = options.fileFields ?? {
+    video: {extensions: VIDEO_EXTENSIONS, fallbackExtension: '.mp4', maxBytes: maxVideoBytes, label: 'El vídeo'},
+    transcript: {extensions: TRANSCRIPT_EXTENSIONS, fallbackExtension: '.txt', maxBytes: maxTranscriptBytes, label: 'La transcripción'}
+  };
+  const acceptedFields = Object.keys(fileFields);
+  if (!acceptedFields.length) throw new Error('At least one multipart file field is required.');
+  const declaredLimit = Object.values(fileFields).reduce((total, config) => total + Number(config.maxBytes || 0), 0);
   const declared = Number(req.headers?.['content-length'] || 0);
-  if (declared && declared > maxVideoBytes + maxTranscriptBytes + 2 * 1024 * 1024) {
-    throw new Error(`Upload demasiado grande. Límite: ${Math.round(maxVideoBytes / 1024 / 1024)} MB.`);
+  if (declared && declared > declaredLimit + 2 * 1024 * 1024) {
+    throw new Error(`Upload demasiado grande. Límite de archivos: ${Math.round(declaredLimit / 1024 / 1024)} MB.`);
   }
   await mkdir(uploadDir, {recursive: true});
   const fields = {};
@@ -46,7 +54,7 @@ export async function parseMultipartUpload(req, options = {}) {
     try {
       parser = Busboy({
         headers: req.headers,
-        limits: {fieldNameSize: 80, fieldSize: 2 * 1024 * 1024, fields: 20, files: 2, parts: 24, headerPairs: 100}
+        limits: {fieldNameSize: 80, fieldSize: 2 * 1024 * 1024, fields: 20, files: Number(options.maxFiles || acceptedFields.length), parts: 24, headerPairs: 100}
       });
     } catch (error) {
       reject(new Error(`Multipart inválido: ${error.message}`));
@@ -58,7 +66,8 @@ export async function parseMultipartUpload(req, options = {}) {
       fields[name] = value;
     });
     parser.on('file', (name, stream, info) => {
-      if (!['video', 'transcript'].includes(name)) {
+      const config = fileFields[name];
+      if (!config) {
         stream.resume();
         return;
       }
@@ -66,8 +75,9 @@ export async function parseMultipartUpload(req, options = {}) {
         stream.resume();
         return void fail(new Error(`Solo se admite un archivo para ${name}.`));
       }
-      const maxBytes = name === 'video' ? maxVideoBytes : maxTranscriptBytes;
-      const filename = `${name}-${Date.now()}-${randomUUID()}${extensionFor(name, info.filename)}`;
+      const maxBytes = Number(config.maxBytes || 0);
+      const safeField = /^[a-z0-9_-]{1,40}$/i.test(name) ? name : 'file';
+      const filename = `${safeField}-${Date.now()}-${randomUUID()}${extensionFor(name, info.filename, config)}`;
       const destination = path.join(uploadDir, filename);
       const record = {field: name, path: destination, originalName: path.basename(info.filename || filename), mimeType: info.mimeType, size: 0, temporary: true};
       created.push(record);
@@ -81,12 +91,12 @@ export async function parseMultipartUpload(req, options = {}) {
             limited = true;
             stream.unpipe(output);
             output.destroy();
-            fail(new Error(`${name === 'video' ? 'El vídeo' : 'La transcripción'} supera el límite permitido.`));
+            fail(new Error(`${config.label || `El archivo ${name}`} supera el límite permitido.`));
           }
         });
         stream.on('limit', () => {
           limited = true;
-          fail(new Error(`${name === 'video' ? 'El vídeo' : 'La transcripción'} supera el límite permitido.`));
+          fail(new Error(`${config.label || `El archivo ${name}`} supera el límite permitido.`));
         });
         stream.on('error', rejectWrite);
         output.on('error', rejectWrite);
