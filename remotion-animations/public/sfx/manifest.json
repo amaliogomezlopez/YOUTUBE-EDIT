@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "format": {
+    "codec": "pcm_s16le",
+    "sampleRate": 48000,
+    "channels": 2
+  },
+  "licenseWarning": "Los archivos library-* conservan la procedencia de la biblioteca local; verificar licencia antes de redistribuirlos aisladamente.",
+  "library": [
+    {
+      "source": "Smooth Woosh.wav",
+      "output": "library-smooth-whoosh.wav"
+    },
+    {
+      "source": "Digital Counting.mp3",
+      "output": "library-digital-count.wav"
+    },
+    {
+      "source": "UI Data Loading Sound Effect.mp3",
+      "output": "library-data-loading.wav"
+    },
+    {
+      "source": "Chime 1.mp3",
+      "output": "library-chime.wav"
+    },
+    {
+      "source": "Pop.mp3",
+      "output": "library-pop.wav"
+    },
+    {
+      "source": "Keyboard Typing 1.wav",
+      "output": "library-keyboard.wav"
+    },
+    {
+      "source": "01 Processing.wav",
+      "output": "library-processing.wav"
+    },
+    {
+      "source": "DSGNWhsh_Short Whip, Short Whoosh 1_Ocular Sounds_Quick Whips_The Complete Whooshes Collection.wav",
+      "output": "library-quick-whip.wav"
+    }
+  ],
+  "custom": [
+    {
+      "output": "amaliometria-ui-pulse.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-data-tick.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-soft-impact.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-rise-whoosh.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-success-chime.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    }
+  ]
+}

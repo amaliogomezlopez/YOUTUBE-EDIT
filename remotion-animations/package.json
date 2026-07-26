@@ -1,0 +1,43 @@
+{
+  "name": "remotion-animations",
+  "version": "1.0.0",
+  "description": "Shortsmith motion graphics and reusable Remotion compositions.",
+  "repository": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@remotion/cli": "4.0.499",
+    "@remotion/media": "^4.0.499",
+    "@remotion/zod-types": "^4.0.499",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.499",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.499",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.19.0",
+    "prettier": "3.8.1",
+    "typescript": "5.9.3"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion bundle",
+    "upgrade": "remotion upgrade",
+    "lint": "eslint src && tsc",
+    "check": "npm run lint && remotion compositions src/index.ts",
+    "still:chart": "remotion still src/index.ts ChartHighlight out/chart-highlight.png --frame=75",
+    "render:chart": "remotion render src/index.ts ChartHighlight out/chart-highlight.mp4",
+    "render:overlay": "remotion render src/index.ts ChartHighlightOverlay out/chart-highlight-overlay.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le",
+    "render:ahorrar-limites": "node scripts/render-ahorrar-limites.mjs",
+    "render:ahorrar-limites-v2": "node scripts/render-ahorrar-limites-v2.mjs",
+    "render:ahorrar-limites-v3-audio": "node scripts/render-ahorrar-limites-v3-audio.mjs",
+    "render:toolkit": "node scripts/render-toolkit.mjs",
+    "prepare:sfx": "node scripts/prepare-sfx.mjs"
+  },
+  "sideEffects": [
+    "*.css"
+  ]
+}

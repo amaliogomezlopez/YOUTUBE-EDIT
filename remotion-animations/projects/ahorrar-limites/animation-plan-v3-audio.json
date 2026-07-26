@@ -1,0 +1,73 @@
+{
+  "version": 3,
+  "project": "ahorrar-limites",
+  "sourceDirectory": "C:\\Users\\amalio\\Desktop\\VIDEOS-YOUTUBE\\VIDEOS YOUTUBE\\VIDEOS_RECORDED\\VACACIONES\\1-ahorrar-limites",
+  "variant": "fullscreen-with-sfx",
+  "soundMix": 0.65,
+  "animations": [
+    {
+      "clipNumber": 3,
+      "sourceFile": "3.mkv",
+      "sourceInSeconds": 14.5,
+      "durationSeconds": 8,
+      "compositionId": "ALV3A-03-Input-90",
+      "renderFile": "03\\03_tokens_entrada_90_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 6,
+      "sourceFile": "6.mkv",
+      "sourceInSeconds": 8.5,
+      "durationSeconds": 8,
+      "compositionId": "ALV3A-06-Harness",
+      "renderFile": "06\\06_harness_flujo_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 10,
+      "sourceFile": "10.mkv",
+      "sourceInSeconds": 4.5,
+      "durationSeconds": 8,
+      "compositionId": "ALV3A-10-Carga",
+      "renderFile": "10\\10_carga_contexto_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 13,
+      "sourceFile": "13.mkv",
+      "sourceInSeconds": 1.8,
+      "durationSeconds": 6,
+      "compositionId": "ALV3A-13-Contexto",
+      "renderFile": "13\\13_contexto_acumulado_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 17,
+      "sourceFile": "17.mkv",
+      "sourceInSeconds": 5.5,
+      "durationSeconds": 8,
+      "compositionId": "ALV3A-17-Un-Prompt",
+      "renderFile": "17\\17_una_lectura_varias_tareas_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 22,
+      "sourceFile": "22.mkv",
+      "sourceInSeconds": 12,
+      "durationSeconds": 8,
+      "compositionId": "ALV3A-22-Skills",
+      "renderFile": "22\\22_rango_skills_10_30_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 24,
+      "sourceFile": "24.mkv",
+      "sourceInSeconds": 38,
+      "durationSeconds": 10,
+      "compositionId": "ALV3A-24-Chat-Nuevo",
+      "renderFile": "24\\24_chat_nuevo_v3_audio.mp4"
+    },
+    {
+      "clipNumber": 27,
+      "sourceFile": "27.mkv",
+      "sourceInSeconds": 26,
+      "durationSeconds": 10,
+      "compositionId": "ALV3A-27-Subagentes",
+      "renderFile": "27\\27_orquestador_subagentes_v3_audio.mp4"
+    }
+  ]
+}
