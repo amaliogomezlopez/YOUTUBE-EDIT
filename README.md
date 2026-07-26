@@ -1,6 +1,6 @@
 # Shortsmith
 
-Herramienta local para convertir un vídeo largo en transcripción, clips verticales, metadata editable, Stories y paquetes de publicación mediante APIs oficiales.
+Herramienta local para convertir un vídeo largo en transcripción, clips verticales, metadata editable, Stories, carruseles informativos y paquetes de publicación mediante APIs oficiales.
 
 ## Qué incluye
 
@@ -14,8 +14,9 @@ Herramienta local para convertir un vídeo largo en transcripción, clips vertic
 - Render vertical `1080x1920` con FFmpeg y subtítulos ASS quemados.
 - Encoder de calidad alta por defecto: escalado Lanczos, `crf 17`, preset `slow` y buffer alto para evitar artefactos en textos/pantallas.
 - Layout móvil adaptativo: videos horizontales usan webcam arriba + pantalla abajo cuando detecta webcam; videos verticales se recortan a pantalla completa.
-- Subtítulos estilo Shorts: mayúsculas, amarillo con reborde negro, palabra por palabra.
-- Dashboard local organizado en Producción, Biblioteca y Storysmith.
+- Subtítulos progresivos editables: presets, jerarquía visual, palabras acumulativas, fuentes locales y fallback por palabra o línea.
+- Dashboard local organizado en Producción, Biblioteca, Storysmith y Carouselsmith.
+- Carouselsmith independiente: 10 layouts, imágenes importadas o generadas, overlays SVG, edición persistente y exportación PNG/JPEG 4:5 y 9:16.
 - Historial persistente de jobs, recuperación tras recargar y estado seguro de proveedores.
 - Edición real y persistente de título, resumen, hashtags, timestamps y copy por plataforma.
 - Confirmación explícita e idempotencia antes de publicar en plataformas externas.
@@ -126,25 +127,35 @@ También acepta `LLM_BASE_URL`, `LLM_API_KEY` y `LLM_MODEL`.
 
 Si no configuras LLM, el sistema usa scoring heurístico. Esto es deliberado: el MVP debe funcionar offline con transcript.
 
-## STT opcional
+## STT local y subtítulos progresivos
 
-Si no proporcionas transcript:
-
-```bash
-set STT_PROVIDER=openai
-set OPENAI_API_KEY=tu_key
-set OPENAI_TRANSCRIBE_MODEL=gpt-4o-mini-transcribe
-```
-
-Para probar local con faster-whisper compatible con CLI:
+Instala Faster-Whisper en el entorno aislado del proyecto:
 
 ```bash
-set TRANSCRIPTION_PROVIDER=faster-whisper
-set FASTER_WHISPER_COMMAND=whisper
-set TRANSCRIPTION_MODEL=small
-set TRANSCRIPTION_LANGUAGE=es
-npm run process -- --video "D:\videos\directo.mp4" --top 5 --no-llm
+npm run stt:setup
 ```
+
+La UI permite escoger `small`, `medium`, `large-v3` o `large-v3-turbo`, idioma, vocabulario contextual y GPU sin editar `.env`. Los modelos se descargan en `data/models/faster-whisper` —o se reutilizan desde la caché local de Hugging Face— y nunca se envía el audio a un servicio externo.
+
+Por CLI:
+
+```bash
+npm run process -- --video "D:\videos\directo.mp4" --stt-provider faster-whisper --stt-model large-v3-turbo --stt-prompt "Kimi K3, GPT-5, Claude Opus" --subtitle-mode progressive --subtitle-preset progressive-punchy --top 5 --no-llm
+```
+
+En Windows, `--stt-device cuda --stt-compute-type float16` requiere CUDA 12/cuBLAS y cuDNN 9 compatibles con CTranslate2. Se puede usar el fallback completamente local `--stt-device cpu --stt-compute-type int8` mientras se prepara ese runtime.
+
+El modo progresivo conserva timestamps por palabra, construye bloques acumulativos y genera `captions.ass` más `caption-plan.json` junto a cada Short. Copia fuentes TTF/OTF con licencia adecuada en `data/fonts` y selecciona su nombre de familia en la UI.
+
+Prueba el renderer sin usar un vídeo privado:
+
+```bash
+npm run smoke:captions
+```
+
+Consulta [docs/local-progressive-captions.md](docs/local-progressive-captions.md) para el contrato, presets y diagnóstico de GPU.
+
+Como alternativa local más lenta, el proveedor `whisper-cli` usa el Whisper clásico ya instalado y también solicita timestamps por palabra.
 
 Para un servicio local tipo Nemotron ASR que acepte `multipart/form-data` con campo `file`:
 
@@ -192,7 +203,7 @@ La Biblioteca muestra espacio libre y permite simular la limpieza. Los temporale
 - La detección YuNet sigue una única región de webcam estable; podcasts multicámara o cambios de plano complejos requieren revisión manual en el editor.
 - El scoring heurístico es útil para ranking inicial. Las métricas pueden registrarse para análisis, pero todavía no recalibran automáticamente el ranking.
 - El texto plano sin timestamps se aproxima por duración; para resultados serios usa SRT/VTT/JSON.
-- El render actual usa FFmpeg. Remotion queda como siguiente capa para plantillas más ricas, animaciones y edición visual avanzada.
+- El render principal usa FFmpeg. El módulo `remotion-animations/` añade composiciones parametrizables para motion graphics, empezando por una gráfica con columna y cifra destacadas.
 - Si la fuente es 360p/480p, el export puede ser `1080x1920` pero no tendrá detalle real 1080p. Para resultados nítidos usa fuente mínima `1280x720` horizontal o `720x1280` vertical.
 - Las APIs externas pueden imponer revisión de aplicación, scopes, cuotas o planes. Cuando no permiten automatización, Shortsmith conserva el asset/caption y marca `requires_manual_action`.
 
@@ -200,7 +211,7 @@ La Biblioteca muestra espacio libre y permite simular la limpieza. Los temporale
 
 - Tracking dinámico de cara entre planos y soporte multicámara.
 - Sincronización oficial automática de métricas desde cada plataforma.
-- Plantillas Remotion.
+- Integración automática de las plantillas Remotion dentro de los jobs de Shortsmith.
 - Feedback loop con métricas reales para recalibrar el scoring.
 
 ## MiniMax M3 para metadata
