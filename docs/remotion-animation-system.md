@@ -401,6 +401,32 @@ Normalmente implementar a partir de 10 puntos, siempre que evidencia sea 4 o
 5. El umbral no sustituye criterio editorial. Una pieza decorativa con buena
 puntuación técnica sigue siendo descartable.
 
+## Sistema visual y revisión v2
+
+La ampliación profesional se apoya en cuatro contratos coordinados:
+
+- `DesignSystem.ts` centraliza temas, perfiles de movimiento, tipografía,
+  espaciado y formatos responsive;
+- `ExtendedPatterns.tsx` aporta nueve patrones reutilizables para capturas,
+  comparaciones, cronologías, rankings, acumulaciones, embudos, ramificaciones
+  y fotografías;
+- Review Studio permite probar variantes A/B/C con `@remotion/player`,
+  contexto del vídeo, safe zones, comentarios por frame y aprobación después
+  de QA;
+- el importador de assets normaliza imágenes y rasteriza SVG externos antes
+  de registrarlos con procedencia, licencia, hashes y punto focal.
+
+Los reportes estáticos y los obtenidos de frames renderizados tienen contratos
+separados:
+
+- `schemas/visual-qa-report.schema.json`;
+- `schemas/rendered-visual-qa-report.schema.json`.
+
+El manifest `catalog/capabilities.manifest.json` es la fuente que debe leer la
+IA antes de seleccionar un patrón. El perfil de preferencias evita repetir
+tema, geometría, metáfora y cámara en piezas consecutivas. La entrega final
+requiere una revisión aprobada; modificar props invalida automáticamente el QA.
+
 Reglas de diversidad para un lote:
 
 - no repetir el mismo patrón en clips consecutivos;
@@ -429,7 +455,10 @@ remotion-animations/
 │   ├── clip-animation-input.schema.json
 │   ├── animation-spec.schema.json
 │   ├── visual-selection.schema.json
-│   └── image-asset-manifest.schema.json
+│   ├── image-asset-manifest.schema.json
+│   ├── review-session.schema.json
+│   ├── visual-qa-report.schema.json
+│   └── rendered-visual-qa-report.schema.json
 ├── src/
 │   ├── visuals/
 │   │   ├── icons/

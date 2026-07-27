@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/visual-qa-report.schema.json",
+  "title": "Shortsmith Remotion visual QA report",
+  "type": "object",
+  "required": [
+    "version",
+    "checkedAt",
+    "score",
+    "passed",
+    "checks",
+    "issues"
+  ],
+  "properties": {
+    "version": {"const": 1},
+    "checkedAt": {"type": "string"},
+    "score": {"type": "number", "minimum": 0, "maximum": 100},
+    "passed": {"type": "boolean"},
+    "dimensions": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["width", "height"],
+          "properties": {
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1}
+          },
+          "additionalProperties": false
+        },
+        {"type": "null"}
+      ]
+    },
+    "checks": {
+      "type": "object",
+      "required": ["blocking", "warnings", "info"],
+      "properties": {
+        "blocking": {"type": "integer", "minimum": 0},
+        "warnings": {"type": "integer", "minimum": 0},
+        "info": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "code", "message", "field"],
+        "properties": {
+          "severity": {"enum": ["blocking", "warning", "info"]},
+          "code": {"type": "string"},
+          "message": {"type": "string"},
+          "field": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

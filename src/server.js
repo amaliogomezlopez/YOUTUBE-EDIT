@@ -30,8 +30,18 @@ import {exportCarouselProject} from './modules/carousels/exporter.js';
 import {renderCarouselSvg} from './modules/carousels/renderer.js';
 import {carouselDir, listCarouselProjects, loadCarouselProject} from './modules/carousels/repository.js';
 import {createCarouselProject, publicCarouselProject, updateCarouselProject} from './modules/carousels/service.js';
+import {
+  addReviewComment,
+  createReviewSession,
+  listReviewSessions,
+  loadReviewSession,
+  reviewStudioCatalog,
+  runReviewQa,
+  updateReviewSession
+} from './lib/remotion-review.js';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
+const REMOTION_PUBLIC_DIR = path.join(ROOT, 'remotion-animations', 'public');
 let processingQueue = null;
 let publishingQueue = null;
 const oauthStates = new Set();
@@ -130,10 +140,33 @@ function sendCarouselError(res, error) {
   sendJson(res, 500, {error: 'No se pudo completar la operación de carrusel.', code: 'CAROUSEL_INTERNAL_ERROR'});
 }
 
-async function serveStatic(res, file) {
+function sendReviewError(res, error) {
+  const status = Number(error?.status);
+  if (status >= 400 && status < 500) {
+    sendJson(res, status, {
+      error: error.message,
+      code: error.code || 'REMOTION_REVIEW_ERROR'
+    });
+    return;
+  }
+  if (error instanceof SyntaxError) {
+    sendJson(res, 400, {
+      error: 'El cuerpo JSON no es válido.',
+      code: 'INVALID_JSON'
+    });
+    return;
+  }
+  console.error(`Remotion review request failed: ${error?.name || 'Error'} (${error?.code || 'INTERNAL_ERROR'})`);
+  sendJson(res, 500, {
+    error: 'No se pudo completar la operación de revisión.',
+    code: 'REMOTION_REVIEW_INTERNAL_ERROR'
+  });
+}
+
+async function serveStatic(res, file, staticRoot = PUBLIC_DIR, options = {}) {
   try {
     const resolved = path.resolve(file);
-    const relative = path.relative(PUBLIC_DIR, resolved);
+    const relative = path.relative(staticRoot, resolved);
     if (relative.startsWith('..') || path.isAbsolute(relative)) {
       sendText(res, 403, 'Forbidden');
       return;
@@ -142,7 +175,10 @@ async function serveStatic(res, file) {
       sendText(res, 404, 'Not found');
       return;
     }
-    res.writeHead(200, securityHeaders({contentType: contentType(resolved), cache: !resolved.endsWith('index.html')}));
+    res.writeHead(200, securityHeaders({
+      contentType: contentType(resolved),
+      cache: options.cache ?? !resolved.endsWith('index.html')
+    }));
     const stream = createReadStream(resolved);
     stream.on('error', () => {
       if (!res.headersSent) sendText(res, 404, 'Not found');
@@ -408,6 +444,69 @@ async function handleApi(req, res, url) {
   }
   if (req.method === 'GET' && url.pathname === '/api/fonts') {
     sendJson(res, 200, {fonts: await dashboardFonts()});
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/remotion-review/catalog') {
+    try {
+      sendJson(res, 200, await reviewStudioCatalog());
+    } catch (error) {
+      sendReviewError(res, error);
+    }
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/remotion-review/sessions') {
+    try {
+      const limit = Math.min(100, Math.max(1, Number(url.searchParams.get('limit') || 50)));
+      sendJson(res, 200, {sessions: await listReviewSessions({limit})});
+    } catch (error) {
+      sendReviewError(res, error);
+    }
+    return;
+  }
+  if (req.method === 'POST' && url.pathname === '/api/remotion-review/sessions') {
+    try {
+      const body = JSON.parse((await readBody(req, 512 * 1024)).toString('utf8') || '{}');
+      sendJson(res, 201, await createReviewSession(body));
+    } catch (error) {
+      sendReviewError(res, error);
+    }
+    return;
+  }
+  const reviewCommentMatch = url.pathname.match(/^\/api\/remotion-review\/sessions\/(review-[a-z0-9-]+)\/comments$/);
+  if (req.method === 'POST' && reviewCommentMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 128 * 1024)).toString('utf8') || '{}');
+      sendJson(res, 201, await addReviewComment(reviewCommentMatch[1], body));
+    } catch (error) {
+      sendReviewError(res, error);
+    }
+    return;
+  }
+  const reviewQaMatch = url.pathname.match(/^\/api\/remotion-review\/sessions\/(review-[a-z0-9-]+)\/qa$/);
+  if (req.method === 'POST' && reviewQaMatch) {
+    try {
+      sendJson(res, 200, await runReviewQa(reviewQaMatch[1]));
+    } catch (error) {
+      sendReviewError(res, error);
+    }
+    return;
+  }
+  const reviewSessionMatch = url.pathname.match(/^\/api\/remotion-review\/sessions\/(review-[a-z0-9-]+)$/);
+  if (req.method === 'GET' && reviewSessionMatch) {
+    try {
+      sendJson(res, 200, await loadReviewSession(reviewSessionMatch[1]));
+    } catch (error) {
+      sendReviewError(res, error);
+    }
+    return;
+  }
+  if (req.method === 'PATCH' && reviewSessionMatch) {
+    try {
+      const body = JSON.parse((await readBody(req, 512 * 1024)).toString('utf8') || '{}');
+      sendJson(res, 200, await updateReviewSession(reviewSessionMatch[1], body));
+    } catch (error) {
+      sendReviewError(res, error);
+    }
     return;
   }
   if (req.method === 'POST' && url.pathname === '/api/captions/preview') {
@@ -1092,8 +1191,25 @@ async function handler(req, res) {
       await handleApi(req, res, url);
       return;
     }
-    const file = url.pathname === '/' ? path.join(PUBLIC_DIR, 'index.html') : path.join(PUBLIC_DIR, url.pathname);
-    await serveStatic(res, file);
+    const staticPath = url.pathname === '/remotion-review' || url.pathname === '/remotion-review/'
+      ? '/remotion-review/index.html'
+      : url.pathname;
+    const file = staticPath === '/' ? path.join(PUBLIC_DIR, 'index.html') : path.join(PUBLIC_DIR, staticPath);
+    const remotionPrefix = /^\/(?:assets|fonts|sfx)\//.test(staticPath);
+    if (!existsSync(file) && remotionPrefix) {
+      await serveStatic(
+        res,
+        path.join(REMOTION_PUBLIC_DIR, staticPath),
+        REMOTION_PUBLIC_DIR
+      );
+      return;
+    }
+    await serveStatic(
+      res,
+      file,
+      PUBLIC_DIR,
+      {cache: !staticPath.startsWith('/remotion-review/')}
+    );
   } catch (error) {
     console.error(`Shortsmith request failed: ${error?.name || 'Error'} (${error?.code || 'INTERNAL_ERROR'})`);
     sendJson(res, 500, {error: 'Error interno del servidor.', code: 'INTERNAL_ERROR'});

@@ -101,6 +101,7 @@ Riesgo:
 - [x] Añadir smoke test end-to-end.
 - [ ] V2: face tracking.
 - [ ] V2: subtítulos palabra por palabra.
-- [ ] V2: plantillas Remotion.
+- [x] V2: plantillas Remotion, catálogo semántico, patrones responsive y
+  Review Studio con QA.
 - [ ] V2: editor de cortes.
 - [ ] V2: cola de jobs persistente.

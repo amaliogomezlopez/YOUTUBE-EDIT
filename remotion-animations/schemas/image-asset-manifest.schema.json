@@ -94,6 +94,27 @@
                 "maximum": 100
               }
             }
+          },
+          "sourceSha256": {
+            "type": "string",
+            "pattern": "^[a-fA-F0-9]{64}$"
+          },
+          "assetType": {
+            "enum": [
+              "photo",
+              "screenshot",
+              "chart",
+              "illustration",
+              "texture",
+              "logo"
+            ]
+          },
+          "treatment": {
+            "type": "string",
+            "minLength": 1
+          },
+          "importedAt": {
+            "type": "string"
           }
         }
       }

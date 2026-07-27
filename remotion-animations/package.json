@@ -12,6 +12,7 @@
     "@remotion/fonts": "^4.0.499",
     "@remotion/layout-utils": "^4.0.499",
     "@remotion/media": "^4.0.499",
+    "@remotion/player": "4.0.499",
     "@remotion/zod-types": "^4.0.499",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -24,7 +25,8 @@
     "@types/web": "0.0.166",
     "eslint": "9.19.0",
     "prettier": "3.8.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "esbuild": "0.28.1"
   },
   "scripts": {
     "dev": "remotion studio",
@@ -48,7 +50,9 @@
     "stills:visual-catalog": "node scripts/render-visual-catalog-stills.mjs",
     "stills:annotated-chart": "node scripts/render-annotated-chart-stills.mjs",
     "prepare:sfx": "node scripts/prepare-sfx.mjs",
-    "prepare:fonts": "node scripts/prepare-fonts.mjs"
+    "prepare:fonts": "node scripts/prepare-fonts.mjs",
+    "build:review-studio": "node scripts/build-review-studio.mjs",
+    "review:package": "node scripts/render-review-package.mjs"
   },
   "sideEffects": [
     "*.css"

@@ -8,6 +8,7 @@ Leer primero:
 - `remotion-animations/catalog/visuals/icons.json`;
 - `remotion-animations/catalog/visuals/drawings.json`;
 - `remotion-animations/catalog/visuals/images.json`.
+- `remotion-animations/catalog/preferences/channel-profile.json`.
 
 El manifest enumera composiciones, patrones, efectos, perfiles artísticos,
 schemas y comandos disponibles. Si no coincide con los catálogos, ejecutar
@@ -21,8 +22,10 @@ npm run remotion:select:visual -- --query "<concepto>" --kind drawing
 npm run remotion:select:visual -- --query "<concepto>" --allow-fallback
 ```
 
-El modo local puntúa ID, etiqueta, tags, categoría y verbo de movimiento. La
-salida incluye la selección y alternativas auditables.
+El modo local puntúa ID, etiqueta, tags, categoría y verbo de movimiento;
+expande conceptos mediante una ontología bilingüe, añade coincidencia fuzzy y
+aplica el perfil de preferencias del canal. La salida incluye señales
+semánticas, ajustes y alternativas auditables.
 
 `--llm` solo puede elegir un ID y tipo existentes. Una respuesta fuera del
 catálogo se rechaza completa.
@@ -31,7 +34,8 @@ catálogo se rechaza completa.
 
 `--allow-fallback` no autoriza SVG libre. Produce una receta
 `controlled-composite` de uno a tres iconos existentes con layout `cluster` o
-`flow`. El renderer compone esos glifos ya auditados.
+`flow`. La receta declara primitivas, roles y conectores y queda editable. El
+renderer compone esos glifos ya auditados.
 
 No generar path SVG arbitrario desde texto. Si la receta no comunica la idea,
 registrar un hueco de catálogo y diseñar un recurso reutilizable con revisión

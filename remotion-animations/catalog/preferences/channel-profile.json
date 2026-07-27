@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "id": "amaliometria-default",
+  "label": "Preferencias visuales aprendidas de Amaliometría",
+  "kindWeights": {
+    "icon": 0,
+    "drawing": 0.5,
+    "image": 0
+  },
+  "categoryWeights": {
+    "data": 0.5,
+    "process": 0.75,
+    "finance": 0.75,
+    "interface": 0.25
+  },
+  "relationshipDrawingBoost": 2,
+  "acceptedAssetIds": [],
+  "rejectedAssetIds": [],
+  "preferredTreatments": [
+    "spotlight-mask",
+    "path-follow",
+    "freeze-and-callout"
+  ],
+  "rejectedTreatments": [
+    "decorative-watermark",
+    "corner-rule",
+    "gratuitous-gradient"
+  ],
+  "layoutDefaults": {
+    "headerPosition": "top-center",
+    "headerOptional": true,
+    "watermark": false,
+    "cornerRule": false
+  },
+  "notes": [
+    "Preferir relaciones visuales y evidencia frente a iconos decorativos.",
+    "No generar SVG libre: el fallback combina primitivas auditadas.",
+    "El texto superior sólo aparece cuando añade información no visible."
+  ]
+}

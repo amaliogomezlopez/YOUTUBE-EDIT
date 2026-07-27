@@ -537,8 +537,11 @@
       "id": "transition.before-after-wipe",
       "category": "transition",
       "phase": "build",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "purpose": "Revelar un estado posterior sobre la misma referencia espacial.",
       "selectWhen": "Dos imágenes o estados comparten encuadre comparable.",
       "constraints": [

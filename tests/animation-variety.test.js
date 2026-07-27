@@ -30,3 +30,35 @@ test('documenta las repeticiones de efectos que son necesarias', () => {
   assert.deepEqual(result.repeatedEffects, ['camera.focus-zoom']);
   assert.equal(result.selected.artDirection, 'editorial-report');
 });
+
+test('contrasta tema, ritmo, geometría, metáfora y cámara en seis piezas', () => {
+  const result = planAnimationVariety({
+    patternId: 'data.ranking',
+    preferredArtDirection: 'diagrammatic-system',
+    artDirectionCandidates: ['diagrammatic-system', 'editorial-report'],
+    preferredTheme: 'ink-lime',
+    themeCandidates: ['ink-lime', 'signal-cobalt'],
+    preferredMotionProfile: 'editorial',
+    motionProfileCandidates: ['editorial', 'technical'],
+    preferredGeometry: 'rows',
+    geometryCandidates: ['rows', 'radial'],
+    preferredMetaphor: 'podium',
+    metaphorCandidates: ['podium', 'race'],
+    preferredCamera: 'static',
+    cameraCandidates: ['static', 'focus'],
+    recentSelections: Array.from({length: 6}, () => ({
+      artDirection: 'diagrammatic-system',
+      themeId: 'ink-lime',
+      motionProfile: 'editorial',
+      geometry: 'rows',
+      metaphor: 'podium',
+      camera: 'static'
+    }))
+  });
+  assert.equal(result.historyWindow, 6);
+  assert.equal(result.selected.themeId, 'signal-cobalt');
+  assert.equal(result.selected.motionProfile, 'technical');
+  assert.equal(result.selected.geometry, 'radial');
+  assert.equal(result.selected.metaphor, 'race');
+  assert.equal(result.selected.camera, 'focus');
+});

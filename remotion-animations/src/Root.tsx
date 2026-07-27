@@ -61,6 +61,17 @@ import {
   imageOnlyAnnotatedChartProps,
   marketAnnotatedChartProps,
 } from "./charts/AnnotatedChartScene";
+import {
+  ContextualPatternPreview,
+  ExtendedPatternScene,
+  ContextualPreviewProps,
+  ExtendedPatternProps,
+  contextualPreviewSchema,
+  defaultContextualPreviewProps,
+  defaultExtendedPatternProps,
+  extendedPatternMetadata,
+  extendedPatternSchema,
+} from "./motion/ExtendedPatterns";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -293,6 +304,35 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{showLabels: true}}
         />
       </Folder>
+      <Folder name="Patrones-Extendidos">
+        {extendedPatternCompositions.map((composition) => (
+          <Composition
+            key={composition.id}
+            id={composition.id}
+            component={ExtendedPatternScene}
+            durationInFrames={8 * 60}
+            fps={60}
+            width={1920}
+            height={1080}
+            schema={extendedPatternSchema}
+            defaultProps={composition.props}
+            calculateMetadata={extendedPatternMetadata}
+          />
+        ))}
+        <Composition
+          id="Review-Contextual-Pattern"
+          component={ContextualPatternPreview}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={contextualPreviewSchema}
+          defaultProps={defaultContextualPreviewProps}
+          calculateMetadata={
+            extendedPatternMetadata as CalculateMetadataFunction<ContextualPreviewProps>
+          }
+        />
+      </Folder>
       <Folder name="Ahorrar-Limites">
         {ahorrarLimitesCompositions.map((composition) => (
           <Composition
@@ -395,6 +435,125 @@ const kineticNumberDemoProps: KineticNumberDemoProps = {
   suffix: "%",
   decimals: 0,
 };
+
+const extendedPatternCompositions: {
+  id: string;
+  props: ExtendedPatternProps;
+}[] = [
+  {
+    id: "Pattern-Screenshot-Spotlight",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "screenshot-spotlight",
+      title: "La imagen ya contiene la prueba",
+      callout: "TRAMO CLAVE",
+    },
+  },
+  {
+    id: "Pattern-Before-After-Wipe",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "before-after-wipe",
+      themeId: "oxide-documentary",
+      title: "El cambio se entiende sobre la misma referencia",
+      supportingText: undefined,
+      callout: "MISMO ENCUADRE",
+    },
+  },
+  {
+    id: "Pattern-Common-Baseline",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "common-baseline",
+      themeId: "editorial-ivory",
+      title: "Comparar exige una base común",
+      supportingText: "La escala y el punto de partida permanecen fijos.",
+      callout: "ESCALA COMPARABLE",
+    },
+  },
+  {
+    id: "Pattern-Timeline-Milestones",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "timeline-milestones",
+      themeId: "signal-cobalt",
+      title: "Cuatro hitos explican el recorrido",
+      items: [
+        {label: "SEÑAL", detail: "Detectar"},
+        {label: "ANÁLISIS", detail: "Ordenar"},
+        {label: "DECISIÓN", detail: "Priorizar"},
+        {label: "RESULTADO", detail: "Medir"},
+      ],
+      callout: "SECUENCIA COMPLETA",
+    },
+  },
+  {
+    id: "Pattern-Ranking",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "ranking",
+      title: "El orden importa más que el volumen",
+      items: [
+        {label: "Contexto", value: 92},
+        {label: "Herramientas", value: 78},
+        {label: "Memoria", value: 64},
+        {label: "Formato", value: 52},
+        {label: "Ruido", value: 31},
+      ],
+      callout: "PRIORIDAD EDITORIAL",
+    },
+  },
+  {
+    id: "Pattern-Accumulation",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "accumulation",
+      motionProfile: "kinetic",
+      title: "Cada turno añade contexto",
+      supportingText: undefined,
+      callout: "EL COSTE SE ACUMULA",
+    },
+  },
+  {
+    id: "Pattern-Funnel-Filter",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "funnel-filter",
+      themeId: "signal-cobalt",
+      title: "Filtrar antes de cargar",
+      primaryLabel: "ENTRADA COMPLETA",
+      callout: "SÓLO LO ÚTIL",
+    },
+  },
+  {
+    id: "Pattern-Branch-Merge",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "branch-merge",
+      title: "Explorar en paralelo, consolidar una vez",
+      items: [
+        {label: "FUENTE A"},
+        {label: "FUENTE B"},
+        {label: "FUENTE C"},
+        {label: "FUENTE D"},
+      ],
+      callout: "SÍNTESIS",
+    },
+  },
+  {
+    id: "Pattern-Photo-Parallax",
+    props: {
+      ...defaultExtendedPatternProps,
+      pattern: "photo-parallax",
+      themeId: "oxide-documentary",
+      motionProfile: "cinematic",
+      title: "",
+      supportingText: undefined,
+      showHeader: false,
+      callout: "Una imagen puede respirar sin parecer una plantilla",
+    },
+  },
+];
 
 const transversalEffectsDemoProps: TransversalEffectsDemoProps = {
   longText: "La gráfica se construye antes de señalar la conclusión",

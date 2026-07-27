@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "defaultProfile": "amaliometria",
+  "profiles": [
+    {
+      "id": "amaliometria",
+      "label": "Amaliometría",
+      "principles": [
+        "Una idea visual dominante por beat.",
+        "Encabezado opcional y centrado; nunca repetir subtítulos.",
+        "Sin marca de agua ni línea decorativa por defecto.",
+        "Color de acento reservado para la conclusión o el elemento activo.",
+        "Movimiento con causa, pausa de lectura y resolución estable."
+      ],
+      "defaults": {
+        "themeId": "ink-lime",
+        "motionProfile": "editorial",
+        "format": "landscape",
+        "showHeader": false,
+        "showWatermark": false,
+        "showCornerRule": false,
+        "soundEnabled": false,
+        "soundMix": 0.62
+      },
+      "themes": [
+        "ink-lime",
+        "editorial-ivory",
+        "signal-cobalt",
+        "oxide-documentary"
+      ],
+      "motionProfiles": [
+        "restrained",
+        "editorial",
+        "kinetic",
+        "technical",
+        "cinematic"
+      ],
+      "formats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ],
+      "typography": {
+        "display": "Schibsted Grotesk Variable",
+        "data": "Fragment Mono",
+        "fallback": "Arial"
+      }
+    }
+  ]
+}

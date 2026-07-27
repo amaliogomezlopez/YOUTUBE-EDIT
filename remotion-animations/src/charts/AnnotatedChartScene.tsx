@@ -187,7 +187,7 @@ const sampleSeries = [
 ];
 
 const sampleImage = {
-  publicPath: "assets/library/chart-samples/demo-index-2025.svg",
+  publicPath: "assets/library/chart-samples/demo-index-2025.png",
   alt: "Gráfica sintética de un índice de demostración durante 2025",
   width: 1700,
   height: 760,
@@ -939,6 +939,15 @@ export const AnnotatedChartScene: React.FC<AnnotatedChartProps> = ({
     yAxis,
     image.plotRegion,
   );
+  const cameraProgress = camera.enabled
+    ? motionProgress(
+        frame,
+        fps,
+        camera.startSeconds,
+        camera.endSeconds,
+        Easing.bezier(0.16, 1, 0.3, 1),
+      )
+    : 0;
   const chartBody = (
     <>
       <ManagedImage
@@ -1037,6 +1046,42 @@ export const AnnotatedChartScene: React.FC<AnnotatedChartProps> = ({
             ) : (
               chartBody
             )}
+            {camera.enabled ? (
+              <>
+                <div
+                  style={{
+                    background:
+                      "linear-gradient(90deg, rgba(5,17,29,1) 0%, rgba(5,17,29,1) 78%, transparent 100%)",
+                    bottom: 0,
+                    left: 0,
+                    opacity: cameraProgress,
+                    pointerEvents: "none",
+                    position: "absolute",
+                    top: 0,
+                    width: Math.max(150, image.plotRegion.x + 40),
+                  }}
+                />
+                <div
+                  style={{
+                    background:
+                      "linear-gradient(270deg, rgba(5,17,29,.98) 0%, transparent 100%)",
+                    bottom: 0,
+                    opacity: cameraProgress * 0.75,
+                    pointerEvents: "none",
+                    position: "absolute",
+                    right: 0,
+                    top: 0,
+                    width: Math.max(
+                      44,
+                      (image.width -
+                        image.plotRegion.x -
+                        image.plotRegion.width) *
+                        0.55,
+                    ),
+                  }}
+                />
+              </>
+            ) : null}
             <div
               style={{
                 background:

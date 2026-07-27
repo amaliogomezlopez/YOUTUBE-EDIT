@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "product": "Shortsmith Remotion",
   "sourceOfTruth": [
     "catalog/animations/patterns.json",
@@ -7,18 +7,27 @@
     "catalog/visuals/icons.json",
     "catalog/visuals/drawings.json",
     "catalog/visuals/images.json",
+    "catalog/design/brand-profiles.json",
+    "catalog/preferences/channel-profile.json",
     "src/Root.tsx"
   ],
   "commands": {
     "ingestAnnotatedChart": "npm run remotion:ingest:chart -- --input <chart-ingestion-input.json>",
     "selectVisual": "npm run remotion:select:visual -- --query \"<concepto>\" --allow-fallback",
     "validate": "npm run remotion:check",
-    "renderChartStills": "npm run remotion:stills:annotated-chart"
+    "renderChartStills": "npm run remotion:stills:annotated-chart",
+    "importAsset": "npm run remotion:asset:import -- --file <imagen> --id <slug> --type <tipo> --alt <texto> --source <origen> --license <licencia> --tags <lista>",
+    "buildReviewStudio": "npm run remotion:review:build",
+    "createReviewPackage": "npm run remotion:review:package -- --session <review-id>"
   },
   "schemas": {
     "chartIngestion": "schemas/chart-ingestion-input.schema.json",
     "animationSpec": "schemas/animation-spec.schema.json",
-    "visualSelection": "schemas/visual-selection.schema.json"
+    "visualSelection": "schemas/visual-selection.schema.json",
+    "managedImage": "schemas/image-asset-manifest.schema.json",
+    "reviewSession": "schemas/review-session.schema.json",
+    "visualQa": "schemas/visual-qa-report.schema.json",
+    "renderedVisualQa": "schemas/rendered-visual-qa-report.schema.json"
   },
   "artDirections": [
     "editorial-report",
@@ -72,6 +81,16 @@
     "Chart-Annotated-Range-Audio",
     "ChartHighlight",
     "ChartHighlightOverlay",
+    "Pattern-Accumulation",
+    "Pattern-Before-After-Wipe",
+    "Pattern-Branch-Merge",
+    "Pattern-Common-Baseline",
+    "Pattern-Funnel-Filter",
+    "Pattern-Photo-Parallax",
+    "Pattern-Ranking",
+    "Pattern-Screenshot-Spotlight",
+    "Pattern-Timeline-Milestones",
+    "Review-Contextual-Pattern",
     "Scout-CapacityMatrix",
     "Scout-ConnectedCardChain",
     "Scout-RadialOrbitSummary",
@@ -94,7 +113,10 @@
         "Chart-Annotated-Range-Audio"
       ],
       "component": "AnnotatedChartScene",
-      "ingestion": "npm run remotion:ingest:chart"
+      "ingestion": "npm run remotion:ingest:chart",
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "asset.logo-ecosystem",
@@ -102,39 +124,66 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "asset.photo-parallax",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Photo-Parallax",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "asset.screenshot-spotlight",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Screenshot-Spotlight",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "comparison.before-after-wipe",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Before-After-Wipe",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "comparison.common-baseline",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Common-Baseline",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "comparison.image-logo-versus",
@@ -142,7 +191,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "comparison.pros-cons-balance",
@@ -150,15 +202,24 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "concept.accumulation",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Accumulation",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "concept.compression",
@@ -166,7 +227,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "concept.scale-proportion",
@@ -174,7 +238,10 @@
       "compositionId": "Scout-CapacityMatrix",
       "variants": [],
       "component": "CapacityMatrix",
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.bar-focus",
@@ -182,7 +249,10 @@
       "compositionId": "Toolkit-RisingHistogram",
       "variants": [],
       "component": "RisingHistogram",
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.delta-before-after",
@@ -190,7 +260,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.hero-metric",
@@ -198,7 +271,10 @@
       "compositionId": "Toolkit-KineticNumber",
       "variants": [],
       "component": "KineticNumber",
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.histogram-distribution",
@@ -206,7 +282,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.line-trend-zoom",
@@ -214,7 +293,10 @@
       "compositionId": "Toolkit-LineChartZoom",
       "variants": [],
       "component": "LineChartZoom",
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.part-to-whole",
@@ -222,15 +304,24 @@
       "compositionId": "Scout-RadialOrbitSummary",
       "variants": [],
       "component": "RadialOrbitSummary",
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "data.ranking",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Ranking",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "data.waterfall",
@@ -238,7 +329,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "overlay.precision-callout",
@@ -246,7 +340,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "process.bottleneck-queue",
@@ -254,23 +351,38 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "process.branch-merge",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Branch-Merge",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "process.funnel-filter",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Funnel-Filter",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     },
     {
       "id": "process.hierarchy-delegation",
@@ -278,7 +390,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "process.signal-flow",
@@ -286,7 +401,10 @@
       "compositionId": "Scout-ConnectedCardChain",
       "variants": [],
       "component": "ConnectedCardChain",
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "text.kinetic-phrase",
@@ -294,7 +412,10 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "time.cycle",
@@ -302,15 +423,24 @@
       "compositionId": null,
       "variants": [],
       "component": null,
-      "ingestion": null
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
     },
     {
       "id": "time.timeline-milestones",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Timeline-Milestones",
       "variants": [],
-      "component": null,
-      "ingestion": null
+      "component": "ExtendedPatternScene",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape",
+        "vertical",
+        "square",
+        "portrait"
+      ]
     }
   ],
   "effects": [
@@ -416,8 +546,8 @@
     },
     {
       "id": "transition.before-after-wipe",
-      "status": "planned",
-      "component": null
+      "status": "ready",
+      "component": "ExtendedPatternScene"
     }
   ],
   "visuals": {
@@ -483,10 +613,14 @@
     ],
     "selectionModes": [
       "deterministic-catalog",
+      "semantic-ontology-fuzzy",
       "llm-catalog-validated",
       "controlled-fallback"
     ],
-    "fallbackPolicy": "catalog-only-no-freeform-svg"
+    "fallbackPolicy": "catalog-only-no-freeform-svg",
+    "managedAssetImport": true,
+    "svgRasterizationOnImport": true,
+    "preferenceProfile": "amaliometria-default"
   },
   "factualSafety": {
     "calibratedCharts": true,
@@ -507,5 +641,61 @@
       "process-flow",
       "trend-focus"
     ]
+  },
+  "design": {
+    "defaultProfile": "amaliometria",
+    "profiles": [
+      "amaliometria"
+    ],
+    "themes": [
+      "ink-lime",
+      "editorial-ivory",
+      "signal-cobalt",
+      "oxide-documentary"
+    ],
+    "motionProfiles": [
+      "restrained",
+      "editorial",
+      "kinetic",
+      "technical",
+      "cinematic"
+    ],
+    "formats": [
+      "landscape",
+      "vertical",
+      "square",
+      "portrait"
+    ],
+    "optionalHeader": true,
+    "watermarkDefault": false,
+    "cornerRuleDefault": false
+  },
+  "review": {
+    "studioUrl": "/remotion-review/",
+    "playerPreview": true,
+    "abVariants": true,
+    "frameComments": true,
+    "sourceContext": true,
+    "safeZones": true,
+    "approvalGate": "qa-passed",
+    "statuses": [
+      "draft",
+      "in-review",
+      "changes-requested",
+      "approved"
+    ]
+  },
+  "quality": {
+    "staticPropQa": true,
+    "renderedFrameQa": true,
+    "labelledContactSheets": true,
+    "immutableReviewRuns": true,
+    "chartCameraEdgeGuards": true
+  },
+  "agentRouting": {
+    "skill": ".agents/skills/create-remotion-animations/SKILL.md",
+    "readManifestFirst": true,
+    "reviewBeforeFinalRender": true,
+    "preferenceAwareSelection": true
   }
 }

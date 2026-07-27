@@ -15,6 +15,8 @@ test('prefiere un dibujo cuando la consulta describe una relación', async () =>
     kind: 'drawing'
   });
   assert.equal(result.selected.id, 'branch-merge');
+  assert.ok(result.semanticSignals.concepts.includes('branch-consolidate'));
+  assert.equal(result.preferenceProfile, 'amaliometria-default');
 });
 
 test('genera solo recetas de fallback con iconos auditados', async () => {
@@ -25,6 +27,20 @@ test('genera solo recetas de fallback con iconos auditados', async () => {
   assert.equal(result.mode, 'controlled-fallback');
   assert.equal(result.fallback.generationPolicy, 'catalog-only-no-freeform-svg');
   assert.deepEqual(result.fallback.iconIds, ['unknown']);
+  assert.equal(result.fallback.recipe.editable, true);
+});
+
+test('las preferencias auditables pueden penalizar un asset concreto', async () => {
+  const result = await selectVisualAsset('memoria', {
+    kind: 'icon',
+    preferenceProfile: {
+      id: 'test-profile',
+      rejectedAssetIds: ['memory'],
+      acceptedAssetIds: ['context']
+    }
+  });
+  assert.equal(result.selected.id, 'context');
+  assert.ok(result.alternatives.find((item) => item.id === 'memory').matches.includes('preference:rejected-asset'));
 });
 
 test('rechaza IDs inventados por el selector LLM', async () => {

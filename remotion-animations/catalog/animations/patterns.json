@@ -45,6 +45,30 @@
       {
         "intent": "annotate-calibrated-chart-image",
         "patternId": "asset.annotated-chart"
+      },
+      {
+        "intent": "spotlight-existing-image",
+        "patternId": "asset.screenshot-spotlight"
+      },
+      {
+        "intent": "before-after-same-reference",
+        "patternId": "comparison.before-after-wipe"
+      },
+      {
+        "intent": "rank-comparable-options",
+        "patternId": "data.ranking"
+      },
+      {
+        "intent": "ordered-milestones",
+        "patternId": "time.timeline-milestones"
+      },
+      {
+        "intent": "filter-many-to-few",
+        "patternId": "process.funnel-filter"
+      },
+      {
+        "intent": "parallel-branches-to-result",
+        "patternId": "process.branch-merge"
       }
     ]
   },
@@ -256,8 +280,12 @@
       "id": "data.ranking",
       "family": "data",
       "label": "Ranking reordenable",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Ranking",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Orden relativo entre opciones con una métrica común.",
       "selectWhen": "Hay entre 3 y 7 opciones con valores comparables.",
       "rejectWhen": "El orden es subjetivo y la fuente no lo respalda.",
@@ -274,8 +302,12 @@
       "id": "comparison.common-baseline",
       "family": "comparison",
       "label": "Comparación sobre base común",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Common-Baseline",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Dos opciones sometidas al mismo criterio, escala o recorrido.",
       "selectWhen": "La locución contrasta A y B y existe una base de comparación explícita.",
       "rejectWhen": "Los argumentos de cada opción no son comparables.",
@@ -328,8 +360,12 @@
       "id": "comparison.before-after-wipe",
       "family": "comparison",
       "label": "Antes y después visual",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Before-After-Wipe",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Cambio visible sobre una referencia espacial compartida.",
       "selectWhen": "Hay dos imágenes o capturas comparables del mismo objeto o interfaz.",
       "rejectWhen": "Los encuadres no permiten una comparación honesta.",
@@ -369,8 +405,12 @@
       "id": "process.funnel-filter",
       "family": "process",
       "label": "Embudo o filtro",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Funnel-Filter",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Muchas entradas se filtran o comprimen en pocas salidas.",
       "selectWhen": "La locución habla de selección, reducción, filtrado o conversión.",
       "rejectWhen": "No existe una transformación entre entrada y salida.",
@@ -423,8 +463,12 @@
       "id": "process.branch-merge",
       "family": "process",
       "label": "Ramificación y convergencia",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Branch-Merge",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Una entrada produce varias tareas que vuelven a un resultado común.",
       "selectWhen": "La explicación contiene división, trabajos paralelos y consolidación.",
       "rejectWhen": "Las ramas no regresan ni producen una conclusión común.",
@@ -441,8 +485,12 @@
       "id": "time.timeline-milestones",
       "family": "time",
       "label": "Timeline de hitos",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Timeline-Milestones",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Fechas, etapas o cambios ordenados en el tiempo.",
       "selectWhen": "Hay dos o más hitos con orden y etiquetas verificables.",
       "rejectWhen": "Las fechas no son relevantes para la conclusión.",
@@ -477,8 +525,12 @@
       "id": "concept.accumulation",
       "family": "concept",
       "label": "Acumulación continua",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Accumulation",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Crecimiento de contexto, deuda, presión, volumen o complejidad.",
       "selectWhen": "La locución usa acumulación como relación causal o metáfora.",
       "rejectWhen": "Una cifra exacta necesita una gráfica cuantitativa.",
@@ -569,8 +621,12 @@
       "id": "asset.screenshot-spotlight",
       "family": "asset",
       "label": "Spotlight de captura",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Screenshot-Spotlight",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Dónde mirar dentro de una interfaz, documento o captura.",
       "selectWhen": "Hay una captura legible y una región objetivo que demuestra la locución.",
       "rejectWhen": "La captura es decorativa o la zona relevante no se distingue.",
@@ -587,8 +643,12 @@
       "id": "asset.photo-parallax",
       "family": "asset",
       "label": "Foto con profundidad editorial",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "ExtendedPatternScene",
+        "compositionId": "Pattern-Photo-Parallax",
+        "source": "src/motion/ExtendedPatterns.tsx"
+      },
       "communicates": "Presentación de una persona, lugar u objeto con contexto visual.",
       "selectWhen": "La foto aporta evidencia o reconocimiento que la geometría no puede dar.",
       "rejectWhen": "La foto solo sirve de fondo genérico.",

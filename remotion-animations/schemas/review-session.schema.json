@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/review-session.schema.json",
+  "title": "Shortsmith Remotion review session",
+  "type": "object",
+  "required": [
+    "version",
+    "id",
+    "projectId",
+    "title",
+    "status",
+    "revision",
+    "selectedVariantId",
+    "variants",
+    "comments",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "version": {"const": 1},
+    "id": {"type": "string", "pattern": "^review-[a-z0-9-]+$"},
+    "projectId": {"type": "string", "minLength": 1},
+    "title": {"type": "string", "minLength": 1},
+    "status": {
+      "enum": ["draft", "in-review", "changes-requested", "approved"]
+    },
+    "revision": {"type": "integer", "minimum": 1},
+    "selectedVariantId": {"type": "string", "minLength": 1},
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "compositionId", "props"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "label": {"type": "string", "minLength": 1},
+          "compositionId": {"type": "string", "minLength": 1},
+          "props": {"type": "object"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "comments": {"type": "array"},
+    "qa": {
+      "oneOf": [
+        {"type": "object"},
+        {"type": "null"}
+      ]
+    },
+    "createdAt": {"type": "string"},
+    "updatedAt": {"type": "string"}
+  },
+  "additionalProperties": true
+}

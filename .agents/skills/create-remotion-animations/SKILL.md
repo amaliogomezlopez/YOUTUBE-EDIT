@@ -1,6 +1,6 @@
 ---
 name: create-remotion-animations
-description: "Analiza vídeos, transcripciones y assets; consulta un manifest de capacidades; selecciona iconos, dibujos e imágenes por significado con fallback controlado; ingiere y calibra gráficas; aplica perfiles de dirección artística y control de repetición; diseña animaciones con sonido semántico en Remotion; las audita, entrega y limpia. Usar dentro de YouTube Edit cuando el usuario pida motion graphics, recursos visuales, gráficas animadas o anotadas, rendimiento bursátil, comparativas, procesos, overlays, sonorización o paquetes de animaciones."
+description: "Analiza vídeos, transcripciones y assets; consulta el manifest v2; selecciona iconos, dibujos e imágenes por ontología semántica y preferencias con fallback controlado; importa y normaliza assets; ingiere y calibra gráficas; aplica temas, formatos y perfiles de movimiento; crea patrones animados con sonido semántico; prepara variantes A/B/C en Review Studio, comentarios por frame, QA y aprobación; entrega y limpia. Usar dentro de YouTube Edit cuando el usuario pida motion graphics, previews interactivas, recursos visuales, gráficas animadas o anotadas, rendimiento bursátil, comparativas, procesos, overlays, sonorización, customización o paquetes de animaciones."
 ---
 
 # Crear animaciones con Remotion
@@ -29,6 +29,10 @@ Producir piezas breves, fieles a la fuente y listas para montar. Reutilizar el m
     tipografía, material visual o variantes de un lote.
 14. Leer `remotion-animations/catalog/capabilities.manifest.json` como índice
     legible por máquina de lo que está realmente implementado.
+15. Leer [customization.md](references/customization.md) antes de variar tema,
+    formato, ritmo, tipografía, densidad o preferencias visuales.
+16. Leer [review-studio.md](references/review-studio.md) antes de pedir
+    feedback, preparar variantes, aprobar o hacer el render final.
 
 ## Flujo
 
@@ -63,9 +67,9 @@ mecánica visual —no su contenido editorial— usar primero
 - Leer el manifest de capacidades, `catalog/animations/patterns.json` y `catalog/animations/effects.json`. Para recursos visuales ejecutar `npm run remotion:select:visual -- --query "<concepto>"`; elegir por significado y evidencia usando `selectWhen`, `rejectWhen`, `evidenceRequired` y [catalog-selection.md](references/catalog-selection.md), no por gusto estético.
 - Preferir un patrón `ready` que comunique la afirmación exacta. Usar una entrada `planned` solo si ninguna composición lista resuelve el momento y la nueva implementación queda justificada.
 - Preparar un plan antes de programar: clip, timestamp, afirmación, `patternId`, `effectIds`, `soundProfile`, eventos sonoros, composición, formato y prioridad.
-- Consultar `recentSelections` y registrar `variety` para evitar repetir
-  dirección artística, patrón, efecto dominante o metáfora en piezas
-  consecutivas.
+- Consultar `recentSelections` y registrar `variety` contra una ventana de seis
+  piezas para evitar repetir dirección artística, tema, ritmo, geometría,
+  cámara, patrón, efecto dominante o metáfora.
 - Mantener normalmente cada animación entre 5 y 10 segundos. Dejar tiempo real de lectura y un tramo estable para que el editor pueda cortar.
 
 #### Ingestar una gráfica aportada
@@ -86,12 +90,28 @@ mecánica visual —no su contenido editorial— usar primero
 - Leer el `chart-ingestion-report.json`, los props y `animation-spec.json`
   antes de renderizar.
 
+#### Importar imágenes, capturas y SVG
+
+- Ejecutar `npm run remotion:asset:import` con origen, licencia, autor, alt,
+  tags, tipo y punto focal. No copiar assets sueltos sin registrarlos.
+- La ingestión normaliza metadatos y orientación; los SVG externos se
+  rasterizan a PNG antes del render.
+- Usar `photo`, `screenshot`, `chart`, `illustration`, `texture` o `logo` como
+  tipo. Mantener cada colección bajo `public/assets/library/<colección>/`.
+- No descargar assets durante el render. Si la procedencia o la licencia no es
+  verificable, usar iconos o dibujos propios.
+
 ### 3. Diseñar e implementar
 
 - Reutilizar componentes, paleta y lenguaje visual existentes cuando encajen; crear abstracciones solo si se repetirán.
-- Elegir uno de los perfiles `editorial-report`, `documentary-evidence`,
-  `diagrammatic-system` o `market-data`. Usar Schibsted Grotesk para texto y
-  Fragment Mono solo para datos. Mantener el encabezado opcional.
+- Separar dirección, acabado y ritmo: elegir una dirección artística; un tema
+  `ink-lime`, `editorial-ivory`, `signal-cobalt` u `oxide-documentary`; y un
+  perfil `restrained`, `editorial`, `kinetic`, `technical` o `cinematic`.
+  Usar Schibsted Grotesk para texto y Fragment Mono solo para datos.
+  Mantener el encabezado opcional y centrado cuando exista.
+- Declarar `format` como `landscape`, `vertical`, `square` o `portrait` cuando
+  la composición lo soporte. Probar cada formato mediante metadata dinámica,
+  no estirando una composición 16:9.
 - Registrar cada composición en `remotion-animations/src/Root.tsx`, agrupada en un `<Folder>` del proyecto.
 - Parametrizar textos, datos, colores y selección destacada mediante props JSON-serializables y Zod.
 - Hacer depender todo movimiento de `useCurrentFrame()` y `useVideoConfig()`. No usar animaciones o transiciones CSS.
@@ -105,10 +125,20 @@ mecánica visual —no su contenido editorial— usar primero
 ### 4. Revisar antes del render final
 
 - Ejecutar `npm run remotion:check`.
+- Construir Review Studio con `npm run remotion:review:build` y abrir
+  `/remotion-review/` desde el servidor local.
+- Crear una sesión con variantes A/B/C cuando haya decisiones reales de tema,
+  ritmo o layout. Revisar dentro del Player, activar contexto de vídeo y safe
+  zones cuando corresponda, y anclar comentarios al frame exacto.
+- Ejecutar el QA de la sesión. El estado `approved` está bloqueado hasta que
+  `qa.passed=true`; un cambio posterior invalida el QA.
 - Generar stills de entrada, momento principal y salida; revisar legibilidad, recortes, jerarquía, contraste y fidelidad.
 - Corregir el código si la composición falla visualmente. No considerar suficiente que TypeScript compile.
 - Para un conjunto de piezas, preparar una hoja de contacto o previews equivalentes que permitan compararlas de un vistazo.
 - Puntuar cada pieza con la rúbrica de [visual-quality.md](references/visual-quality.md). No entregar como final una pieza por debajo de 80/100.
+- Para QA reproducible usar
+  `npm run remotion:review:package -- --session <review-id>`; genera frames,
+  hoja de contacto etiquetada, métricas de frames y manifest inmutable.
 - Renderizar primero una pieza sonorizada piloto; revisar sincronía, silencios, picos, solapamientos y convivencia con locución antes de procesar el lote.
 
 ### 5. Renderizar y entregar
@@ -167,6 +197,9 @@ npm run remotion:render
 npm run remotion:overlay
 npm run remotion:ingest:chart -- --input "<chart-ingestion-input.json>"
 npm run remotion:select:visual -- --query "<concepto>" --allow-fallback
+npm run remotion:asset:import -- --file "<imagen>" --id "<slug>" --type screenshot --alt "<texto>" --source "<origen>" --license "<licencia>" --tags "tag1,tag2"
+npm run remotion:review:build
+npm run remotion:review:package -- --session "<review-id>"
 npm run remotion:capabilities
 npm run cleanup:animations
 ```

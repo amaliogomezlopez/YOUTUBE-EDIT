@@ -10,6 +10,13 @@ const CATALOG_ROOT = path.join(
   'catalog',
   'visuals'
 );
+const DEFAULT_PREFERENCE_FILE = path.join(
+  ROOT,
+  'remotion-animations',
+  'catalog',
+  'preferences',
+  'channel-profile.json'
+);
 
 const KIND_FILES = {
   icon: 'icons.json',
@@ -25,6 +32,44 @@ const FALLBACK_ROLE_MAP = [
   {pattern: /\b(riesgo|seguridad|bloqueo)\b/, ids: ['risk', 'shield', 'lock']}
 ];
 
+const SEMANTIC_ONTOLOGY = [
+  {
+    id: 'memory-context',
+    terms: ['memoria', 'recordar', 'preferencia', 'contexto', 'history', 'remember'],
+    expands: ['memory', 'context', 'repository', 'preferences']
+  },
+  {
+    id: 'branch-consolidate',
+    terms: ['ramificar', 'subagente', 'paralelo', 'consolidar', 'merge', 'branch'],
+    expands: ['branch', 'merge', 'agent', 'parallel', 'consolidation']
+  },
+  {
+    id: 'filter-compress',
+    terms: ['filtrar', 'reducir', 'comprimir', 'seleccionar', 'ruido', 'filter'],
+    expands: ['filter', 'compression', 'funnel', 'selection', 'noise']
+  },
+  {
+    id: 'market-evidence',
+    terms: ['bolsa', 'sp500', 's&p', 'rendimiento', 'mercado', 'grafica', 'índice'],
+    expands: ['analytics', 'chart', 'finance', 'index', 'trend', 'evidence']
+  },
+  {
+    id: 'process-flow',
+    terms: ['proceso', 'flujo', 'pipeline', 'etapa', 'entrada', 'salida'],
+    expands: ['input', 'tool', 'output', 'pipeline', 'flow', 'stages']
+  },
+  {
+    id: 'risk-security',
+    terms: ['riesgo', 'seguridad', 'bloqueo', 'proteger', 'vulnerable'],
+    expands: ['risk', 'shield', 'lock', 'security', 'protection']
+  },
+  {
+    id: 'time-sequence',
+    terms: ['tiempo', 'fecha', 'hito', 'cronologia', 'antes', 'despues'],
+    expands: ['clock', 'timeline', 'milestone', 'sequence', 'before', 'after']
+  }
+];
+
 function normalize(value) {
   return String(value ?? '')
     .normalize('NFD')
@@ -36,6 +81,60 @@ function normalize(value) {
 
 function tokens(value) {
   return new Set(normalize(value).split(/\s+/).filter((token) => token.length > 1));
+}
+
+function trigrams(value) {
+  const normalized = `  ${normalize(value)}  `;
+  const grams = new Set();
+  for (let index = 0; index <= normalized.length - 3; index++) {
+    grams.add(normalized.slice(index, index + 3));
+  }
+  return grams;
+}
+
+function trigramSimilarity(left, right) {
+  const leftGrams = trigrams(left);
+  const rightGrams = trigrams(right);
+  if (!leftGrams.size || !rightGrams.size) return 0;
+  let intersection = 0;
+  for (const gram of leftGrams) if (rightGrams.has(gram)) intersection += 1;
+  return (2 * intersection) / (leftGrams.size + rightGrams.size);
+}
+
+export function semanticVisualSignals(query) {
+  const queryText = normalize(query);
+  const queryTokens = tokens(query);
+  const concepts = SEMANTIC_ONTOLOGY.filter((concept) =>
+    concept.terms.some((term) => {
+      const normalizedTerm = normalize(term);
+      return queryText.includes(normalizedTerm)
+        || [...queryTokens].some((token) =>
+          trigramSimilarity(token, normalizedTerm) >= 0.68
+        );
+    })
+  );
+  const expandedTerms = [...new Set(
+    concepts.flatMap((concept) => concept.expands.map(normalize))
+  )];
+  return {
+    concepts: concepts.map((concept) => concept.id),
+    expandedTerms,
+    relationshipIntent: concepts.some((concept) =>
+      ['branch-consolidate', 'filter-compress', 'process-flow', 'time-sequence'].includes(concept.id)
+    )
+  };
+}
+
+async function loadPreferenceProfile(preferenceProfile) {
+  if (preferenceProfile === false) return null;
+  if (preferenceProfile && typeof preferenceProfile === 'object') {
+    return preferenceProfile;
+  }
+  try {
+    return JSON.parse(await readFile(DEFAULT_PREFERENCE_FILE, 'utf8'));
+  } catch {
+    return null;
+  }
 }
 
 async function readCatalog(kind) {
@@ -58,9 +157,39 @@ export async function loadVisualCatalog({kind = 'any'} = {}) {
   return (await Promise.all(kinds.map(readCatalog))).flat();
 }
 
-function scoreEntry(query, entry) {
+function preferenceAdjustment(entry, profile, signals) {
+  if (!profile) return {score: 0, matches: []};
+  let score = 0;
+  const matches = [];
+  if (profile.acceptedAssetIds?.includes(entry.id)) {
+    score += 7;
+    matches.push('preference:accepted-asset');
+  }
+  if (profile.rejectedAssetIds?.includes(entry.id)) {
+    score -= 18;
+    matches.push('preference:rejected-asset');
+  }
+  const categoryWeight = Number(profile.categoryWeights?.[entry.category] || 0);
+  if (categoryWeight) {
+    score += categoryWeight;
+    matches.push(`preference:category:${entry.category}`);
+  }
+  const kindWeight = Number(profile.kindWeights?.[entry.kind] || 0);
+  if (kindWeight) {
+    score += kindWeight;
+    matches.push(`preference:kind:${entry.kind}`);
+  }
+  if (signals.relationshipIntent && entry.kind === 'drawing') {
+    score += Number(profile.relationshipDrawingBoost ?? 2);
+    matches.push('preference:relationship-drawing');
+  }
+  return {score, matches};
+}
+
+function scoreEntry(query, entry, signals, profile) {
   const queryText = normalize(query);
   const queryTokens = tokens(query);
+  const semanticTokens = new Set([...queryTokens, ...signals.expandedTerms]);
   const label = normalize(entry.label || entry.alt || '');
   const id = normalize(entry.id);
   const tags = (entry.tags || []).map(normalize);
@@ -76,10 +205,11 @@ function scoreEntry(query, entry) {
       score += 8;
       matches.push('id-or-label');
     }
-    for (const token of queryTokens) {
+    for (const token of semanticTokens) {
       if (tags.some((tag) => tag === token || tag.includes(token))) {
-        score += 5;
-        matches.push(`tag:${token}`);
+        const semantic = !queryTokens.has(token);
+        score += semantic ? 2.6 : 5;
+        matches.push(`${semantic ? 'semantic' : 'tag'}:${token}`);
       }
       if (category.includes(token)) {
         score += 2;
@@ -90,12 +220,28 @@ function scoreEntry(query, entry) {
         matches.push(`motion:${token}`);
       }
       if (label.includes(token) || id.includes(token)) {
-        score += 4;
+        score += queryTokens.has(token) ? 4 : 2;
         matches.push(`label:${token}`);
       }
     }
+    const fuzzy = Math.max(
+      trigramSimilarity(queryText, label),
+      trigramSimilarity(queryText, id),
+      ...tags.map((tag) => trigramSimilarity(queryText, tag))
+    );
+    if (fuzzy >= 0.42) {
+      score += fuzzy * 5;
+      matches.push(`fuzzy:${fuzzy.toFixed(2)}`);
+    }
   }
-  return {...entry, score, matches: [...new Set(matches)]};
+  const preference = preferenceAdjustment(entry, profile, signals);
+  score += preference.score;
+  matches.push(...preference.matches);
+  return {
+    ...entry,
+    score: Math.max(0, Number(score.toFixed(3))),
+    matches: [...new Set(matches)]
+  };
 }
 
 function controlledFallback(query, catalog) {
@@ -110,6 +256,15 @@ function controlledFallback(query, catalog) {
     layout: iconIds.length > 2 ? 'flow' : 'cluster',
     iconIds: iconIds.length ? iconIds.slice(0, 3) : ['unknown'],
     generationPolicy: 'catalog-only-no-freeform-svg',
+    recipe: {
+      version: 1,
+      primitives: iconIds.map((id, index) => ({
+        iconId: id,
+        role: index === 0 ? 'primary' : 'supporting'
+      })),
+      connectors: iconIds.length > 1 ? 'semantic-flow' : 'none',
+      editable: true
+    },
     rationale:
       'No hay coincidencia suficientemente fuerte; se compone un fallback con glifos auditados.'
   };
@@ -121,12 +276,17 @@ export async function selectVisualAsset(query, {
   allowFallback = false,
   useLlm = false,
   llmConfig,
-  chatJsonImpl = chatJson
+  chatJsonImpl = chatJson,
+  preferenceProfile
 } = {}) {
   if (!normalize(query)) throw new Error('La consulta visual no puede estar vacía.');
-  const catalog = await loadVisualCatalog({kind});
+  const [catalog, profile] = await Promise.all([
+    loadVisualCatalog({kind}),
+    loadPreferenceProfile(preferenceProfile)
+  ]);
+  const signals = semanticVisualSignals(query);
   const ranked = catalog
-    .map((entry) => scoreEntry(query, entry))
+    .map((entry) => scoreEntry(query, entry, signals, profile))
     .sort((left, right) =>
       right.score - left.score
       || left.kind.localeCompare(right.kind)
@@ -181,6 +341,8 @@ export async function selectVisualAsset(query, {
     mode: fallback ? 'controlled-fallback' : mode,
     selected,
     alternatives: ranked.slice(0, Math.max(1, Math.min(12, limit))),
-    fallback
+    fallback,
+    semanticSignals: signals,
+    preferenceProfile: profile?.id || null
   });
 }

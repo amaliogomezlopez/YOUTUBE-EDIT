@@ -29,11 +29,16 @@ const iconsCatalog = readJson("catalog/visuals/icons.json");
 const drawingsCatalog = readJson("catalog/visuals/drawings.json");
 const imagesCatalog = readJson("catalog/visuals/images.json");
 const capabilitiesManifest = readJson("catalog/capabilities.manifest.json");
+const brandProfiles = readJson("catalog/design/brand-profiles.json");
+const preferenceProfile = readJson("catalog/preferences/channel-profile.json");
 readJson("schemas/clip-animation-input.schema.json");
 readJson("schemas/chart-ingestion-input.schema.json");
 readJson("schemas/animation-spec.schema.json");
 readJson("schemas/image-asset-manifest.schema.json");
 readJson("schemas/visual-selection.schema.json");
+readJson("schemas/review-session.schema.json");
+readJson("schemas/visual-qa-report.schema.json");
+readJson("schemas/rendered-visual-qa-report.schema.json");
 
 const allowedStatuses = new Set(["ready", "primitive", "planned"]);
 const allowedFormats = new Set(["fullscreen", "overlay-alpha"]);
@@ -60,6 +65,23 @@ const drawingIds = new Set();
 const imageIds = new Set();
 const rootSource = readFileSync(path.join(projectRoot, "src", "Root.tsx"), "utf8");
 const compositionIds = new Set(extractCompositionIds(rootSource));
+
+if (capabilitiesManifest.version !== 2) {
+  errors.push("catalog/capabilities.manifest.json debe usar el contrato v2");
+}
+if (
+  brandProfiles.version !== 1 ||
+  !Array.isArray(brandProfiles.profiles) ||
+  brandProfiles.profiles.length === 0
+) {
+  errors.push("catalog/design/brand-profiles.json no es válido");
+}
+if (
+  preferenceProfile.version !== 1 ||
+  typeof preferenceProfile.id !== "string"
+) {
+  errors.push("catalog/preferences/channel-profile.json no es válido");
+}
 
 if (catalog.version !== 1) {
   errors.push("catalog.version debe ser 1");

@@ -10,17 +10,30 @@
   "images": [
     {
       "id": "demo-index-2025",
-      "publicPath": "assets/library/chart-samples/demo-index-2025.svg",
+      "publicPath": "assets/library/chart-samples/demo-index-2025.png",
       "alt": "Gráfica sintética de un índice de demostración durante 2025",
-      "width": 1700,
-      "height": 760,
-      "sha256": "b386f521e98461f427f5995150d79c28c71925356698d527868ab1e35690f22e",
+      "width": 5667,
+      "height": 2533,
+      "sha256": "2ba67144814a4c8a2f02a01a97f9cb6cceb34fdd2de3b5d57e81a7617d516409",
+      "sourceSha256": "b386f521e98461f427f5995150d79c28c71925356698d527868ab1e35690f22e",
       "source": "Shortsmith",
       "author": "Shortsmith",
       "license": "project-owned",
       "attribution": "Serie y gráfico sintéticos creados para pruebas del renderer.",
-      "tags": ["gráfica", "índice", "finanzas", "serie temporal", "demostración"],
-      "focalPoint": {"x": 50, "y": 50}
+      "tags": [
+        "gráfica",
+        "índice",
+        "finanzas",
+        "serie temporal",
+        "demostración"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "chart",
+      "treatment": "natural",
+      "importedAt": "2026-07-27T11:19:29.581Z"
     }
   ]
 }

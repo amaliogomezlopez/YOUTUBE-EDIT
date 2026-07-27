@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/rendered-visual-qa-report.schema.json",
+  "title": "Shortsmith Remotion rendered visual QA report",
+  "type": "object",
+  "required": [
+    "version",
+    "generatedAt",
+    "score",
+    "passed",
+    "checks",
+    "issues",
+    "frames"
+  ],
+  "properties": {
+    "version": {"const": 1},
+    "generatedAt": {"type": "string"},
+    "score": {"type": "number", "minimum": 0, "maximum": 100},
+    "passed": {"type": "boolean"},
+    "checks": {
+      "type": "object",
+      "required": [
+        "frameCount",
+        "blankFrameRisks",
+        "labelledContactSheet",
+        "immutableRun"
+      ],
+      "properties": {
+        "frameCount": {"type": "integer", "minimum": 0},
+        "blankFrameRisks": {"type": "integer", "minimum": 0},
+        "labelledContactSheet": {"type": "boolean"},
+        "immutableRun": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "code", "message", "frame"],
+        "properties": {
+          "severity": {"enum": ["blocking", "warning", "info"]},
+          "code": {"type": "string"},
+          "message": {"type": "string"},
+          "frame": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    },
+    "frames": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "compositionId",
+          "variantId",
+          "label",
+          "sequence",
+          "checkpoint",
+          "frame",
+          "width",
+          "height",
+          "sha256",
+          "luminanceMean",
+          "luminanceVariance",
+          "blankRisk"
+        ],
+        "properties": {
+          "compositionId": {"type": "string"},
+          "variantId": {"type": "string"},
+          "label": {"type": "string"},
+          "sequence": {"type": "integer", "minimum": 0},
+          "checkpoint": {"type": "number", "minimum": 0, "maximum": 1},
+          "frame": {"type": "integer", "minimum": 0},
+          "width": {"type": "integer", "minimum": 1},
+          "height": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+          "luminanceMean": {"type": "number", "minimum": 0, "maximum": 255},
+          "luminanceVariance": {"type": "number", "minimum": 0},
+          "blankRisk": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

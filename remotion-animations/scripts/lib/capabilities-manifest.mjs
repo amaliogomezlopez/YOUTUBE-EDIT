@@ -29,10 +29,18 @@ export const buildCapabilitiesManifest = (projectRoot) => {
   const icons = readJson(projectRoot, "catalog/visuals/icons.json");
   const drawings = readJson(projectRoot, "catalog/visuals/drawings.json");
   const images = readJson(projectRoot, "catalog/visuals/images.json");
+  const brandProfiles = readJson(
+    projectRoot,
+    "catalog/design/brand-profiles.json",
+  );
+  const preferences = readJson(
+    projectRoot,
+    "catalog/preferences/channel-profile.json",
+  );
   const rootSource = readFileSync(path.join(projectRoot, "src", "Root.tsx"), "utf8");
   const compositionIds = extractCompositionIds(rootSource);
   return {
-    version: 1,
+    version: 2,
     product: "Shortsmith Remotion",
     sourceOfTruth: [
       "catalog/animations/patterns.json",
@@ -40,6 +48,8 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       "catalog/visuals/icons.json",
       "catalog/visuals/drawings.json",
       "catalog/visuals/images.json",
+      "catalog/design/brand-profiles.json",
+      "catalog/preferences/channel-profile.json",
       "src/Root.tsx",
     ],
     commands: {
@@ -49,11 +59,20 @@ export const buildCapabilitiesManifest = (projectRoot) => {
         'npm run remotion:select:visual -- --query "<concepto>" --allow-fallback',
       validate: "npm run remotion:check",
       renderChartStills: "npm run remotion:stills:annotated-chart",
+      importAsset:
+        "npm run remotion:asset:import -- --file <imagen> --id <slug> --type <tipo> --alt <texto> --source <origen> --license <licencia> --tags <lista>",
+      buildReviewStudio: "npm run remotion:review:build",
+      createReviewPackage:
+        "npm run remotion:review:package -- --session <review-id>",
     },
     schemas: {
       chartIngestion: "schemas/chart-ingestion-input.schema.json",
       animationSpec: "schemas/animation-spec.schema.json",
       visualSelection: "schemas/visual-selection.schema.json",
+      managedImage: "schemas/image-asset-manifest.schema.json",
+      reviewSession: "schemas/review-session.schema.json",
+      visualQa: "schemas/visual-qa-report.schema.json",
+      renderedVisualQa: "schemas/rendered-visual-qa-report.schema.json",
     },
     artDirections: [
       "editorial-report",
@@ -70,6 +89,10 @@ export const buildCapabilitiesManifest = (projectRoot) => {
         variants: pattern.implementation?.variants ?? [],
         component: pattern.implementation?.component ?? null,
         ingestion: pattern.ingestion?.command ?? null,
+        supportedFormats:
+          pattern.implementation?.component === "ExtendedPatternScene"
+            ? ["landscape", "vertical", "square", "portrait"]
+            : ["landscape"],
       }))
       .sort((left, right) => left.id.localeCompare(right.id)),
     effects: effects.effects
@@ -85,10 +108,14 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       images: images.images.map((image) => image.id).sort(),
       selectionModes: [
         "deterministic-catalog",
+        "semantic-ontology-fuzzy",
         "llm-catalog-validated",
         "controlled-fallback",
       ],
       fallbackPolicy: "catalog-only-no-freeform-svg",
+      managedAssetImport: true,
+      svgRasterizationOnImport: true,
+      preferenceProfile: preferences.id,
     },
     factualSafety: {
       calibratedCharts: true,
@@ -101,6 +128,46 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       silentAndSfxTargets: true,
       defaultDelivery: effects.soundDesignPolicy.defaultDelivery,
       profiles: effects.soundProfiles.map((profile) => profile.id).sort(),
+    },
+    design: {
+      defaultProfile: brandProfiles.defaultProfile,
+      profiles: brandProfiles.profiles.map((profile) => profile.id),
+      themes: brandProfiles.profiles.flatMap((profile) => profile.themes),
+      motionProfiles: brandProfiles.profiles.flatMap(
+        (profile) => profile.motionProfiles,
+      ),
+      formats: brandProfiles.profiles.flatMap((profile) => profile.formats),
+      optionalHeader: true,
+      watermarkDefault: false,
+      cornerRuleDefault: false,
+    },
+    review: {
+      studioUrl: "/remotion-review/",
+      playerPreview: true,
+      abVariants: true,
+      frameComments: true,
+      sourceContext: true,
+      safeZones: true,
+      approvalGate: "qa-passed",
+      statuses: [
+        "draft",
+        "in-review",
+        "changes-requested",
+        "approved",
+      ],
+    },
+    quality: {
+      staticPropQa: true,
+      renderedFrameQa: true,
+      labelledContactSheets: true,
+      immutableReviewRuns: true,
+      chartCameraEdgeGuards: true,
+    },
+    agentRouting: {
+      skill: ".agents/skills/create-remotion-animations/SKILL.md",
+      readManifestFirst: true,
+      reviewBeforeFinalRender: true,
+      preferenceAwareSelection: true,
     },
   };
 };

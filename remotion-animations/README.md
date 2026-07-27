@@ -19,6 +19,10 @@ El módulo incluye una capa de decisión reutilizable:
   para explicar procesos y relaciones;
 - `catalog/visuals/images.json`: inventario de imágenes locales con procedencia,
   licencia, hash, dimensiones, etiquetas y punto focal;
+- `catalog/design/brand-profiles.json`: temas, ritmos, formatos y defaults de
+  marca separados de las composiciones;
+- `catalog/preferences/channel-profile.json`: preferencias que ajustan el
+  selector semántico sin ocultar su razonamiento;
 - `catalog/capabilities.manifest.json`: índice generado de capacidades,
   composiciones, comandos, schemas y garantías factuales;
 - `schemas/clip-animation-input.schema.json`: contrato opcional para clips y
@@ -35,6 +39,55 @@ El módulo incluye una capa de decisión reutilizable:
 El catálogo distingue barras categóricas de histogramas estadísticos reales.
 `RisingHistogram` conserva su nombre histórico en código, pero se registra
 como `data.bar-focus`.
+
+## Patrones extendidos y formatos
+
+`src/motion/ExtendedPatterns.tsx` añade nueve patrones reutilizables:
+
+- spotlight sobre captura;
+- wipe antes/después;
+- comparación con base común;
+- timeline de hitos;
+- ranking;
+- acumulación;
+- embudo/filtro;
+- ramificación y convergencia;
+- foto con parallax editorial.
+
+Todos usan props Zod, sonido opcional y metadata dinámica para `landscape`
+1920×1080, `vertical` 1080×1920, `square` 1080×1080 y `portrait` 1080×1350.
+El sistema visual separa cuatro temas de cinco perfiles de movimiento en
+`src/motion/DesignSystem.ts`.
+
+## Review Studio
+
+La revisión interactiva vive en:
+
+```text
+http://127.0.0.1:3000/remotion-review/
+```
+
+Preparación:
+
+```powershell
+npm run remotion:review:build
+npm run server
+```
+
+El Player permite comparar A/B/C, cambiar formato, tema, ritmo, encabezado y
+sonido, activar contexto de vídeo y safe zones, saltar a checkpoints y guardar
+comentarios por frame. Las sesiones se conservan localmente en
+`data/review/remotion/`. La aprobación exige superar QA y cualquier cambio de
+props invalida ese resultado.
+
+Para producir una evidencia reproducible:
+
+```powershell
+npm run remotion:review:package -- --session "<review-id>"
+```
+
+El paquete genera stills, índice, métricas, hoja de contacto etiquetada y un
+manifest inmutable.
 
 `src/motion/Effects.tsx` separa los efectos comunes de los patrones:
 
@@ -112,9 +165,19 @@ npm run remotion:select:visual -- --query "flujo de agentes" --allow-fallback
 npm run remotion:capabilities
 ```
 
+El selector usa ontología bilingüe, fuzzy matching y preferencias del canal.
 El fallback solo compone iconos auditados; no genera SVG libre. La tipografía
 se carga localmente: Schibsted Grotesk para texto editorial y Fragment Mono
 para datos.
+
+Para incorporar imágenes, capturas o SVG:
+
+```powershell
+npm run remotion:asset:import -- --file "<ruta>" --id "<slug>" --type screenshot --alt "<texto>" --source "<origen>" --license "<licencia>" --tags "tag1,tag2"
+```
+
+La importación normaliza orientación y metadatos, rasteriza SVG, calcula hashes
+y registra procedencia, licencia, tipo, tratamiento y punto focal.
 
 ## Catálogo visual
 
@@ -199,6 +262,8 @@ npm run render:ahorrar-limites-v3-audio
 npm run render:toolkit
 npm run stills:visual-catalog
 npm run stills:annotated-chart
+npm run build:review-studio
+npm run review:package -- --session "<review-id>"
 npm run prepare:sfx
 npm run check:catalog
 ```

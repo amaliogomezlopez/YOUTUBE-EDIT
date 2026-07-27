@@ -19,6 +19,10 @@ Herramienta local para convertir un vídeo largo en transcripción, clips vertic
 - Carouselsmith independiente: 10 layouts, imágenes importadas o generadas, overlays SVG, edición persistente y exportación PNG/JPEG 4:5 y 9:16.
 - Animation Scout local: muestreo visual denso, hojas de contacto, perfil de movimiento y análisis multimodal opcional para llevar referencias a Remotion.
 - Ingestión local de gráficas para preparar assets, calibrar ejes, seleccionar tramos y generar props de Remotion con fallback controlado.
+- Review Studio de Remotion con Player, variantes A/B/C, contexto de vídeo,
+  comentarios por frame, QA y aprobación antes del render final.
+- Biblioteca responsive de patrones, temas y ritmos, importación normalizada de
+  imágenes/SVG y selector semántico sensible a preferencias.
 - Selector semántico local de iconos, dibujos e imágenes con fallback
   compuesto y validado, más manifest de capacidades para agentes.
 - Cuatro perfiles de dirección artística y fuentes locales deterministas para

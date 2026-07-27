@@ -12,7 +12,9 @@
     "mode",
     "selected",
     "alternatives",
-    "fallback"
+    "fallback",
+    "semanticSignals",
+    "preferenceProfile"
   ],
   "properties": {
     "version": {"const": 1},
@@ -41,6 +43,22 @@
     "fallback": {
       "oneOf": [
         {"$ref": "#/$defs/controlledFallback"},
+        {"type": "null"}
+      ]
+    },
+    "semanticSignals": {
+      "type": "object",
+      "required": ["concepts", "expandedTerms", "relationshipIntent"],
+      "properties": {
+        "concepts": {"type": "array", "items": {"type": "string"}},
+        "expandedTerms": {"type": "array", "items": {"type": "string"}},
+        "relationshipIntent": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "preferenceProfile": {
+      "oneOf": [
+        {"type": "string"},
         {"type": "null"}
       ]
     }
@@ -87,7 +105,29 @@
         "generationPolicy": {
           "const": "catalog-only-no-freeform-svg"
         },
-        "rationale": {"type": "string", "minLength": 1}
+        "rationale": {"type": "string", "minLength": 1},
+        "recipe": {
+          "type": "object",
+          "required": ["version", "primitives", "connectors", "editable"],
+          "properties": {
+            "version": {"const": 1},
+            "primitives": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["iconId", "role"],
+                "properties": {
+                  "iconId": {"type": "string"},
+                  "role": {"enum": ["primary", "supporting"]}
+                },
+                "additionalProperties": false
+              }
+            },
+            "connectors": {"enum": ["semantic-flow", "none"]},
+            "editable": {"const": true}
+          },
+          "additionalProperties": false
+        }
       }
     }
   }
