@@ -6,7 +6,8 @@
 - `data/jobs/`: jobs y transcripciones reutilizables.
 - `data/transcriptions/`: lotes de transcripciones conservados localmente.
 - `remotion-animations/src/`: componentes y composiciones.
-- `remotion-animations/out/`: renders temporales o de trabajo, no versionados.
+- `remotion-animations/out/<proyecto>/runs/<run-id>/`: renders temporales o
+  de trabajo separados por ejecución, no versionados.
 - `remotion-animations/projects/`: guías y contexto específicos de cada vídeo.
 
 No crear un segundo pipeline de transcripción ni otro proyecto Remotion.

@@ -1,6 +1,6 @@
 ---
 name: scout-animations
-description: "Descarga y explora vídeos de referencia de YouTube o archivos locales para descubrir, estudiar y reconstruir mecánicas de motion graphics, transiciones, gráficas, interfaces y cámara; ejecuta Animation Scout en dos pasadas, analiza hojas de contacto frame a frame y prepara o realiza su integración en el catálogo Remotion de Shortsmith. Usar cuando el usuario aporte un vídeo o enlace y pida explorar, copiar o recrear el estilo de una animación, extraer patrones visuales, comparar referencias o ampliar el catálogo, sin reutilizar assets, textos o marcas de terceros."
+description: "Descarga y explora vídeos de referencia de YouTube o archivos locales para descubrir, estudiar y reconstruir mecánicas de motion graphics, transiciones, gráficas, interfaces y cámara; ejecuta Animation Scout en dos pasadas, analiza hojas de contacto frame a frame, prepara o realiza su integración en el catálogo Remotion de Shortsmith y gestiona la limpieza explícita de sus jobs visuales. Usar cuando el usuario aporte un vídeo o enlace y pida explorar, copiar o recrear el estilo de una animación, extraer patrones visuales, comparar referencias, ampliar el catálogo o limpiar frames y hojas de scouting, sin reutilizar assets, textos o marcas de terceros."
 ---
 
 # Scout Animations
@@ -22,6 +22,8 @@ editorial ni copiar su identidad.
    artefactos.
 6. Si comienza implementación React/Remotion, continuar con
    `$create-remotion-animations` y `remotion-best-practices`.
+7. Leer `docs/animation-artifact-cleanup.md` antes de revisar o borrar jobs,
+   frames, vídeos descargados u hojas de scouting.
 
 ## Elegir el alcance
 
@@ -116,6 +118,19 @@ Indicar:
 - enlaces absolutos a `manifest.json`, hojas, análisis, handoff y propuesta;
 - si se enviaron imágenes a un modelo externo;
 - validaciones ejecutadas y limitaciones reales.
+
+## Limpiar
+
+- Conservar los jobs de scouting por defecto: contienen la evidencia visual y
+  el handoff usados para reconstruir la mecánica.
+- Simular con
+  `npm run cleanup:animations -- --scope scout --older-than-days <días> --keep-last <n>`.
+- Borrar solo ante una petición explícita, repitiendo el mismo alcance con
+  `--apply --confirm=DELETE_ANIMATION_ARTIFACTS`.
+- No usar `--include-incomplete`, `--keep-last 0` ni
+  `--older-than-days 0` salvo que el usuario pida ese alcance.
+- Confirmar qué jobs se eliminaron y que el borrado no es recuperable. Borrar
+  o archivar el chat no elimina estos archivos.
 
 ## Invocaciones típicas
 

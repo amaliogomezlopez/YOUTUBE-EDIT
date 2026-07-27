@@ -1,13 +1,23 @@
-import {mkdirSync, writeFileSync} from "node:fs";
 import {spawnSync} from "node:child_process";
 import path from "node:path";
+import {
+  completeRun,
+  createRunDirectory,
+  metadataPathFor,
+  renderPathFor,
+  writeJsonExclusive,
+} from "./lib/output-run.mjs";
 
 const renders = [
   ["Scout-RadialOrbitSummary", "radial-orbit-summary.mp4"],
   ["Scout-ConnectedCardChain", "connected-card-chain.mp4"],
   ["Scout-CapacityMatrix", "capacity-matrix.mp4"],
 ];
-const outputRoot = path.resolve("out", "scout-catalog");
+const run = createRunDirectory({
+  project: "scout-catalog",
+  purpose: "render",
+});
+const outputRoot = run.directory;
 const remotionCli = path.resolve(
   "node_modules",
   "@remotion",
@@ -15,11 +25,13 @@ const remotionCli = path.resolve(
   "remotion-cli.js",
 );
 
-mkdirSync(outputRoot, {recursive: true});
 const media = [];
+const outputs = [];
+
+console.log(`\nEjecución ${run.runId}`);
 
 for (const [compositionId, filename] of renders) {
-  const outputPath = path.join(outputRoot, filename);
+  const outputPath = renderPathFor(run, filename);
   console.log(`\nRenderizando ${compositionId} -> ${outputPath}`);
   const renderResult = spawnSync(
     process.execPath,
@@ -73,12 +85,13 @@ for (const [compositionId, filename] of renders) {
     file: filename,
     ...JSON.parse(probeResult.stdout),
   });
+  outputs.push(outputPath);
 }
 
-writeFileSync(
-  path.join(outputRoot, "media-manifest.json"),
-  `${JSON.stringify({version: 1, media}, null, 2)}\n`,
-  "utf8",
-);
+const mediaManifestPath = metadataPathFor(run, "media-manifest.json");
+writeJsonExclusive(mediaManifestPath, {version: 1, runId: run.runId, media});
+outputs.push(mediaManifestPath);
 
+const manifestPath = completeRun(run, {outputs});
 console.log(`\nDemos del catálogo scout terminadas en ${outputRoot}`);
+console.log(`Manifest: ${manifestPath}`);

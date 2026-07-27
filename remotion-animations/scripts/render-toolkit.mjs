@@ -1,6 +1,10 @@
-import {mkdirSync} from "node:fs";
 import {spawnSync} from "node:child_process";
 import path from "node:path";
+import {
+  completeRun,
+  createRunDirectory,
+  renderPathFor,
+} from "./lib/output-run.mjs";
 
 const renders = [
   ["Toolkit-LineChartZoom", "toolkit-line-chart-zoom.mp4"],
@@ -14,11 +18,11 @@ const renders = [
   ["Toolkit-TextFocusJourney", "toolkit-text-focus-journey.mp4"],
 ];
 
-const outputRoot = path.resolve(
-  "out",
-  "ahorrar-limites-v2",
-  "TOOLKIT",
-);
+const run = createRunDirectory({
+  project: "toolkit",
+  purpose: "render",
+});
+const outputRoot = run.directory;
 const remotionCli = path.resolve(
   "node_modules",
   "@remotion",
@@ -26,10 +30,12 @@ const remotionCli = path.resolve(
   "remotion-cli.js",
 );
 
-mkdirSync(outputRoot, {recursive: true});
+const outputs = [];
+
+console.log(`\nEjecución ${run.runId}`);
 
 for (const [compositionId, filename] of renders) {
-  const outputPath = path.join(outputRoot, filename);
+  const outputPath = renderPathFor(run, filename);
   console.log(`\nRenderizando ${compositionId} -> ${outputPath}`);
   const result = spawnSync(
     process.execPath,
@@ -57,6 +63,9 @@ for (const [compositionId, filename] of renders) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+  outputs.push(outputPath);
 }
 
+const manifestPath = completeRun(run, {outputs});
 console.log(`\nDemos del toolkit terminadas en ${outputRoot}`);
+console.log(`Manifest: ${manifestPath}`);

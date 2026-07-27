@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/visual-selection.schema.json",
+  "title": "Shortsmith visual catalog selection",
+  "description": "Contrato preparado para que un selector semántico elija recursos existentes sin emitir SVG libre.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "query",
+    "selection",
+    "generationPolicy"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "query": {
+      "type": "string",
+      "minLength": 1
+    },
+    "selection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "assetId",
+        "role",
+        "rationale"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "icon",
+            "drawing",
+            "image"
+          ]
+        },
+        "assetId": {
+          "type": "string",
+          "pattern": "^[a-z]+(?:-[a-z]+)*$"
+        },
+        "role": {
+          "enum": [
+            "subject",
+            "support",
+            "process",
+            "warning",
+            "decoration"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "treatment": {
+          "enum": [
+            "outline",
+            "accent",
+            "muted",
+            "highlighted"
+          ]
+        }
+      }
+    },
+    "generationPolicy": {
+      "const": "catalog-only"
+    }
+  }
+}

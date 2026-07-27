@@ -168,6 +168,21 @@ catalog-proposal.json          # propuesta de reutilización o ampliación
 SCOUT-REPORT.md                # informe humano
 ```
 
+## Limpieza
+
+Los jobs de scouting se conservan hasta que se solicita su limpieza. Cerrar,
+archivar o borrar el chat no elimina estos archivos.
+
+Simular la política predeterminada:
+
+```powershell
+npm run cleanup:animations -- --scope scout
+```
+
+La simulación mantiene 30 días, conserva los 3 jobs más recientes y protege
+jobs sin `manifest.json`. Consultar
+`docs/animation-artifact-cleanup.md` antes de aplicar el borrado.
+
 ### `manifest.json`
 
 Incluye fuente, probe, rango, crop, fps solicitado y efectivo, frames,
@@ -202,8 +217,8 @@ Separa:
 
 Conecta el scouting con:
 
-- `catalog/animation-patterns.json`;
-- `catalog/animation-effects.json`;
+- `catalog/animations/patterns.json`;
+- `catalog/animations/effects.json`;
 - `schemas/animation-spec.schema.json`;
 - `src/motion/Toolkit.tsx`;
 - `src/motion/Effects.tsx`.

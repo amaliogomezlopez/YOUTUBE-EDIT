@@ -18,6 +18,7 @@ const radialSideCardSchema = z.object({
 
 export const radialOrbitDemoSchema = z.object({
   title: z.string().min(1).max(58),
+  showHeader: z.boolean().optional(),
   supportingText: z.string().max(70),
   value: z.number().min(0).max(100),
   suffix: z.string().max(3),
@@ -53,6 +54,7 @@ export const RadialOrbitSummaryDemo: React.FC<RadialOrbitDemoProps> = (
 ) => (
   <MotionCanvas
     accentColor={props.accentColor}
+    showHeader={props.showHeader}
     supportingText={props.supportingText}
     title={props.title}
   >
@@ -78,6 +80,7 @@ const chainNodeSchema = z.object({
 
 export const connectedCardChainDemoSchema = z.object({
   title: z.string().min(1).max(58),
+  showHeader: z.boolean().optional(),
   supportingText: z.string().max(70),
   nodes: z.array(chainNodeSchema).min(2).max(4),
   accentColor: zColor(),
@@ -117,6 +120,7 @@ export const ConnectedCardChainDemo: React.FC<
 > = (props) => (
   <MotionCanvas
     accentColor={props.accentColor}
+    showHeader={props.showHeader}
     supportingText={props.supportingText}
     title={props.title}
   >
@@ -129,6 +133,7 @@ export const ConnectedCardChainDemo: React.FC<
 
 export const capacityMatrixDemoSchema = z.object({
   title: z.string().min(1).max(58),
+  showHeader: z.boolean().optional(),
   supportingText: z.string().max(70),
   rows: z.number().int().min(3).max(6),
   columns: z.number().int().min(4).max(10),
@@ -156,6 +161,7 @@ export const CapacityMatrixDemo: React.FC<CapacityMatrixDemoProps> = (
 ) => (
   <MotionCanvas
     accentColor={props.accentColor}
+    showHeader={props.showHeader}
     supportingText={props.supportingText}
     title={props.title}
   >

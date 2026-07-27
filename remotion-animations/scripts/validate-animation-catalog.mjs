@@ -18,10 +18,15 @@ const readJson = (relativePath) => {
   }
 };
 
-const catalog = readJson("catalog/animation-patterns.json");
-const effectsCatalog = readJson("catalog/animation-effects.json");
+const catalog = readJson("catalog/animations/patterns.json");
+const effectsCatalog = readJson("catalog/animations/effects.json");
+const iconsCatalog = readJson("catalog/visuals/icons.json");
+const drawingsCatalog = readJson("catalog/visuals/drawings.json");
+const imagesCatalog = readJson("catalog/visuals/images.json");
 readJson("schemas/clip-animation-input.schema.json");
 readJson("schemas/animation-spec.schema.json");
+readJson("schemas/image-asset-manifest.schema.json");
+readJson("schemas/visual-selection.schema.json");
 
 const allowedStatuses = new Set(["ready", "primitive", "planned"]);
 const allowedFormats = new Set(["fullscreen", "overlay-alpha"]);
@@ -43,9 +48,15 @@ const effectPhases = new Set(
   effectsCatalog.phases?.map((phase) => phase.id) ?? [],
 );
 const soundProfileIds = new Set();
+const iconIds = new Set();
+const drawingIds = new Set();
+const imageIds = new Set();
 
 if (catalog.version !== 1) {
   errors.push("catalog.version debe ser 1");
+}
+if (catalog.catalogFamily !== "animations") {
+  errors.push("catalog/animations/patterns.json debe declarar catalogFamily=animations");
 }
 if (!Array.isArray(catalog.patterns) || catalog.patterns.length === 0) {
   errors.push("catalog.patterns debe contener al menos un patrón");
@@ -167,6 +178,9 @@ for (const [index, route] of (
 if (effectsCatalog.version !== 1) {
   errors.push("animation-effects.version debe ser 1");
 }
+if (effectsCatalog.catalogFamily !== "animations") {
+  errors.push("catalog/animations/effects.json debe declarar catalogFamily=animations");
+}
 if (
   !Array.isArray(effectsCatalog.effects) ||
   effectsCatalog.effects.length === 0
@@ -227,6 +241,121 @@ for (const [index, mode] of (
   }
 }
 
+if (
+  iconsCatalog.version !== 1 ||
+  iconsCatalog.catalogFamily !== "visuals" ||
+  iconsCatalog.kind !== "icon"
+) {
+  errors.push("catalog/visuals/icons.json no declara el contrato visual v1");
+}
+if (!Array.isArray(iconsCatalog.icons) || iconsCatalog.icons.length === 0) {
+  errors.push("catalog/visuals/icons.json debe contener iconos");
+}
+for (const [index, icon] of (iconsCatalog.icons ?? []).entries()) {
+  const location = `icons[${index}]`;
+  if (!/^[a-z]+(?:-[a-z]+)*$/.test(icon.id ?? "")) {
+    errors.push(`${location}.id no es un slug válido`);
+  } else if (iconIds.has(icon.id)) {
+    errors.push(`${location}.id está duplicado: ${icon.id}`);
+  } else {
+    iconIds.add(icon.id);
+  }
+  if (
+    typeof icon.label !== "string" ||
+    !icon.label.trim() ||
+    typeof icon.category !== "string" ||
+    !icon.category.trim()
+  ) {
+    errors.push(`${location} necesita label y category`);
+  }
+  if (!Array.isArray(icon.tags) || icon.tags.length < 2) {
+    errors.push(`${location}.tags necesita al menos dos términos semánticos`);
+  }
+  if (!Array.isArray(icon.parts) || icon.parts.length === 0) {
+    errors.push(`${location}.parts debe describir sus piezas visuales`);
+  }
+}
+
+if (
+  drawingsCatalog.version !== 1 ||
+  drawingsCatalog.catalogFamily !== "visuals" ||
+  drawingsCatalog.kind !== "drawing"
+) {
+  errors.push("catalog/visuals/drawings.json no declara el contrato visual v1");
+}
+if (
+  !Array.isArray(drawingsCatalog.drawings) ||
+  drawingsCatalog.drawings.length === 0
+) {
+  errors.push("catalog/visuals/drawings.json debe contener dibujos");
+}
+for (const [index, drawing] of (drawingsCatalog.drawings ?? []).entries()) {
+  const location = `drawings[${index}]`;
+  if (!/^[a-z]+(?:-[a-z]+)*$/.test(drawing.id ?? "")) {
+    errors.push(`${location}.id no es un slug válido`);
+  } else if (drawingIds.has(drawing.id)) {
+    errors.push(`${location}.id está duplicado: ${drawing.id}`);
+  } else {
+    drawingIds.add(drawing.id);
+  }
+  if (!Array.isArray(drawing.iconRefs) || drawing.iconRefs.length === 0) {
+    errors.push(`${location}.iconRefs debe contener referencias`);
+  } else {
+    for (const iconId of drawing.iconRefs) {
+      if (!iconIds.has(iconId)) {
+        errors.push(`${location}.iconRefs referencia un icono desconocido: ${iconId}`);
+      }
+    }
+  }
+  if (!Array.isArray(drawing.tags) || drawing.tags.length < 2) {
+    errors.push(`${location}.tags necesita al menos dos términos semánticos`);
+  }
+  if (typeof drawing.motionVerb !== "string" || !drawing.motionVerb.trim()) {
+    errors.push(`${location}.motionVerb es obligatorio`);
+  }
+}
+
+if (
+  imagesCatalog.version !== 1 ||
+  imagesCatalog.catalogFamily !== "visuals" ||
+  imagesCatalog.kind !== "managed-image"
+) {
+  errors.push("catalog/visuals/images.json no declara el contrato visual v1");
+}
+if (!Array.isArray(imagesCatalog.images)) {
+  errors.push("catalog/visuals/images.json debe declarar images como array");
+}
+for (const [index, image] of (imagesCatalog.images ?? []).entries()) {
+  const location = `images[${index}]`;
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(image.id ?? "")) {
+    errors.push(`${location}.id no es un slug válido`);
+  } else if (imageIds.has(image.id)) {
+    errors.push(`${location}.id está duplicado: ${image.id}`);
+  } else {
+    imageIds.add(image.id);
+  }
+  if (!/^assets\/library\//.test(image.publicPath ?? "")) {
+    errors.push(`${location}.publicPath debe vivir en assets/library/`);
+  }
+  if (!/^[a-fA-F0-9]{64}$/.test(image.sha256 ?? "")) {
+    errors.push(`${location}.sha256 no es válido`);
+  }
+  if (!Number.isInteger(image.width) || !Number.isInteger(image.height)) {
+    errors.push(`${location} necesita width y height enteros`);
+  }
+  if (!Array.isArray(image.tags) || image.tags.length < 2) {
+    errors.push(`${location}.tags necesita al menos dos términos semánticos`);
+  }
+  if (
+    typeof image.source !== "string" ||
+    !image.source.trim() ||
+    typeof image.license !== "string" ||
+    !image.license.trim()
+  ) {
+    errors.push(`${location} necesita source y license verificables`);
+  }
+}
+
 if (errors.length > 0) {
   for (const error of errors) {
     console.error(`- ${error}`);
@@ -246,5 +375,6 @@ console.log(
     `(${Object.entries(statusCounts)
       .map(([status, count]) => `${status}=${count}`)
       .join(", ")}), ${effectsCatalog.effects.length} efectos transversales, ` +
-    `${soundProfileIds.size} perfiles sonoros.`,
+    `${soundProfileIds.size} perfiles sonoros, ${iconIds.size} iconos y ` +
+    `${drawingIds.size} dibujos; ${imageIds.size} imágenes gestionadas.`,
 );

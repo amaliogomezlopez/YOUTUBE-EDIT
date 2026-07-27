@@ -6,8 +6,10 @@ existente de Remotion. No crean otro proyecto ni sustituyen FFmpeg.
 Documentos que el agente debe leer antes de actuar:
 
 - `docs/remotion-animation-system.md`;
-- `remotion-animations/catalog/animation-patterns.json`;
-- `remotion-animations/catalog/animation-effects.json`;
+- `remotion-animations/catalog/animations/patterns.json`;
+- `remotion-animations/catalog/animations/effects.json`;
+- `remotion-animations/catalog/visuals/icons.json`;
+- `remotion-animations/catalog/visuals/drawings.json`;
 - `remotion-animations/schemas/clip-animation-input.schema.json`;
 - `remotion-animations/schemas/animation-spec.schema.json`;
 - la skill `create-remotion-animations` y sus referencias.
@@ -26,9 +28,9 @@ transformación y una señal de color.
 
 Antes de tocar React:
 1. inspecciona vídeo, transcripción y assets;
-2. consulta animation-patterns.json;
+2. consulta `catalog/animations/patterns.json`;
 3. elige patternId por significado, no por apariencia;
-4. consulta animation-effects.json y declara cada efecto con target, fase,
+4. consulta `catalog/animations/effects.json` y declara cada efecto con target, fase,
    inicio, fin y parámetros;
 5. crea visual.cameraPlan con modo, justificación y cues normalizados;
 6. genera animation-spec.json válido;
@@ -170,7 +172,7 @@ proyecto.
 Si hay imágenes o logos:
 - inspecciónalos visualmente;
 - conserva proporción y transparencia;
-- copia solo los seleccionados a public/projects/<proyecto>/<clip>/assets/;
+- copia solo los seleccionados a `public/assets/projects/<proyecto>/<clip>/`;
 - registra SHA-256, origen y stagedFile;
 - no uses assets desconocidos como simple decoración.
 
@@ -434,7 +436,7 @@ Reglas:
 - la imagen participa en el argumento, no decora.
 
 Copia solo los assets seleccionados a
-public/projects/<proyecto>/<clip>/assets/, calcula SHA-256 y regístralos en el
+`public/assets/projects/<proyecto>/<clip>/`, calcula SHA-256 y regístralos en el
 animation-spec.json. Genera stills que prueben que el zoom no pierde contexto.
 Haz aparecer assets progresivamente con reveal.element y aplica
 camera.focus-zoom solo después de mostrar el encuadre completo.

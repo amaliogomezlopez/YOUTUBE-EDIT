@@ -77,7 +77,7 @@ y el gris son efectos transversales, no nuevas familias.
 ## Efectos transversales
 
 El registro legible por máquina vive en
-`remotion-animations/catalog/animation-effects.json`. Cada efecto declara su
+`remotion-animations/catalog/animations/effects.json`. Cada efecto declara su
 fase, objetivo, ventana temporal y parámetros. El agente no puede pedir
 simplemente “hazlo dinámico”: debe expresar qué elemento recibe qué efecto y
 por qué.
@@ -167,7 +167,7 @@ subtítulos ni duplica toda la locución.
 ## Taxonomía editorial
 
 El registro completo y legible por máquina vive en
-`remotion-animations/catalog/animation-patterns.json`.
+`remotion-animations/catalog/animations/patterns.json`.
 
 ### 1. Datos y gráficas
 
@@ -280,7 +280,7 @@ dominante:
 
 Estos nombres se conservan como hints de compatibilidad dentro del catálogo
 de patrones. En contratos nuevos, `visual.effects[]` usa siempre el ID
-canónico de `animation-effects.json`, por ejemplo `camera.focus-zoom`,
+canónico de `catalog/animations/effects.json`, por ejemplo `camera.focus-zoom`,
 `focus.desaturate-peers` o `transition.before-after-wipe`.
 
 Evitar desenfoque fuerte en texto y elementos informativos. El gris y la
@@ -331,7 +331,7 @@ Orden de descubrimiento:
 Los assets seleccionados se copian a un staging local:
 
 ```text
-remotion-animations/public/projects/<proyecto>/<clip>/assets/
+remotion-animations/public/assets/projects/<proyecto>/<clip>/
 ```
 
 Se registra origen, destino y SHA-256. No se copia el vídeo fuente salvo que
@@ -397,12 +397,24 @@ Reglas de diversidad para un lote:
 ```text
 remotion-animations/
 ├── catalog/
-│   ├── animation-patterns.json
-│   └── animation-effects.json
+│   ├── animations/
+│   │   ├── patterns.json
+│   │   └── effects.json
+│   └── visuals/
+│       ├── icons.json
+│       ├── drawings.json
+│       └── images.json
 ├── schemas/
 │   ├── clip-animation-input.schema.json
-│   └── animation-spec.schema.json
+│   ├── animation-spec.schema.json
+│   ├── visual-selection.schema.json
+│   └── image-asset-manifest.schema.json
 ├── src/
+│   ├── visuals/
+│   │   ├── icons/
+│   │   ├── drawings/
+│   │   ├── ManagedImage.tsx
+│   │   └── VisualCatalogGallery.tsx
 │   └── motion/
 │       ├── Effects.tsx      # zoom, texto y revelado transversal
 │       ├── primitives/       # número, paths, cámara, máscara, asset frame
@@ -417,14 +429,14 @@ remotion-animations/
 │       └── sound/
 ├── public/
 │   ├── sfx/
-│   └── projects/            # staging local, no versionado
-└── projects/
-    └── <proyecto>/
-        ├── inputs/
-        ├── plans/
-        ├── props/
+│   └── assets/
+│       ├── library/         # recursos licenciados y versionables
+│       └── projects/        # staging local, no versionado
+└── out/
+    └── <proyecto>/runs/<run-id>/
+        ├── renders/
         ├── previews/
-        └── guides/
+        └── metadata/
 ```
 
 No hace falta mover inmediatamente `Toolkit.tsx` ni los proyectos existentes.

@@ -54,7 +54,9 @@ npm run stills:scout-catalog
 npm run render:scout-catalog
 ```
 
-Los renders se generan en `out/scout-catalog/`. Son MP4 H.264 silenciosos a
+Cada comando crea una ejecución nueva en
+`out/scout-catalog/runs/<run-id>/`; los renders y los stills de invocaciones
+distintas no comparten carpeta. Los vídeos son MP4 H.264 silenciosos a
 1920x1080, 60 fps y `yuv420p`.
 
 ## QA final

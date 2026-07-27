@@ -1,6 +1,10 @@
-import {mkdirSync} from "node:fs";
 import {spawnSync} from "node:child_process";
 import path from "node:path";
+import {
+  completeRun,
+  createRunDirectory,
+  renderPathFor,
+} from "./lib/output-run.mjs";
 
 const renders = [
   ["ALV4-01-Coste", "01", "01_coste_creciente_v4.mp4"],
@@ -14,18 +18,11 @@ const renders = [
   ["ALV4-29-Pico", "29", "29_horas_pico_v4.mp4"],
 ];
 
-const outputRoot = path.resolve(
-  "C:",
-  "Users",
-  "amalio",
-  "Desktop",
-  "VIDEOS-YOUTUBE",
-  "VIDEOS YOUTUBE",
-  "VIDEOS_RECORDED",
-  "VACACIONES",
-  "1-ahorrar-limites",
-  "ANIMACIONES_REMOTION_V4",
-);
+const run = createRunDirectory({
+  project: "ahorrar-limites-v4",
+  purpose: "render",
+});
+const outputRoot = run.directory;
 
 const remotionCli = path.resolve(
   "node_modules",
@@ -33,11 +30,12 @@ const remotionCli = path.resolve(
   "cli",
   "remotion-cli.js",
 );
+const outputs = [];
+
+console.log(`\nEjecución ${run.runId}`);
 
 for (const [compositionId, clipNumber, filename] of renders) {
-  const clipOutput = path.join(outputRoot, clipNumber);
-  mkdirSync(clipOutput, {recursive: true});
-  const outputPath = path.join(clipOutput, filename);
+  const outputPath = renderPathFor(run, clipNumber, filename);
   console.log(`\nRenderizando ${compositionId} -> ${outputPath}`);
   const result = spawnSync(
     process.execPath,
@@ -65,6 +63,9 @@ for (const [compositionId, clipNumber, filename] of renders) {
   if (result.status !== 0) {
     process.exit(result.status ?? 1);
   }
+  outputs.push(outputPath);
 }
 
+const manifestPath = completeRun(run, {outputs});
 console.log(`\nRenders V4 terminados en ${outputRoot}`);
+console.log(`Manifest: ${manifestPath}`);

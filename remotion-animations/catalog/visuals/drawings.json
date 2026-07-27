@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "catalogFamily": "visuals",
+  "kind": "drawing",
+  "designSystem": {
+    "viewBox": "0 0 320 220",
+    "style": "editorial-outline",
+    "source": "shortsmith-original",
+    "license": "project-owned"
+  },
+  "selectionPolicy": {
+    "rule": "Usar un dibujo cuando la relación entre objetos comunique mejor que un icono aislado.",
+    "maxPerScene": 1,
+    "aiContract": "La IA seleccionará un id y sus roles semánticos; no generará markup SVG libre."
+  },
+  "drawings": [
+    {"id": "memory-repositories", "label": "Memoria y repositorios", "tags": ["memoria", "preferencias", "repositorios"], "iconRefs": ["memory", "repository"], "motionVerb": "intentar transferir y rechazar"},
+    {"id": "context-window", "label": "Ventana de contexto", "tags": ["contexto", "historial", "llenar"], "iconRefs": ["context", "prompt"], "motionVerb": "llenar"},
+    {"id": "token-stream", "label": "Flujo de tokens", "tags": ["tokens", "entrada", "consumo"], "iconRefs": ["tokens", "input", "model"], "motionVerb": "transportar"},
+    {"id": "agent-workspace", "label": "Espacio del agente", "tags": ["agente", "herramientas", "trabajo"], "iconRefs": ["agent", "tool", "terminal"], "motionVerb": "activar"},
+    {"id": "tool-stack", "label": "Pila de herramientas", "tags": ["skills", "herramientas", "contexto"], "iconRefs": ["tool", "file", "context"], "motionVerb": "apilar"},
+    {"id": "server-cloud", "label": "Servidor y nube", "tags": ["servidor", "nube", "despliegue"], "iconRefs": ["server", "cloud", "upload"], "motionVerb": "conectar"},
+    {"id": "pipeline", "label": "Pipeline", "tags": ["proceso", "etapas", "resultado"], "iconRefs": ["input", "tool", "output"], "motionVerb": "recorrer"},
+    {"id": "filter-compress", "label": "Filtrar y comprimir", "tags": ["filtrar", "reducir", "síntesis"], "iconRefs": ["queue", "filter", "output"], "motionVerb": "comprimir"},
+    {"id": "branch-merge", "label": "Ramificar y reunir", "tags": ["paralelo", "subagentes", "consolidar"], "iconRefs": ["branch", "agent", "merge"], "motionVerb": "dividir y reunir"},
+    {"id": "bottleneck", "label": "Cuello de botella", "tags": ["cola", "límite", "saturación"], "iconRefs": ["queue", "limit", "output"], "motionVerb": "acumular"},
+    {"id": "review-loop", "label": "Bucle de revisión", "tags": ["revisión", "corregir", "recurrencia"], "iconRefs": ["prompt", "edit", "loop"], "motionVerb": "volver"},
+    {"id": "off-peak", "label": "Horas valle", "tags": ["tiempo", "horas pico", "límite"], "iconRefs": ["clock", "limit", "cost"], "motionVerb": "recorrer y expandir"}
+  ]
+}

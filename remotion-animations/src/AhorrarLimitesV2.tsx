@@ -27,6 +27,7 @@ export const ahorrarLimitesV2Schema = z.object({
   scene: z.enum(ahorrarLimitesScenesV2),
   clipNumber: z.number().int().min(1),
   title: z.string(),
+  showHeader: z.boolean().optional(),
   accentColor: zColor(),
 });
 
@@ -1135,6 +1136,7 @@ const sceneComponentsV2: Record<
 export const AhorrarLimitesV2: React.FC<AhorrarLimitesV2Props> = ({
   scene,
   title,
+  showHeader,
   accentColor,
 }) => {
   const frame = useCurrentFrame();
@@ -1142,7 +1144,11 @@ export const AhorrarLimitesV2: React.FC<AhorrarLimitesV2Props> = ({
   const Scene = sceneComponentsV2[scene];
 
   return (
-    <MotionCanvas accentColor={accentColor} title={title}>
+    <MotionCanvas
+      accentColor={accentColor}
+      showHeader={showHeader}
+      title={title}
+    >
       <Scene accentColor={accentColor} fps={fps} frame={frame} />
     </MotionCanvas>
   );

@@ -24,6 +24,7 @@ export const ahorrarLimitesSchema = z.object({
   clipNumber: z.number().int().min(1),
   title: z.string(),
   kicker: z.string(),
+  showHeader: z.boolean().optional(),
   accentColor: zColor(),
 });
 
@@ -1293,9 +1294,9 @@ const sceneComponents: Record<
 
 export const AhorrarLimitesAnimation: React.FC<AhorrarLimitesProps> = ({
   scene,
-  clipNumber,
   title,
   kicker,
+  showHeader = true,
   accentColor,
 }) => {
   const frame = useCurrentFrame();
@@ -1316,77 +1317,45 @@ export const AhorrarLimitesAnimation: React.FC<AhorrarLimitesProps> = ({
         padding: "58px 86px 54px",
       }}
     >
-      <div
-        style={{
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "space-between",
-          opacity: headerIn,
-          transform: `translateY(${interpolate(headerIn, [0, 1], [-24, 0])}px)`,
-        }}
-      >
+      {showHeader ? (
         <div
           style={{
             alignItems: "center",
             display: "flex",
-            gap: 18,
+            flexDirection: "column",
+            left: 140,
+            opacity: headerIn,
+            position: "absolute",
+            right: 140,
+            textAlign: "center",
+            top: 58,
+            transform: `translateY(${interpolate(headerIn, [0, 1], [-24, 0])}px)`,
           }}
         >
           <div
             style={{
-              backgroundColor: accentColor,
-              borderRadius: 999,
-              boxShadow: `0 0 26px ${rgba(accentColor, 0.7)}`,
-              height: 14,
-              width: 56,
-            }}
-          />
-          <span
-            style={{
-              color: "#A5BCD1",
-              fontSize: 23,
-              fontWeight: 900,
-              letterSpacing: 3.4,
+              fontSize: 54,
+              fontWeight: 920,
+              letterSpacing: -1.5,
+              lineHeight: 1.04,
+              maxWidth: 1500,
             }}
           >
-            AHORRAR LÍMITES · CLIP {String(clipNumber).padStart(2, "0")}
-          </span>
+            {title}
+          </div>
+          <div
+            style={{
+              color: "#A9BED2",
+              fontSize: 24,
+              fontWeight: 570,
+              marginTop: 10,
+              maxWidth: 1260,
+            }}
+          >
+            {kicker}
+          </div>
         </div>
-        <span
-          style={{
-            color: rgba(accentColor, 0.9),
-            fontSize: 20,
-            fontWeight: 850,
-            letterSpacing: 2,
-          }}
-        >
-          AMALIOMETRÍA
-        </span>
-      </div>
-
-      <div
-        style={{
-          fontSize: 62,
-          fontWeight: 920,
-          letterSpacing: -2.2,
-          lineHeight: 1.03,
-          marginTop: 24,
-          opacity: headerIn,
-        }}
-      >
-        {title}
-      </div>
-      <div
-        style={{
-          color: "#A9BED2",
-          fontSize: 27,
-          fontWeight: 570,
-          marginTop: 10,
-          opacity: headerIn,
-        }}
-      >
-        {kicker}
-      </div>
+      ) : null}
 
       <div
         style={{
@@ -1394,7 +1363,7 @@ export const AhorrarLimitesAnimation: React.FC<AhorrarLimitesProps> = ({
           left: 86,
           position: "absolute",
           right: 86,
-          top: 250,
+          top: showHeader ? 230 : 54,
         }}
       >
         <Scene accentColor={accentColor} fps={fps} frame={frame} />

@@ -43,6 +43,12 @@ import {
   radialOrbitDemoProps,
   radialOrbitDemoSchema,
 } from "./motion/ScoutedPatternDemos";
+import {
+  DrawingCatalogGallery,
+  IconCatalogGallery,
+  drawingGallerySchema,
+  iconGallerySchema,
+} from "./visuals/VisualCatalogGallery";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -170,6 +176,38 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={capacityMatrixDemoProps}
         />
       </Folder>
+      <Folder name="Catalogo-Visual">
+        <Composition
+          id="Catalog-Icons-01"
+          component={IconCatalogGallery}
+          durationInFrames={180}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={iconGallerySchema}
+          defaultProps={{page: 0}}
+        />
+        <Composition
+          id="Catalog-Icons-02"
+          component={IconCatalogGallery}
+          durationInFrames={180}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={iconGallerySchema}
+          defaultProps={{page: 1}}
+        />
+        <Composition
+          id="Catalog-Drawings"
+          component={DrawingCatalogGallery}
+          durationInFrames={240}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={drawingGallerySchema}
+          defaultProps={{showLabels: true}}
+        />
+      </Folder>
       <Folder name="Ahorrar-Limites">
         {ahorrarLimitesCompositions.map((composition) => (
           <Composition
@@ -236,6 +274,7 @@ export const RemotionRoot: React.FC = () => {
 
 const lineChartDemoProps: LineChartDemoProps = {
   title: "Gráfica de línea con foco",
+  showHeader: true,
   data: [
     { label: "ENE", value: 42 },
     { label: "FEB", value: 51 },
@@ -250,6 +289,7 @@ const lineChartDemoProps: LineChartDemoProps = {
 
 const histogramDemoProps: HistogramDemoProps = {
   title: "Histograma proporcional",
+  showHeader: true,
   data: [
     { label: "A", value: 32 },
     { label: "B", value: 54 },
@@ -263,6 +303,7 @@ const histogramDemoProps: HistogramDemoProps = {
 
 const kineticNumberDemoProps: KineticNumberDemoProps = {
   title: "Contador cinético",
+  showHeader: true,
   value: 90,
   accentColor: "#FFD43B",
   prefix: "",
@@ -495,6 +536,7 @@ const ahorrarLimitesV4Compositions = [
       clipNumber: 9,
       title: "Miles de tokens antes de tu pregunta",
       kicker: "System prompt y herramientas consumen antes de responder.",
+      showHeader: false,
       accentColor: "#42C7F5",
     },
   },
@@ -506,6 +548,7 @@ const ahorrarLimitesV4Compositions = [
       clipNumber: 12,
       title: "La ventana de contexto se llena",
       kicker: "Cada prompt arrastra toda la conversación anterior.",
+      showHeader: false,
       accentColor: "#45E1A4",
     },
   },
@@ -517,6 +560,7 @@ const ahorrarLimitesV4Compositions = [
       clipNumber: 15,
       title: "Atención dispersa: índices en vez de releer todo",
       kicker: "El modelo busca la parte relevante con índices.",
+      showHeader: false,
       accentColor: "#42C7F5",
     },
   },

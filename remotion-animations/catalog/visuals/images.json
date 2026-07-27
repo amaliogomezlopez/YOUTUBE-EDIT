@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "catalogFamily": "visuals",
+  "kind": "managed-image",
+  "selectionPolicy": {
+    "rule": "Solo registrar imágenes locales cuyo origen, licencia, dimensiones y hash estén verificados.",
+    "renderPolicy": "local-only",
+    "fallback": "Usar icono o dibujo del catálogo; nunca descargar una imagen durante el render."
+  },
+  "images": []
+}

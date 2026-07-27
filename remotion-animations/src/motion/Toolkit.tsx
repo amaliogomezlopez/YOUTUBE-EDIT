@@ -61,6 +61,7 @@ export type MotionCanvasProps = {
   title: string;
   accentColor: string;
   children: React.ReactNode;
+  showHeader?: boolean;
   supportingText?: string;
 };
 
@@ -68,10 +69,12 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
   title,
   accentColor,
   children,
+  showHeader = true,
   supportingText,
 }) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
+  const hasHeader = showHeader && Boolean(title || supportingText);
   const intro = motionProgress(frame, fps, 0, 0.55);
   const outro = interpolate(
     frame,
@@ -96,78 +99,58 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
         overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          left: 96,
-          opacity: intro,
-          position: "absolute",
-          right: 96,
-          top: 64,
-          transform: `translateY(${interpolate(
-            intro,
-            [0, 1],
-            [-18, 0],
-          )}px)`,
-        }}
-      >
+      {hasHeader ? (
         <div
           style={{
             alignItems: "center",
             display: "flex",
-            justifyContent: "space-between",
+            flexDirection: "column",
+            left: 140,
+            opacity: intro,
+            position: "absolute",
+            right: 140,
+            textAlign: "center",
+            top: 58,
+            transform: `translateY(${interpolate(
+              intro,
+              [0, 1],
+              [-18, 0],
+            )}px)`,
           }}
         >
           <div
             style={{
-              backgroundColor: accentColor,
-              borderRadius: 2,
-              height: 5,
-              width: 42,
-            }}
-          />
-          <div
-            style={{
-              color: rgba(accentColor, 0.82),
-              fontSize: 17,
-              fontWeight: 800,
-              letterSpacing: 1.2,
+              fontSize: 54,
+              fontWeight: 850,
+              letterSpacing: -1.5,
+              lineHeight: 1.04,
+              maxWidth: 1500,
             }}
           >
-            AMALIOMETRÍA
+            {title}
           </div>
+          {supportingText ? (
+            <div
+              style={{
+                color: MOTION_COLORS.muted,
+                fontSize: 24,
+                fontWeight: 520,
+                marginTop: 10,
+                maxWidth: 1260,
+              }}
+            >
+              {supportingText}
+            </div>
+          ) : null}
         </div>
-        <div
-          style={{
-            fontSize: 58,
-            fontWeight: 850,
-            letterSpacing: -1.7,
-            lineHeight: 1.04,
-            marginTop: 22,
-            maxWidth: 1350,
-          }}
-        >
-          {title}
-        </div>
-        {supportingText ? (
-          <div
-            style={{
-              color: MOTION_COLORS.muted,
-              fontSize: 25,
-              fontWeight: 520,
-              marginTop: 10,
-            }}
-          >
-            {supportingText}
-          </div>
-        ) : null}
-      </div>
+      ) : null}
       <div
         style={{
           bottom: 58,
           left: 96,
           position: "absolute",
           right: 96,
-          top: supportingText ? 220 : 190,
+          top: hasHeader ? (supportingText ? 214 : 170) : 56,
         }}
       >
         {children}

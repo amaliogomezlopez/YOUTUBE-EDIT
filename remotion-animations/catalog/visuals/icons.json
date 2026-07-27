@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "catalogFamily": "visuals",
+  "kind": "icon",
+  "designSystem": {
+    "viewBox": "0 0 64 64",
+    "strokeWidth": 3.5,
+    "strokeLinecap": "round",
+    "strokeLinejoin": "round",
+    "defaultStyle": "outline",
+    "source": "shortsmith-original",
+    "license": "project-owned"
+  },
+  "selectionPolicy": {
+    "rule": "Elegir el icono por significado y reservarlo para objetos o acciones reconocibles.",
+    "fallback": "unknown",
+    "aiContract": "La IA seleccionará un id existente; la generación controlada se añadirá en una fase posterior."
+  },
+  "icons": [
+    {"id": "agent", "label": "Agente", "category": "ai-system", "tags": ["agente", "usuario", "rol", "persona"], "parts": ["head", "body", "signal"]},
+    {"id": "model", "label": "Modelo", "category": "ai-system", "tags": ["modelo", "ia", "núcleo", "cerebro"], "parts": ["core", "nodes"]},
+    {"id": "memory", "label": "Memoria", "category": "ai-system", "tags": ["memoria", "preferencias", "recordar"], "parts": ["chip", "cells"]},
+    {"id": "context", "label": "Contexto", "category": "ai-system", "tags": ["contexto", "ventana", "historial"], "parts": ["window", "blocks"]},
+    {"id": "prompt", "label": "Prompt", "category": "ai-system", "tags": ["prompt", "mensaje", "entrada"], "parts": ["bubble", "cursor"]},
+    {"id": "tokens", "label": "Tokens", "category": "ai-system", "tags": ["tokens", "consumo", "texto"], "parts": ["coins", "marks"]},
+    {"id": "tool", "label": "Herramienta", "category": "ai-system", "tags": ["herramienta", "función", "skill"], "parts": ["handle", "head"]},
+    {"id": "api", "label": "API", "category": "ai-system", "tags": ["api", "conector", "endpoint"], "parts": ["ports", "bridge"]},
+
+    {"id": "file", "label": "Archivo", "category": "software", "tags": ["archivo", "documento", "md"], "parts": ["sheet", "fold", "lines"]},
+    {"id": "folder", "label": "Carpeta", "category": "software", "tags": ["carpeta", "directorio", "proyecto"], "parts": ["tab", "body"]},
+    {"id": "repository", "label": "Repositorio", "category": "software", "tags": ["repo", "repositorio", "git"], "parts": ["folder", "branch"]},
+    {"id": "code", "label": "Código", "category": "software", "tags": ["código", "programación", "desarrollo"], "parts": ["brackets", "slash"]},
+    {"id": "terminal", "label": "Terminal", "category": "software", "tags": ["terminal", "comando", "cli"], "parts": ["window", "prompt"]},
+    {"id": "browser", "label": "Navegador", "category": "software", "tags": ["web", "navegador", "interfaz"], "parts": ["window", "chrome"]},
+    {"id": "database", "label": "Base de datos", "category": "software", "tags": ["base de datos", "datos", "almacenamiento"], "parts": ["top", "body", "rows"]},
+    {"id": "server", "label": "Servidor", "category": "software", "tags": ["servidor", "vps", "infraestructura"], "parts": ["racks", "lights"]},
+    {"id": "cloud", "label": "Nube", "category": "software", "tags": ["nube", "remoto", "hosting"], "parts": ["cloud", "link"]},
+    {"id": "mobile", "label": "Móvil", "category": "software", "tags": ["móvil", "teléfono", "app"], "parts": ["device", "screen"]},
+
+    {"id": "input", "label": "Entrada", "category": "flow", "tags": ["entrada", "input", "recibir"], "parts": ["gate", "arrow"]},
+    {"id": "output", "label": "Salida", "category": "flow", "tags": ["salida", "output", "resultado"], "parts": ["gate", "arrow"]},
+    {"id": "queue", "label": "Cola", "category": "flow", "tags": ["cola", "espera", "tareas"], "parts": ["items", "gate"]},
+    {"id": "filter", "label": "Filtro", "category": "flow", "tags": ["filtro", "selección", "reducir"], "parts": ["funnel", "result"]},
+    {"id": "branch", "label": "Ramificar", "category": "flow", "tags": ["rama", "dividir", "paralelo"], "parts": ["source", "branches"]},
+    {"id": "merge", "label": "Unir", "category": "flow", "tags": ["unir", "consolidar", "resultado"], "parts": ["branches", "target"]},
+    {"id": "loop", "label": "Bucle", "category": "flow", "tags": ["bucle", "revisión", "recurrencia"], "parts": ["arc", "arrow"]},
+    {"id": "sync", "label": "Sincronizar", "category": "flow", "tags": ["sincronizar", "actualizar", "intercambiar"], "parts": ["arrows", "nodes"]},
+    {"id": "search", "label": "Buscar", "category": "flow", "tags": ["buscar", "encontrar", "foco"], "parts": ["lens", "handle"]},
+    {"id": "index", "label": "Índice", "category": "flow", "tags": ["índice", "referencia", "salto"], "parts": ["rows", "markers"]},
+
+    {"id": "camera", "label": "Cámara", "category": "production", "tags": ["cámara", "vídeo", "grabar"], "parts": ["body", "lens"]},
+    {"id": "microphone", "label": "Micrófono", "category": "production", "tags": ["micrófono", "audio", "voz"], "parts": ["capsule", "stand"]},
+    {"id": "edit", "label": "Edición", "category": "production", "tags": ["editar", "cortar", "montaje"], "parts": ["timeline", "playhead"]},
+    {"id": "upload", "label": "Subir", "category": "production", "tags": ["subir", "publicar", "exportar"], "parts": ["tray", "arrow"]},
+    {"id": "analytics", "label": "Analítica", "category": "production", "tags": ["analítica", "métrica", "rendimiento"], "parts": ["axes", "bars"]},
+
+    {"id": "clock", "label": "Reloj", "category": "business", "tags": ["tiempo", "horario", "pico"], "parts": ["face", "hands"]},
+    {"id": "cost", "label": "Coste", "category": "business", "tags": ["coste", "precio", "consumo"], "parts": ["coin", "trend"]},
+    {"id": "wallet", "label": "Cartera", "category": "business", "tags": ["cartera", "dinero", "presupuesto"], "parts": ["body", "clasp"]},
+    {"id": "risk", "label": "Riesgo", "category": "business", "tags": ["riesgo", "alerta", "problema"], "parts": ["triangle", "mark"]},
+    {"id": "limit", "label": "Límite", "category": "business", "tags": ["límite", "tope", "capacidad"], "parts": ["gauge", "needle"]},
+    {"id": "lock", "label": "Bloqueo", "category": "business", "tags": ["bloqueo", "seguridad", "cerrado"], "parts": ["shackle", "body"]},
+    {"id": "shield", "label": "Protección", "category": "business", "tags": ["protección", "seguridad", "validación"], "parts": ["shield", "check"]}
+  ]
+}

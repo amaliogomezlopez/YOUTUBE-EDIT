@@ -9,10 +9,16 @@ parametrizables.
 
 El módulo incluye una capa de decisión reutilizable:
 
-- `catalog/animation-patterns.json`: 27 patrones semánticos con estado real,
+- `catalog/animations/patterns.json`: 27 patrones semánticos con estado real,
   evidencia requerida, assets compatibles, foco y sonido;
-- `catalog/animation-effects.json`: zooms, revelados, trazados, contadores,
+- `catalog/animations/effects.json`: zooms, revelados, trazados, contadores,
   texto progresivo, foco, salida y cues transversales;
+- `catalog/visuals/icons.json`: 40 iconos SVG originales, clasificados por
+  significado y preparados para selección semántica;
+- `catalog/visuals/drawings.json`: 12 dibujos editoriales que combinan iconos
+  para explicar procesos y relaciones;
+- `catalog/visuals/images.json`: inventario de imágenes locales con procedencia,
+  licencia, hash, dimensiones, etiquetas y punto focal;
 - `schemas/clip-animation-input.schema.json`: contrato opcional para clips y
   assets adyacentes;
 - `schemas/animation-spec.schema.json`: contrato obligatorio entre el planner
@@ -41,7 +47,8 @@ como `data.bar-focus`.
 
 El núcleo compartido vive en `src/motion/Toolkit.tsx`:
 
-- `MotionCanvas`: lienzo editorial, márgenes e identidad.
+- `MotionCanvas`: lienzo editorial sin marca fija, con titular centrado y
+  encabezado opcional mediante `showHeader`.
 - `KineticNumber`: contador numérico con formato español y zoom de énfasis.
 - `RisingHistogram`: barras ascendentes con proporciones correctas.
 - `LineChartZoom`: línea trazada y zoom de cámara sobre el dato elegido.
@@ -61,6 +68,22 @@ por cifras de la transcripción o de una fuente aportada por el usuario.
 
 `ChartHighlight` y `ChartHighlightOverlay` se mantienen por compatibilidad; el
 overlay está preparado para ProRes 4444 con canal alfa.
+
+## Catálogo visual
+
+La API reutilizable vive en `src/visuals/`:
+
+- `MotionIcon` representa un icono aislado;
+- `IconGlyph` permite incrustarlo dentro de otro SVG;
+- `EditorialDoodle` compone relaciones visuales animables;
+- `ManagedImage` carga imágenes locales de `public/` con encuadre y punto
+  focal controlados.
+
+Los IDs son estables y se resuelven desde los JSON del catálogo. Las
+composiciones `Catalog-Icons-01`, `Catalog-Icons-02` y `Catalog-Drawings`
+permiten revisar el sistema completo desde Remotion Studio. La IA todavía no
+genera SVG libre: `schemas/visual-selection.schema.json` fija por ahora la
+política `catalog-only`.
 
 ## Diseño sonoro
 
@@ -98,7 +121,22 @@ El resultado `remotion-handoff.json` enlaza las hojas de contacto y las
 recomendaciones visuales con este catálogo. No es todavía un
 `animation-spec.json`: la pieza final debe aportar su evidencia editorial.
 
-Los renders quedan en `remotion-animations\out\` y no se versionan.
+Los renders quedan en
+`remotion-animations\out\<proyecto>\runs\<run-id>\` y no se versionan. Cada
+comando reserva una carpeta nueva; nunca reutiliza ni limpia una ejecución
+anterior. `run-start.json` identifica el intento y `run-result.json` aparece
+solo cuando termina correctamente.
+
+Las nuevas ejecuciones separan sus artefactos:
+
+```text
+<run-id>/
+├── renders/     # MP4, MOV y entregables
+├── previews/    # stills, frames, timelines y hojas de contacto
+├── metadata/    # índices y manifests auxiliares
+├── run-start.json
+└── run-result.json
+```
 
 ## Uso directo
 
@@ -112,6 +150,7 @@ npm run render:overlay
 npm run render:ahorrar-limites-v2
 npm run render:ahorrar-limites-v3-audio
 npm run render:toolkit
+npm run stills:visual-catalog
 npm run prepare:sfx
 npm run check:catalog
 ```
@@ -119,8 +158,24 @@ npm run check:catalog
 Para renderizar con datos enviados desde un JSON:
 
 ```powershell
-npx remotion render src/index.ts ChartHighlight out\mi-grafica.mp4 --props=props\mi-grafica.json
+node scripts/render-safe.mjs render mi-proyecto ChartHighlight mi-grafica.mp4 --props=props\mi-grafica.json
 ```
+
+El wrapper rechaza rutas que salgan de la ejecución y archivos ya existentes.
+Los scripts de lote aplican la misma política y usan `ffmpeg -n` para previews.
+
+## Limpieza
+
+Los vídeos, stills, frames y hojas de contacto se conservan por ejecución.
+Cerrar o borrar un chat no los elimina. Desde la raíz del repositorio:
+
+```powershell
+npm run cleanup:animations
+```
+
+El comando solo simula por defecto. Consulta
+`docs/animation-artifact-cleanup.md` antes de usar `--apply`; los originales y
+el código nunca forman parte de esta limpieza.
 
 La licencia estándar de Remotion es gratuita para particulares y equipos de
 hasta tres personas. Si cambia el tamaño o el uso comercial del equipo, revisa

@@ -11,6 +11,7 @@ import {
   motionProgress,
   rgba,
 } from "./Toolkit";
+import {MotionIcon} from "../visuals/icons/MotionIcon";
 
 export type RadialOrbitItem = {
   label: string;
@@ -662,18 +663,16 @@ export const CapacityMatrix: React.FC<CapacityMatrixProps> = ({
                   }}
                 />
               ) : null}
-              <svg height={66} viewBox="0 0 66 66" width={66}>
-                <circle
-                  cx={33}
-                  cy={20}
-                  fill={rgba(color, Math.min(1, fill + scanBoost * 0.22))}
-                  r={12}
-                />
-                <path
-                  d="M 12 58 C 13 41, 22 34, 33 34 C 44 34, 53 41, 54 58 Z"
-                  fill={rgba(color, Math.min(1, fill + scanBoost * 0.22))}
-                />
-              </svg>
+              <MotionIcon
+                color={rgba(
+                  color,
+                  Math.min(1, fill + scanBoost * 0.22),
+                )}
+                id="agent"
+                progress={Math.min(1, fill + scanBoost * 0.22)}
+                secondaryColor={rgba(accentColor, 0.86)}
+                style={{height: 66, width: 66}}
+              />
             </div>
           );
         })}

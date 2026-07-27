@@ -9,6 +9,7 @@ import {
   motionProgress,
   rgba,
 } from "./motion/Toolkit";
+import {IconGlyph} from "./visuals/icons/MotionIcon";
 
 export const ahorrarLimitesScenesV4 = [
   "rising-cost",
@@ -27,6 +28,7 @@ export const ahorrarLimitesV4Schema = z.object({
   clipNumber: z.number().int().min(1),
   title: z.string(),
   kicker: z.string().optional(),
+  showHeader: z.boolean().optional(),
   accentColor: zColor(),
 });
 
@@ -586,53 +588,11 @@ const SparseAttentionV4: React.FC<SceneProps> = ({
   );
 };
 
-const SkillIcon: React.FC<{ kind: string; color: string }> = ({
-  kind,
-  color,
-}) => {
-  if (kind === "server") {
-    return (
-      <g fill="none" stroke={color} strokeWidth={4}>
-        {[0, 1, 2].map((row) => (
-          <g key={row}>
-            <rect height={16} rx={4} width={62} x={-31} y={-30 + row * 22} />
-            <circle
-              cx={-20}
-              cy={-22 + row * 22}
-              fill={color}
-              r={3}
-              stroke="none"
-            />
-          </g>
-        ))}
-      </g>
-    );
-  }
-  if (kind === "architecture") {
-    return (
-      <g fill="none" stroke={color} strokeWidth={4}>
-        <rect height={18} rx={4} width={18} x={-9} y={-34} />
-        <rect height={18} rx={4} width={18} x={-32} y={16} />
-        <rect height={18} rx={4} width={18} x={14} y={16} />
-        <path d="M 0 -16 L 0 0 L -23 0 L -23 16" />
-        <path d="M 0 0 L 23 0 L 23 16" />
-      </g>
-    );
-  }
-  return (
-    <g fill="none" stroke={color} strokeWidth={4}>
-      <circle r={34} />
-      <circle r={20} />
-      <circle fill={color} r={7} stroke="none" />
-    </g>
-  );
-};
-
 const ThreeSkillsV4: React.FC<SceneProps> = ({ frame, fps, accentColor }) => {
   const cards = [
     { kind: "server", label: "Servidores" },
-    { kind: "architecture", label: "Arquitectura" },
-    { kind: "target", label: "Objetivos y rol" },
+    { kind: "branch", label: "Arquitectura" },
+    { kind: "agent", label: "Objetivos y rol" },
   ];
   const chatIn = motionProgress(frame, fps, 2.6, 3.2);
   const chatGlow = interpolate(
@@ -719,8 +679,14 @@ const ThreeSkillsV4: React.FC<SceneProps> = ({ frame, fps, accentColor }) => {
             >
               .md
             </text>
-            <g transform="translate(-95 0)">
-              <SkillIcon color={accentColor} kind={card.kind} />
+            <g transform="translate(-127 -32)">
+              <IconGlyph
+                color={accentColor}
+                id={card.kind}
+                progress={enter}
+                secondaryColor={MOTION_COLORS.ink}
+                strokeWidth={4}
+              />
             </g>
             <text
               fill={MOTION_COLORS.ink}
@@ -1507,6 +1473,7 @@ export const AhorrarLimitesV4: React.FC<AhorrarLimitesV4Props> = ({
   scene,
   title,
   kicker,
+  showHeader,
   accentColor,
 }) => {
   const frame = useCurrentFrame();
@@ -1516,6 +1483,7 @@ export const AhorrarLimitesV4: React.FC<AhorrarLimitesV4Props> = ({
   return (
     <MotionCanvas
       accentColor={accentColor}
+      showHeader={showHeader}
       supportingText={kicker}
       title={title}
     >

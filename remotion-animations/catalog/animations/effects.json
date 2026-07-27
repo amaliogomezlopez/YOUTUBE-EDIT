@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "catalogFamily": "animations",
   "designRule": "El patrón decide qué se cuenta; los efectos deciden cómo se construye y dónde termina la mirada.",
   "phases": [
     {

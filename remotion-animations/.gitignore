@@ -8,3 +8,5 @@ out
 
 # Assets selected from local clip folders and staged for deterministic renders.
 public/projects/
+public/assets/projects/*
+!public/assets/projects/.gitkeep

@@ -88,25 +88,34 @@ Reglas obligatorias:
 
 ## Render
 
+Cada invocación debe reservar una ejecución nueva. No pasar una ruta fija
+directamente a Remotion: el wrapper crea
+`out/<proyecto>/runs/<run-id>/`, rechaza colisiones y registra
+`run-start.json`/`run-result.json`.
+
 MP4 de alta calidad:
 
 ```powershell
-npx remotion render src/index.ts <CompositionId> out\<archivo>.mp4 --codec=h264 --crf=17 --image-format=png --pixel-format=yuv420p
+node scripts/render-safe.mjs render <proyecto> <CompositionId> <archivo>.mp4 --codec=h264 --crf=17 --image-format=png --pixel-format=yuv420p
 ```
 
 Overlay transparente para editor:
 
 ```powershell
-npx remotion render src/index.ts <CompositionId> out\<archivo>.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le
+node scripts/render-safe.mjs render <proyecto> <CompositionId> <archivo>.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le
 ```
 
 Still de control:
 
 ```powershell
-npx remotion still src/index.ts <CompositionId> out\previews\<archivo>.png --frame=<frame>
+node scripts/render-safe.mjs still <proyecto> <CompositionId> <archivo>.png --frame=<frame>
 ```
 
 Usar `--props=<archivo.json>` cuando los datos deban quedar reproducibles fuera de `defaultProps`.
+Para lotes, importar `createRunDirectory()`, `outputPathFor()` y
+`completeRun()` desde `scripts/lib/output-run.mjs`. Generar todos los
+artefactos del lote dentro de la misma ejecución. No usar `ffmpeg -y` para
+renders o previews: la opción obligatoria es `-n`.
 
 ## Control de calidad
 

@@ -12,8 +12,10 @@ Elegir la animación por lo que la locución necesita demostrar. Separar:
 
 Leer antes:
 
-- `remotion-animations/catalog/animation-patterns.json`;
-- `remotion-animations/catalog/animation-effects.json`;
+- `remotion-animations/catalog/animations/patterns.json`;
+- `remotion-animations/catalog/animations/effects.json`;
+- `remotion-animations/catalog/visuals/icons.json`;
+- `remotion-animations/catalog/visuals/drawings.json`;
 - la transcripción y el tramo exacto del clip.
 
 ## Ruta rápida para patrones `ready`

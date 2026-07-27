@@ -1,6 +1,6 @@
 ---
 name: create-remotion-animations
-description: "Analiza vídeos y transcripciones, elige automáticamente el patrón y los efectos del catálogo que mejor explican cada momento, diseña e implementa animaciones cortas con efectos de sonido semánticos en Remotion, las audita y las entrega por clip. Usar dentro de YouTube Edit cuando el usuario pida crear o mejorar motion graphics, gráficas animadas, porcentajes, comparativas, procesos, explicaciones visuales, sonorización sincronizada, overlays transparentes o un paquete de animaciones asociado a clips de YouTube."
+description: "Analiza vídeos y transcripciones, elige automáticamente el patrón y los efectos del catálogo que mejor explican cada momento, diseña e implementa animaciones cortas con efectos de sonido semánticos en Remotion, las audita, las entrega por clip y gestiona la limpieza explícita de sus renders y previews. Usar dentro de YouTube Edit cuando el usuario pida crear o mejorar motion graphics, gráficas animadas, porcentajes, comparativas, procesos, explicaciones visuales, sonorización sincronizada, overlays transparentes, un paquete de animaciones asociado a clips de YouTube o limpiar artefactos de animación."
 ---
 
 # Crear animaciones con Remotion
@@ -18,6 +18,8 @@ Producir piezas breves, fieles a la fuente y listas para montar. Reutilizar el m
 7. Leer siempre [sound-design.md](references/sound-design.md) antes de implementar o renderizar; la decisión sonora forma parte obligatoria del diseño.
 8. Leer [delivery-contract.md](references/delivery-contract.md) cuando haya que preparar un paquete para el editor.
 9. Cargar también `remotion-best-practices` cuando esté disponible y consultar solo sus reglas pertinentes, especialmente animaciones, charts, compositions, parameters, sequencing, timing, measuring-text, audio, sfx y transparent-videos.
+10. Leer `docs/animation-artifact-cleanup.md` antes de revisar o borrar
+    renders, stills, previews o jobs de scouting.
 
 ## Flujo
 
@@ -49,7 +51,7 @@ mecánica visual —no su contenido editorial— usar primero
 
 - Favorecer cifras, porcentajes, comparativas, jerarquías, procesos, acumulaciones, relaciones causa-efecto y conceptos abstractos difíciles de imaginar.
 - Omitir adornos que no aclaren la explicación, afirmaciones dudosas y repeticiones de la misma metáfora visual.
-- Leer `animation-patterns.json` y `animation-effects.json`. Elegir por significado y evidencia usando `selectWhen`, `rejectWhen`, `evidenceRequired` y [catalog-selection.md](references/catalog-selection.md), no por gusto estético.
+- Leer `catalog/animations/patterns.json`, `catalog/animations/effects.json` y, cuando la escena necesite recursos visuales, `catalog/visuals/icons.json` y `catalog/visuals/drawings.json`. Elegir por significado y evidencia usando `selectWhen`, `rejectWhen`, `evidenceRequired` y [catalog-selection.md](references/catalog-selection.md), no por gusto estético.
 - Preferir un patrón `ready` que comunique la afirmación exacta. Usar una entrada `planned` solo si ninguna composición lista resuelve el momento y la nueva implementación queda justificada.
 - Preparar un plan antes de programar: clip, timestamp, afirmación, `patternId`, `effectIds`, `soundProfile`, eventos sonoros, composición, formato y prioridad.
 - Mantener normalmente cada animación entre 5 y 10 segundos. Dejar tiempo real de lectura y un tramo estable para que el editor pueda cortar.
@@ -78,6 +80,15 @@ mecánica visual —no su contenido editorial— usar primero
 
 ### 5. Renderizar y entregar
 
+- Reservar una carpeta nueva por cada ejecución con
+  `scripts/lib/output-run.mjs`. La estructura obligatoria es
+  `out/<proyecto>/runs/<run-id>/`; no reutilizar una ejecución anterior ni
+  escribir renders directamente en una ruta fija.
+- Usar `scripts/render-safe.mjs` para renders individuales y los scripts de
+  lote protegidos para paquetes completos. Toda ejecución debe crear
+  `run-start.json` y, si termina correctamente, `run-result.json`.
+- Rechazar cualquier colisión antes de invocar Remotion o FFmpeg. Usar
+  `ffmpeg -n` para artefactos de entrega y no `-y`.
 - Exportar MP4 H.264 para inserciones a pantalla completa.
 - Exportar ProRes 4444 con alfa cuando la pieza deba superponerse al vídeo.
 - Exportar la variante con efectos de sonido con sufijo `_audio` y conservar la variante silenciosa sin sobrescribirla.
@@ -85,6 +96,25 @@ mecánica visual —no su contenido editorial— usar primero
 - Verificar audio AAC 48 kHz estéreo y medir `mean_volume` y `max_volume` con `volumedetect`.
 - Organizar los archivos por número de clip y acompañarlos con el plan y la guía de montaje definidos en [delivery-contract.md](references/delivery-contract.md).
 - Conservar el código fuente en `remotion-animations/`; copiar renders a otra carpeta solo cuando forme parte de la petición.
+
+### 6. Limpiar artefactos
+
+- No borrar automáticamente después de entregar. Los previews sirven para QA
+  y cada run es deliberadamente inmutable.
+- Ejecutar primero `npm run cleanup:animations` con el alcance y la retención
+  solicitados. La simulación no borra nada.
+- Aplicar `--apply --confirm=DELETE_ANIMATION_ARTIFACTS` solo si el usuario
+  pidió explícitamente eliminar esos candidatos y después de verificar las
+  rutas mostradas.
+- Mantener por defecto 30 días, los 3 últimos artefactos por proyecto, runs
+  incompletos y salidas `legacy`. Ampliar el borrado solo si el usuario lo
+  especifica.
+- No tocar vídeos fuente, código, `public/sfx`, `.env`, `data/jobs/` ni
+  `data/output/`. Estos dos últimos pertenecen a la limpieza general.
+- Informar del número de artefactos, espacio liberado y carácter no
+  recuperable del borrado.
+- No presentar el borrado o archivado de un chat como limpieza de disco: son
+  acciones independientes.
 
 ## Límites
 
@@ -102,9 +132,18 @@ npm run remotion:check
 npm run remotion:still
 npm run remotion:render
 npm run remotion:overlay
+npm run cleanup:animations
 ```
 
 Usar comandos directos dentro de `remotion-animations/` cuando la composición requiera props, frames o nombres de salida específicos. Documentar el comando reproducible en la guía de montaje.
+
+No invocar `npx remotion render` o `npx remotion still` contra una ruta fija.
+Para una composición personalizada usar:
+
+```powershell
+node scripts/render-safe.mjs render <proyecto> <CompositionId> <archivo.mp4> --props=<archivo.json>
+node scripts/render-safe.mjs still <proyecto> <CompositionId> <preview.png> --frame=<frame>
+```
 
 ## Invocaciones típicas
 
@@ -133,6 +172,7 @@ Indicar:
 - qué clips recibieron animación y por qué;
 - timestamp y duración recomendados;
 - ID de cada composición y props editables;
+- ID y carpeta única de la ejecución;
 - enlaces absolutos a renders, previews, plan y guía;
 - validaciones ejecutadas y cualquier limitación real.
 

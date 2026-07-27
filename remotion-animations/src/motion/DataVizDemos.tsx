@@ -14,6 +14,7 @@ const datumSchema = z.object({
 
 export const lineChartDemoSchema = z.object({
   title: z.string(),
+  showHeader: z.boolean().optional(),
   data: z.array(datumSchema).min(2),
   focusIndex: z.number().int().min(0),
   accentColor: zColor(),
@@ -24,12 +25,17 @@ export type LineChartDemoProps = z.infer<typeof lineChartDemoSchema>;
 
 export const LineChartZoomDemo: React.FC<LineChartDemoProps> = ({
   title,
+  showHeader,
   data,
   focusIndex,
   accentColor,
   unit,
 }) => (
-  <MotionCanvas accentColor={accentColor} title={title}>
+  <MotionCanvas
+    accentColor={accentColor}
+    showHeader={showHeader}
+    title={title}
+  >
     <div
       style={{
         alignItems: "center",
@@ -54,6 +60,7 @@ export const LineChartZoomDemo: React.FC<LineChartDemoProps> = ({
 
 export const histogramDemoSchema = z.object({
   title: z.string(),
+  showHeader: z.boolean().optional(),
   data: z.array(datumSchema).min(1),
   highlightIndex: z.number().int().min(0),
   accentColor: zColor(),
@@ -64,12 +71,17 @@ export type HistogramDemoProps = z.infer<typeof histogramDemoSchema>;
 
 export const RisingHistogramDemo: React.FC<HistogramDemoProps> = ({
   title,
+  showHeader,
   data,
   highlightIndex,
   accentColor,
   unit,
 }) => (
-  <MotionCanvas accentColor={accentColor} title={title}>
+  <MotionCanvas
+    accentColor={accentColor}
+    showHeader={showHeader}
+    title={title}
+  >
     <div
       style={{
         alignItems: "center",
@@ -94,6 +106,7 @@ export const RisingHistogramDemo: React.FC<HistogramDemoProps> = ({
 
 export const kineticNumberDemoSchema = z.object({
   title: z.string(),
+  showHeader: z.boolean().optional(),
   value: z.number(),
   accentColor: zColor(),
   prefix: z.string(),
@@ -105,13 +118,18 @@ export type KineticNumberDemoProps = z.infer<typeof kineticNumberDemoSchema>;
 
 export const KineticNumberDemo: React.FC<KineticNumberDemoProps> = ({
   title,
+  showHeader,
   value,
   accentColor,
   prefix,
   suffix,
   decimals,
 }) => (
-  <MotionCanvas accentColor={accentColor} title={title}>
+  <MotionCanvas
+    accentColor={accentColor}
+    showHeader={showHeader}
+    title={title}
+  >
     <div
       style={{
         alignItems: "center",

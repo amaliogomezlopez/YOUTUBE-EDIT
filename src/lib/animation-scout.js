@@ -509,8 +509,8 @@ function buildRemotionHandoff(manifest, analysis) {
     styleFingerprint: analysis?.styleFingerprint ?? null,
     candidates,
     remotionSystem: {
-      patternCatalog: path.join(ROOT, 'remotion-animations', 'catalog', 'animation-patterns.json'),
-      effectCatalog: path.join(ROOT, 'remotion-animations', 'catalog', 'animation-effects.json'),
+      patternCatalog: path.join(ROOT, 'remotion-animations', 'catalog', 'animations', 'patterns.json'),
+      effectCatalog: path.join(ROOT, 'remotion-animations', 'catalog', 'animations', 'effects.json'),
       animationSpecSchema: path.join(ROOT, 'remotion-animations', 'schemas', 'animation-spec.schema.json'),
       toolkit: path.join(ROOT, 'remotion-animations', 'src', 'motion', 'Toolkit.tsx'),
       effects: path.join(ROOT, 'remotion-animations', 'src', 'motion', 'Effects.tsx')

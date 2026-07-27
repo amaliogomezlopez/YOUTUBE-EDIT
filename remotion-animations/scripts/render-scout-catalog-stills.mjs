@@ -1,6 +1,12 @@
-import {mkdirSync, writeFileSync} from "node:fs";
 import {spawnSync} from "node:child_process";
 import path from "node:path";
+import {
+  completeRun,
+  createRunDirectory,
+  metadataPathFor,
+  previewPathFor,
+  writeJsonExclusive,
+} from "./lib/output-run.mjs";
 
 const compositions = [
   ["Scout-RadialOrbitSummary", "radial-orbit-summary", 8],
@@ -8,8 +14,12 @@ const compositions = [
   ["Scout-CapacityMatrix", "capacity-matrix", 8],
 ];
 const checkpoints = [0, 0.15, 0.45, 0.75, 0.95];
-const outputRoot = path.resolve("out", "scout-catalog", "PREVIEWS");
-const framesRoot = path.join(outputRoot, "frames");
+const run = createRunDirectory({
+  project: "scout-catalog",
+  purpose: "previews",
+});
+const outputRoot = run.directory;
+const framesRoot = path.join(outputRoot, "previews", "frames");
 const remotionCli = path.resolve(
   "node_modules",
   "@remotion",
@@ -17,9 +27,11 @@ const remotionCli = path.resolve(
   "remotion-cli.js",
 );
 
-mkdirSync(framesRoot, {recursive: true});
 const previewIndex = [];
+const outputs = [];
 let sequence = 1;
+
+console.log(`\nEjecución ${run.runId}`);
 
 for (const [compositionId, slug, durationSeconds] of compositions) {
   const durationInFrames = durationSeconds * 60;
@@ -29,7 +41,7 @@ for (const [compositionId, slug, durationSeconds] of compositions) {
       Math.round((durationInFrames - 1) * checkpoint),
     );
     const filename = `${String(sequence).padStart(3, "0")}.png`;
-    const outputPath = path.join(framesRoot, filename);
+    const outputPath = previewPathFor(run, "frames", filename);
     console.log(
       `Still ${compositionId} · ${Math.round(checkpoint * 100)} % -> ${filename}`,
     );
@@ -58,28 +70,31 @@ for (const [compositionId, slug, durationSeconds] of compositions) {
     }
     previewIndex.push({
       sequence,
-      file: `frames/${filename}`,
+      file: `previews/frames/${filename}`,
       compositionId,
       slug,
       checkpoint,
       frame,
     });
+    outputs.push(outputPath);
     sequence += 1;
   }
 }
 
-writeFileSync(
-  path.join(outputRoot, "preview-index.json"),
-  `${JSON.stringify(previewIndex, null, 2)}\n`,
-  "utf8",
-);
+const previewIndexPath = metadataPathFor(run, "preview-index.json");
+writeJsonExclusive(previewIndexPath, previewIndex);
+outputs.push(previewIndexPath);
 
 const framePattern = path.join(framesRoot, "%03d.png");
-const contactSheet = path.join(outputRoot, "contact-sheet.png");
+const contactSheet = previewPathFor(
+  run,
+  "contact-sheets",
+  "contact-sheet.png",
+);
 const contactResult = spawnSync(
   "ffmpeg",
   [
-    "-y",
+    "-n",
     "-framerate",
     "1",
     "-start_number",
@@ -100,13 +115,18 @@ if (contactResult.error) {
 if (contactResult.status !== 0) {
   process.exit(contactResult.status ?? 1);
 }
+outputs.push(contactSheet);
 
 for (const [compositionIndex, [, slug]] of compositions.entries()) {
-  const timelinePath = path.join(outputRoot, `${slug}-timeline.png`);
+  const timelinePath = previewPathFor(
+    run,
+    "timelines",
+    `${slug}-timeline.png`,
+  );
   const timelineResult = spawnSync(
     "ffmpeg",
     [
-      "-y",
+      "-n",
       "-framerate",
       "1",
       "-start_number",
@@ -127,6 +147,9 @@ for (const [compositionIndex, [, slug]] of compositions.entries()) {
   if (timelineResult.status !== 0) {
     process.exit(timelineResult.status ?? 1);
   }
+  outputs.push(timelinePath);
 }
 
+const manifestPath = completeRun(run, {outputs});
 console.log(`\nStills del catálogo scout terminados en ${outputRoot}`);
+console.log(`Manifest: ${manifestPath}`);

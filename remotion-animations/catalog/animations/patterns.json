@@ -1,5 +1,6 @@
 {
   "version": 1,
+  "catalogFamily": "animations",
   "designPrinciple": "Una idea, una transformación, una señal de color.",
   "statuses": {
     "ready": "Hay una composición o componente reutilizable operativo.",

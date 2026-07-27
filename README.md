@@ -222,7 +222,20 @@ Antes de una sesión de publicación comprueba los conectores sin realizar ningu
 npm run publishing:doctor
 ```
 
-La Biblioteca muestra espacio libre y permite simular la limpieza. Los temporales caducan por defecto a las 24 horas. Los proyectos y renders solo se eliminan si configuras `SHORTSMITH_JOB_RETENTION_DAYS` con un valor mayor que cero.
+La Biblioteca muestra espacio libre y permite simular la limpieza. Los
+temporales caducan por defecto a las 24 horas. Los proyectos y renders
+generales solo se eliminan si configuras `SHORTSMITH_JOB_RETENTION_DAYS` con
+un valor mayor que cero.
+
+Los runs Remotion y los jobs de Animation Scout tienen una limpieza separada,
+siempre en modo simulación por defecto:
+
+```powershell
+npm run cleanup:animations
+```
+
+Consulta `docs/animation-artifact-cleanup.md` antes de aplicar el borrado.
+Archivar o eliminar un chat no borra archivos locales.
 
 ## Limitaciones actuales
 

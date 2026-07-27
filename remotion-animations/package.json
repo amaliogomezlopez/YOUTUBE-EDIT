@@ -29,9 +29,9 @@
     "lint": "eslint src && tsc",
     "check:catalog": "node scripts/validate-animation-catalog.mjs",
     "check": "npm run check:catalog && npm run lint && remotion compositions src/index.ts",
-    "still:chart": "remotion still src/index.ts ChartHighlight out/chart-highlight.png --frame=75",
-    "render:chart": "remotion render src/index.ts ChartHighlight out/chart-highlight.mp4",
-    "render:overlay": "remotion render src/index.ts ChartHighlightOverlay out/chart-highlight-overlay.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le",
+    "still:chart": "node scripts/render-safe.mjs still chart-highlight ChartHighlight chart-highlight.png --frame=75 --image-format=png",
+    "render:chart": "node scripts/render-safe.mjs render chart-highlight ChartHighlight chart-highlight.mp4",
+    "render:overlay": "node scripts/render-safe.mjs render chart-highlight ChartHighlightOverlay chart-highlight-overlay.mov --codec=prores --prores-profile=4444 --image-format=png --pixel-format=yuva444p10le",
     "render:ahorrar-limites": "node scripts/render-ahorrar-limites.mjs",
     "render:ahorrar-limites-v2": "node scripts/render-ahorrar-limites-v2.mjs",
     "render:ahorrar-limites-v3-audio": "node scripts/render-ahorrar-limites-v3-audio.mjs",
@@ -40,6 +40,7 @@
     "render:toolkit": "node scripts/render-toolkit.mjs",
     "render:scout-catalog": "node scripts/render-scout-catalog.mjs",
     "stills:scout-catalog": "node scripts/render-scout-catalog-stills.mjs",
+    "stills:visual-catalog": "node scripts/render-visual-catalog-stills.mjs",
     "prepare:sfx": "node scripts/prepare-sfx.mjs"
   },
   "sideEffects": [
