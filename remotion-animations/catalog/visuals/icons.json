@@ -60,6 +60,7 @@
     {"id": "risk", "label": "Riesgo", "category": "business", "tags": ["riesgo", "alerta", "problema"], "parts": ["triangle", "mark"]},
     {"id": "limit", "label": "Límite", "category": "business", "tags": ["límite", "tope", "capacidad"], "parts": ["gauge", "needle"]},
     {"id": "lock", "label": "Bloqueo", "category": "business", "tags": ["bloqueo", "seguridad", "cerrado"], "parts": ["shackle", "body"]},
-    {"id": "shield", "label": "Protección", "category": "business", "tags": ["protección", "seguridad", "validación"], "parts": ["shield", "check"]}
+    {"id": "shield", "label": "Protección", "category": "business", "tags": ["protección", "seguridad", "validación"], "parts": ["shield", "check"]},
+    {"id": "unknown", "label": "Concepto genérico", "category": "fallback", "tags": ["desconocido", "genérico", "concepto"], "parts": ["circle", "question"]}
   ]
 }

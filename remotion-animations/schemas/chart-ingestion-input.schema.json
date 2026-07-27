@@ -1,0 +1,328 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/chart-ingestion-input.schema.json",
+  "title": "Shortsmith annotated chart ingestion input",
+  "description": "Contrato local para inspeccionar, calibrar y planificar una gráfica aportada como imagen.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "project", "imageFile"],
+  "allOf": [
+    {
+      "not": {
+        "required": ["transcript", "transcriptFile"]
+      }
+    },
+    {
+      "not": {
+        "required": ["series", "seriesFile"]
+      }
+    }
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "project": {
+      "type": "string",
+      "minLength": 1
+    },
+    "clipId": {
+      "type": ["string", "integer"]
+    },
+    "imageFile": {
+      "type": "string",
+      "minLength": 1
+    },
+    "transcript": {
+      "type": "string"
+    },
+    "transcriptFile": {
+      "type": "string"
+    },
+    "series": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/seriesDatum"
+      }
+    },
+    "seriesFile": {
+      "type": "string"
+    },
+    "sourceInSeconds": {
+      "type": "number",
+      "minimum": 0
+    },
+    "sourceOutSeconds": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "sourceLabel": {
+      "type": "string"
+    },
+    "alt": {
+      "type": "string"
+    },
+    "provenance": {
+      "enum": [
+        "user-provided",
+        "project-owned",
+        "verified-external",
+        "unknown"
+      ]
+    },
+    "licenseNote": {
+      "type": ["string", "null"]
+    },
+    "language": {
+      "type": "string",
+      "default": "es"
+    },
+    "title": {
+      "type": "string"
+    },
+    "supportingText": {
+      "type": "string"
+    },
+    "showHeader": {
+      "type": "boolean",
+      "default": true
+    },
+    "artDirection": {
+      "enum": [
+        "editorial-report",
+        "documentary-evidence",
+        "diagrammatic-system",
+        "market-data"
+      ]
+    },
+    "recentSelections": {
+      "type": "array",
+      "maxItems": 12,
+      "items": {
+        "$ref": "#/$defs/recentSelection"
+      }
+    },
+    "calibration": {
+      "$ref": "#/$defs/calibration"
+    },
+    "focus": {
+      "$ref": "#/$defs/focus"
+    },
+    "camera": {
+      "$ref": "#/$defs/camera"
+    },
+    "colors": {
+      "$ref": "#/$defs/colors"
+    },
+    "sound": {
+      "$ref": "#/$defs/sound"
+    }
+  },
+  "$defs": {
+    "seriesDatum": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["date", "value"],
+      "properties": {
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "value": {
+          "type": "number"
+        }
+      }
+    },
+    "plotRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": {"type": "number", "minimum": 0},
+        "y": {"type": "number", "minimum": 0},
+        "width": {"type": "number", "exclusiveMinimum": 0},
+        "height": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "xAxis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "end": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        }
+      }
+    },
+    "yAxis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["min", "max"],
+      "properties": {
+        "min": {"type": "number"},
+        "max": {"type": "number"},
+        "unit": {"type": "string"},
+        "decimals": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4
+        }
+      }
+    },
+    "calibration": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "plotRegion": {
+          "$ref": "#/$defs/plotRegion"
+        },
+        "xAxis": {
+          "$ref": "#/$defs/xAxis"
+        },
+        "yAxis": {
+          "$ref": "#/$defs/yAxis"
+        },
+        "confirmation": {
+          "$ref": "#/$defs/calibrationConfirmation"
+        }
+      }
+    },
+    "calibrationConfirmation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "scope", "acceptedBy"],
+      "properties": {
+        "status": {
+          "const": "accepted"
+        },
+        "scope": {
+          "const": "plot-region-and-axes"
+        },
+        "acceptedBy": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptedAt": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "recentSelection": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "patternId": {"type": "string"},
+        "artDirection": {
+          "enum": [
+            "editorial-report",
+            "documentary-evidence",
+            "diagrammatic-system",
+            "market-data"
+          ]
+        },
+        "effectIds": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "focus": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intent": {
+          "enum": [
+            "auto",
+            "range",
+            "event",
+            "before-after",
+            "peak-to-trough",
+            "trend"
+          ]
+        },
+        "from": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "date": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "peakDate": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "troughDate": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "value": {
+          "type": "number"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "camera": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "startSeconds": {
+          "type": "number",
+          "minimum": 0
+        },
+        "endSeconds": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "zoomScale": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 3
+        }
+      }
+    },
+    "colors": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "accentColor": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        },
+        "dangerColor": {
+          "type": "string",
+          "pattern": "^#[a-fA-F0-9]{6}$"
+        }
+      }
+    },
+    "sound": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "deliver": {
+          "enum": ["silent", "with-sfx", "both"]
+        },
+        "mix": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

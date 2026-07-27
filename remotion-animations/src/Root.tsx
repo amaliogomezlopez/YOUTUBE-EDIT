@@ -1,4 +1,5 @@
 import "./index.css";
+import "./motion/fonts";
 import { CalculateMetadataFunction, Composition, Folder } from "remotion";
 import {
   ChartHighlight,
@@ -49,6 +50,17 @@ import {
   drawingGallerySchema,
   iconGallerySchema,
 } from "./visuals/VisualCatalogGallery";
+import {
+  AnnotatedChartSilent,
+  AnnotatedChartWithAudio,
+  annotatedChartSchema,
+  defaultAnnotatedChartProps,
+  documentaryAnnotatedChartProps,
+  editorialAnnotatedChartProps,
+  eventAnnotatedChartProps,
+  imageOnlyAnnotatedChartProps,
+  marketAnnotatedChartProps,
+} from "./charts/AnnotatedChartScene";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -77,6 +89,79 @@ export const RemotionRoot: React.FC = () => {
             transparent: true,
           }}
           calculateMetadata={overlayMetadata}
+        />
+        <Composition
+          id="Chart-Annotated-Range"
+          component={AnnotatedChartSilent}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={defaultAnnotatedChartProps}
+        />
+        <Composition
+          id="Chart-Annotated-Range-Audio"
+          component={AnnotatedChartWithAudio}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={{
+            ...defaultAnnotatedChartProps,
+            soundEnabled: true,
+          }}
+        />
+        <Composition
+          id="Chart-Annotated-Events"
+          component={AnnotatedChartSilent}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={eventAnnotatedChartProps}
+        />
+        <Composition
+          id="Chart-Annotated-Image-Only"
+          component={AnnotatedChartSilent}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={imageOnlyAnnotatedChartProps}
+        />
+        <Composition
+          id="Chart-Annotated-Editorial"
+          component={AnnotatedChartSilent}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={editorialAnnotatedChartProps}
+        />
+        <Composition
+          id="Chart-Annotated-Documentary"
+          component={AnnotatedChartSilent}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={documentaryAnnotatedChartProps}
+        />
+        <Composition
+          id="Chart-Annotated-Market"
+          component={AnnotatedChartSilent}
+          durationInFrames={9 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={annotatedChartSchema}
+          defaultProps={marketAnnotatedChartProps}
         />
       </Folder>
       <Folder name="Toolkit-Reutilizable">

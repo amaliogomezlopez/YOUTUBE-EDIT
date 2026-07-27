@@ -1,70 +1,94 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://shortsmith.local/schemas/visual-selection.schema.json",
-  "title": "Shortsmith visual catalog selection",
-  "description": "Contrato preparado para que un selector semántico elija recursos existentes sin emitir SVG libre.",
+  "title": "Shortsmith semantic visual selection result",
+  "description": "Resultado auditable del selector de iconos, dibujos e imágenes gestionadas.",
   "type": "object",
   "additionalProperties": false,
   "required": [
     "version",
     "query",
-    "selection",
-    "generationPolicy"
+    "kind",
+    "mode",
+    "selected",
+    "alternatives",
+    "fallback"
   ],
   "properties": {
-    "version": {
-      "const": 1
+    "version": {"const": 1},
+    "query": {"type": "string", "minLength": 1},
+    "kind": {
+      "enum": ["any", "icon", "drawing", "image"]
     },
-    "query": {
-      "type": "string",
-      "minLength": 1
+    "mode": {
+      "enum": [
+        "deterministic-catalog",
+        "llm-catalog-validated",
+        "controlled-fallback",
+        "no-match"
+      ]
     },
-    "selection": {
+    "selected": {
+      "oneOf": [
+        {"$ref": "#/$defs/rankedAsset"},
+        {"type": "null"}
+      ]
+    },
+    "alternatives": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/rankedAsset"}
+    },
+    "fallback": {
+      "oneOf": [
+        {"$ref": "#/$defs/controlledFallback"},
+        {"type": "null"}
+      ]
+    }
+  },
+  "$defs": {
+    "rankedAsset": {
+      "type": "object",
+      "required": ["id", "kind", "score", "matches"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "kind": {
+          "enum": ["icon", "drawing", "image"]
+        },
+        "score": {"type": "number", "minimum": 0},
+        "matches": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "rationale": {"type": "string"}
+      },
+      "additionalProperties": true
+    },
+    "controlledFallback": {
       "type": "object",
       "additionalProperties": false,
       "required": [
         "kind",
-        "assetId",
-        "role",
+        "layout",
+        "iconIds",
+        "generationPolicy",
         "rationale"
       ],
       "properties": {
-        "kind": {
-          "enum": [
-            "icon",
-            "drawing",
-            "image"
-          ]
+        "kind": {"const": "controlled-composite"},
+        "layout": {
+          "enum": ["flow", "cluster"]
         },
-        "assetId": {
-          "type": "string",
-          "pattern": "^[a-z]+(?:-[a-z]+)*$"
+        "iconIds": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
+          "items": {"type": "string"}
         },
-        "role": {
-          "enum": [
-            "subject",
-            "support",
-            "process",
-            "warning",
-            "decoration"
-          ]
+        "generationPolicy": {
+          "const": "catalog-only-no-freeform-svg"
         },
-        "rationale": {
-          "type": "string",
-          "minLength": 1
-        },
-        "treatment": {
-          "enum": [
-            "outline",
-            "accent",
-            "muted",
-            "highlighted"
-          ]
-        }
+        "rationale": {"type": "string", "minLength": 1}
       }
-    },
-    "generationPolicy": {
-      "const": "catalog-only"
     }
   }
 }

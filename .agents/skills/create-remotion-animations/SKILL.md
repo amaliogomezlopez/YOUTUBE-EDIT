@@ -1,6 +1,6 @@
 ---
 name: create-remotion-animations
-description: "Analiza vídeos y transcripciones, elige automáticamente el patrón y los efectos del catálogo que mejor explican cada momento, diseña e implementa animaciones cortas con efectos de sonido semánticos en Remotion, las audita, las entrega por clip y gestiona la limpieza explícita de sus renders y previews. Usar dentro de YouTube Edit cuando el usuario pida crear o mejorar motion graphics, gráficas animadas, porcentajes, comparativas, procesos, explicaciones visuales, sonorización sincronizada, overlays transparentes, un paquete de animaciones asociado a clips de YouTube o limpiar artefactos de animación."
+description: "Analiza vídeos, transcripciones y assets; consulta un manifest de capacidades; selecciona iconos, dibujos e imágenes por significado con fallback controlado; ingiere y calibra gráficas; aplica perfiles de dirección artística y control de repetición; diseña animaciones con sonido semántico en Remotion; las audita, entrega y limpia. Usar dentro de YouTube Edit cuando el usuario pida motion graphics, recursos visuales, gráficas animadas o anotadas, rendimiento bursátil, comparativas, procesos, overlays, sonorización o paquetes de animaciones."
 ---
 
 # Crear animaciones con Remotion
@@ -20,6 +20,15 @@ Producir piezas breves, fieles a la fuente y listas para montar. Reutilizar el m
 9. Cargar también `remotion-best-practices` cuando esté disponible y consultar solo sus reglas pertinentes, especialmente animaciones, charts, compositions, parameters, sequencing, timing, measuring-text, audio, sfx y transparent-videos.
 10. Leer `docs/animation-artifact-cleanup.md` antes de revisar o borrar
     renders, stills, previews o jobs de scouting.
+11. Leer [chart-ingestion.md](references/chart-ingestion.md) cuando exista una
+    gráfica aportada como imagen o haya que automatizar su calibración,
+    selección de tramo o preparación de props.
+12. Leer [visual-selection.md](references/visual-selection.md) cuando hagan
+    falta iconos, dibujos o imágenes gestionadas.
+13. Leer [art-direction.md](references/art-direction.md) antes de elegir
+    tipografía, material visual o variantes de un lote.
+14. Leer `remotion-animations/catalog/capabilities.manifest.json` como índice
+    legible por máquina de lo que está realmente implementado.
 
 ## Flujo
 
@@ -51,14 +60,38 @@ mecánica visual —no su contenido editorial— usar primero
 
 - Favorecer cifras, porcentajes, comparativas, jerarquías, procesos, acumulaciones, relaciones causa-efecto y conceptos abstractos difíciles de imaginar.
 - Omitir adornos que no aclaren la explicación, afirmaciones dudosas y repeticiones de la misma metáfora visual.
-- Leer `catalog/animations/patterns.json`, `catalog/animations/effects.json` y, cuando la escena necesite recursos visuales, `catalog/visuals/icons.json` y `catalog/visuals/drawings.json`. Elegir por significado y evidencia usando `selectWhen`, `rejectWhen`, `evidenceRequired` y [catalog-selection.md](references/catalog-selection.md), no por gusto estético.
+- Leer el manifest de capacidades, `catalog/animations/patterns.json` y `catalog/animations/effects.json`. Para recursos visuales ejecutar `npm run remotion:select:visual -- --query "<concepto>"`; elegir por significado y evidencia usando `selectWhen`, `rejectWhen`, `evidenceRequired` y [catalog-selection.md](references/catalog-selection.md), no por gusto estético.
 - Preferir un patrón `ready` que comunique la afirmación exacta. Usar una entrada `planned` solo si ninguna composición lista resuelve el momento y la nueva implementación queda justificada.
 - Preparar un plan antes de programar: clip, timestamp, afirmación, `patternId`, `effectIds`, `soundProfile`, eventos sonoros, composición, formato y prioridad.
+- Consultar `recentSelections` y registrar `variety` para evitar repetir
+  dirección artística, patrón, efecto dominante o metáfora en piezas
+  consecutivas.
 - Mantener normalmente cada animación entre 5 y 10 segundos. Dejar tiempo real de lectura y un tramo estable para que el editor pueda cortar.
+
+#### Ingestar una gráfica aportada
+
+- Usar `npm run remotion:ingest:chart -- --input <archivo.json>` en vez de
+  reconstruir manualmente sus props.
+- Mantener el modo local por defecto. Activar `--vision` o `--llm` solo con
+  autorización para enviar la imagen o la transcripción al proveedor
+  configurado.
+- Tratar región y ejes detectados o simplemente aportados como propuesta. Solo
+  marcar `confirmed` cuando `calibration.confirmation` registre aceptación
+  explícita de región y ejes. `--allow-proposed` no cambia esa procedencia.
+- Rechazar fechas, valores o cifras editoriales emitidos por la IA que no
+  aparezcan en la serie, la transcripción o el foco autorizado. Los cursores
+  pueden moverse de forma continua, pero solo etiquetan muestras observadas.
+  Usar el fallback determinista completo, no
+  corregir parcialmente una respuesta inventada.
+- Leer el `chart-ingestion-report.json`, los props y `animation-spec.json`
+  antes de renderizar.
 
 ### 3. Diseñar e implementar
 
 - Reutilizar componentes, paleta y lenguaje visual existentes cuando encajen; crear abstracciones solo si se repetirán.
+- Elegir uno de los perfiles `editorial-report`, `documentary-evidence`,
+  `diagrammatic-system` o `market-data`. Usar Schibsted Grotesk para texto y
+  Fragment Mono solo para datos. Mantener el encabezado opcional.
 - Registrar cada composición en `remotion-animations/src/Root.tsx`, agrupada en un `<Folder>` del proyecto.
 - Parametrizar textos, datos, colores y selección destacada mediante props JSON-serializables y Zod.
 - Hacer depender todo movimiento de `useCurrentFrame()` y `useVideoConfig()`. No usar animaciones o transiciones CSS.
@@ -132,6 +165,9 @@ npm run remotion:check
 npm run remotion:still
 npm run remotion:render
 npm run remotion:overlay
+npm run remotion:ingest:chart -- --input "<chart-ingestion-input.json>"
+npm run remotion:select:visual -- --query "<concepto>" --allow-fallback
+npm run remotion:capabilities
 npm run cleanup:animations
 ```
 
@@ -163,6 +199,13 @@ MP4 y como overlay ProRes 4444.
 ```text
 Usa $create-remotion-animations para proponer el plan visual de este vídeo,
 pero no renderices todavía.
+```
+
+```text
+Usa $create-remotion-animations con esta captura de una gráfica y su serie
+JSON. Ingiérela, confirma o propone la calibración, selecciona el tramo que
+respalda la transcripción y genera props de AnnotatedChartScene sin inventar
+fechas ni valores.
 ```
 
 ## Entrega en el chat

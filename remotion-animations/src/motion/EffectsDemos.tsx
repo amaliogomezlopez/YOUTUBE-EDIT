@@ -81,7 +81,7 @@ const DemoPoint: React.FC<{
       />
       <text
         fill={isFocus ? accentColor : MOTION_COLORS.muted}
-        fontFamily="Inter, Segoe UI, Arial, sans-serif"
+        fontFamily="Schibsted Grotesk"
         fontSize={25}
         fontWeight={750}
         textAnchor="middle"
@@ -157,7 +157,7 @@ export const TransversalEffectsDemo: React.FC<
           0.09,
         )}, transparent 34%), ${MOTION_COLORS.background}`,
         color: MOTION_COLORS.ink,
-        fontFamily: 'Inter, "Segoe UI", Arial, sans-serif',
+        fontFamily: "Schibsted Grotesk",
         overflow: "hidden",
       }}
     >
@@ -257,7 +257,7 @@ export const TextFocusJourneyDemo: React.FC<
           0.08,
         )}, transparent 31%), ${MOTION_COLORS.background}`,
         color: MOTION_COLORS.ink,
-        fontFamily: 'Inter, "Segoe UI", Arial, sans-serif',
+        fontFamily: "Schibsted Grotesk",
         overflow: "hidden",
       }}
     >

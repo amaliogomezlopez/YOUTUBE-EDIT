@@ -28,7 +28,7 @@ const background =
 const titleStyle: React.CSSProperties = {
   margin: 0,
   color: "#F8FAFC",
-  fontFamily: "Inter, Arial, sans-serif",
+  fontFamily: "Schibsted Grotesk",
   fontSize: 56,
   fontWeight: 850,
   letterSpacing: -2,
@@ -44,7 +44,7 @@ export const IconCatalogGallery: React.FC<IconGalleryProps> = ({page}) => {
       style={{
         background,
         padding: "68px 80px",
-        fontFamily: "Inter, Arial, sans-serif",
+        fontFamily: "Schibsted Grotesk",
       }}
     >
       <div style={{display: "flex", alignItems: "baseline", gap: 24}}>
@@ -136,7 +136,7 @@ export const DrawingCatalogGallery: React.FC<DrawingGalleryProps> = ({
       style={{
         background,
         padding: "58px 72px",
-        fontFamily: "Inter, Arial, sans-serif",
+        fontFamily: "Schibsted Grotesk",
       }}
     >
       <div style={{display: "flex", alignItems: "baseline", gap: 24}}>

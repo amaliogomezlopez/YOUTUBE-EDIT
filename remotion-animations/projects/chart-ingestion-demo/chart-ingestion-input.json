@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "project": "chart-ingestion-demo",
+  "clipId": "demo-2025",
+  "imageFile": "../../public/assets/library/chart-samples/demo-index-2025.svg",
+  "transcript": "Entre abril y mayo se concentra la caída más importante del periodo y después el índice recupera la tendencia.",
+  "sourceInSeconds": 0,
+  "sourceOutSeconds": 9,
+  "sourceLabel": "SERIE SINTÉTICA PARA QA · NO USAR COMO DATO EDITORIAL",
+  "alt": "Gráfica sintética de un índice de demostración durante 2025",
+  "provenance": "project-owned",
+  "licenseNote": "Asset sintético propio para pruebas.",
+  "title": "Dos meses concentran toda la caída",
+  "supportingText": "La ingestión selecciona el tramo usando únicamente la serie autorizada.",
+  "showHeader": true,
+  "calibration": {
+    "plotRegion": {
+      "x": 120,
+      "y": 70,
+      "width": 1460,
+      "height": 570
+    },
+    "xAxis": {
+      "start": "2025-01-01",
+      "end": "2025-12-31"
+    },
+    "yAxis": {
+      "min": 95,
+      "max": 130,
+      "unit": "",
+      "decimals": 1
+    },
+    "confirmation": {
+      "status": "accepted",
+      "scope": "plot-region-and-axes",
+      "acceptedBy": "qa-demo",
+      "acceptedAt": "2026-07-27T08:00:00.000Z"
+    }
+  },
+  "series": [
+    {"date": "2025-01-02", "value": 100},
+    {"date": "2025-02-03", "value": 104.2},
+    {"date": "2025-03-03", "value": 108.1},
+    {"date": "2025-04-01", "value": 111.8},
+    {"date": "2025-05-01", "value": 103.6},
+    {"date": "2025-06-02", "value": 105.8},
+    {"date": "2025-07-01", "value": 109.2},
+    {"date": "2025-08-01", "value": 114.7},
+    {"date": "2025-09-02", "value": 118.3},
+    {"date": "2025-10-01", "value": 116.5},
+    {"date": "2025-11-03", "value": 122.8},
+    {"date": "2025-12-01", "value": 126.4}
+  ],
+  "focus": {
+    "intent": "auto"
+  },
+  "camera": {
+    "enabled": true,
+    "startSeconds": 5.7,
+    "endSeconds": 6.8,
+    "zoomScale": 1.85
+  },
+  "sound": {
+    "deliver": "both",
+    "mix": 0.65
+  }
+}

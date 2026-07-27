@@ -40,7 +40,7 @@ type SceneProps = {
   accentColor: string;
 };
 
-const FONT = "Inter, Segoe UI, Arial, sans-serif";
+const FONT = "Schibsted Grotesk";
 
 const RisingCostV4: React.FC<SceneProps> = ({ frame, fps, accentColor }) => {
   const bars = [

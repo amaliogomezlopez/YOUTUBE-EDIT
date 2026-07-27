@@ -9,20 +9,24 @@ parametrizables.
 
 El módulo incluye una capa de decisión reutilizable:
 
-- `catalog/animations/patterns.json`: 27 patrones semánticos con estado real,
+- `catalog/animations/patterns.json`: 28 patrones semánticos con estado real,
   evidencia requerida, assets compatibles, foco y sonido;
 - `catalog/animations/effects.json`: zooms, revelados, trazados, contadores,
   texto progresivo, foco, salida y cues transversales;
-- `catalog/visuals/icons.json`: 40 iconos SVG originales, clasificados por
+- `catalog/visuals/icons.json`: 41 iconos SVG originales, clasificados por
   significado y preparados para selección semántica;
 - `catalog/visuals/drawings.json`: 12 dibujos editoriales que combinan iconos
   para explicar procesos y relaciones;
 - `catalog/visuals/images.json`: inventario de imágenes locales con procedencia,
   licencia, hash, dimensiones, etiquetas y punto focal;
+- `catalog/capabilities.manifest.json`: índice generado de capacidades,
+  composiciones, comandos, schemas y garantías factuales;
 - `schemas/clip-animation-input.schema.json`: contrato opcional para clips y
   assets adyacentes;
 - `schemas/animation-spec.schema.json`: contrato obligatorio entre el planner
   editorial y el builder de Remotion;
+- `schemas/chart-ingestion-input.schema.json`: contrato para importar una
+  gráfica, calibrarla y generar props con revisión de confianza;
 - `PROMPT_PARA_AGENTES.md`: router de lotes y prompts especializados por
   familia;
 - `docs/remotion-animation-system.md`: arquitectura, taxonomía y fases de
@@ -68,6 +72,49 @@ por cifras de la transcripción o de una fuente aportada por el usuario.
 
 `ChartHighlight` y `ChartHighlightOverlay` se mantienen por compatibilidad; el
 overlay está preparado para ProRes 4444 con canal alfa.
+
+### Gráficas anotadas sobre imágenes
+
+`src/charts/AnnotatedChartScene.tsx` permite calibrar una imagen mediante su
+región de trazado y los límites de sus ejes. Con una serie JSON adicional,
+Remotion puede marcar rangos, recorrer valores, calcular variaciones, añadir
+eventos y hacer zoom manteniendo imagen y SVG perfectamente alineados.
+
+Composiciones:
+
+- `Chart-Annotated-Range`;
+- `Chart-Annotated-Range-Audio`;
+- `Chart-Annotated-Events`;
+- `Chart-Annotated-Editorial`;
+- `Chart-Annotated-Documentary`;
+- `Chart-Annotated-Market`;
+- `Chart-Annotated-Image-Only` (sin serie numérica ni encabezado).
+
+El contrato de precisión y el flujo de calibración están documentados en
+`docs/annotated-chart-workflow.md`.
+
+La ingestión automática se ejecuta desde la raíz:
+
+```powershell
+npm run remotion:ingest:chart -- --input remotion-animations/projects/chart-ingestion-demo/chart-ingestion-input.json
+```
+
+Por defecto no usa servicios remotos. `--vision` propone región y ejes;
+`--llm` selecciona anotaciones, y ambas salidas se validan antes de producir
+props. Una calibración inferida permanece bloqueada hasta revisarla o aceptar
+explícitamente `--allow-proposed`.
+
+El selector semántico y el manifest se gestionan desde la raíz:
+
+```powershell
+npm run remotion:select:visual -- --query "memoria y repositorios"
+npm run remotion:select:visual -- --query "flujo de agentes" --allow-fallback
+npm run remotion:capabilities
+```
+
+El fallback solo compone iconos auditados; no genera SVG libre. La tipografía
+se carga localmente: Schibsted Grotesk para texto editorial y Fragment Mono
+para datos.
 
 ## Catálogo visual
 
@@ -151,6 +198,7 @@ npm run render:ahorrar-limites-v2
 npm run render:ahorrar-limites-v3-audio
 npm run render:toolkit
 npm run stills:visual-catalog
+npm run stills:annotated-chart
 npm run prepare:sfx
 npm run check:catalog
 ```

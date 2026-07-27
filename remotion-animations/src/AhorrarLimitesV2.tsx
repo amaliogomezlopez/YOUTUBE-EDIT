@@ -143,7 +143,7 @@ const HarnessWorkshopV2: React.FC<SceneProps> = ({
         <circle fill={accentColor} r={18} />
         <text
           fill={MOTION_COLORS.ink}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={24}
           fontWeight={800}
           textAnchor="middle"
@@ -179,7 +179,7 @@ const HarnessWorkshopV2: React.FC<SceneProps> = ({
             <circle fill={accentColor} r={7} />
             <text
               fill={MOTION_COLORS.ink}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily="Schibsted Grotesk"
               fontSize={22}
               fontWeight={750}
               textAnchor="middle"
@@ -210,7 +210,7 @@ const HarnessWorkshopV2: React.FC<SceneProps> = ({
         <circle fill={accentColor} r={24} />
         <text
           fill={MOTION_COLORS.ink}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={24}
           fontWeight={800}
           textAnchor="middle"
@@ -221,7 +221,7 @@ const HarnessWorkshopV2: React.FC<SceneProps> = ({
       </g>
       <text
         fill={accentColor}
-        fontFamily="Inter, Segoe UI, Arial, sans-serif"
+        fontFamily="Schibsted Grotesk"
         fontSize={26}
         fontWeight={800}
         opacity={result}
@@ -283,7 +283,7 @@ const HarnessCompareV2: React.FC<SceneProps> = ({
           <g key={lane.label} opacity={laneIn}>
             <text
               fill={lane.color}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily="Schibsted Grotesk"
               fontSize={25}
               fontWeight={850}
               x={66}
@@ -330,7 +330,7 @@ const HarnessCompareV2: React.FC<SceneProps> = ({
                   />
                   <text
                     fill={MOTION_COLORS.ink}
-                    fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                    fontFamily="Schibsted Grotesk"
                     fontSize={20}
                     fontWeight={700}
                     textAnchor="middle"
@@ -341,7 +341,7 @@ const HarnessCompareV2: React.FC<SceneProps> = ({
                   {adjustable ? (
                     <text
                       fill={lane.color}
-                      fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                      fontFamily="Schibsted Grotesk"
                       fontSize={15}
                       fontWeight={750}
                       textAnchor="middle"
@@ -363,7 +363,7 @@ const HarnessCompareV2: React.FC<SceneProps> = ({
               <circle fill={lane.color} r={18} />
               <text
                 fill={lane.color}
-                fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                fontFamily="Schibsted Grotesk"
                 fontSize={18}
                 fontWeight={800}
                 textAnchor="middle"
@@ -491,7 +491,7 @@ const ContextSnowballV2: React.FC<SceneProps> = ({
       >
         <text
           fill={accentColor}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={34}
           fontWeight={850}
         >
@@ -499,7 +499,7 @@ const ContextSnowballV2: React.FC<SceneProps> = ({
         </text>
         <text
           fill={MOTION_COLORS.ink}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={50}
           fontWeight={850}
           y={62}
@@ -558,7 +558,7 @@ const BatchPromptsV2: React.FC<SceneProps> = ({
             />
             <text
               fill={MOTION_COLORS.muted}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily="Schibsted Grotesk"
               fontSize={18}
               fontWeight={700}
               textAnchor="middle"
@@ -582,7 +582,7 @@ const BatchPromptsV2: React.FC<SceneProps> = ({
         />
         <text
           fill={accentColor}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={23}
           fontWeight={850}
           textAnchor="middle"
@@ -592,7 +592,7 @@ const BatchPromptsV2: React.FC<SceneProps> = ({
         </text>
         <text
           fill={MOTION_COLORS.muted}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={17}
           fontWeight={650}
           textAnchor="middle"
@@ -632,7 +632,7 @@ const BatchPromptsV2: React.FC<SceneProps> = ({
               />
               <text
                 fill={MOTION_COLORS.ink}
-                fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                fontFamily="Schibsted Grotesk"
                 fontSize={19}
                 fontWeight={800}
                 textAnchor="middle"
@@ -742,7 +742,7 @@ const SkillsRangeV2: React.FC<SceneProps> = ({
             />
             <text
               fill={important ? accentColor : MOTION_COLORS.muted}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily="Schibsted Grotesk"
               fontSize={important ? 54 : 26}
               fontWeight={important ? 900 : 650}
               style={{fontVariantNumeric: "tabular-nums"}}
@@ -761,7 +761,7 @@ const SkillsRangeV2: React.FC<SceneProps> = ({
       >
         <text
           fill={accentColor}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={31}
           fontWeight={850}
           textAnchor="middle"
@@ -770,7 +770,7 @@ const SkillsRangeV2: React.FC<SceneProps> = ({
         </text>
         <text
           fill={MOTION_COLORS.ink}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={74}
           fontWeight={900}
           style={{fontVariantNumeric: "tabular-nums"}}
@@ -782,7 +782,7 @@ const SkillsRangeV2: React.FC<SceneProps> = ({
       </g>
       <text
         fill={MOTION_COLORS.coral}
-        fontFamily="Inter, Segoe UI, Arial, sans-serif"
+        fontFamily="Schibsted Grotesk"
         fontSize={26}
         fontWeight={850}
         opacity={noise}
@@ -1014,7 +1014,7 @@ const SubagentsV2: React.FC<SceneProps> = ({
         <circle fill={accentColor} r={18} />
         <text
           fill={MOTION_COLORS.ink}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={23}
           fontWeight={850}
           textAnchor="middle"
@@ -1082,7 +1082,7 @@ const SubagentsV2: React.FC<SceneProps> = ({
               />
               <text
                 fill={MOTION_COLORS.ink}
-                fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                fontFamily="Schibsted Grotesk"
                 fontSize={22}
                 fontWeight={820}
                 textAnchor="middle"
@@ -1106,7 +1106,7 @@ const SubagentsV2: React.FC<SceneProps> = ({
         <circle fill={MOTION_COLORS.cyan} r={10} />
         <text
           fill={MOTION_COLORS.cyan}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={24}
           fontWeight={850}
           textAnchor="middle"

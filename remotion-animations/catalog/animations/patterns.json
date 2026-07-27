@@ -41,6 +41,10 @@
       {
         "intent": "qualitative-scale",
         "patternId": "concept.scale-proportion"
+      },
+      {
+        "intent": "annotate-calibrated-chart-image",
+        "patternId": "asset.annotated-chart"
       }
     ]
   },
@@ -526,6 +530,40 @@
       "durationSeconds": {"min": 6, "max": 8},
       "defaultFormat": "fullscreen",
       "promptKey": "time-concept"
+    },
+    {
+      "id": "asset.annotated-chart",
+      "family": "asset",
+      "label": "Gráfica calibrada y anotada",
+      "status": "ready",
+      "implementation": {
+        "component": "AnnotatedChartScene",
+        "compositionId": "Chart-Annotated-Range",
+        "source": "src/charts/AnnotatedChartScene.tsx",
+        "variants": [
+          "Chart-Annotated-Editorial",
+          "Chart-Annotated-Documentary",
+          "Chart-Annotated-Market",
+          "Chart-Annotated-Range-Audio"
+        ]
+      },
+      "ingestion": {
+        "command": "npm run remotion:ingest:chart",
+        "inputSchema": "schemas/chart-ingestion-input.schema.json",
+        "confidenceStates": ["confirmed", "proposed", "blocked"],
+        "externalAnalysisDefault": false
+      },
+      "communicates": "Un periodo, evento o variación exacta sobre una gráfica aportada como imagen.",
+      "selectWhen": "Existe una gráfica legible, se conoce su región de trazado y la locución señala una fecha, rango, evento o cambio concreto.",
+      "rejectWhen": "La imagen no puede calibrarse o se pretende deducir un valor exacto sin datos ni ejes fiables.",
+      "evidenceRequired": ["imagen local", "región de trazado", "límites de los ejes", "afirmación respaldada"],
+      "acceptedAssets": ["screenshot", "image", "chart-data"],
+      "motionVerb": "calibrar, recorrer y enfocar",
+      "focusTreatments": ["spotlight-mask", "path-follow", "camera-zoom", "freeze-and-callout"],
+      "soundProfile": "trend-focus",
+      "durationSeconds": {"min": 6, "max": 10},
+      "defaultFormat": "fullscreen",
+      "promptKey": "asset"
     },
     {
       "id": "asset.screenshot-spotlight",

@@ -43,6 +43,27 @@ El sistema añade cuatro capas para escalar:
 4. **Prompts especializados**: router, familias visuales, efectos, sonido y
    auditoría.
 
+El índice operativo de estas capas es
+`remotion-animations/catalog/capabilities.manifest.json`. Se genera con
+`npm run remotion:capabilities` y el validador comprueba que patrones `ready`,
+archivos fuente y composiciones registradas sigan sincronizados.
+
+El selector semántico ejecutable:
+
+```powershell
+npm run remotion:select:visual -- --query "<concepto>" --allow-fallback
+```
+
+puntúa recursos locales, puede usar un LLM únicamente como selector de IDs
+existentes y limita el fallback a composiciones de iconos auditados. Nunca
+acepta SVG libre generado por texto.
+
+La dirección artística se expresa con cuatro perfiles: `editorial-report`,
+`documentary-evidence`, `diagrammatic-system` y `market-data`. No son skins:
+cambian jerarquía, marco, material, etiquetas y atribución. Schibsted Grotesk
+se usa para texto editorial y Fragment Mono solo para datos. `variety` registra
+el historial reciente y las repeticiones justificadas.
+
 Como capa previa opcional, `Animation Scout` convierte vídeos de referencia en
 hojas de contacto, perfil de movimiento e informes multimodales sin
 transcripción. Su salida `remotion-handoff.json` aporta lenguaje visual y
@@ -495,6 +516,7 @@ convivir con locución y pasar medición con FFmpeg.
 - consolidar `hero-metric`, `bar-focus` y `line-trend-zoom`;
 - implementar `part-to-whole`;
 - implementar `comparison.common-baseline`;
+- consolidar `asset.annotated-chart` para imágenes calibradas;
 - implementar `asset.screenshot-spotlight`;
 - consolidar `FocusZoom`, `ProgressiveText` y `ProgressiveReveal`;
 - extraer fondos, spotlight y staging de assets como primitivas.
@@ -512,6 +534,11 @@ convivir con locución y pasar medición con FFmpeg.
 - genera manifiestos y `animation-spec.json`;
 - prepara props, stills 0/15/45/75/95 y hoja de contacto;
 - ejecuta gates y produce guía de montaje.
+
+Primer bloque operativo: `npm run remotion:ingest:chart` ya inspecciona una
+gráfica, prepara el asset, clasifica la confianza de calibración, selecciona
+anotaciones y genera props más `animation-spec.json`. La ampliación a
+descubrimiento de todos los clips del lote continúa siendo incremental.
 
 ### Fase 4 — Integración en la UI
 

@@ -7,5 +7,20 @@
     "renderPolicy": "local-only",
     "fallback": "Usar icono o dibujo del catálogo; nunca descargar una imagen durante el render."
   },
-  "images": []
+  "images": [
+    {
+      "id": "demo-index-2025",
+      "publicPath": "assets/library/chart-samples/demo-index-2025.svg",
+      "alt": "Gráfica sintética de un índice de demostración durante 2025",
+      "width": 1700,
+      "height": 760,
+      "sha256": "b386f521e98461f427f5995150d79c28c71925356698d527868ab1e35690f22e",
+      "source": "Shortsmith",
+      "author": "Shortsmith",
+      "license": "project-owned",
+      "attribution": "Serie y gráfico sintéticos creados para pruebas del renderer.",
+      "tags": ["gráfica", "índice", "finanzas", "serie temporal", "demostración"],
+      "focalPoint": {"x": 50, "y": 50}
+    }
+  ]
 }

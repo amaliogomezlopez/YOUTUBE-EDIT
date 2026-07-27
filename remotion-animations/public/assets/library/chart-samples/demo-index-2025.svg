@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1700" height="760" viewBox="0 0 1700 760">
+  <defs>
+    <linearGradient id="area" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4A8FB8" stop-opacity=".26"/>
+      <stop offset="1" stop-color="#4A8FB8" stop-opacity=".02"/>
+    </linearGradient>
+  </defs>
+  <rect width="1700" height="760" rx="16" fill="#091624"/>
+  <text x="120" y="42" fill="#9BB1C4" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="700">DEMO INDEX · 2025</text>
+  <text x="1580" y="42" fill="#638096" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="16" font-weight="700" text-anchor="end">SERIE SINTÉTICA</text>
+  <g stroke="#20364A" stroke-width="2">
+    <line x1="120" y1="70" x2="1580" y2="70"/>
+    <line x1="120" y1="232.9" x2="1580" y2="232.9"/>
+    <line x1="120" y1="395.7" x2="1580" y2="395.7"/>
+    <line x1="120" y1="558.6" x2="1580" y2="558.6"/>
+    <line x1="120" y1="640" x2="1580" y2="640"/>
+  </g>
+  <g fill="#71899D" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="650" text-anchor="end">
+    <text x="100" y="76">130</text>
+    <text x="100" y="239">120</text>
+    <text x="100" y="402">110</text>
+    <text x="100" y="565">100</text>
+    <text x="100" y="646">95</text>
+  </g>
+  <path d="M124 558.6 L252.4 490.2 L364.7 426.7 L481 366.4 L601.3 499.9 L729.7 464.1 L846 408.7 L970.3 319.2 L1098.7 260.5 L1215 289.9 L1347.4 187.3 L1459.7 128.6 L1459.7 640 L124 640 Z" fill="url(#area)"/>
+  <path d="M124 558.6 L252.4 490.2 L364.7 426.7 L481 366.4 L601.3 499.9 L729.7 464.1 L846 408.7 L970.3 319.2 L1098.7 260.5 L1215 289.9 L1347.4 187.3 L1459.7 128.6" fill="none" stroke="#6E9DB8" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#71899D" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="18" font-weight="650" text-anchor="middle">
+    <text x="120" y="692">ENE</text>
+    <text x="356.6" y="692">MAR</text>
+    <text x="601.3" y="692">MAY</text>
+    <text x="846" y="692">JUL</text>
+    <text x="1094.7" y="692">SEP</text>
+    <text x="1339.1" y="692">NOV</text>
+    <text x="1580" y="692">DIC</text>
+  </g>
+</svg>

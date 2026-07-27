@@ -12,11 +12,17 @@ Elegir la animación por lo que la locución necesita demostrar. Separar:
 
 Leer antes:
 
+- `remotion-animations/catalog/capabilities.manifest.json`;
 - `remotion-animations/catalog/animations/patterns.json`;
 - `remotion-animations/catalog/animations/effects.json`;
 - `remotion-animations/catalog/visuals/icons.json`;
 - `remotion-animations/catalog/visuals/drawings.json`;
 - la transcripción y el tramo exacto del clip.
+
+Para iconos, dibujos e imágenes, usar el selector ejecutable descrito en
+[visual-selection.md](visual-selection.md). No pedir a la IA markup SVG libre.
+Para paquetes, aplicar [art-direction.md](art-direction.md) y conservar
+`variety` en el contrato.
 
 ## Ruta rápida para patrones `ready`
 
@@ -25,6 +31,7 @@ Leer antes:
 | Una cifra exacta protagonista | `data.hero-metric` | `KineticNumber` |
 | Categorías con valores comparables | `data.bar-focus` | `RisingHistogram` |
 | Evolución temporal o punto de inflexión | `data.line-trend-zoom` | `LineChartZoom` |
+| Fecha, rango o variación sobre una gráfica aportada | `asset.annotated-chart` | `AnnotatedChartScene` |
 | Porcentaje o parte-total verificable | `data.part-to-whole` | `RadialOrbitSummary` |
 | Etapas conectadas por causa y efecto | `process.signal-flow` | `ConnectedCardChain` |
 | “Más”, “menos” o diferencia de escala sin cifras | `concept.scale-proportion` | `CapacityMatrix` |
@@ -32,6 +39,21 @@ Leer antes:
 No usar `data.part-to-whole` para una mayoría no cuantificada. No usar
 `concept.scale-proportion` si existen cifras suficientes para una gráfica
 cuantitativa.
+
+### `asset.annotated-chart`
+
+Usar para capturas de rendimiento, líneas bursátiles, dashboards exportados o
+gráficas de informes cuando la imagen real debe conservarse. Leer
+[chart-ingestion.md](chart-ingestion.md) y ejecutar la ingestión local.
+
+- Imagen y foco solamente: rango o evento cualitativo, sin valores inferidos.
+- Imagen calibrada: fechas y valores se proyectan sobre región y ejes
+  confirmados.
+- Imagen calibrada con serie: permite recorrido, cursor, variación,
+  antes-después y máximo-mínimo.
+
+Rechazar valores exactos si solo existe la curva rasterizada. Una calibración
+de visión o heurística sigue siendo una propuesta hasta revisión.
 
 ## Patrones incorporados por Animation Scout
 

@@ -1,3 +1,4 @@
+import {fitText} from "@remotion/layout-utils";
 import {
   AbsoluteFill,
   Easing,
@@ -6,6 +7,11 @@ import {
   useVideoConfig,
 } from "remotion";
 import {useId} from "react";
+import {
+  ArtDirection,
+  getArtDirectionProfile,
+} from "./ArtDirection";
+import {DATA_FONT_FAMILY, MOTION_FONT_FAMILY} from "./fonts";
 
 export const MOTION_COLORS = {
   background: "#07111F",
@@ -63,6 +69,7 @@ export type MotionCanvasProps = {
   children: React.ReactNode;
   showHeader?: boolean;
   supportingText?: string;
+  artDirection?: ArtDirection;
 };
 
 export const MotionCanvas: React.FC<MotionCanvasProps> = ({
@@ -71,10 +78,26 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
   children,
   showHeader = true,
   supportingText,
+  artDirection = "diagrammatic-system",
 }) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
   const hasHeader = showHeader && Boolean(title || supportingText);
+  const profile = getArtDirectionProfile(artDirection);
+  const fittedTitleSize = title
+    ? Math.max(
+        profile.headlineMinSize,
+        Math.min(
+          profile.headlineMaxSize,
+          fitText({
+            text: title,
+            withinWidth: profile.headerMaxWidth,
+            fontFamily: MOTION_FONT_FAMILY,
+            fontWeight: "800",
+          }).fontSize,
+        ),
+      )
+    : profile.headlineMaxSize;
   const intro = motionProgress(frame, fps, 0, 0.55);
   const outro = interpolate(
     frame,
@@ -91,26 +114,58 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
       style={{
         background: `radial-gradient(circle at 50% 52%, ${rgba(
           accentColor,
-          0.055,
-        )}, transparent 48%), ${MOTION_COLORS.background}`,
+          artDirection === "diagrammatic-system" ? 0.055 : 0.025,
+        )}, transparent 48%), ${profile.background}`,
         color: MOTION_COLORS.ink,
-        fontFamily: 'Inter, "Segoe UI", Arial, sans-serif',
+        fontFamily: MOTION_FONT_FAMILY,
         opacity: outro,
         overflow: "hidden",
       }}
     >
+      {profile.showGrid ? (
+        <AbsoluteFill
+          style={{
+            backgroundImage: `linear-gradient(${rgba(
+              MOTION_COLORS.grid,
+              0.22,
+            )} 1px, transparent 1px), linear-gradient(90deg, ${rgba(
+              MOTION_COLORS.grid,
+              0.22,
+            )} 1px, transparent 1px)`,
+            backgroundSize: "72px 72px",
+            maskImage:
+              "linear-gradient(to bottom, rgba(0,0,0,.78), transparent 88%)",
+            opacity: 0.42,
+          }}
+        />
+      ) : null}
+      {artDirection === "editorial-report" ? (
+        <div
+          style={{
+            background: accentColor,
+            height: 4,
+            left: 96,
+            opacity: intro,
+            position: "absolute",
+            top: 46,
+            width: 82,
+          }}
+        />
+      ) : null}
       {hasHeader ? (
         <div
           style={{
-            alignItems: "center",
+            alignItems:
+              profile.headerAlign === "center" ? "center" : "flex-start",
             display: "flex",
             flexDirection: "column",
-            left: 140,
+            left: profile.headerAlign === "center" ? 140 : 96,
             opacity: intro,
             position: "absolute",
-            right: 140,
-            textAlign: "center",
-            top: 58,
+            right: profile.headerAlign === "center" ? 140 : 96,
+            textAlign: profile.headerAlign,
+            top: profile.headerTop,
+            zIndex: 2,
             transform: `translateY(${interpolate(
               intro,
               [0, 1],
@@ -120,11 +175,11 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
         >
           <div
             style={{
-              fontSize: 54,
-              fontWeight: 850,
-              letterSpacing: -1.5,
-              lineHeight: 1.04,
-              maxWidth: 1500,
+              fontSize: fittedTitleSize,
+              fontWeight: 820,
+              letterSpacing: -1.1,
+              lineHeight: 1,
+              maxWidth: profile.headerMaxWidth,
             }}
           >
             {title}
@@ -133,10 +188,11 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
             <div
               style={{
                 color: MOTION_COLORS.muted,
-                fontSize: 24,
+                fontSize:
+                  artDirection === "documentary-evidence" ? 19 : 22,
                 fontWeight: 520,
                 marginTop: 10,
-                maxWidth: 1260,
+                maxWidth: profile.supportingMaxWidth,
               }}
             >
               {supportingText}
@@ -150,7 +206,8 @@ export const MotionCanvas: React.FC<MotionCanvasProps> = ({
           left: 96,
           position: "absolute",
           right: 96,
-          top: hasHeader ? (supportingText ? 214 : 170) : 56,
+          top: hasHeader ? profile.contentTopWithHeader : 56,
+          zIndex: 1,
         }}
       >
         {children}
@@ -219,6 +276,7 @@ export const KineticNumber: React.FC<KineticNumberProps> = ({
         color: accentColor,
         fontSize,
         fontVariantNumeric: "tabular-nums",
+        fontFamily: DATA_FONT_FAMILY,
         fontWeight: 900,
         letterSpacing: -Math.max(2, fontSize * 0.035),
         lineHeight: 0.92,
@@ -360,7 +418,7 @@ export const RisingHistogram: React.FC<RisingHistogramProps> = ({
             />
             <text
               fill={isHighlight ? accentColor : MOTION_COLORS.ink}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily={DATA_FONT_FAMILY}
               fontSize={isHighlight ? 48 : 36}
               fontWeight={850}
               style={{
@@ -378,7 +436,7 @@ export const RisingHistogram: React.FC<RisingHistogramProps> = ({
             </text>
             <text
               fill={MOTION_COLORS.muted}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily={MOTION_FONT_FAMILY}
               fontSize={24}
               fontWeight={700}
               textAnchor="middle"
@@ -554,7 +612,7 @@ export const LineChartZoom: React.FC<LineChartZoomProps> = ({
       {safeData.map((item, index) => (
         <text
           fill={MOTION_COLORS.muted}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily={MOTION_FONT_FAMILY}
           fontSize={21}
           fontWeight={650}
           key={item.label}
@@ -585,7 +643,7 @@ export const LineChartZoom: React.FC<LineChartZoomProps> = ({
         />
         <text
           fill={MOTION_COLORS.muted}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily={MOTION_FONT_FAMILY}
           fontSize={20}
           fontWeight={700}
           textAnchor="start"
@@ -596,7 +654,7 @@ export const LineChartZoom: React.FC<LineChartZoomProps> = ({
         </text>
         <text
           fill={accentColor}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily={DATA_FONT_FAMILY}
           fontSize={64}
           fontWeight={900}
           style={{fontVariantNumeric: "tabular-nums"}}

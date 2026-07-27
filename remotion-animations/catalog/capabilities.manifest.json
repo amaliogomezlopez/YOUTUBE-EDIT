@@ -1,0 +1,511 @@
+{
+  "version": 1,
+  "product": "Shortsmith Remotion",
+  "sourceOfTruth": [
+    "catalog/animations/patterns.json",
+    "catalog/animations/effects.json",
+    "catalog/visuals/icons.json",
+    "catalog/visuals/drawings.json",
+    "catalog/visuals/images.json",
+    "src/Root.tsx"
+  ],
+  "commands": {
+    "ingestAnnotatedChart": "npm run remotion:ingest:chart -- --input <chart-ingestion-input.json>",
+    "selectVisual": "npm run remotion:select:visual -- --query \"<concepto>\" --allow-fallback",
+    "validate": "npm run remotion:check",
+    "renderChartStills": "npm run remotion:stills:annotated-chart"
+  },
+  "schemas": {
+    "chartIngestion": "schemas/chart-ingestion-input.schema.json",
+    "animationSpec": "schemas/animation-spec.schema.json",
+    "visualSelection": "schemas/visual-selection.schema.json"
+  },
+  "artDirections": [
+    "editorial-report",
+    "documentary-evidence",
+    "diagrammatic-system",
+    "market-data"
+  ],
+  "compositionIds": [
+    "AL03-Input-90",
+    "AL06-Harness-Taller",
+    "AL10-Claude-vs-Pi",
+    "AL13-Bola-Contexto",
+    "AL17-Un-Prompt",
+    "AL22-Skills-10-30",
+    "AL24-Chat-Nuevo",
+    "AL27-Subagentes",
+    "ALV2-03-Input-90",
+    "ALV2-06-Harness",
+    "ALV2-10-Carga",
+    "ALV2-13-Contexto",
+    "ALV2-17-Un-Prompt",
+    "ALV2-22-Skills",
+    "ALV2-24-Chat-Nuevo",
+    "ALV2-27-Subagentes",
+    "ALV3A-03-Input-90",
+    "ALV3A-06-Harness",
+    "ALV3A-10-Carga",
+    "ALV3A-13-Contexto",
+    "ALV3A-17-Un-Prompt",
+    "ALV3A-22-Skills",
+    "ALV3A-24-Chat-Nuevo",
+    "ALV3A-27-Subagentes",
+    "ALV4-01-Coste",
+    "ALV4-09-Tokens",
+    "ALV4-12-Ventana",
+    "ALV4-15-Atencion",
+    "ALV4-19-Skills",
+    "ALV4-21-Markdown",
+    "ALV4-23-Bucle",
+    "ALV4-26-Memoria",
+    "ALV4-29-Pico",
+    "Catalog-Drawings",
+    "Catalog-Icons-01",
+    "Catalog-Icons-02",
+    "Chart-Annotated-Documentary",
+    "Chart-Annotated-Editorial",
+    "Chart-Annotated-Events",
+    "Chart-Annotated-Image-Only",
+    "Chart-Annotated-Market",
+    "Chart-Annotated-Range",
+    "Chart-Annotated-Range-Audio",
+    "ChartHighlight",
+    "ChartHighlightOverlay",
+    "Scout-CapacityMatrix",
+    "Scout-ConnectedCardChain",
+    "Scout-RadialOrbitSummary",
+    "Toolkit-KineticNumber",
+    "Toolkit-LineChartZoom",
+    "Toolkit-RisingHistogram",
+    "Toolkit-TextFocusJourney",
+    "Toolkit-TransversalEffects",
+    "Toolkit-TransversalEffects-FinalZoom"
+  ],
+  "patterns": [
+    {
+      "id": "asset.annotated-chart",
+      "status": "ready",
+      "compositionId": "Chart-Annotated-Range",
+      "variants": [
+        "Chart-Annotated-Editorial",
+        "Chart-Annotated-Documentary",
+        "Chart-Annotated-Market",
+        "Chart-Annotated-Range-Audio"
+      ],
+      "component": "AnnotatedChartScene",
+      "ingestion": "npm run remotion:ingest:chart"
+    },
+    {
+      "id": "asset.logo-ecosystem",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "asset.photo-parallax",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "asset.screenshot-spotlight",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "comparison.before-after-wipe",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "comparison.common-baseline",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "comparison.image-logo-versus",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "comparison.pros-cons-balance",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "concept.accumulation",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "concept.compression",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "concept.scale-proportion",
+      "status": "ready",
+      "compositionId": "Scout-CapacityMatrix",
+      "variants": [],
+      "component": "CapacityMatrix",
+      "ingestion": null
+    },
+    {
+      "id": "data.bar-focus",
+      "status": "ready",
+      "compositionId": "Toolkit-RisingHistogram",
+      "variants": [],
+      "component": "RisingHistogram",
+      "ingestion": null
+    },
+    {
+      "id": "data.delta-before-after",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "data.hero-metric",
+      "status": "ready",
+      "compositionId": "Toolkit-KineticNumber",
+      "variants": [],
+      "component": "KineticNumber",
+      "ingestion": null
+    },
+    {
+      "id": "data.histogram-distribution",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "data.line-trend-zoom",
+      "status": "ready",
+      "compositionId": "Toolkit-LineChartZoom",
+      "variants": [],
+      "component": "LineChartZoom",
+      "ingestion": null
+    },
+    {
+      "id": "data.part-to-whole",
+      "status": "ready",
+      "compositionId": "Scout-RadialOrbitSummary",
+      "variants": [],
+      "component": "RadialOrbitSummary",
+      "ingestion": null
+    },
+    {
+      "id": "data.ranking",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "data.waterfall",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "overlay.precision-callout",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "process.bottleneck-queue",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "process.branch-merge",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "process.funnel-filter",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "process.hierarchy-delegation",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "process.signal-flow",
+      "status": "ready",
+      "compositionId": "Scout-ConnectedCardChain",
+      "variants": [],
+      "component": "ConnectedCardChain",
+      "ingestion": null
+    },
+    {
+      "id": "text.kinetic-phrase",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "time.cycle",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    },
+    {
+      "id": "time.timeline-milestones",
+      "status": "planned",
+      "compositionId": null,
+      "variants": [],
+      "component": null,
+      "ingestion": null
+    }
+  ],
+  "effects": [
+    {
+      "id": "camera.focus-zoom",
+      "status": "ready",
+      "component": "FocusZoom"
+    },
+    {
+      "id": "camera.path-track",
+      "status": "ready",
+      "component": "TrackingZoom"
+    },
+    {
+      "id": "camera.text-follow",
+      "status": "ready",
+      "component": "NarrativeCamera"
+    },
+    {
+      "id": "exit.clean-fade",
+      "status": "ready",
+      "component": "MotionCanvas"
+    },
+    {
+      "id": "focus.accent-only",
+      "status": "primitive",
+      "component": "Tratamiento por props de color"
+    },
+    {
+      "id": "focus.count-impact",
+      "status": "ready",
+      "component": "KineticNumber"
+    },
+    {
+      "id": "focus.depth-isolation",
+      "status": "planned",
+      "component": null
+    },
+    {
+      "id": "focus.desaturate-peers",
+      "status": "primitive",
+      "component": "Tratamiento por props de color y opacity"
+    },
+    {
+      "id": "focus.freeze-callout",
+      "status": "ready",
+      "component": "AnnotatedChartScene"
+    },
+    {
+      "id": "focus.path-follow",
+      "status": "ready",
+      "component": "SignalPath"
+    },
+    {
+      "id": "focus.radial-orbit",
+      "status": "ready",
+      "component": "RadialOrbitSummary"
+    },
+    {
+      "id": "focus.spotlight-mask",
+      "status": "ready",
+      "component": "AnnotatedChartScene"
+    },
+    {
+      "id": "reveal.bar-rise",
+      "status": "ready",
+      "component": "RisingHistogram"
+    },
+    {
+      "id": "reveal.element",
+      "status": "ready",
+      "component": "ProgressiveReveal"
+    },
+    {
+      "id": "reveal.element-stagger",
+      "status": "ready",
+      "component": "useStaggeredReveal"
+    },
+    {
+      "id": "reveal.number-count",
+      "status": "ready",
+      "component": "KineticNumber"
+    },
+    {
+      "id": "reveal.path-draw",
+      "status": "ready",
+      "component": "LineChartZoom / SignalPath"
+    },
+    {
+      "id": "reveal.text-letters",
+      "status": "ready",
+      "component": "ProgressiveText"
+    },
+    {
+      "id": "reveal.text-words",
+      "status": "ready",
+      "component": "ProgressiveText"
+    },
+    {
+      "id": "sound.semantic-cue",
+      "status": "ready",
+      "component": "Soundtrack"
+    },
+    {
+      "id": "transition.before-after-wipe",
+      "status": "planned",
+      "component": null
+    }
+  ],
+  "visuals": {
+    "icons": [
+      "agent",
+      "analytics",
+      "api",
+      "branch",
+      "browser",
+      "camera",
+      "clock",
+      "cloud",
+      "code",
+      "context",
+      "cost",
+      "database",
+      "edit",
+      "file",
+      "filter",
+      "folder",
+      "index",
+      "input",
+      "limit",
+      "lock",
+      "loop",
+      "memory",
+      "merge",
+      "microphone",
+      "mobile",
+      "model",
+      "output",
+      "prompt",
+      "queue",
+      "repository",
+      "risk",
+      "search",
+      "server",
+      "shield",
+      "sync",
+      "terminal",
+      "tokens",
+      "tool",
+      "unknown",
+      "upload",
+      "wallet"
+    ],
+    "drawings": [
+      "agent-workspace",
+      "bottleneck",
+      "branch-merge",
+      "context-window",
+      "filter-compress",
+      "memory-repositories",
+      "off-peak",
+      "pipeline",
+      "review-loop",
+      "server-cloud",
+      "token-stream",
+      "tool-stack"
+    ],
+    "images": [
+      "demo-index-2025"
+    ],
+    "selectionModes": [
+      "deterministic-catalog",
+      "llm-catalog-validated",
+      "controlled-fallback"
+    ],
+    "fallbackPolicy": "catalog-only-no-freeform-svg"
+  },
+  "factualSafety": {
+    "calibratedCharts": true,
+    "explicitCalibrationAcceptance": true,
+    "observedValueLabels": true,
+    "externalSvgRasterization": true,
+    "runtimeInputSchemaValidation": true
+  },
+  "sound": {
+    "silentAndSfxTargets": true,
+    "defaultDelivery": "both",
+    "profiles": [
+      "asset-reveal",
+      "comparison-split",
+      "filter-compress",
+      "metric-impact",
+      "precision-callout",
+      "process-flow",
+      "trend-focus"
+    ]
+  }
+}

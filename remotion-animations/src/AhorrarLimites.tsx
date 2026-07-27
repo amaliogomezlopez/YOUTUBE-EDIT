@@ -1311,7 +1311,7 @@ export const AhorrarLimitesAnimation: React.FC<AhorrarLimitesProps> = ({
         background:
           "radial-gradient(circle at 16% 10%, rgba(33, 150, 243, 0.26), transparent 33%), radial-gradient(circle at 86% 84%, rgba(82, 70, 230, 0.2), transparent 38%), linear-gradient(145deg, #06101D, #0A1D31 55%, #071525)",
         color: "#F5F9FD",
-        fontFamily: 'Inter, "Segoe UI", Arial, sans-serif',
+        fontFamily: "Schibsted Grotesk",
         opacity: outro,
         overflow: "hidden",
         padding: "58px 86px 54px",

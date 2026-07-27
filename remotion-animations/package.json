@@ -6,7 +6,11 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@fontsource-variable/schibsted-grotesk": "^5.3.0",
+    "@fontsource/fragment-mono": "^5.3.0",
     "@remotion/cli": "4.0.499",
+    "@remotion/fonts": "^4.0.499",
+    "@remotion/layout-utils": "^4.0.499",
     "@remotion/media": "^4.0.499",
     "@remotion/zod-types": "^4.0.499",
     "react": "19.2.3",
@@ -28,6 +32,7 @@
     "upgrade": "remotion upgrade",
     "lint": "eslint src && tsc",
     "check:catalog": "node scripts/validate-animation-catalog.mjs",
+    "build:capabilities": "node scripts/generate-capabilities-manifest.mjs",
     "check": "npm run check:catalog && npm run lint && remotion compositions src/index.ts",
     "still:chart": "node scripts/render-safe.mjs still chart-highlight ChartHighlight chart-highlight.png --frame=75 --image-format=png",
     "render:chart": "node scripts/render-safe.mjs render chart-highlight ChartHighlight chart-highlight.mp4",
@@ -41,7 +46,9 @@
     "render:scout-catalog": "node scripts/render-scout-catalog.mjs",
     "stills:scout-catalog": "node scripts/render-scout-catalog-stills.mjs",
     "stills:visual-catalog": "node scripts/render-visual-catalog-stills.mjs",
-    "prepare:sfx": "node scripts/prepare-sfx.mjs"
+    "stills:annotated-chart": "node scripts/render-annotated-chart-stills.mjs",
+    "prepare:sfx": "node scripts/prepare-sfx.mjs",
+    "prepare:fonts": "node scripts/prepare-fonts.mjs"
   },
   "sideEffects": [
     "*.css"

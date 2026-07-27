@@ -1,6 +1,11 @@
-import {readFileSync} from "node:fs";
+import {createHash} from "node:crypto";
+import {existsSync, readFileSync} from "node:fs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
+import {
+  buildCapabilitiesManifest,
+  extractCompositionIds,
+} from "./lib/capabilities-manifest.mjs";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(moduleDirectory, "..");
@@ -23,7 +28,9 @@ const effectsCatalog = readJson("catalog/animations/effects.json");
 const iconsCatalog = readJson("catalog/visuals/icons.json");
 const drawingsCatalog = readJson("catalog/visuals/drawings.json");
 const imagesCatalog = readJson("catalog/visuals/images.json");
+const capabilitiesManifest = readJson("catalog/capabilities.manifest.json");
 readJson("schemas/clip-animation-input.schema.json");
+readJson("schemas/chart-ingestion-input.schema.json");
 readJson("schemas/animation-spec.schema.json");
 readJson("schemas/image-asset-manifest.schema.json");
 readJson("schemas/visual-selection.schema.json");
@@ -51,6 +58,8 @@ const soundProfileIds = new Set();
 const iconIds = new Set();
 const drawingIds = new Set();
 const imageIds = new Set();
+const rootSource = readFileSync(path.join(projectRoot, "src", "Root.tsx"), "utf8");
+const compositionIds = new Set(extractCompositionIds(rootSource));
 
 if (catalog.version !== 1) {
   errors.push("catalog.version debe ser 1");
@@ -145,6 +154,23 @@ for (const [index, pattern] of (catalog.patterns ?? []).entries()) {
   if (pattern.status === "ready" && !pattern.implementation?.component) {
     errors.push(`${location} está ready pero no declara component`);
   }
+  if (pattern.status === "ready" && pattern.implementation?.source) {
+    const sourceFile = path.resolve(projectRoot, pattern.implementation.source);
+    if (!existsSync(sourceFile)) {
+      errors.push(
+        `${location}.implementation.source no existe: ${pattern.implementation.source}`,
+      );
+    }
+  }
+  if (
+    pattern.status === "ready" &&
+    pattern.implementation?.compositionId &&
+    !compositionIds.has(pattern.implementation.compositionId)
+  ) {
+    errors.push(
+      `${location}.implementation.compositionId no está registrado en Root.tsx: ${pattern.implementation.compositionId}`,
+    );
+  }
   if (pattern.status === "planned" && pattern.implementation !== null) {
     errors.push(`${location} está planned pero implementation no es null`);
   }
@@ -152,6 +178,38 @@ for (const [index, pattern] of (catalog.patterns ?? []).entries()) {
     errors.push(
       `${location}.soundProfile referencia un perfil desconocido: ${pattern.soundProfile}`,
     );
+  }
+  if (pattern.ingestion) {
+    const schemaFile = path.resolve(
+      projectRoot,
+      pattern.ingestion.inputSchema ?? "",
+    );
+    if (
+      typeof pattern.ingestion.command !== "string" ||
+      !pattern.ingestion.command.trim()
+    ) {
+      errors.push(`${location}.ingestion.command es obligatorio`);
+    }
+    if (!existsSync(schemaFile)) {
+      errors.push(
+        `${location}.ingestion.inputSchema no existe: ${pattern.ingestion.inputSchema}`,
+      );
+    }
+    const confidenceStates = pattern.ingestion.confidenceStates ?? [];
+    if (
+      !["confirmed", "proposed", "blocked"].every((state) =>
+        confidenceStates.includes(state),
+      )
+    ) {
+      errors.push(
+        `${location}.ingestion.confidenceStates debe incluir confirmed, proposed y blocked`,
+      );
+    }
+    if (pattern.ingestion.externalAnalysisDefault !== false) {
+      errors.push(
+        `${location}.ingestion.externalAnalysisDefault debe ser false`,
+      );
+    }
   }
 }
 
@@ -354,6 +412,35 @@ for (const [index, image] of (imagesCatalog.images ?? []).entries()) {
   ) {
     errors.push(`${location} necesita source y license verificables`);
   }
+  const libraryRoot = path.resolve(projectRoot, "public", "assets", "library");
+  const imageFile = path.resolve(projectRoot, "public", image.publicPath ?? "");
+  const relativeImageFile = path.relative(libraryRoot, imageFile);
+  if (
+    !relativeImageFile ||
+    relativeImageFile.startsWith("..") ||
+    path.isAbsolute(relativeImageFile)
+  ) {
+    errors.push(`${location}.publicPath debe quedar dentro de public/assets/library`);
+  } else if (!existsSync(imageFile)) {
+    errors.push(`${location}.publicPath no existe: ${image.publicPath}`);
+  } else {
+    const actualHash = createHash("sha256")
+      .update(readFileSync(imageFile))
+      .digest("hex");
+    if (actualHash !== image.sha256) {
+      errors.push(`${location}.sha256 no coincide con el archivo local`);
+    }
+  }
+}
+
+const expectedCapabilitiesManifest = buildCapabilitiesManifest(projectRoot);
+if (
+  JSON.stringify(capabilitiesManifest) !==
+  JSON.stringify(expectedCapabilitiesManifest)
+) {
+  errors.push(
+    "catalog/capabilities.manifest.json está desactualizado; ejecuta npm run build:capabilities",
+  );
 }
 
 if (errors.length > 0) {
@@ -376,5 +463,6 @@ console.log(
       .map(([status, count]) => `${status}=${count}`)
       .join(", ")}), ${effectsCatalog.effects.length} efectos transversales, ` +
     `${soundProfileIds.size} perfiles sonoros, ${iconIds.size} iconos y ` +
-    `${drawingIds.size} dibujos; ${imageIds.size} imágenes gestionadas.`,
+    `${drawingIds.size} dibujos; ${imageIds.size} imágenes gestionadas y ` +
+    `${compositionIds.size} composiciones registradas.`,
 );

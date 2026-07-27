@@ -18,6 +18,11 @@ Herramienta local para convertir un vídeo largo en transcripción, clips vertic
 - Dashboard local organizado en Producción, Biblioteca, Storysmith y Carouselsmith.
 - Carouselsmith independiente: 10 layouts, imágenes importadas o generadas, overlays SVG, edición persistente y exportación PNG/JPEG 4:5 y 9:16.
 - Animation Scout local: muestreo visual denso, hojas de contacto, perfil de movimiento y análisis multimodal opcional para llevar referencias a Remotion.
+- Ingestión local de gráficas para preparar assets, calibrar ejes, seleccionar tramos y generar props de Remotion con fallback controlado.
+- Selector semántico local de iconos, dibujos e imágenes con fallback
+  compuesto y validado, más manifest de capacidades para agentes.
+- Cuatro perfiles de dirección artística y fuentes locales deterministas para
+  evitar una apariencia repetitiva o dependiente del sistema.
 - Historial persistente de jobs, recuperación tras recargar y estado seguro de proveedores.
 - Edición real y persistente de título, resumen, hashtags, timestamps y copy por plataforma.
 - Confirmación explícita e idempotencia antes de publicar en plataformas externas.
@@ -242,7 +247,7 @@ Archivar o eliminar un chat no borra archivos locales.
 - La detección YuNet sigue una única región de webcam estable; podcasts multicámara o cambios de plano complejos requieren revisión manual en el editor.
 - El scoring heurístico es útil para ranking inicial. Las métricas pueden registrarse para análisis, pero todavía no recalibran automáticamente el ranking.
 - El texto plano sin timestamps se aproxima por duración; para resultados serios usa SRT/VTT/JSON.
-- El render principal usa FFmpeg. El módulo `remotion-animations/` añade composiciones parametrizables para motion graphics, empezando por una gráfica con columna y cifra destacadas.
+- El render principal usa FFmpeg. El módulo `remotion-animations/` añade composiciones parametrizables para motion graphics, gráficas nativas y anotaciones calibradas sobre imágenes.
 - Si la fuente es 360p/480p, el export puede ser `1080x1920` pero no tendrá detalle real 1080p. Para resultados nítidos usa fuente mínima `1280x720` horizontal o `720x1280` vertical.
 - Las APIs externas pueden imponer revisión de aplicación, scopes, cuotas o planes. Cuando no permiten automatización, Shortsmith conserva el asset/caption y marca `requires_manual_action`.
 

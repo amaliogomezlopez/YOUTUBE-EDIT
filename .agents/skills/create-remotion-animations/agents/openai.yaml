@@ -1,4 +1,4 @@
 interface:
   display_name: "Crear animaciones con Remotion"
-  short_description: "Elige patrones y sonoriza motion graphics"
-  default_prompt: "Usa $create-remotion-animations para analizar estos clips, elegir el patrón del catálogo y sincronizar los efectos de sonido que mejor expliquen cada idea."
+  short_description: "Planifica y crea motion graphics auditables"
+  default_prompt: "Usa $create-remotion-animations para consultar las capacidades disponibles, analizar estos clips o gráficas, seleccionar recursos visuales por significado, variar la dirección artística y crear las animaciones que mejor expliquen cada idea sin inventar datos."

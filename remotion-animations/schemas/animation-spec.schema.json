@@ -34,6 +34,9 @@
     "selection": {
       "$ref": "#/$defs/selection"
     },
+    "variety": {
+      "$ref": "#/$defs/variety"
+    },
     "editorial": {
       "$ref": "#/$defs/editorial"
     },
@@ -75,13 +78,24 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "videoFile",
         "sourceInSeconds",
         "sourceOutSeconds",
         "evidence"
       ],
+      "oneOf": [
+        {
+          "required": ["videoFile"]
+        },
+        {
+          "required": ["imageFile"]
+        }
+      ],
       "properties": {
         "videoFile": {
+          "type": "string",
+          "minLength": 1
+        },
+        "imageFile": {
           "type": "string",
           "minLength": 1
         },
@@ -182,6 +196,68 @@
         },
         "implementationStatus": {
           "enum": ["ready", "primitive", "planned"]
+        }
+      }
+    },
+    "variety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "historyWindow",
+        "avoid",
+        "selected",
+        "repeatedEffects",
+        "reasons"
+      ],
+      "properties": {
+        "historyWindow": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "avoid": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["artDirections", "effectIds"],
+          "properties": {
+            "artDirections": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "effectIds": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "selected": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["patternId", "artDirection", "effectIds"],
+          "properties": {
+            "patternId": {"type": "string"},
+            "artDirection": {
+              "enum": [
+                "editorial-report",
+                "documentary-evidence",
+                "diagrammatic-system",
+                "market-data"
+              ]
+            },
+            "effectIds": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "repeatedEffects": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string"}
         }
       }
     },
@@ -571,6 +647,30 @@
           "minItems": 1,
           "items": {
             "type": "string"
+          }
+        },
+        "renderTargets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "compositionId",
+              "propsFile",
+              "renderFile",
+              "sound"
+            ],
+            "properties": {
+              "compositionId": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9-]+$"
+              },
+              "propsFile": {"type": "string"},
+              "renderFile": {"type": "string"},
+              "sound": {
+                "enum": ["silent", "with-sfx"]
+              }
+            }
           }
         }
       }

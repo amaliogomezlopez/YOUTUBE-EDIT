@@ -446,8 +446,12 @@
       "id": "focus.freeze-callout",
       "category": "focus",
       "phase": "focus",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "AnnotatedChartScene",
+        "source": "src/charts/AnnotatedChartScene.tsx",
+        "demoCompositionId": "Chart-Annotated-Events"
+      },
       "purpose": "Congelar un estado comprensible y añadir una anotación breve.",
       "selectWhen": "Una región o estado concreto necesita explicación adicional.",
       "constraints": [
@@ -515,8 +519,12 @@
       "id": "focus.spotlight-mask",
       "category": "focus",
       "phase": "focus",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "AnnotatedChartScene",
+        "source": "src/charts/AnnotatedChartScene.tsx",
+        "demoCompositionId": "Chart-Annotated-Range"
+      },
       "purpose": "Oscurecer la escena salvo una región de captura o vídeo.",
       "selectWhen": "La evidencia ya existe en la imagen real y necesita dirección visual.",
       "constraints": [

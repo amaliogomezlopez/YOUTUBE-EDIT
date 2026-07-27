@@ -184,7 +184,7 @@ export const RadialOrbitSummary: React.FC<RadialOrbitSummaryProps> = ({
               fill={
                 isFocus ? MOTION_COLORS.ink : rgba(MOTION_COLORS.ink, 0.78)
               }
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily="Schibsted Grotesk"
               fontSize={20}
               fontWeight={760}
               textAnchor="middle"
@@ -200,7 +200,7 @@ export const RadialOrbitSummary: React.FC<RadialOrbitSummaryProps> = ({
       <g opacity={motionProgress(frame, fps, 0.65, 1.2)}>
         <text
           fill={accentColor}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={88}
           fontWeight={900}
           style={{fontVariantNumeric: "tabular-nums"}}
@@ -213,7 +213,7 @@ export const RadialOrbitSummary: React.FC<RadialOrbitSummaryProps> = ({
         </text>
         <text
           fill={MOTION_COLORS.muted}
-          fontFamily="Inter, Segoe UI, Arial, sans-serif"
+          fontFamily="Schibsted Grotesk"
           fontSize={22}
           fontWeight={760}
           letterSpacing={0.7}
@@ -291,7 +291,7 @@ export const RadialOrbitSummary: React.FC<RadialOrbitSummaryProps> = ({
               />
               <text
                 fill={MOTION_COLORS.muted}
-                fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                fontFamily="Schibsted Grotesk"
                 fontSize={19}
                 fontWeight={730}
                 x={cardX + 58}
@@ -301,7 +301,7 @@ export const RadialOrbitSummary: React.FC<RadialOrbitSummaryProps> = ({
               </text>
               <text
                 fill={MOTION_COLORS.ink}
-                fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                fontFamily="Schibsted Grotesk"
                 fontSize={36}
                 fontWeight={860}
                 x={cardX + 58}
@@ -498,7 +498,7 @@ export const ConnectedCardChain: React.FC<ConnectedCardChainProps> = ({
                 >
                   <text
                     fill={MOTION_COLORS.ink}
-                    fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                    fontFamily="Schibsted Grotesk"
                     fontSize={width < 330 ? 29 : 34}
                     fontWeight={870}
                     textAnchor="middle"
@@ -509,7 +509,7 @@ export const ConnectedCardChain: React.FC<ConnectedCardChainProps> = ({
                   </text>
                   <text
                     fill={MOTION_COLORS.muted}
-                    fontFamily="Inter, Segoe UI, Arial, sans-serif"
+                    fontFamily="Schibsted Grotesk"
                     fontSize={19}
                     fontWeight={620}
                     textAnchor="middle"
@@ -529,7 +529,7 @@ export const ConnectedCardChain: React.FC<ConnectedCardChainProps> = ({
             />
             <text
               fill={rgba(MOTION_COLORS.muted, 0.62)}
-              fontFamily="Inter, Segoe UI, Arial, sans-serif"
+              fontFamily="Schibsted Grotesk"
               fontSize={17}
               fontWeight={750}
               letterSpacing={1}

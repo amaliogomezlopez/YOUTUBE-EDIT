@@ -6,11 +6,13 @@ existente de Remotion. No crean otro proyecto ni sustituyen FFmpeg.
 Documentos que el agente debe leer antes de actuar:
 
 - `docs/remotion-animation-system.md`;
+- `remotion-animations/catalog/capabilities.manifest.json`;
 - `remotion-animations/catalog/animations/patterns.json`;
 - `remotion-animations/catalog/animations/effects.json`;
 - `remotion-animations/catalog/visuals/icons.json`;
 - `remotion-animations/catalog/visuals/drawings.json`;
 - `remotion-animations/schemas/clip-animation-input.schema.json`;
+- `remotion-animations/schemas/chart-ingestion-input.schema.json`;
 - `remotion-animations/schemas/animation-spec.schema.json`;
 - la skill `create-remotion-animations` y sus referencias.
 
@@ -28,13 +30,19 @@ transformación y una señal de color.
 
 Antes de tocar React:
 1. inspecciona vídeo, transcripción y assets;
-2. consulta `catalog/animations/patterns.json`;
+2. consulta `catalog/capabilities.manifest.json` y
+   `catalog/animations/patterns.json`;
 3. elige patternId por significado, no por apariencia;
 4. consulta `catalog/animations/effects.json` y declara cada efecto con target, fase,
    inicio, fin y parámetros;
 5. crea visual.cameraPlan con modo, justificación y cues normalizados;
 6. genera animation-spec.json válido;
 7. prepara cinco estados al 0, 15, 45, 75 y 95 %.
+
+Para iconos, dibujos o imágenes ejecuta `npm run remotion:select:visual`.
+El LLM solo puede elegir IDs existentes y el fallback solo compone glifos del
+catálogo. Elige un `artDirection` por evidencia y registra `variety` para no
+repetir composición, metáfora o efecto dominante en piezas consecutivas.
 
 Reutiliza Toolkit.tsx, Effects.tsx y SoundDesign.tsx cuando encajen. Toda
 animación depende de useCurrentFrame() y useVideoConfig(); no uses CSS
@@ -285,6 +293,25 @@ son [0-10]=4, [10-20]=11, [20-30]=18, [30-40]=9, [40-50]=3. Resalta el
 intervalo 20-30 después de construir toda la distribución. Los bins deben ser
 contiguos, compartir escala y no usar el componente RisingHistogram como si
 fuera un histograma estadístico sin adaptarlo.
+```
+
+### Ejemplo — Ingestar una gráfica aportada
+
+```text
+Usa $create-remotion-animations y el flujo de INGESTIÓN DE GRÁFICA.
+Imagen: [RUTA].
+Transcripción o claim: [EVIDENCIA].
+Serie opcional: [JSON NORMALIZADO A FECHA-VALOR].
+
+Crea un input conforme a chart-ingestion-input.schema.json y ejecuta
+npm run remotion:ingest:chart. No actives --vision ni --llm sin autorización.
+Si la región o los ejes son propuestos, entrega el informe para revisión y no
+renderices por defecto. Solo están confirmados cuando
+calibration.confirmation registra una aceptación explícita. Si están
+confirmados, usa los props generados con
+AnnotatedChartScene, revisa stills 0/15/45/75/95 y conserva el fallback
+determinista si la IA emite fechas o cifras no autorizadas. El cursor puede
+moverse de forma continua, pero solo etiqueta muestras observadas.
 ```
 
 ## Prompt 4 — Comparación, ventajas y desventajas

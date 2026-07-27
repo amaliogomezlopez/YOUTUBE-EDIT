@@ -1,0 +1,106 @@
+import {readFileSync} from "node:fs";
+import path from "node:path";
+
+const readJson = (projectRoot, relativePath) =>
+  JSON.parse(readFileSync(path.join(projectRoot, relativePath), "utf8"));
+
+export const extractCompositionIds = (rootSource) => {
+  const ids = new Set();
+  for (const match of rootSource.matchAll(/\bid=["']([A-Za-z0-9-]+)["']/g)) {
+    ids.add(match[1]);
+  }
+  for (const match of rootSource.matchAll(/\bid:\s*["']([A-Za-z0-9-]+)["']/g)) {
+    ids.add(match[1]);
+  }
+  for (const match of rootSource.matchAll(
+    /\bid:\s*composition\.id\.replace\(\s*["']([^"']+)["']\s*,\s*["']([^"']+)["']\s*\)/g,
+  )) {
+    const [, from, to] = match;
+    for (const id of [...ids]) {
+      if (id.includes(from)) ids.add(id.replace(from, to));
+    }
+  }
+  return [...ids].sort();
+};
+
+export const buildCapabilitiesManifest = (projectRoot) => {
+  const patterns = readJson(projectRoot, "catalog/animations/patterns.json");
+  const effects = readJson(projectRoot, "catalog/animations/effects.json");
+  const icons = readJson(projectRoot, "catalog/visuals/icons.json");
+  const drawings = readJson(projectRoot, "catalog/visuals/drawings.json");
+  const images = readJson(projectRoot, "catalog/visuals/images.json");
+  const rootSource = readFileSync(path.join(projectRoot, "src", "Root.tsx"), "utf8");
+  const compositionIds = extractCompositionIds(rootSource);
+  return {
+    version: 1,
+    product: "Shortsmith Remotion",
+    sourceOfTruth: [
+      "catalog/animations/patterns.json",
+      "catalog/animations/effects.json",
+      "catalog/visuals/icons.json",
+      "catalog/visuals/drawings.json",
+      "catalog/visuals/images.json",
+      "src/Root.tsx",
+    ],
+    commands: {
+      ingestAnnotatedChart:
+        "npm run remotion:ingest:chart -- --input <chart-ingestion-input.json>",
+      selectVisual:
+        'npm run remotion:select:visual -- --query "<concepto>" --allow-fallback',
+      validate: "npm run remotion:check",
+      renderChartStills: "npm run remotion:stills:annotated-chart",
+    },
+    schemas: {
+      chartIngestion: "schemas/chart-ingestion-input.schema.json",
+      animationSpec: "schemas/animation-spec.schema.json",
+      visualSelection: "schemas/visual-selection.schema.json",
+    },
+    artDirections: [
+      "editorial-report",
+      "documentary-evidence",
+      "diagrammatic-system",
+      "market-data",
+    ],
+    compositionIds,
+    patterns: patterns.patterns
+      .map((pattern) => ({
+        id: pattern.id,
+        status: pattern.status,
+        compositionId: pattern.implementation?.compositionId ?? null,
+        variants: pattern.implementation?.variants ?? [],
+        component: pattern.implementation?.component ?? null,
+        ingestion: pattern.ingestion?.command ?? null,
+      }))
+      .sort((left, right) => left.id.localeCompare(right.id)),
+    effects: effects.effects
+      .map((effect) => ({
+        id: effect.id,
+        status: effect.status,
+        component: effect.implementation?.component ?? null,
+      }))
+      .sort((left, right) => left.id.localeCompare(right.id)),
+    visuals: {
+      icons: icons.icons.map((icon) => icon.id).sort(),
+      drawings: drawings.drawings.map((drawing) => drawing.id).sort(),
+      images: images.images.map((image) => image.id).sort(),
+      selectionModes: [
+        "deterministic-catalog",
+        "llm-catalog-validated",
+        "controlled-fallback",
+      ],
+      fallbackPolicy: "catalog-only-no-freeform-svg",
+    },
+    factualSafety: {
+      calibratedCharts: true,
+      explicitCalibrationAcceptance: true,
+      observedValueLabels: true,
+      externalSvgRasterization: true,
+      runtimeInputSchemaValidation: true,
+    },
+    sound: {
+      silentAndSfxTargets: true,
+      defaultDelivery: effects.soundDesignPolicy.defaultDelivery,
+      profiles: effects.soundProfiles.map((profile) => profile.id).sort(),
+    },
+  };
+};
