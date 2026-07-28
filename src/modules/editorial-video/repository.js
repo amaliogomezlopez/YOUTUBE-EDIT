@@ -24,6 +24,8 @@ export const EPISODE_DIRECTORIES = Object.freeze([
   'narration',
   'transcript',
   'visuals',
+  'assets',
+  'thumbnails',
   'review',
   'renders',
   'publishing'

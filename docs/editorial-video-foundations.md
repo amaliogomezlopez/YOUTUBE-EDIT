@@ -9,7 +9,7 @@ publica.
 La configuración versionada vive en:
 
 ```text
-channels/economia-historias/
+channels/finance-cavaliers/
 ```
 
 El motor neutral vive en:
@@ -24,17 +24,25 @@ Los episodios locales se crean bajo:
 data/channels/<channel-id>/episodes/<episode-id>/
 ```
 
+Finance Cavaliers dispone además de un inbox local para material todavía no
+asignado:
+
+```text
+data/channels/finance-cavaliers/inbox/
+```
+
 `data/channels/` está ignorado por Git. Cada episodio contiene
 `episode-manifest.json` y directorios separados para fuentes, investigación,
-story, narración, transcript, visuales, revisión, renders y publicación.
+story, narración, transcript, visuales, assets, miniaturas, revisión, renders
+y publicación.
 
 ## CLI
 
 ```powershell
 npm run editorial-video -- channels
-npm run editorial-video -- create --channel economia-historias
-npm run editorial-video -- create --channel economia-historias --title "Título provisional"
-npm run editorial-video -- list --channel economia-historias
+npm run editorial-video -- create --channel finance-cavaliers
+npm run editorial-video -- create --channel finance-cavaliers --title "Título provisional"
+npm run editorial-video -- list --channel finance-cavaliers
 npm run editorial-video -- show --episode <episode-id>
 ```
 

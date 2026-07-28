@@ -28,8 +28,9 @@ async function registryFixture(t, fixtureName) {
 
 test('registry loads the versioned finance channel from configuration', async () => {
   const registry = new ChannelRegistry();
-  const channel = await registry.load('economia-historias');
-  assert.equal(channel.id, 'economia-historias');
+  const channel = await registry.load('finance-cavaliers');
+  assert.equal(channel.id, 'finance-cavaliers');
+  assert.equal(channel.label, 'Finance Cavaliers');
   assert.deepEqual(channel.formats, ['landscape']);
   assert.equal(channel.episode.targetMinutes.min, 6);
   assert.equal(channel.editorial.requireNumericDataRef, true);
@@ -50,15 +51,15 @@ test('registry reports invalid configuration with an actionable path', async (t)
 test('registry rejects traversal and mismatched directory IDs', async () => {
   const registry = new ChannelRegistry();
   await assert.rejects(
-    () => registry.load('../economia-historias'),
+    () => registry.load('../finance-cavaliers'),
     (error) => error.code === 'INVALID_EDITORIAL_CHANNEL_ID'
   );
 });
 
 test('channel DTO exposes configuration but no filesystem location', async () => {
   const registry = new ChannelRegistry();
-  const dto = channelPublicDto(await registry.load('economia-historias'));
-  assert.equal(dto.id, 'economia-historias');
+  const dto = channelPublicDto(await registry.load('finance-cavaliers'));
+  assert.equal(dto.id, 'finance-cavaliers');
   assert.equal('root' in dto, false);
   assert.equal('configFile' in dto, false);
   assert.doesNotMatch(JSON.stringify(dto), /[A-Z]:\\\\|\/home\//i);

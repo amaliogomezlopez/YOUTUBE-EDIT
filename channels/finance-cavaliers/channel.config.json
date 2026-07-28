@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "id": "economia-historias",
-  "label": "Economía e historias",
+  "id": "finance-cavaliers",
+  "label": "Finance Cavaliers",
   "language": "es",
   "formats": [
     "landscape"
@@ -30,7 +30,7 @@
     "requireNumericDataRef": true
   },
   "visual": {
-    "brandProfileId": "economia-historias",
+    "brandProfileId": "finance-cavaliers",
     "themeAllowlist": [
       "editorial-ivory",
       "signal-cobalt",

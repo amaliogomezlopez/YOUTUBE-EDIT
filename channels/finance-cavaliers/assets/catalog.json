@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "channelId": "finance-cavaliers",
+  "assets": [
+    {
+      "id": "finance-cavaliers-logo-primary",
+      "type": "logo",
+      "file": "brand/logo-primary.png",
+      "alt": "Casco de caballero dorado con flor de lis sobre fondo azul noche",
+      "source": "Aportado por el propietario del canal",
+      "license": "Uso autorizado para Finance Cavaliers",
+      "sha256": "1d10ab6d4411c452a93bce8cdcd3ee23d7284ca17528157471aaee65fbc8431d"
+    }
+  ]
+}

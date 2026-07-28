@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "id": "economia-historias",
-  "label": "Economía e historias",
+  "id": "finance-cavaliers",
+  "label": "Finance Cavaliers",
   "format": {
     "id": "landscape",
     "width": 1920,
@@ -13,12 +13,12 @@
     "data": "Fragment Mono"
   },
   "palette": {
-    "paper": "#F3EBDD",
-    "ink": "#16202A",
-    "cobalt": "#2457E6",
-    "oxide": "#A64B2A",
-    "positive": "#2F7D5A",
-    "negative": "#B83B3B"
+    "paper": "#050817",
+    "ink": "#F8E7B0",
+    "cobalt": "#FFC83D",
+    "oxide": "#D89A12",
+    "positive": "#49C98A",
+    "negative": "#FF5F6D"
   },
   "safeZonePercent": 6,
   "headerPolicy": "optional-centered",

@@ -108,14 +108,14 @@ data/output/<job-id>/<clip-id>/metadata.json
 
 ## Episodios editoriales de economía
 
-El canal provisional `economia-historias` ya dispone de configuración,
+El canal `Finance Cavaliers` (`finance-cavaliers`) ya dispone de configuración,
 schemas, repositorio persistente, máquina de estados y CLI. La UI permanece
 oculta hasta completar el piloto:
 
 ```powershell
 npm run editorial-video -- channels
-npm run editorial-video -- create --channel economia-historias
-npm run editorial-video -- list --channel economia-historias
+npm run editorial-video -- create --channel finance-cavaliers
+npm run editorial-video -- list --channel finance-cavaliers
 npm run editorial-video -- show --episode <episode-id>
 ```
 

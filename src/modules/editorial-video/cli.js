@@ -15,9 +15,9 @@ export function editorialVideoUsage() {
   return `Shortsmith · episodios editoriales
 
 Uso:
-  npm run editorial-video -- create --channel economia-historias [--title "Título"]
-  npm run editorial-video -- show --episode <id> [--channel economia-historias]
-  npm run editorial-video -- list --channel economia-historias
+  npm run editorial-video -- create --channel finance-cavaliers [--title "Título"]
+  npm run editorial-video -- show --episode <id> [--channel finance-cavaliers]
+  npm run editorial-video -- list --channel finance-cavaliers
   npm run editorial-video -- channels`;
 }
 
