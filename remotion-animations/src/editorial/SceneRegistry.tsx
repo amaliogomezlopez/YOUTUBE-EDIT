@@ -17,6 +17,7 @@ import {
   SoundCue,
   Soundtrack,
 } from "../motion/SoundDesign";
+import {MarketNarrativeScene} from "./MarketNarrativeScene";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -314,10 +315,11 @@ const SourceFooter: React.FC<{
       style={{
         alignItems: "center",
         bottom: 34,
-        display: "flex",
+        display: "grid",
         fontFamily: MOTION_FONT_FAMILY,
         fontSize: 17,
         gap: 12,
+        gridTemplateColumns: "auto minmax(0, 1fr)",
         left: 92,
         letterSpacing: 0.15,
         position: "absolute",
@@ -340,7 +342,10 @@ const SourceFooter: React.FC<{
       <span
         style={{
           color: COLORS.muted,
+          display: "block",
           fontWeight: 540,
+          overflow: "hidden",
+          textOverflow: "ellipsis",
           whiteSpace: "nowrap",
         }}
       >
@@ -1566,6 +1571,36 @@ const cuesForEditorialScene = (
   scene: EditorialScene,
   durationSeconds: number,
 ): SoundCue[] => {
+  const semanticSoundFiles = {
+    "data-tick": {file: SOUND_FILES.dataTick, duration: 0.42, volume: 0.48},
+    "rise-whoosh": {file: SOUND_FILES.riseWhoosh, duration: 0.78, volume: 0.5},
+    "soft-impact": {file: SOUND_FILES.softImpact, duration: 0.58, volume: 0.56},
+    "success-chime": {file: SOUND_FILES.successChime, duration: 0.52, volume: 0.46},
+    "ui-pulse": {file: SOUND_FILES.uiPulse, duration: 0.22, volume: 0.48},
+    "quick-whip": {file: SOUND_FILES.quickWhip, duration: 0.12, volume: 0.18},
+    "smooth-whoosh": {file: SOUND_FILES.smoothWhoosh, duration: 1.1, volume: 0.11},
+    "digital-count": {file: SOUND_FILES.digitalCount, duration: 0.51, volume: 0.18},
+    processing: {file: SOUND_FILES.processing, duration: 1.2, volume: 0.1},
+    pop: {file: SOUND_FILES.pop, duration: 0.42, volume: 0.12},
+  } as const;
+  if (scene.semanticCues.some((semanticCue) => semanticCue.sound)) {
+    return scene.semanticCues
+      .filter((semanticCue) => semanticCue.sound)
+      .map((semanticCue) => {
+        const config = semanticSoundFiles[semanticCue.sound!];
+        const emphasis =
+          semanticCue.tone === "negative" || semanticCue.action === "verify"
+            ? 1.12
+            : 1;
+        return cue(
+          config.file,
+          semanticCue.atSeconds,
+          config.duration,
+          config.volume * emphasis,
+        );
+      })
+      .filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
+  }
   const raw =
     scene.kind === "split-lines"
       ? [
@@ -1631,6 +1666,15 @@ export const FinanceEditorialScene: React.FC<{
       (scene.chartData.length < 2 || scene.secondaryChartData.length < 2));
   let content: React.ReactNode;
   switch (scene.kind) {
+    case "market-seed":
+    case "market-xray":
+    case "market-health":
+    case "market-recovery":
+    case "market-contrast":
+    case "mag7-relationship":
+    case "claim-audit":
+      content = <MarketNarrativeScene scene={scene} />;
+      break;
     case "split-lines":
       content = <SplitLines scene={scene} accentColor={accentColor} />;
       break;
@@ -1669,9 +1713,18 @@ export const FinanceEditorialScene: React.FC<{
     default:
       content = <KineticText scene={scene} accentColor={accentColor} />;
   }
-  const headerVisible = !["brand-cta", "split-lines", "kinetic-text"].includes(
-    scene.kind,
-  );
+  const headerVisible = ![
+    "brand-cta",
+    "split-lines",
+    "kinetic-text",
+    "market-seed",
+    "market-xray",
+    "market-health",
+    "market-recovery",
+    "market-contrast",
+    "mag7-relationship",
+    "claim-audit",
+  ].includes(scene.kind);
   const footerVisible = scene.kind !== "brand-cta";
   return (
     <AbsoluteFill

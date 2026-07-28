@@ -9,6 +9,13 @@ export const factualStatusSchema = z.enum([
 
 export const editorialSceneKindSchema = z.enum([
   "split-lines",
+  "market-seed",
+  "market-xray",
+  "market-health",
+  "market-recovery",
+  "market-contrast",
+  "mag7-relationship",
+  "claim-audit",
   "market-ticker",
   "kinetic-text",
   "company-orbit",
@@ -44,6 +51,38 @@ const sceneAssetSchema = z.object({
   path: z.string(),
 });
 
+const semanticCueSchema = z.object({
+  id: z.string(),
+  atSeconds: z.number().min(0),
+  durationSeconds: z.number().positive().max(12).default(1),
+  action: z.enum([
+    "reveal",
+    "focus",
+    "highlight",
+    "zoom",
+    "shade",
+    "scan",
+    "connect",
+    "verify",
+  ]),
+  target: z.string(),
+  label: z.string().optional(),
+  tone: z.enum(["neutral", "gold", "cyan", "positive", "negative"]).default("neutral"),
+  persist: z.boolean().default(false),
+  sound: z.enum([
+    "data-tick",
+    "rise-whoosh",
+    "soft-impact",
+    "success-chime",
+    "ui-pulse",
+    "quick-whip",
+    "smooth-whoosh",
+    "digital-count",
+    "processing",
+    "pop",
+  ]).optional(),
+});
+
 export const editorialSceneSchema = z.object({
   id: z.string(),
   startSeconds: z.number().min(0),
@@ -62,6 +101,7 @@ export const editorialSceneSchema = z.object({
   secondaryChartData: z.array(chartDatumSchema).max(500).default([]),
   focusTarget: z.enum(["both", "primary", "secondary"]).default("both"),
   assets: z.array(sceneAssetSchema).max(20).default([]),
+  semanticCues: z.array(semanticCueSchema).max(30).default([]),
 });
 
 export const editorialEpisodeSchema = z.object({
@@ -111,6 +151,7 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
       secondaryChartData: [],
       focusTarget: "both",
       assets: [],
+      semanticCues: [],
     },
     {
       id: "scene-demo-002",
@@ -128,6 +169,7 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
       secondaryChartData: [],
       focusTarget: "both",
       assets: [],
+      semanticCues: [],
     },
   ],
 };

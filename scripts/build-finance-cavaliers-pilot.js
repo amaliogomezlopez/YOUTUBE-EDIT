@@ -77,6 +77,84 @@ const MARKET_IMAGE_ASSET = {
   label: 'Pantalla de mercados',
   path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-screen.jpg'
 };
+const FIRST_MINUTE_BLUEPRINTS = [
+  {
+    kind: 'market-seed',
+    headline: 'El mercado empieza a separarse',
+    supportingText: 'Dos señales reales, normalizadas para poder compararlas.',
+    semanticCues: [
+      {id: 'decade', atSeconds: 0.82, durationSeconds: 1.35, action: 'highlight', target: 'context', label: 'MÁS DE UNA DÉCADA', tone: 'gold', sound: 'smooth-whoosh'},
+      {id: 'two-lines', atSeconds: 4.6, durationSeconds: 1.2, action: 'reveal', target: 'series-seeds', label: 'DOS LÍNEAS', tone: 'cyan', sound: 'data-tick'},
+      {id: 'lines-reveal', atSeconds: 4.9, durationSeconds: 2.5, action: 'reveal', target: 'both-series', tone: 'neutral', sound: 'rise-whoosh'},
+      {id: 'separation', atSeconds: 7.58, durationSeconds: 2.2, action: 'shade', target: 'divergence-gap', tone: 'negative', sound: 'quick-whip'},
+      {id: 'drastic', atSeconds: 8.46, durationSeconds: 1.35, action: 'highlight', target: 'divergence-gap', label: 'SEPARACIÓN DRÁSTICA', tone: 'negative', sound: 'soft-impact'}
+    ]
+  },
+  {
+    kind: 'market-xray',
+    headline: 'Superficie / señal interna',
+    supportingText: 'La misma pantalla cuenta dos historias distintas.',
+    semanticCues: [
+      {id: 'reveal', atSeconds: 0.1, durationSeconds: 1.25, action: 'scan', target: 'chart-layers', label: 'LO QUE REVELA', tone: 'neutral', sound: 'processing'},
+      {id: 'below-surface', atSeconds: 4, durationSeconds: 2.3, action: 'reveal', target: 'relative-layer', label: 'BAJO LA SUPERFICIE', tone: 'negative', sound: 'smooth-whoosh'},
+      {id: 'first-line', atSeconds: 6.54, durationSeconds: 2.05, action: 'zoom', target: 'spy-layer', label: 'PRIMERA LÍNEA', tone: 'gold', sound: 'ui-pulse'}
+    ]
+  },
+  {
+    kind: 'market-health',
+    headline: 'El precio parece saludable',
+    supportingText: 'Cierre de SPY normalizado a base 100.',
+    semanticCues: [
+      {id: 'price', atSeconds: 0.5, durationSeconds: 1.25, action: 'focus', target: 'spy-line', label: 'PRECIO DEL S&P 500', tone: 'gold', sound: 'data-tick'},
+      {id: 'first-view', atSeconds: 4.47, durationSeconds: 1.25, action: 'highlight', target: 'full-chart', label: 'A PRIMERA VISTA', tone: 'positive', sound: 'pop'},
+      {id: 'healthy', atSeconds: 6.59, durationSeconds: 1.45, action: 'shade', target: 'chart-background', label: 'SALUDABLE', tone: 'positive', sound: 'success-chime'},
+      {id: 'corrections', atSeconds: 8.55, durationSeconds: 2.1, action: 'zoom', target: '2026-05-28/2026-06-26', label: 'CORRECCIÓN RECIENTE', tone: 'negative', sound: 'quick-whip'}
+    ]
+  },
+  {
+    kind: 'market-recovery',
+    headline: 'Recuperación del índice',
+    supportingText: 'Cambio desde la base inicial de la serie.',
+    semanticCues: [
+      {id: 'revalued', atSeconds: 0.48, durationSeconds: 1.35, action: 'reveal', target: 'recovery-arrow', label: 'REVALORIZADO', tone: 'positive', sound: 'rise-whoosh'},
+      {id: 'recovered', atSeconds: 3.1, durationSeconds: 1.4, action: 'highlight', target: 'base-gain', label: 'RECUPERANDO TERRENO', tone: 'positive', sound: 'digital-count'},
+      {id: 'highs', atSeconds: 5.3, durationSeconds: 1.3, action: 'zoom', target: 'latest-spy-value', label: 'MÁXIMOS', tone: 'positive', sound: 'soft-impact'},
+      {id: 'historical', atSeconds: 6.02, durationSeconds: 1.2, action: 'focus', target: 'latest-spy-value', label: 'HISTÓRICOS', tone: 'gold', sound: 'ui-pulse'},
+      {id: 'celebrate', atSeconds: 7.72, durationSeconds: 0.4, action: 'highlight', target: 'market-recovery', label: 'EL MERCADO LO CELEBRA', tone: 'positive', sound: 'success-chime'}
+    ]
+  },
+  {
+    kind: 'market-contrast',
+    headline: 'Sin embargo',
+    supportingText: 'La fuerza relativa cuenta una historia distinta.',
+    semanticCues: [
+      {id: 'however', atSeconds: 1.58, durationSeconds: 4.8, action: 'highlight', target: 'scene-tone', label: 'SIN EMBARGO', tone: 'negative', sound: 'soft-impact'},
+      {id: 'second-line', atSeconds: 3.72, durationSeconds: 2.55, action: 'focus', target: 'relative-line', label: 'SEGUNDA LÍNEA', tone: 'cyan', sound: 'data-tick'},
+      {id: 'distinct', atSeconds: 5.96, durationSeconds: 0.45, action: 'shade', target: 'recent-relative-segment', label: 'ALGO MUY DISTINTO', tone: 'negative', sound: 'quick-whip'}
+    ]
+  },
+  {
+    kind: 'mag7-relationship',
+    headline: 'Los siete magníficos',
+    supportingText: 'Siete compañías comparadas como grupo frente al índice.',
+    semanticCues: [
+      {id: 'seven', atSeconds: 2.68, durationSeconds: 1.4, action: 'reveal', target: 'seven-company-logos', label: 'SIETE EMPRESAS', tone: 'gold', sound: 'rise-whoosh'},
+      {id: 'relationship', atSeconds: 4.32, durationSeconds: 1.55, action: 'connect', target: 'mag7-to-spy', label: 'EN RELACIÓN CON EL MERCADO', tone: 'cyan', sound: 'data-tick'}
+    ]
+  },
+  {
+    kind: 'claim-audit',
+    headline: 'La cifra debe coincidir',
+    supportingText: 'La locución y la serie deben medir exactamente lo mismo.',
+    semanticCues: [
+      {id: 'months', atSeconds: 0.56, durationSeconds: 2.1, action: 'focus', target: 'measurement-window', label: 'ÚLTIMOS MESES', tone: 'neutral', sound: 'ui-pulse'},
+      {id: 'lost', atSeconds: 3.3, durationSeconds: 2.2, action: 'reveal', target: 'narrated-loss', label: 'HAN PERDIDO', tone: 'negative', sound: 'smooth-whoosh'},
+      {id: 'twenty', atSeconds: 5.48, durationSeconds: 1.45, action: 'highlight', target: 'narrated-20-percent', label: '20% EN LA LOCUCIÓN', tone: 'negative', sound: 'soft-impact'},
+      {id: 'verified', atSeconds: 6.94, durationSeconds: 6.6, action: 'verify', target: 'mags-spy-supported-value', label: 'SERIE REPRODUCIBLE', tone: 'cyan', sound: 'data-tick'},
+      {id: 'strange', atSeconds: 14.09, durationSeconds: 2.3, action: 'highlight', target: 'claim-mismatch', label: 'SUMAMENTE EXTRAÑO', tone: 'negative', sound: 'soft-impact'}
+    ]
+  }
+];
 const SLOOS_DDP_URL =
   'https://www.federalreserve.gov/datadownload/Choose.aspx?rel=sloos';
 const SLOOS_RELEASE_URL =
@@ -316,6 +394,13 @@ function beatFor(seconds) {
 function patternForKind(kind) {
   const patterns = {
     'split-lines': 'data.line-trend-zoom',
+    'market-seed': 'data.line-trend-zoom',
+    'market-xray': 'comparison.common-baseline',
+    'market-health': 'data.line-trend-zoom',
+    'market-recovery': 'data.hero-metric',
+    'market-contrast': 'comparison.common-baseline',
+    'mag7-relationship': 'process.signal-flow',
+    'claim-audit': 'comparison.before-after-wipe',
     'market-ticker': 'data.hero-metric',
     'kinetic-text': 'text.kinetic-phrase',
     'company-orbit': 'concept.scale-proportion',
@@ -345,6 +430,46 @@ function kindData(kind, sloos, marketSeries) {
     {label: 'META', value: 2.21},
     {label: 'TESLA', value: 1.67}
   ];
+  const marketData = {
+    labels: [
+      'SPY · CIERRE, BASE 100',
+      'MAGS / SPY · FUERZA RELATIVA'
+    ],
+    chartData: marketSeries.series.map((datum) => ({
+      label: datum.date,
+      value: datum.spy
+    })),
+    secondaryChartData: marketSeries.series.map((datum) => ({
+      label: datum.date,
+      value: datum.mag7Relative
+    })),
+    metric: {
+      value: marketSeries.summary.relativeChangeFromPeakPercent,
+      suffix: '%',
+      label: 'DESDE MÁX. RELATIVO · 29 OCT 2025'
+    },
+    sourceLabel:
+      'Yahoo Finance (MAGS y SPY) · cierres diarios · 02 Ene 2025–17 Jul 2026 · cálculo propio MAGS/SPY, base 100'
+  };
+  if ([
+    'market-seed',
+    'market-xray',
+    'market-health',
+    'market-recovery',
+    'market-contrast',
+    'claim-audit'
+  ].includes(kind)) {
+    return marketData;
+  }
+  if (kind === 'mag7-relationship') {
+    return {
+      labels: mag7.map((item) => item.label),
+      values: mag7.map((item) => item.value),
+      valueLabels: mag7.map((item) => `${item.value.toFixed(2)} %`),
+      sourceLabel:
+        'State Street · composición SPY · 17 Jul 2026; relación MAGS/SPY calculada con cierres diarios'
+    };
+  }
   if (kind === 'mag7-weights' || kind === 'portfolio-grid') {
     return {
       labels: mag7.map((item) => item.label),
@@ -414,27 +539,7 @@ function kindData(kind, sloos, marketSeries) {
     };
   }
   if (kind === 'split-lines') {
-    return {
-      labels: [
-        'SPY · CIERRE, BASE 100',
-        'MAGS / SPY · FUERZA RELATIVA'
-      ],
-      chartData: marketSeries.series.map((datum) => ({
-        label: datum.date,
-        value: datum.spy
-      })),
-      secondaryChartData: marketSeries.series.map((datum) => ({
-        label: datum.date,
-        value: datum.mag7Relative
-      })),
-      metric: {
-        value: marketSeries.summary.relativeChangeFromPeakPercent,
-        suffix: '%',
-        label: 'DESDE MÁX. RELATIVO · 29 OCT 2025'
-      },
-      sourceLabel:
-        'Yahoo Finance (MAGS y SPY) · cierres diarios · 02 Ene 2025–17 Jul 2026 · cálculo propio MAGS/SPY, base 100'
-    };
+    return marketData;
   }
   if (kind === 'market-ticker') {
     return {
@@ -1024,35 +1129,16 @@ async function main() {
 
   const allWords = transcript.segments.flatMap((segment) => segment.words ?? []);
   const groups = buildSceneGroups(transcript.segments, durationSeconds);
-  const firstMinuteKinds = [
-    'split-lines',
-    'split-lines',
-    'split-lines',
-    'split-lines',
-    'split-lines',
-    'mag7-weights',
-    'split-lines'
-  ];
-  const firstMinuteFocus = [
-    'both',
-    'primary',
-    'primary',
-    'primary',
-    'secondary',
-    'both',
-    'secondary'
-  ];
   const renderScenes = groups.map((group, index) => {
     const midpoint = (group.startSeconds + group.endSeconds) / 2;
     const beat = beatFor(midpoint);
+    const blueprint = FIRST_MINUTE_BLUEPRINTS[index];
     const kind =
-      firstMinuteKinds[index] ??
+      blueprint?.kind ??
       beat.kinds[index % beat.kinds.length];
-    const headline = index === 5 ? 'Los siete magníficos' : beat.title;
+    const headline = blueprint?.headline ?? beat.title;
     const supportingText =
-      index === 5
-        ? 'Siete empresas; Alphabet aparece en dos clases de acciones.'
-        : beat.supporting;
+      blueprint?.supportingText ?? beat.supporting;
     const sceneClaims = claimsForRange(
       claims,
       group.startSeconds,
@@ -1062,6 +1148,7 @@ async function main() {
     const companyAssets = [
       'company-orbit',
       'mag7-weights',
+      'mag7-relationship',
       'portfolio-grid',
       'market-ticker'
     ].includes(kind)
@@ -1107,17 +1194,32 @@ async function main() {
       sourceRefs,
       dataRefs,
       visualIntent:
-        kind.includes('chart') ? 'chart'
+        kind.includes('chart') ||
+          ['market-seed', 'market-xray', 'market-health', 'market-contrast'].includes(kind)
+          ? 'chart'
           : kind.includes('timeline') ? 'timeline'
-            : kind.includes('ticker') || kind.includes('cards') ? 'number'
+            : kind.includes('ticker') || kind.includes('cards') ||
+              ['market-recovery', 'claim-audit'].includes(kind) ? 'number'
               : kind.includes('text') || kind === 'brand-cta' ? 'text'
                 : 'diagram',
       patternId: patternForKind(kind),
       compositionId: 'Finance-Cavaliers-Episode',
       effectIds: [
-        kind === 'split-lines' ? 'reveal.path-draw' : 'reveal.element-stagger',
-        kind === 'split-lines' ? 'focus.path-follow' : 'focus.accent-only',
-        ...(kind === 'split-lines' ? ['camera.focus-zoom', 'focus.desaturate-peers'] : []),
+        ['split-lines', 'market-seed', 'market-health', 'market-contrast'].includes(kind)
+          ? 'reveal.path-draw'
+          : 'reveal.element-stagger',
+        ['split-lines', 'market-health', 'market-contrast'].includes(kind)
+          ? 'focus.path-follow'
+          : 'focus.accent-only',
+        ...([
+          'split-lines',
+          'market-xray',
+          'market-health',
+          'market-recovery',
+          'market-contrast'
+        ].includes(kind)
+          ? ['camera.focus-zoom', 'focus.desaturate-peers']
+          : []),
         'exit.clean-fade'
       ],
       assetRefs: [
@@ -1126,7 +1228,8 @@ async function main() {
       ],
       themeId: index % 5 === 0 ? 'oxide-documentary' : 'signal-cobalt',
       motionProfile: index % 7 === 0 ? 'kinetic' : 'editorial',
-      soundProfile: kind === 'split-lines' ? 'trend-focus' : 'editorial-semantic',
+      soundProfile: blueprint ? 'word-synced-semantic' :
+        kind === 'split-lines' ? 'trend-focus' : 'editorial-semantic',
       soundDecision: 'cue',
       header: {
         text: headline,
@@ -1137,9 +1240,8 @@ async function main() {
         supportingText,
         factualStatus: status,
         assets: sceneAssets,
-        focusTarget:
-          firstMinuteFocus[index] ??
-          (kind === 'split-lines' ? 'both' : undefined),
+        focusTarget: kind === 'split-lines' ? 'both' : undefined,
+        semanticCues: blueprint?.semanticCues ?? [],
         ...kindData(kind, sloos, marketSeries)
       },
       fallback: {
@@ -1221,7 +1323,8 @@ async function main() {
       chartData: scene.props.chartData ?? [],
       secondaryChartData: scene.props.secondaryChartData ?? [],
       focusTarget: scene.props.focusTarget ?? 'both',
-      assets: scene.props.assets ?? []
+      assets: scene.props.assets ?? [],
+      semanticCues: scene.props.semanticCues ?? []
     }))
   };
   const silentRenderProps = {
@@ -1265,7 +1368,7 @@ async function main() {
 - Formato: 1920×1080, 30 fps
 - Frames: ${Math.ceil(durationSeconds * 30)}
 - Escenas: ${renderScenes.length}
-- Movimiento interno: pulsos, trazados o cambios de foco cada 1,6–2,2 s
+- Movimiento interno: cambio semántico o de foco como máximo cada 1,5 s
 - Estado factual: preview editorial, no publicable
 
 ## Cobertura
@@ -1279,6 +1382,8 @@ ${BEATS.map((beat) =>
 ## Reglas
 
 - El logo y el audio son locales; el render no depende de URLs remotas.
+- Los primeros siete bloques usan cues sincronizados a palabras concretas.
+- Aplicar \`channels/finance-cavaliers/brand/editing-playbook.md\` al resto.
 - Las gráficas del canal de referencia no se copian ni se desmarcan.
 - SLOOS se redibuja desde la descarga oficial de la Reserva Federal.
 - Los pesos de SPY son snapshots fechados, no cifras permanentes.
