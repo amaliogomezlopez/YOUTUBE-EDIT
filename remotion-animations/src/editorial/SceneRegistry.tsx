@@ -8,7 +8,15 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import {DATA_FONT_FAMILY, MOTION_FONT_FAMILY} from "../motion/fonts";
+import {
+  DATA_FONT_FAMILY,
+  FINANCE_FONT_FAMILY as MOTION_FONT_FAMILY,
+} from "../motion/fonts";
+import {
+  SOUND_FILES,
+  SoundCue,
+  Soundtrack,
+} from "../motion/SoundDesign";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -225,13 +233,13 @@ const CompanyLogoRibbon: React.FC<{scene: EditorialScene}> = ({scene}) => {
     <div
       style={{
         alignItems: "center",
-        bottom: 76,
         display: "flex",
         gap: 22,
         justifyContent: "center",
         left: 180,
         position: "absolute",
         right: 180,
+        top: 174,
         zIndex: 4,
       }}
     >
@@ -298,23 +306,76 @@ const AssetBackdrop: React.FC<{scene: EditorialScene}> = ({scene}) => {
 const SourceFooter: React.FC<{
   label?: string;
   conceptual?: boolean;
-}> = ({label, conceptual}) => (
-  <div
-    style={{
-      bottom: 38,
-      color: COLORS.muted,
-      fontFamily: MOTION_FONT_FAMILY,
-      fontSize: 16,
-      left: 92,
-      letterSpacing: 0.3,
-      position: "absolute",
-      right: 92,
-      zIndex: 5,
-    }}
-  >
-    {label ? `FUENTE · ${label}` : conceptual ? "ILUSTRACIÓN CONCEPTUAL · SIN ESCALA" : ""}
-  </div>
-);
+}> = ({label, conceptual}) => {
+  const detail = label ?? (conceptual ? "ILUSTRACIÓN CONCEPTUAL · SIN ESCALA" : "");
+  if (!detail) return null;
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        bottom: 34,
+        display: "flex",
+        fontFamily: MOTION_FONT_FAMILY,
+        fontSize: 17,
+        gap: 12,
+        left: 92,
+        letterSpacing: 0.15,
+        position: "absolute",
+        right: 92,
+        zIndex: 5,
+      }}
+    >
+      {label ? (
+        <span
+          style={{
+            color: COLORS.gold,
+            flex: "0 0 auto",
+            fontWeight: 800,
+            letterSpacing: 0.8,
+          }}
+        >
+          FUENTE
+        </span>
+      ) : null}
+      <span
+        style={{
+          color: COLORS.muted,
+          fontWeight: 540,
+          whiteSpace: "nowrap",
+        }}
+      >
+        {detail}
+      </span>
+    </div>
+  );
+};
+
+const MONTHS = [
+  "ENE",
+  "FEB",
+  "MAR",
+  "ABR",
+  "MAY",
+  "JUN",
+  "JUL",
+  "AGO",
+  "SEP",
+  "OCT",
+  "NOV",
+  "DIC",
+];
+
+const chartDateLabel = (value: string) => {
+  const [year, month] = value.split("-").map(Number);
+  if (!year || !month) return value;
+  return `${MONTHS[month - 1]} ${year}`;
+};
+
+const formatIndex = (value: number) =>
+  value.toLocaleString("es-ES", {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: 2,
+  });
 
 const SplitLines: React.FC<{scene: EditorialScene; accentColor: string}> = ({
   scene,
@@ -322,15 +383,94 @@ const SplitLines: React.FC<{scene: EditorialScene; accentColor: string}> = ({
 }) => {
   const frame = useCurrentFrame();
   const {fps, durationInFrames} = useVideoConfig();
+  const primary = scene.chartData;
+  const secondary = scene.secondaryChartData;
+  const hasEvidence = primary.length >= 2 && secondary.length >= 2;
+  const fallbackPrimary = [
+    {label: "INICIO", value: 100},
+    {label: "FINAL", value: 114},
+  ];
+  const fallbackSecondary = [
+    {label: "INICIO", value: 100},
+    {label: "FINAL", value: 92},
+  ];
+  const seriesA = hasEvidence ? primary : fallbackPrimary;
+  const seriesB = hasEvidence ? secondary : fallbackSecondary;
+  const values = [...seriesA, ...seriesB].map((datum) => datum.value);
+  const rawMin = Math.min(...values);
+  const rawMax = Math.max(...values);
+  const yMin = Math.floor((rawMin - 2) / 10) * 10;
+  const yMax = Math.max(yMin + 20, Math.ceil((rawMax + 2) / 10) * 10);
+  const yTicks = Array.from(
+    {length: Math.round((yMax - yMin) / 10) + 1},
+    (_, index) => yMin + index * 10,
+  );
+  const plot = {left: 184, right: 1746, top: 194, bottom: 864};
+  const xFor = (index: number, length: number) =>
+    plot.left + (index / Math.max(1, length - 1)) * (plot.right - plot.left);
+  const yFor = (value: number) =>
+    plot.bottom -
+    ((value - yMin) / Math.max(1, yMax - yMin)) *
+      (plot.bottom - plot.top);
+  const pointsA = seriesA
+    .map((datum, index) => `${xFor(index, seriesA.length)},${yFor(datum.value)}`)
+    .join(" ");
+  const pointsB = seriesB
+    .map((datum, index) => `${xFor(index, seriesB.length)},${yFor(datum.value)}`)
+    .join(" ");
+  const durationSeconds = durationInFrames / fps;
   const draw = progress(
     frame,
     fps,
-    0.25,
-    Math.max(1.5, durationInFrames / fps - 1.2),
+    0.18,
+    Math.min(2.6, Math.max(1.2, durationSeconds * 0.34)),
   );
-  const focus = smoothPulse(frame, fps, 1.9);
-  const pointsA = "110,520 330,472 550,495 770,390 990,410 1210,302 1430,336 1650,235";
-  const pointsB = "110,590 330,534 550,552 770,505 990,548 1210,585 1430,620 1650,676";
+  const secondaryDraw = progress(
+    frame,
+    fps,
+    0.48,
+    Math.min(3.05, Math.max(1.5, durationSeconds * 0.41)),
+  );
+  const seconds = frame / fps;
+  const stagedPrimary =
+    scene.focusTarget === "both" && seconds >= 2.2 && seconds < 4.35;
+  const stagedSecondary =
+    scene.focusTarget === "both" && seconds >= 4.35;
+  const focusPrimary =
+    scene.focusTarget === "primary" || stagedPrimary;
+  const focusSecondary =
+    scene.focusTarget === "secondary" || stagedSecondary;
+  const focusAmount = progress(
+    frame,
+    fps,
+    scene.focusTarget === "both" ? (focusSecondary ? 4.35 : 2.2) : 0.85,
+    scene.focusTarget === "both" ? (focusSecondary ? 5.0 : 2.85) : 1.55,
+  );
+  const focusActive = focusPrimary || focusSecondary;
+  const primaryOpacity =
+    focusActive && !focusPrimary ? 0.16 + (1 - focusAmount) * 0.84 : 1;
+  const secondaryOpacity =
+    focusActive && !focusSecondary ? 0.16 + (1 - focusAmount) * 0.84 : 1;
+  const focusSeries = focusSecondary ? seriesB : seriesA;
+  const focusPoint = focusSeries[focusSeries.length - 1] ?? focusSeries[0];
+  const focusX = xFor(focusSeries.length - 1, focusSeries.length);
+  const focusY = yFor(focusPoint.value);
+  const cameraScale = 1 + (focusActive ? focusAmount * 0.11 : 0);
+  const cameraTransform = `translate(${focusX * (1 - cameraScale)} ${
+    focusY * (1 - cameraScale)
+  }) scale(${cameraScale})`;
+  const labelIndices = [
+    0,
+    Math.round((seriesA.length - 1) / 3),
+    Math.round(((seriesA.length - 1) * 2) / 3),
+    seriesA.length - 1,
+  ];
+  const primaryEnd = seriesA[seriesA.length - 1] ?? seriesA[0];
+  const secondaryEnd = seriesB[seriesB.length - 1] ?? seriesB[0];
+  const markerPulse = 1 + smoothPulse(frame, fps, 1.1) * 0.18;
+  const metricVisible =
+    hasEvidence && (focusSecondary || scene.focusTarget === "secondary");
+
   return (
     <svg
       height="100%"
@@ -338,64 +478,272 @@ const SplitLines: React.FC<{scene: EditorialScene; accentColor: string}> = ({
       viewBox="0 0 1920 1080"
       width="100%"
     >
-      {[300, 430, 560, 690].map((y) => (
-        <line
-          key={y}
-          stroke={alpha(COLORS.grid, 0.64)}
-          strokeWidth={2}
-          x1={110}
-          x2={1780}
-          y1={y}
-          y2={y}
-        />
+      <rect
+        fill={alpha(COLORS.surface, 0.82)}
+        height={plot.bottom - plot.top}
+        rx={22}
+        stroke={alpha(COLORS.white, 0.12)}
+        width={plot.right - plot.left}
+        x={plot.left}
+        y={plot.top}
+      />
+      <g opacity={focusActive ? 0.48 : 0.9}>
+        {yTicks.map((tick) => {
+          const y = yFor(tick);
+          return (
+            <g key={tick}>
+              <line
+                stroke={tick === 100 ? alpha(COLORS.white, 0.46) : alpha(COLORS.grid, 0.78)}
+                strokeDasharray={tick === 100 ? "8 8" : undefined}
+                strokeWidth={tick === 100 ? 2.5 : 1.5}
+                x1={plot.left}
+                x2={plot.right}
+                y1={y}
+                y2={y}
+              />
+              <text
+                fill={tick === 100 ? COLORS.white : COLORS.muted}
+                fontFamily={DATA_FONT_FAMILY}
+                fontSize={18}
+                textAnchor="end"
+                x={plot.left - 20}
+                y={y + 6}
+              >
+                {tick}
+              </text>
+            </g>
+          );
+        })}
+      </g>
+      <text
+        fill={COLORS.muted}
+        fontFamily={DATA_FONT_FAMILY}
+        fontSize={17}
+        letterSpacing={1.1}
+        transform={`rotate(-90 42 ${(plot.top + plot.bottom) / 2})`}
+        x={42}
+        y={(plot.top + plot.bottom) / 2}
+      >
+        ÍNDICE · BASE 100
+      </text>
+      {labelIndices.map((index) => (
+        <g key={`${seriesA[index]?.label}-${index}`}>
+          <line
+            stroke={alpha(COLORS.grid, 0.72)}
+            strokeWidth={1.5}
+            x1={xFor(index, seriesA.length)}
+            x2={xFor(index, seriesA.length)}
+            y1={plot.bottom}
+            y2={plot.bottom + 10}
+          />
+          <text
+            fill={COLORS.muted}
+            fontFamily={DATA_FONT_FAMILY}
+            fontSize={17}
+            textAnchor={
+              index === 0
+                ? "start"
+                : index === seriesA.length - 1
+                  ? "end"
+                  : "middle"
+            }
+            x={xFor(index, seriesA.length)}
+            y={plot.bottom + 42}
+          >
+            {chartDateLabel(seriesA[index]?.label ?? "")}
+          </text>
+        </g>
       ))}
-      <polyline
-        fill="none"
-        pathLength={1}
-        points={pointsA}
-        stroke={accentColor}
-        strokeDasharray={`${draw} ${1 - draw}`}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={9}
-      />
-      <polyline
-        fill="none"
-        opacity={0.72 + focus * 0.28}
-        pathLength={1}
-        points={pointsB}
-        stroke={COLORS.cyan}
-        strokeDasharray={`${Math.max(0, draw - 0.12)} ${1 - Math.max(0, draw - 0.12)}`}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={7}
-      />
-      {[scene.labels[0] ?? "ÍNDICE", scene.labels[1] ?? "LIDERAZGO"].map(
-        (label, index) => (
-          <g key={label}>
+      <text
+        fill={COLORS.muted}
+        fontFamily={DATA_FONT_FAMILY}
+        fontSize={15}
+        letterSpacing={1}
+        textAnchor="middle"
+        x={(plot.left + plot.right) / 2}
+        y={plot.bottom + 78}
+      >
+        FECHA DE CIERRE
+      </text>
+      <defs>
+        <clipPath id="finance-lines-clip">
+          <rect
+            height={plot.bottom - plot.top}
+            rx={22}
+            width={plot.right - plot.left}
+            x={plot.left}
+            y={plot.top}
+          />
+        </clipPath>
+      </defs>
+      <g clipPath="url(#finance-lines-clip)">
+        <g transform={cameraTransform}>
+          {focusActive ? (
             <rect
-              fill={index === 0 ? alpha(accentColor, 0.16) : alpha(COLORS.cyan, 0.13)}
-              height={54}
-              rx={8}
-              stroke={index === 0 ? accentColor : COLORS.cyan}
-              width={250}
-              x={1415}
-              y={index === 0 ? 220 : 665}
+              fill="rgba(90, 94, 108, 0.2)"
+              height={plot.bottom - plot.top}
+              opacity={focusAmount}
+              width={plot.right - plot.left}
+              x={plot.left}
+              y={plot.top}
             />
-            <text
-              fill={COLORS.white}
-              fontFamily={DATA_FONT_FAMILY}
-              fontSize={20}
-              fontWeight={700}
-              textAnchor="middle"
-              x={1540}
-              y={index === 0 ? 254 : 699}
-            >
-              {label}
-            </text>
-          </g>
-        ),
-      )}
+          ) : null}
+          <polyline
+            fill="none"
+            opacity={primaryOpacity}
+            pathLength={1}
+            points={pointsA}
+            stroke={accentColor}
+            strokeDasharray="1"
+            strokeDashoffset={1 - draw}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={focusPrimary ? 10 : 7}
+          />
+          <polyline
+            fill="none"
+            opacity={secondaryOpacity}
+            pathLength={1}
+            points={pointsB}
+            stroke={COLORS.cyan}
+            strokeDasharray="1"
+            strokeDashoffset={1 - secondaryDraw}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={focusSecondary ? 10 : 7}
+          />
+          {draw > 0.96 ? (
+            <circle
+              cx={xFor(seriesA.length - 1, seriesA.length)}
+              cy={yFor(primaryEnd.value)}
+              fill={accentColor}
+              opacity={primaryOpacity}
+              r={(focusPrimary ? 9 : 6) * markerPulse}
+              stroke={COLORS.background}
+              strokeWidth={4}
+            />
+          ) : null}
+          {secondaryDraw > 0.96 ? (
+            <circle
+              cx={xFor(seriesB.length - 1, seriesB.length)}
+              cy={yFor(secondaryEnd.value)}
+              fill={COLORS.cyan}
+              opacity={secondaryOpacity}
+              r={(focusSecondary ? 9 : 6) * markerPulse}
+              stroke={COLORS.background}
+              strokeWidth={4}
+            />
+          ) : null}
+        </g>
+      </g>
+      <g>
+        <rect
+          fill={alpha(COLORS.surfaceRaised, 0.94)}
+          height={88}
+          rx={14}
+          stroke={alpha(COLORS.white, 0.13)}
+          width={1140}
+          x={390}
+          y={66}
+        />
+        <line
+          stroke={accentColor}
+          strokeWidth={7}
+          x1={430}
+          x2={485}
+          y1={100}
+          y2={100}
+        />
+        <text
+          fill={COLORS.white}
+          fontFamily={MOTION_FONT_FAMILY}
+          fontSize={21}
+          fontWeight={720}
+          x={505}
+          y={108}
+        >
+          {scene.labels[0] ?? "SPY · CIERRE, BASE 100"}
+        </text>
+        <line
+          stroke={COLORS.cyan}
+          strokeWidth={7}
+          x1={960}
+          x2={1015}
+          y1={100}
+          y2={100}
+        />
+        <text
+          fill={COLORS.white}
+          fontFamily={MOTION_FONT_FAMILY}
+          fontSize={21}
+          fontWeight={720}
+          x={1035}
+          y={108}
+        >
+          {scene.labels[1] ?? "MAGS / SPY · FUERZA RELATIVA"}
+        </text>
+      </g>
+      {metricVisible && scene.metric ? (
+        <g opacity={focusAmount}>
+          <rect
+            fill={alpha(COLORS.surfaceRaised, 0.96)}
+            height={126}
+            rx={16}
+            stroke={COLORS.cyan}
+            strokeWidth={2}
+            width={440}
+            x={1235}
+            y={242}
+          />
+          <text
+            fill={COLORS.cyan}
+            fontFamily={DATA_FONT_FAMILY}
+            fontSize={39}
+            fontWeight={800}
+            x={1270}
+            y={294}
+          >
+            {`${scene.metric.value.toLocaleString("es-ES", {
+              maximumFractionDigits: 1,
+              minimumFractionDigits: 1,
+            })}${scene.metric.suffix}`}
+          </text>
+          <text
+            fill={COLORS.white}
+            fontFamily={MOTION_FONT_FAMILY}
+            fontSize={17}
+            fontWeight={680}
+            x={1270}
+            y={332}
+          >
+            {scene.metric.label}
+          </text>
+        </g>
+      ) : null}
+      {hasEvidence ? (
+        <>
+          <text
+            fill={accentColor}
+            fontFamily={DATA_FONT_FAMILY}
+            fontSize={17}
+            textAnchor="end"
+            x={plot.right - 14}
+            y={Math.max(plot.top + 26, yFor(primaryEnd.value) - 18)}
+          >
+            {formatIndex(primaryEnd.value)}
+          </text>
+          <text
+            fill={COLORS.cyan}
+            fontFamily={DATA_FONT_FAMILY}
+            fontSize={17}
+            textAnchor="end"
+            x={plot.right - 14}
+            y={Math.min(plot.bottom - 16, yFor(secondaryEnd.value) + 30)}
+          >
+            {formatIndex(secondaryEnd.value)}
+          </text>
+        </>
+      ) : null}
     </svg>
   );
 };
@@ -550,7 +898,7 @@ const BarPanel: React.FC<{
         gap: compact ? 20 : 34,
         height: "100%",
         justifyContent: "center",
-        padding: "210px 110px 90px",
+        padding: "230px 110px 86px",
       }}
     >
       {values.map((value, index) => {
@@ -569,6 +917,28 @@ const BarPanel: React.FC<{
               maxWidth: compact ? 185 : 280,
             }}
           >
+            {logoForLabel(scene, labels[index]) ? (
+              <div
+                style={{
+                  alignItems: "center",
+                  background: alpha(COLORS.surfaceRaised, 0.94),
+                  border: `1px solid ${alpha(COLORS.white, 0.14)}`,
+                  borderRadius: 14,
+                  display: "flex",
+                  height: compact ? 68 : 78,
+                  justifyContent: "center",
+                  marginBottom: 14,
+                  opacity: reveal,
+                  width: compact ? 78 : 88,
+                }}
+              >
+                <CompanyMark
+                  label={labels[index]}
+                  scene={scene}
+                  size={compact ? 46 : 54}
+                />
+              </div>
+            ) : null}
             <div
               style={{
                 color: index === 0 ? accentColor : COLORS.white,
@@ -610,9 +980,6 @@ const BarPanel: React.FC<{
                 textAlign: "center",
               }}
             >
-              {logoForLabel(scene, labels[index]) ? (
-                <CompanyMark label={labels[index]} scene={scene} size={32} />
-              ) : null}
               {labels[index]}
             </div>
           </div>
@@ -1181,14 +1548,77 @@ const EditorialGuard: React.FC<{
   );
 };
 
+const cue = (
+  file: string,
+  startSeconds: number,
+  durationSeconds: number,
+  volume: number,
+): SoundCue => ({
+  file,
+  startSeconds,
+  durationSeconds,
+  volume,
+  attackSeconds: 0.015,
+  releaseSeconds: 0.12,
+});
+
+const cuesForEditorialScene = (
+  scene: EditorialScene,
+  durationSeconds: number,
+): SoundCue[] => {
+  const raw =
+    scene.kind === "split-lines"
+      ? [
+          cue(SOUND_FILES.riseWhoosh, 0.05, 0.78, 0.58),
+          cue(SOUND_FILES.dataTick, 0.72, 0.42, 0.48),
+          cue(
+            SOUND_FILES.uiPulse,
+            scene.focusTarget === "both" ? 2.2 : 0.92,
+            0.22,
+            0.52,
+          ),
+          ...(scene.focusTarget === "both"
+            ? [cue(SOUND_FILES.uiPulse, 4.35, 0.22, 0.56)]
+            : []),
+          ...(scene.focusTarget === "secondary"
+            ? [cue(SOUND_FILES.softImpact, 2.15, 0.58, 0.55)]
+            : []),
+        ]
+      : scene.kind === "mag7-weights" || scene.kind === "company-orbit"
+        ? [
+            cue(SOUND_FILES.riseWhoosh, 0.06, 0.78, 0.5),
+            cue(SOUND_FILES.dataTick, 0.82, 0.42, 0.4),
+            cue(SOUND_FILES.softImpact, 1.72, 0.58, 0.5),
+          ]
+        : scene.kind === "brand-cta"
+          ? [
+              cue(SOUND_FILES.riseWhoosh, 0.06, 0.78, 0.5),
+              cue(SOUND_FILES.successChime, 1.05, 0.52, 0.46),
+            ]
+          : [
+              cue(SOUND_FILES.riseWhoosh, 0.06, 0.78, 0.36),
+              cue(SOUND_FILES.uiPulse, 0.92, 0.22, 0.34),
+            ];
+  return raw.filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
+};
+
 export const FinanceEditorialScene: React.FC<{
   scene: EditorialScene;
   accentColor: string;
   logoPath: string;
   previewMode: "editorial" | "clean";
-}> = ({scene, accentColor, logoPath, previewMode}) => {
+  soundEnabled: boolean;
+  soundMix: number;
+}> = ({
+  scene,
+  accentColor,
+  logoPath,
+  previewMode,
+  soundEnabled,
+  soundMix,
+}) => {
+  const {durationInFrames, fps} = useVideoConfig();
   const conceptual = [
-    "split-lines",
     "market-ticker",
     "kinetic-text",
     "company-orbit",
@@ -1196,7 +1626,9 @@ export const FinanceEditorialScene: React.FC<{
     "historical-timeline",
     "earnings-flow",
     "credit-flow",
-  ].includes(scene.kind);
+  ].includes(scene.kind) ||
+    (scene.kind === "split-lines" &&
+      (scene.chartData.length < 2 || scene.secondaryChartData.length < 2));
   let content: React.ReactNode;
   switch (scene.kind) {
     case "split-lines":
@@ -1237,7 +1669,10 @@ export const FinanceEditorialScene: React.FC<{
     default:
       content = <KineticText scene={scene} accentColor={accentColor} />;
   }
-  const headerVisible = scene.kind !== "brand-cta";
+  const headerVisible = !["brand-cta", "split-lines", "kinetic-text"].includes(
+    scene.kind,
+  );
+  const footerVisible = scene.kind !== "brand-cta";
   return (
     <AbsoluteFill
       style={{
@@ -1250,7 +1685,7 @@ export const FinanceEditorialScene: React.FC<{
       <AssetBackdrop scene={scene} />
       {headerVisible ? <SceneHeader scene={scene} /> : null}
       <AbsoluteFill style={{zIndex: 2}}>{content}</AbsoluteFill>
-      {headerVisible ? (
+      {footerVisible ? (
         <SourceFooter label={scene.sourceLabel} conceptual={conceptual} />
       ) : null}
       {headerVisible &&
@@ -1258,6 +1693,11 @@ export const FinanceEditorialScene: React.FC<{
       !["company-orbit", "mag7-weights", "sector-bars"].includes(scene.kind) ? (
         <CompanyLogoRibbon scene={scene} />
       ) : null}
+      <Soundtrack
+        cues={cuesForEditorialScene(scene, durationInFrames / fps)}
+        enabled={soundEnabled}
+        masterVolume={soundMix}
+      />
       <EditorialGuard scene={scene} previewMode={previewMode} />
     </AbsoluteFill>
   );

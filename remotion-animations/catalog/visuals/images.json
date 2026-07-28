@@ -62,6 +62,33 @@
       "importedAt": "2026-07-28T18:49:55.664Z"
     },
     {
+      "id": "finance-cavaliers-amazon",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-amazon.png",
+      "alt": "Logotipo de Amazon",
+      "width": 1493,
+      "height": 1707,
+      "sha256": "d762354cf92bfc1caa9d1148899e97370b6fc57034584d359ba866025c09f8cd",
+      "sourceSha256": "98af40be1592bfe79243f0c2e64c99d2bfbc5381b02a5ecb76cb153e8c8716dd",
+      "source": "https://fontawesome.com/icons/amazon?f=brands&s=solid",
+      "author": "Font Awesome contributors",
+      "license": "Font Awesome Free Brands CC BY 4.0; trademark rights retained by Amazon",
+      "attribution": "Icono de marca Amazon procedente de Font Awesome Free Brands; sin afiliación.",
+      "tags": [
+        "finance-cavaliers",
+        "empresa",
+        "magnificent-seven",
+        "amazon",
+        "logo"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T20:19:30.988Z"
+    },
+    {
       "id": "finance-cavaliers-apple",
       "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-apple.png",
       "alt": "Símbolo de Apple",
@@ -136,6 +163,33 @@
       "assetType": "logo",
       "treatment": "natural",
       "importedAt": "2026-07-28T18:49:57.028Z"
+    },
+    {
+      "id": "finance-cavaliers-microsoft",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-microsoft.png",
+      "alt": "Logotipo de Microsoft",
+      "width": 1493,
+      "height": 1707,
+      "sha256": "f6a6cd1886a75ba86ea98acd89623aca0f5b2d1bc47c1f0cca301a45a91db298",
+      "sourceSha256": "7347fd0566904eea85c183bf2cb423ae5098e87bb7e661f82772d7d8b22a24b7",
+      "source": "https://fontawesome.com/icons/microsoft?f=brands&s=solid",
+      "author": "Font Awesome contributors",
+      "license": "Font Awesome Free Brands CC BY 4.0; trademark rights retained by Microsoft",
+      "attribution": "Icono de marca Microsoft procedente de Font Awesome Free Brands; sin afiliación.",
+      "tags": [
+        "finance-cavaliers",
+        "empresa",
+        "magnificent-seven",
+        "microsoft",
+        "logo"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T20:19:24.403Z"
     },
     {
       "id": "finance-cavaliers-nvidia",

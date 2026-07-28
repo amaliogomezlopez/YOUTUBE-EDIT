@@ -1,0 +1,431 @@
+{
+  "version": 1,
+  "title": "SPY y fuerza relativa MAGS/SPY",
+  "methodology": [
+    "Cierres diarios de SPY y MAGS.",
+    "Ambas series parten de base 100 el 2025-01-02.",
+    "La fuerza relativa divide el cierre de MAGS por el cierre de SPY y normaliza el cociente a 100.",
+    "La visual usa una muestra semanal; los cálculos resumen usan todas las sesiones coincidentes."
+  ],
+  "source": {
+    "provider": "Yahoo Finance",
+    "landingPages": [
+      "https://finance.yahoo.com/quote/MAGS/history/",
+      "https://finance.yahoo.com/quote/SPY/history/"
+    ],
+    "queryUrls": [
+      "https://query1.finance.yahoo.com/v8/finance/chart/MAGS?period1=1735689600&period2=1784332800&interval=1d&events=history",
+      "https://query1.finance.yahoo.com/v8/finance/chart/SPY?period1=1735689600&period2=1784332800&interval=1d&events=history"
+    ],
+    "rawSha256": {
+      "mags": "65df242771219f438ab8cb3649f12dd3c438a695e3a9cdbd454c029a1f7c914e",
+      "spy": "5b82c475122d6c1ece499fa1a5f5042b93bb578c7df4fed99ac021dece4a0b3f"
+    },
+    "note": "Datos de mercado de terceros. Conservar atribución y no presentar la serie como un índice oficial de Bloomberg."
+  },
+  "range": {
+    "start": "2025-01-02",
+    "end": "2026-07-17",
+    "observations": 385,
+    "plottedObservations": 78
+  },
+  "summary": {
+    "spyEnd": 127.14,
+    "mag7RelativeEnd": 97.17,
+    "relativePeakDate": "2025-10-29",
+    "relativePeak": 108.45,
+    "relativeChangeFromPeakPercent": -10.4
+  },
+  "series": [
+    {
+      "date": "2025-01-02",
+      "spy": 100,
+      "mag7Relative": 100
+    },
+    {
+      "date": "2025-01-10",
+      "spy": 99.29,
+      "mag7Relative": 101.12
+    },
+    {
+      "date": "2025-01-17",
+      "spy": 102.21,
+      "mag7Relative": 100.15
+    },
+    {
+      "date": "2025-01-27",
+      "spy": 102.52,
+      "mag7Relative": 98.3
+    },
+    {
+      "date": "2025-02-03",
+      "spy": 102.25,
+      "mag7Relative": 98.78
+    },
+    {
+      "date": "2025-02-10",
+      "spy": 103.46,
+      "mag7Relative": 97.5
+    },
+    {
+      "date": "2025-02-18",
+      "spy": 104.59,
+      "mag7Relative": 97.3
+    },
+    {
+      "date": "2025-02-25",
+      "spy": 101.64,
+      "mag7Relative": 93.95
+    },
+    {
+      "date": "2025-03-04",
+      "spy": 98.67,
+      "mag7Relative": 92.22
+    },
+    {
+      "date": "2025-03-11",
+      "spy": 95.09,
+      "mag7Relative": 90.31
+    },
+    {
+      "date": "2025-03-18",
+      "spy": 95.96,
+      "mag7Relative": 88.47
+    },
+    {
+      "date": "2025-03-25",
+      "spy": 98.43,
+      "mag7Relative": 92.78
+    },
+    {
+      "date": "2025-04-01",
+      "spy": 95.95,
+      "mag7Relative": 89.85
+    },
+    {
+      "date": "2025-04-08",
+      "spy": 84.92,
+      "mag7Relative": 88.06
+    },
+    {
+      "date": "2025-04-15",
+      "spy": 91.96,
+      "mag7Relative": 89.45
+    },
+    {
+      "date": "2025-04-23",
+      "spy": 91.58,
+      "mag7Relative": 88.37
+    },
+    {
+      "date": "2025-04-30",
+      "spy": 94.85,
+      "mag7Relative": 89.52
+    },
+    {
+      "date": "2025-05-07",
+      "spy": 95.98,
+      "mag7Relative": 90.35
+    },
+    {
+      "date": "2025-05-14",
+      "spy": 100.5,
+      "mag7Relative": 96.91
+    },
+    {
+      "date": "2025-05-21",
+      "spy": 99.7,
+      "mag7Relative": 95.23
+    },
+    {
+      "date": "2025-05-29",
+      "spy": 100.93,
+      "mag7Relative": 96.78
+    },
+    {
+      "date": "2025-06-05",
+      "spy": 101.44,
+      "mag7Relative": 93.85
+    },
+    {
+      "date": "2025-06-12",
+      "spy": 103.27,
+      "mag7Relative": 95.67
+    },
+    {
+      "date": "2025-06-20",
+      "spy": 101.65,
+      "mag7Relative": 96.02
+    },
+    {
+      "date": "2025-06-27",
+      "spy": 105.18,
+      "mag7Relative": 97.57
+    },
+    {
+      "date": "2025-07-07",
+      "spy": 106.16,
+      "mag7Relative": 95.76
+    },
+    {
+      "date": "2025-07-14",
+      "spy": 106.87,
+      "mag7Relative": 97.11
+    },
+    {
+      "date": "2025-07-21",
+      "spy": 107.55,
+      "mag7Relative": 98.9
+    },
+    {
+      "date": "2025-07-28",
+      "spy": 108.95,
+      "mag7Relative": 98.64
+    },
+    {
+      "date": "2025-08-04",
+      "spy": 107.96,
+      "mag7Relative": 99.02
+    },
+    {
+      "date": "2025-08-11",
+      "spy": 108.77,
+      "mag7Relative": 101.68
+    },
+    {
+      "date": "2025-08-18",
+      "spy": 110.03,
+      "mag7Relative": 101.22
+    },
+    {
+      "date": "2025-08-25",
+      "spy": 109.89,
+      "mag7Relative": 100.98
+    },
+    {
+      "date": "2025-09-02",
+      "spy": 109.52,
+      "mag7Relative": 99.66
+    },
+    {
+      "date": "2025-09-09",
+      "spy": 111.24,
+      "mag7Relative": 102.45
+    },
+    {
+      "date": "2025-09-16",
+      "spy": 112.89,
+      "mag7Relative": 105.36
+    },
+    {
+      "date": "2025-09-23",
+      "spy": 113.44,
+      "mag7Relative": 105.1
+    },
+    {
+      "date": "2025-09-30",
+      "spy": 113.95,
+      "mag7Relative": 105.1
+    },
+    {
+      "date": "2025-10-07",
+      "spy": 114.45,
+      "mag7Relative": 104.28
+    },
+    {
+      "date": "2025-10-14",
+      "spy": 113.27,
+      "mag7Relative": 103.46
+    },
+    {
+      "date": "2025-10-21",
+      "spy": 114.82,
+      "mag7Relative": 104.78
+    },
+    {
+      "date": "2025-10-28",
+      "spy": 117.52,
+      "mag7Relative": 107.42
+    },
+    {
+      "date": "2025-11-04",
+      "spy": 115.5,
+      "mag7Relative": 107.24
+    },
+    {
+      "date": "2025-11-11",
+      "spy": 116.82,
+      "mag7Relative": 106.32
+    },
+    {
+      "date": "2025-11-18",
+      "spy": 112.9,
+      "mag7Relative": 103.91
+    },
+    {
+      "date": "2025-11-25",
+      "spy": 115.46,
+      "mag7Relative": 105.58
+    },
+    {
+      "date": "2025-12-03",
+      "spy": 116.98,
+      "mag7Relative": 105.75
+    },
+    {
+      "date": "2025-12-10",
+      "spy": 117.61,
+      "mag7Relative": 105.49
+    },
+    {
+      "date": "2025-12-17",
+      "spy": 114.84,
+      "mag7Relative": 105
+    },
+    {
+      "date": "2025-12-24",
+      "spy": 118.09,
+      "mag7Relative": 106.59
+    },
+    {
+      "date": "2026-01-02",
+      "spy": 116.85,
+      "mag7Relative": 103.26
+    },
+    {
+      "date": "2026-01-09",
+      "spy": 118.72,
+      "mag7Relative": 103.22
+    },
+    {
+      "date": "2026-01-16",
+      "spy": 118.31,
+      "mag7Relative": 101.29
+    },
+    {
+      "date": "2026-01-26",
+      "spy": 118.49,
+      "mag7Relative": 102.72
+    },
+    {
+      "date": "2026-02-02",
+      "spy": 118.95,
+      "mag7Relative": 102.69
+    },
+    {
+      "date": "2026-02-09",
+      "spy": 118.7,
+      "mag7Relative": 99.31
+    },
+    {
+      "date": "2026-02-17",
+      "spy": 116.8,
+      "mag7Relative": 96.86
+    },
+    {
+      "date": "2026-02-24",
+      "spy": 117.57,
+      "mag7Relative": 97.86
+    },
+    {
+      "date": "2026-03-03",
+      "spy": 116.37,
+      "mag7Relative": 97.25
+    },
+    {
+      "date": "2026-03-10",
+      "spy": 115.83,
+      "mag7Relative": 98.72
+    },
+    {
+      "date": "2026-03-17",
+      "spy": 114.74,
+      "mag7Relative": 98.37
+    },
+    {
+      "date": "2026-03-24",
+      "spy": 111.72,
+      "mag7Relative": 96.7
+    },
+    {
+      "date": "2026-03-31",
+      "spy": 111.24,
+      "mag7Relative": 96.17
+    },
+    {
+      "date": "2026-04-08",
+      "spy": 115.63,
+      "mag7Relative": 95.52
+    },
+    {
+      "date": "2026-04-15",
+      "spy": 119.72,
+      "mag7Relative": 100.65
+    },
+    {
+      "date": "2026-04-22",
+      "spy": 121.65,
+      "mag7Relative": 100.84
+    },
+    {
+      "date": "2026-04-29",
+      "spy": 121.71,
+      "mag7Relative": 101
+    },
+    {
+      "date": "2026-05-06",
+      "spy": 125.52,
+      "mag7Relative": 100.71
+    },
+    {
+      "date": "2026-05-13",
+      "spy": 126.97,
+      "mag7Relative": 102.56
+    },
+    {
+      "date": "2026-05-20",
+      "spy": 126.79,
+      "mag7Relative": 101.2
+    },
+    {
+      "date": "2026-05-28",
+      "spy": 129.07,
+      "mag7Relative": 101.38
+    },
+    {
+      "date": "2026-06-04",
+      "spy": 129.5,
+      "mag7Relative": 98.55
+    },
+    {
+      "date": "2026-06-11",
+      "spy": 126.19,
+      "mag7Relative": 94.97
+    },
+    {
+      "date": "2026-06-18",
+      "spy": 127.73,
+      "mag7Relative": 94.6
+    },
+    {
+      "date": "2026-06-26",
+      "spy": 124.69,
+      "mag7Relative": 91.22
+    },
+    {
+      "date": "2026-07-06",
+      "spy": 128.5,
+      "mag7Relative": 95.23
+    },
+    {
+      "date": "2026-07-13",
+      "spy": 128.14,
+      "mag7Relative": 96.52
+    },
+    {
+      "date": "2026-07-17",
+      "spy": 127.14,
+      "mag7Relative": 97.17
+    }
+  ]
+}

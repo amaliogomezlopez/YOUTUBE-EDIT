@@ -10,6 +10,7 @@
     "episode:narration": "node scripts/prepare-episode-narration.js",
     "episode:transcript:export": "node scripts/export-faster-whisper-transcript.js",
     "episode:sloos:extract": "node scripts/extract-fed-sloos-series.js",
+    "episode:finance-cavaliers:market-series": "node scripts/build-finance-cavaliers-market-series.js",
     "episode:finance-cavaliers:pilot": "node scripts/build-finance-cavaliers-pilot.js",
     "carousel": "node src/modules/carousels/cli.js",
     "scout:animations": "node scripts/animation-scout.js",
@@ -44,9 +45,11 @@
     "node": ">=20"
   },
   "dependencies": {
+    "@fortawesome/free-brands-svg-icons": "^7.2.0",
     "ajv": "^8.20.0",
     "busboy": "^1.6.0",
     "onnxruntime-node": "^1.22.0",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.3",
+    "simple-icons": "^16.21.0"
   }
 }

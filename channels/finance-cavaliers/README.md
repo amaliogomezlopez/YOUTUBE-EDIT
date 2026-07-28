@@ -47,9 +47,12 @@ audios o fuentes privadas.
 La vista `Assets` de Shortsmith combina:
 
 - el catálogo local registrado, disponible sin conexión;
-- Pexels para fotografías y vídeos, con `PEXELS_API_KEY`;
-- Brandfetch para buscar empresas y logos por nombre, dominio o ticker, con
-  `BRANDFETCH_CLIENT_ID`.
+- Simple Icons y Font Awesome Free Brands para buscar logos desde paquetes
+  instalados, sin clave ni llamadas remotas;
+- Pexels para fotografías y vídeos, con una API gratuita y
+  `PEXELS_API_KEY`;
+- Brandfetch, opcional, para ampliar la búsqueda remota de empresas y logos
+  con `BRANDFETCH_CLIENT_ID` y la cuota del plan gratuito.
 
 Los resultados remotos son candidatos, no assets de render. Antes de usarlos
 se importan a `remotion-animations/public/assets/library/`, se normalizan y se
@@ -58,6 +61,8 @@ imágenes o logos durante el render.
 
 Los logos identifican a una empresa en contexto editorial y no implican
 afiliación. Deben respetarse las condiciones y derechos de marca del titular.
+La propuesta de paquete editorial y sus cantidades recomendadas está en
+[`ASSET-PACK.md`](ASSET-PACK.md).
 
 ## Límites
 

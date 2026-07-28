@@ -6,6 +6,7 @@ import test from 'node:test';
 import {
   searchBrandfetch,
   searchEditorialAssets,
+  searchOfflineBrandLogos,
   searchPexels
 } from '../src/lib/editorial-asset-search.js';
 
@@ -44,10 +45,20 @@ test('asset search returns matching managed logos without network keys', async (
     catalogFile: await catalogFixture(t),
     env: {}
   });
-  assert.equal(result.items.length, 1);
+  assert.ok(result.items.length >= 2);
   assert.equal(result.items[0].provider, 'local');
   assert.equal(result.items[0].imported, true);
+  assert.ok(result.items.some((item) => item.offlinePackage === 'simple-icons'));
   assert.equal(result.warnings[0].code, 'BRANDFETCH_NOT_CONFIGURED');
+});
+
+test('offline logo packages cover Microsoft and Amazon without API keys', () => {
+  const microsoft = searchOfflineBrandLogos('Microsoft');
+  const amazon = searchOfflineBrandLogos('Amazon');
+  assert.ok(microsoft.some((item) => item.id.includes('microsoft')));
+  assert.ok(amazon.some((item) => item.id.includes('amazon')));
+  assert.match(microsoft[0].previewUrl, /^data:image\/svg\+xml/);
+  assert.equal(microsoft[0].kind, 'logo');
 });
 
 test('Pexels photo search maps only HTTPS provenance fields', async () => {

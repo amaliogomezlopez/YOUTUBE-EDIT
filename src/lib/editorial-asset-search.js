@@ -1,5 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
+import * as fontAwesomeBrands from '@fortawesome/free-brands-svg-icons';
+import * as simpleIcons from 'simple-icons';
 import {fetchWithTimeout} from './network.js';
 import {ROOT} from './utils.js';
 
@@ -44,6 +46,95 @@ function safeHttps(value) {
   } catch {
     return null;
   }
+}
+
+function normalizeBrand(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '');
+}
+
+function svgDataUrl(svg) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+function simpleIconItem(icon) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${icon.title}" viewBox="0 0 24 24"><path fill="#${icon.hex}" d="${icon.path}"/></svg>`;
+  const dataUrl = svgDataUrl(svg);
+  return {
+    id: `simple-icons-${icon.slug}`,
+    provider: 'Simple Icons · paquete local',
+    kind: 'logo',
+    title: icon.title,
+    previewUrl: dataUrl,
+    downloadUrl: dataUrl,
+    sourceUrl: safeHttps(icon.source) || 'https://simpleicons.org/',
+    author: 'Simple Icons contributors',
+    license: 'CC0; trademark rights retained by brand owner',
+    attribution: 'Icono de Simple Icons; no implica afiliación con la marca.',
+    width: 24,
+    height: 24,
+    durationSeconds: null,
+    imported: false,
+    offlinePackage: 'simple-icons'
+  };
+}
+
+function fontAwesomeItem(icon) {
+  const [width, height, , , pathData] = icon.icon;
+  const paths = Array.isArray(pathData) ? pathData : [pathData];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${icon.iconName}" viewBox="0 0 ${width} ${height}">${paths.map((datum) => `<path fill="#FFFFFF" d="${datum}"/>`).join('')}</svg>`;
+  const dataUrl = svgDataUrl(svg);
+  return {
+    id: `font-awesome-brands-${icon.iconName}`,
+    provider: 'Font Awesome Free Brands · paquete local',
+    kind: 'logo',
+    title: icon.iconName
+      .split('-')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' '),
+    previewUrl: dataUrl,
+    downloadUrl: dataUrl,
+    sourceUrl: `https://fontawesome.com/icons/${icon.iconName}?f=brands&s=solid`,
+    author: 'Font Awesome contributors',
+    license: 'CC BY 4.0; trademark rights retained by brand owner',
+    attribution: 'Icono de Font Awesome Free; no implica afiliación con la marca.',
+    width,
+    height,
+    durationSeconds: null,
+    imported: false,
+    offlinePackage: '@fortawesome/free-brands-svg-icons'
+  };
+}
+
+export function searchOfflineBrandLogos(query, {limit = 18} = {}) {
+  const wanted = normalizeBrand(cleanQuery(query));
+  const simpleMatches = Object.values(simpleIcons)
+    .filter((icon) =>
+      icon &&
+      typeof icon === 'object' &&
+      typeof icon.path === 'string' &&
+      [icon.title, icon.slug].some((value) =>
+        normalizeBrand(value).includes(wanted)
+      )
+    )
+    .map(simpleIconItem);
+  const seen = new Set(simpleMatches.map((item) => normalizeBrand(item.title)));
+  const fontAwesomeMatches = Object.values(fontAwesomeBrands)
+    .filter((icon) =>
+      icon &&
+      typeof icon === 'object' &&
+      Array.isArray(icon.icon) &&
+      normalizeBrand(icon.iconName).includes(wanted) &&
+      !seen.has(normalizeBrand(icon.iconName))
+    )
+    .map(fontAwesomeItem);
+  return [...simpleMatches, ...fontAwesomeMatches].slice(
+    0,
+    Math.min(30, Math.max(1, limit))
+  );
 }
 
 function textMatch(record, query) {
@@ -226,6 +317,7 @@ export async function searchEditorialAssets({
   const env = options.env || process.env;
   const providers = {
     local: {configured: true},
+    offlineLogos: {configured: true},
     pexels: {configured: Boolean(options.pexelsApiKey ?? env.PEXELS_API_KEY)},
     brandfetch: {
       configured: Boolean(options.brandfetchClientId ?? env.BRANDFETCH_CLIENT_ID)
@@ -240,17 +332,19 @@ export async function searchEditorialAssets({
   let remote = [];
   try {
     if (wantedKind === 'logo') {
-      remote = await searchBrandfetch(clean, {
+      const offline = searchOfflineBrandLogos(clean, {limit: safeLimit});
+      const brandfetch = await searchBrandfetch(clean, {
         limit: safeLimit,
         clientId: options.brandfetchClientId ?? env.BRANDFETCH_CLIENT_ID,
         fetchImpl: options.fetchImpl,
         signal: options.signal,
         timeoutMs: options.timeoutMs
       });
+      remote = [...offline, ...brandfetch];
       if (!providers.brandfetch.configured) {
         warnings.push({
           code: 'BRANDFETCH_NOT_CONFIGURED',
-          message: 'Configura BRANDFETCH_CLIENT_ID para buscar logos remotos.'
+          message: 'La búsqueda local de logos está activa; Brandfetch es opcional para ampliar resultados remotos.'
         });
       }
     } else {

@@ -20,6 +20,13 @@ const DEFAULT_EPISODE_DIRECTORY = path.join(
   '1'
 );
 const REFERENCE_URL = 'https://www.youtube.com/watch?v=QNFLN6IvB88';
+const MARKET_SERIES_FILE = path.join(
+  ROOT,
+  'channels',
+  CHANNEL_ID,
+  'data',
+  'mags-spy-relative-2025-2026.json'
+);
 const COMPANY_LOGO_ASSETS = [
   {
     id: 'finance-cavaliers-nvidia',
@@ -32,6 +39,18 @@ const COMPANY_LOGO_ASSETS = [
     kind: 'logo',
     label: 'APPLE',
     path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-apple.png'
+  },
+  {
+    id: 'finance-cavaliers-microsoft',
+    kind: 'logo',
+    label: 'MICROSOFT',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-microsoft.png'
+  },
+  {
+    id: 'finance-cavaliers-amazon',
+    kind: 'logo',
+    label: 'AMAZON',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-amazon.png'
   },
   {
     id: 'finance-cavaliers-alphabet',
@@ -207,8 +226,8 @@ const BEATS = [
   {
     start: 0,
     end: 39,
-    title: 'Dos líneas. Dos historias.',
-    supporting: 'Lo visible arriba no siempre explica lo que ocurre debajo.',
+    title: 'SPY frente a MAGS/SPY',
+    supporting: 'Precio del índice y fuerza relativa, ambos con base cien.',
     kinds: ['split-lines', 'market-ticker', 'kinetic-text']
   },
   {
@@ -316,7 +335,7 @@ function patternForKind(kind) {
   return patterns[kind] ?? 'text.kinetic-phrase';
 }
 
-function kindData(kind, sloos) {
+function kindData(kind, sloos, marketSeries) {
   const mag7 = [
     {label: 'NVIDIA', value: 7.66},
     {label: 'APPLE', value: 7.64},
@@ -396,7 +415,25 @@ function kindData(kind, sloos) {
   }
   if (kind === 'split-lines') {
     return {
-      labels: ['ÍNDICE', 'LIDERAZGO RELATIVO']
+      labels: [
+        'SPY · CIERRE, BASE 100',
+        'MAGS / SPY · FUERZA RELATIVA'
+      ],
+      chartData: marketSeries.series.map((datum) => ({
+        label: datum.date,
+        value: datum.spy
+      })),
+      secondaryChartData: marketSeries.series.map((datum) => ({
+        label: datum.date,
+        value: datum.mag7Relative
+      })),
+      metric: {
+        value: marketSeries.summary.relativeChangeFromPeakPercent,
+        suffix: '%',
+        label: 'DESDE MÁX. RELATIVO · 29 OCT 2025'
+      },
+      sourceLabel:
+        'Yahoo Finance (MAGS y SPY) · cierres diarios · 02 Ene 2025–17 Jul 2026 · cálculo propio MAGS/SPY, base 100'
     };
   }
   if (kind === 'market-ticker') {
@@ -449,7 +486,8 @@ ${sources.map((source) =>
 
 ## Bloqueo de publicación
 
-- No mostrar el «20 % relativo» sin definir cesta, ponderación, ventana y serie.
+- La serie reproducible MAGS/SPY muestra −10,4 % desde el máximo relativo del
+  29-10-2025 hasta el 17-07-2026; regrabar el «casi 20 %».
 - No mostrar «Four Horsemen = 30 %»: contradice incluso la escala de la referencia.
 - No mostrar «energía = un tercio a finales de los 80» sin serie histórica.
 - Sustituir «40 % de todo el mercado estadounidense» por el universo correcto:
@@ -467,9 +505,9 @@ Estas frases evitan que el montaje publique cifras no demostradas.
 
 1. **00:50 — liderazgo relativo**
    - Sustituir el «cerca de un 20 %» por:
-   - «A 17 de julio de 2026, las siete grandes tecnológicas sumaban
-     aproximadamente un tercio del S&P 500 a través del SPY. Esa concentración
-     hace que cualquier pérdida de liderazgo importe al índice completo.»
+   - «Desde su máximo relativo del 29 de octubre de 2025 hasta el 17 de julio de
+     2026, MAGS perdió un 10,4 % frente a SPY. La comparación usa cierres diarios
+     y normaliza el cociente MAGS dividido por SPY a base cien.»
 
 2. **02:50 — Four Horsemen**
    - Eliminar «representaban aproximadamente el 30 %».
@@ -553,10 +591,11 @@ async function main() {
     'brand',
     'logo-primary.png'
   );
-  const [transcript, narrationResult, sloos] = await Promise.all([
+  const [transcript, narrationResult, sloos, marketSeries] = await Promise.all([
     readFile(transcriptFile, 'utf8').then(JSON.parse),
     readFile(narrationResultFile, 'utf8').then(JSON.parse),
-    readFile(sloosFile, 'utf8').then(JSON.parse)
+    readFile(sloosFile, 'utf8').then(JSON.parse),
+    readFile(MARKET_SERIES_FILE, 'utf8').then(JSON.parse)
   ]);
   const durationSeconds = Number(
     narrationResult.masterDurationSeconds ??
@@ -577,6 +616,11 @@ async function main() {
     mkdir(visualsDirectory, {recursive: true}),
     mkdir(marketDataDirectory, {recursive: true})
   ]);
+  const marketSeriesSnapshotFile = path.join(
+    marketDataDirectory,
+    'mags-spy-relative-2025-2026.json'
+  );
+  await copyFile(MARKET_SERIES_FILE, marketSeriesSnapshotFile);
 
   const marketSnapshots = {
     version: 1,
@@ -681,6 +725,20 @@ async function main() {
       SPY_URL
     ),
     sourceRecord(
+      'src-yahoo-mags-history',
+      'Roundhill Magnificent Seven ETF (MAGS) — historical data',
+      'Yahoo Finance',
+      marketSeries.source.landingPages[0],
+      {status: 'ready'}
+    ),
+    sourceRecord(
+      'src-yahoo-spy-history',
+      'SPDR S&P 500 ETF Trust (SPY) — historical data',
+      'Yahoo Finance',
+      marketSeries.source.landingPages[1],
+      {status: 'ready'}
+    ),
+    sourceRecord(
       'src-sp500-earnings',
       'U.S. Equities Market Attributes',
       'S&P Dow Jones Indices',
@@ -698,10 +756,15 @@ async function main() {
     makeClaim({
       id: 'claim-mag7-relative-minus-20',
       statement: 'Las Mag 7 han perdido cerca de 20% de valor relativo en los últimos meses.',
-      sourceRefs: ['src-reference-video'],
-      confidence: 0.2,
-      status: 'unsupported',
-      notes: 'Faltan cesta exacta, ponderación, benchmark, fecha inicial, fecha final y serie reproducible.',
+      sourceRefs: [
+        'src-reference-video',
+        'src-yahoo-mags-history',
+        'src-yahoo-spy-history'
+      ],
+      dataRefs: ['data-mags-spy-relative'],
+      confidence: 1,
+      status: 'disputed',
+      notes: `La serie reproducible MAGS/SPY muestra ${marketSeries.summary.relativeChangeFromPeakPercent}% desde el máximo relativo de ${marketSeries.summary.relativePeakDate} hasta ${marketSeries.range.end}; regrabar el audio.`,
       range: {startSeconds: 50, endSeconds: 66}
     }),
     makeClaim({
@@ -841,6 +904,29 @@ async function main() {
 
   const dataAssets = [
     {
+      id: 'data-mags-spy-relative',
+      kind: 'series',
+      sourceUrl: marketSeries.source.landingPages[0],
+      provider: 'Yahoo Finance; cálculo editorial propio',
+      retrievedAt: generatedAt,
+      timezone: 'America/New_York',
+      frequency: 'daily close; weekly visual sample',
+      unit: 'index, base 100',
+      currency: null,
+      columns: ['date', 'spy', 'mag7Relative'],
+      range: {
+        start: marketSeries.range.start,
+        end: marketSeries.range.end
+      },
+      localFile: path.relative(
+        episodeDirectory,
+        marketSeriesSnapshotFile
+      ).replaceAll('\\', '/'),
+      sha256: await sha256File(marketSeriesSnapshotFile),
+      license: 'Third-party market data; attribute Yahoo Finance and retain methodology. Do not present as an official Bloomberg index.',
+      status: 'confirmed'
+    },
+    {
       id: 'data-fed-sloos-ci',
       kind: 'series',
       sourceUrl: SLOOS_DDP_URL,
@@ -922,7 +1008,6 @@ async function main() {
       }
     ],
     unknowns: [
-      'Serie reproducible de rendimiento relativo Mag 7/S&P 500 y ventana exacta.',
       'Peso conjunto histórico de Cisco, Microsoft, Intel y Dell.',
       'Serie histórica homogénea de pesos sectoriales para energía y tecnología.',
       'Serie de beneficios tecnológicos 1995–2000 con definición explícita.'
@@ -939,23 +1024,52 @@ async function main() {
 
   const allWords = transcript.segments.flatMap((segment) => segment.words ?? []);
   const groups = buildSceneGroups(transcript.segments, durationSeconds);
+  const firstMinuteKinds = [
+    'split-lines',
+    'split-lines',
+    'split-lines',
+    'split-lines',
+    'split-lines',
+    'mag7-weights',
+    'split-lines'
+  ];
+  const firstMinuteFocus = [
+    'both',
+    'primary',
+    'primary',
+    'primary',
+    'secondary',
+    'both',
+    'secondary'
+  ];
   const renderScenes = groups.map((group, index) => {
     const midpoint = (group.startSeconds + group.endSeconds) / 2;
     const beat = beatFor(midpoint);
-    const kind = beat.kinds[index % beat.kinds.length];
+    const kind =
+      firstMinuteKinds[index] ??
+      beat.kinds[index % beat.kinds.length];
+    const headline = index === 5 ? 'Los siete magníficos' : beat.title;
+    const supportingText =
+      index === 5
+        ? 'Siete empresas; Alphabet aparece en dos clases de acciones.'
+        : beat.supporting;
     const sceneClaims = claimsForRange(
       claims,
       group.startSeconds,
       group.endSeconds
     );
     const status = factualStatusFor(sceneClaims);
-    const companyAssets =
-      midpoint >= 37 && midpoint < 405
-        ? COMPANY_LOGO_ASSETS
-        : [];
+    const companyAssets = [
+      'company-orbit',
+      'mag7-weights',
+      'portfolio-grid',
+      'market-ticker'
+    ].includes(kind)
+      ? COMPANY_LOGO_ASSETS
+      : [];
     const sceneAssets = [
       ...companyAssets,
-      ...(index === 1 ? [MARKET_IMAGE_ASSET] : [])
+      ...(kind === 'market-ticker' && index % 4 === 1 ? [MARKET_IMAGE_ASSET] : [])
     ];
     const words = allWords
       .map((word, wordIndex) => ({...word, wordIndex}))
@@ -1001,8 +1115,9 @@ async function main() {
       patternId: patternForKind(kind),
       compositionId: 'Finance-Cavaliers-Episode',
       effectIds: [
-        index % 3 === 0 ? 'reveal.path-draw' : 'reveal.element-stagger',
-        index % 4 === 0 ? 'focus.path-follow' : 'focus.accent-only',
+        kind === 'split-lines' ? 'reveal.path-draw' : 'reveal.element-stagger',
+        kind === 'split-lines' ? 'focus.path-follow' : 'focus.accent-only',
+        ...(kind === 'split-lines' ? ['camera.focus-zoom', 'focus.desaturate-peers'] : []),
         'exit.clean-fade'
       ],
       assetRefs: [
@@ -1011,18 +1126,21 @@ async function main() {
       ],
       themeId: index % 5 === 0 ? 'oxide-documentary' : 'signal-cobalt',
       motionProfile: index % 7 === 0 ? 'kinetic' : 'editorial',
-      soundProfile: 'narration-first',
-      soundDecision: 'silence',
+      soundProfile: kind === 'split-lines' ? 'trend-focus' : 'editorial-semantic',
+      soundDecision: 'cue',
       header: {
-        text: beat.title,
+        text: headline,
         position: 'centered'
       },
       props: {
         kind,
-        supportingText: beat.supporting,
+        supportingText,
         factualStatus: status,
         assets: sceneAssets,
-        ...kindData(kind, sloos)
+        focusTarget:
+          firstMinuteFocus[index] ??
+          (kind === 'split-lines' ? 'both' : undefined),
+        ...kindData(kind, sloos, marketSeries)
       },
       fallback: {
         patternId: 'text.kinetic-phrase',
@@ -1031,7 +1149,7 @@ async function main() {
         props: {
           kind: 'kinetic-text',
           factualStatus: status,
-          supportingText: beat.supporting
+          supportingText
         }
       }
     };
@@ -1084,6 +1202,8 @@ async function main() {
     accentColor: '#FFC83D',
     previewMode: 'editorial',
     narrationVolume: 1,
+    soundEnabled: true,
+    soundMix: 0.62,
     scenes: renderScenes.map((scene) => ({
       id: scene.id,
       startSeconds: scene.startSeconds,
@@ -1099,12 +1219,22 @@ async function main() {
       valueLabels: scene.props.valueLabels ?? [],
       metric: scene.props.metric,
       chartData: scene.props.chartData ?? [],
+      secondaryChartData: scene.props.secondaryChartData ?? [],
+      focusTarget: scene.props.focusTarget ?? 'both',
       assets: scene.props.assets ?? []
     }))
+  };
+  const silentRenderProps = {
+    ...renderProps,
+    soundEnabled: false
   };
 
   const visualPlanFile = path.join(visualsDirectory, 'visual-plan.json');
   const renderPropsFile = path.join(visualsDirectory, 'render-props.json');
+  const silentRenderPropsFile = path.join(
+    visualsDirectory,
+    'render-props-silent.json'
+  );
   const dossierFile = path.join(researchDirectory, 'research-dossier.json');
   const auditJsonFile = path.join(researchDirectory, 'factual-audit.json');
   const auditMarkdownFile = path.join(researchDirectory, 'FACTUAL-AUDIT.md');
@@ -1174,6 +1304,11 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
     writeFile(pickupsFile, buildPickupsMarkdown(), 'utf8'),
     writeFile(visualPlanFile, `${JSON.stringify(visualPlan, null, 2)}\n`, 'utf8'),
     writeFile(renderPropsFile, `${JSON.stringify(renderProps, null, 2)}\n`, 'utf8'),
+    writeFile(
+      silentRenderPropsFile,
+      `${JSON.stringify(silentRenderProps, null, 2)}\n`,
+      'utf8'
+    ),
     writeFile(guideFile, guide, 'utf8')
   ]);
   console.log(`Dossier: ${dossierFile}`);
@@ -1181,6 +1316,7 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
   console.log(`Tomas: ${pickupsFile}`);
   console.log(`Plan visual: ${visualPlanFile}`);
   console.log(`Props Remotion: ${renderPropsFile}`);
+  console.log(`Props sin efectos: ${silentRenderPropsFile}`);
   console.log(`Escenas: ${renderScenes.length}`);
   console.log(`Publicable: ${auditJson.publishable ? 'sí' : 'no'}`);
 }

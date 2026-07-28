@@ -29,6 +29,17 @@ const files = [
     ),
     target: "fragment-mono-latin-ext-400.woff2",
   },
+  {
+    source: path.join(
+      projectRoot,
+      "node_modules",
+      "@fontsource-variable",
+      "instrument-sans",
+      "files",
+      "instrument-sans-latin-wght-normal.woff2",
+    ),
+    target: "instrument-sans-latin-ext-variable.woff2",
+  },
 ];
 
 for (const file of files) {

@@ -59,6 +59,8 @@ export const editorialSceneSchema = z.object({
   valueLabels: z.array(z.string()).max(20),
   metric: metricSchema.optional(),
   chartData: z.array(chartDatumSchema).max(500),
+  secondaryChartData: z.array(chartDatumSchema).max(500).default([]),
+  focusTarget: z.enum(["both", "primary", "secondary"]).default("both"),
   assets: z.array(sceneAssetSchema).max(20).default([]),
 });
 
@@ -72,6 +74,8 @@ export const editorialEpisodeSchema = z.object({
   accentColor: zColor(),
   previewMode: z.enum(["editorial", "clean"]),
   narrationVolume: z.number().min(0).max(1.5),
+  soundEnabled: z.boolean().default(true),
+  soundMix: z.number().min(0).max(1).default(0.5),
   scenes: z.array(editorialSceneSchema).min(1).max(1000),
 });
 
@@ -88,6 +92,8 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
   accentColor: "#FFC83D",
   previewMode: "editorial",
   narrationVolume: 1,
+  soundEnabled: true,
+  soundMix: 0.5,
   scenes: [
     {
       id: "scene-demo-001",
@@ -102,6 +108,8 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
       values: [],
       valueLabels: [],
       chartData: [],
+      secondaryChartData: [],
+      focusTarget: "both",
       assets: [],
     },
     {
@@ -117,6 +125,8 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
       values: [],
       valueLabels: [],
       chartData: [],
+      secondaryChartData: [],
+      focusTarget: "both",
       assets: [],
     },
   ],

@@ -50,6 +50,8 @@ export const EditorialEpisode: React.FC<EditorialEpisodeProps> = (props) => {
                 logoPath={props.logoPath}
                 previewMode={props.previewMode}
                 scene={scene}
+                soundEnabled={props.soundEnabled}
+                soundMix={props.soundMix}
               />
             </SceneBoundary>
           </Sequence>

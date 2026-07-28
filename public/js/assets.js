@@ -51,13 +51,17 @@ function resultCard(item) {
     actions.append(source);
   }
   if (item.downloadUrl && !item.imported) {
-    const copy = text(document.createElement('button'), 'Copiar enlace');
+    const isOfflineSvg = String(item.downloadUrl).startsWith('data:image/svg+xml');
+    const copy = text(
+      document.createElement('button'),
+      isOfflineSvg ? 'Copiar SVG' : 'Copiar enlace'
+    );
     copy.className = 'secondary-action compact';
     copy.type = 'button';
     copy.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(item.downloadUrl);
-        copy.textContent = 'Enlace copiado';
+        copy.textContent = isOfflineSvg ? 'SVG copiado' : 'Enlace copiado';
       } catch {
         copy.textContent = 'No se pudo copiar';
       }
