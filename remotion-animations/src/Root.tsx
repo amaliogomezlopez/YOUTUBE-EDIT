@@ -72,10 +72,29 @@ import {
   extendedPatternMetadata,
   extendedPatternSchema,
 } from "./motion/ExtendedPatterns";
+import {
+  EditorialEpisode,
+  editorialEpisodeMetadata,
+  editorialEpisodeSchema,
+} from "./editorial/EditorialEpisode";
+import {defaultEditorialEpisodeProps} from "./editorial/schemas";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Folder name="Editorial-Episodes">
+        <Composition
+          id="Finance-Cavaliers-Episode"
+          component={EditorialEpisode}
+          durationInFrames={12 * 30}
+          fps={30}
+          width={1920}
+          height={1080}
+          schema={editorialEpisodeSchema}
+          defaultProps={defaultEditorialEpisodeProps}
+          calculateMetadata={editorialEpisodeMetadata}
+        />
+      </Folder>
       <Folder name="Graficas">
         <Composition
           id="ChartHighlight"

@@ -146,7 +146,7 @@ test('visual plan validates ordered, complete scene timing', () => {
         sourceRefs: ['source-alpha'],
         dataRefs: ['data-index'],
         visualIntent: 'chart',
-        patternId: 'pattern-chart',
+        patternId: 'asset.annotated-chart',
         compositionId: 'Pattern-Chart',
         effectIds: [],
         assetRefs: [],
@@ -157,7 +157,7 @@ test('visual plan validates ordered, complete scene timing', () => {
         header: null,
         props: {value: 112},
         fallback: {
-          patternId: 'pattern-static',
+          patternId: 'text.kinetic-phrase',
           compositionId: 'Pattern-Static',
           reason: 'Fallback determinista',
           props: {value: 112}

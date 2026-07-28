@@ -7,6 +7,10 @@
   "scripts": {
     "process": "node src/cli.js process",
     "editorial-video": "node scripts/editorial-video.js",
+    "episode:narration": "node scripts/prepare-episode-narration.js",
+    "episode:transcript:export": "node scripts/export-faster-whisper-transcript.js",
+    "episode:sloos:extract": "node scripts/extract-fed-sloos-series.js",
+    "episode:finance-cavaliers:pilot": "node scripts/build-finance-cavaliers-pilot.js",
     "carousel": "node src/modules/carousels/cli.js",
     "scout:animations": "node scripts/animation-scout.js",
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",

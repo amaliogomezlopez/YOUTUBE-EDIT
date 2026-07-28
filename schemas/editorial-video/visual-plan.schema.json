@@ -122,7 +122,7 @@
             ]
           },
           "patternId": {
-            "$ref": "#/$defs/id"
+            "$ref": "#/$defs/catalogId"
           },
           "compositionId": {
             "type": "string",
@@ -130,7 +130,7 @@
             "maxLength": 160
           },
           "effectIds": {
-            "$ref": "#/$defs/optionalIdList"
+            "$ref": "#/$defs/optionalCatalogIdList"
           },
           "assetRefs": {
             "$ref": "#/$defs/optionalIdList"
@@ -203,7 +203,7 @@
             ],
             "properties": {
               "patternId": {
-                "$ref": "#/$defs/id"
+                "$ref": "#/$defs/catalogId"
               },
               "compositionId": {
                 "type": "string",
@@ -265,6 +265,10 @@
       "type": "string",
       "pattern": "^[a-z][a-z0-9-]{2,95}$"
     },
+    "catalogId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9.-]{2,95}$"
+    },
     "episodeId": {
       "type": "string",
       "pattern": "^episode-[a-z0-9][a-z0-9-]{7,95}$"
@@ -274,6 +278,13 @@
       "uniqueItems": true,
       "items": {
         "$ref": "#/$defs/id"
+      }
+    },
+    "optionalCatalogIdList": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/catalogId"
       }
     },
     "timeRange": {
