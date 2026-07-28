@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "id": "synthetic-channel",
+  "label": "Canal sintético",
+  "language": "es",
+  "formats": [
+    "landscape"
+  ],
+  "episode": {
+    "targetMinutes": {
+      "min": 1,
+      "max": 2
+    },
+    "sourceCount": {
+      "min": 2,
+      "max": 3
+    }
+  },
+  "research": {
+    "lookbackHours": 24,
+    "minimumIndependentSources": 2,
+    "connectors": [
+      "manual"
+    ]
+  },
+  "editorial": {
+    "defaultTemplate": "causal-explainer",
+    "requireClaimEvidence": true,
+    "requireNumericDataRef": true
+  },
+  "visual": {
+    "brandProfileId": "synthetic-channel",
+    "themeAllowlist": [
+      "editorial-ivory"
+    ],
+    "motionProfileAllowlist": [
+      "restrained"
+    ],
+    "headerPolicy": "optional-centered",
+    "watermark": false
+  },
+  "workflow": {
+    "humanGates": [
+      "story-approved",
+      "preview-approved",
+      "publish-confirmed"
+    ]
+  }
+}

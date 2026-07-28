@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "default": "causal-explainer",
+  "templates": [
+    {
+      "id": "causal-explainer",
+      "label": "Explicación causal"
+    },
+    {
+      "id": "market-move",
+      "label": "Movimiento de mercado"
+    },
+    {
+      "id": "macro-chain",
+      "label": "Cadena macroeconómica"
+    },
+    {
+      "id": "policy-impact",
+      "label": "Impacto de una política"
+    },
+    {
+      "id": "company-event",
+      "label": "Evento empresarial"
+    },
+    {
+      "id": "myth-vs-data",
+      "label": "Mito frente a datos"
+    }
+  ]
+}

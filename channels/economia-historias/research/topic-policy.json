@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "preferredTopics": [
+    "macroeconomía",
+    "mercados",
+    "política monetaria",
+    "empresas",
+    "energía",
+    "tecnología y productividad"
+  ],
+  "excludedTopics": [
+    "recomendaciones personalizadas",
+    "señales de trading",
+    "rumores sin fuente"
+  ],
+  "defaultTone": "explicativo-documental",
+  "defaultAudience": "público general interesado en economía"
+}

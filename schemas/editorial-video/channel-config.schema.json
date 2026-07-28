@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://shortsmith.local/schemas/editorial-video/channel-config.schema.json",
+  "title": "Editorial video channel configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "id",
+    "label",
+    "language",
+    "formats",
+    "episode",
+    "research",
+    "editorial",
+    "visual",
+    "workflow"
+  ],
+  "properties": {
+    "version": {
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]{1,62}[a-z0-9])?$"
+    },
+    "label": {
+      "type": "string",
+      "minLength": 2,
+      "maxLength": 100
+    },
+    "language": {
+      "type": "string",
+      "pattern": "^[a-z]{2}(?:-[A-Z]{2})?$"
+    },
+    "formats": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "landscape",
+          "vertical",
+          "square",
+          "portrait"
+        ]
+      }
+    },
+    "episode": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targetMinutes",
+        "sourceCount"
+      ],
+      "properties": {
+        "targetMinutes": {
+          "$ref": "#/$defs/minMaxPositive"
+        },
+        "sourceCount": {
+          "$ref": "#/$defs/minMaxPositiveInteger"
+        }
+      }
+    },
+    "research": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lookbackHours",
+        "minimumIndependentSources",
+        "connectors"
+      ],
+      "properties": {
+        "lookbackHours": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 8760
+        },
+        "minimumIndependentSources": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "connectors": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "manual",
+              "rss",
+              "json-feed"
+            ]
+          }
+        }
+      }
+    },
+    "editorial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "defaultTemplate",
+        "requireClaimEvidence",
+        "requireNumericDataRef"
+      ],
+      "properties": {
+        "defaultTemplate": {
+          "enum": [
+            "causal-explainer",
+            "market-move",
+            "macro-chain",
+            "policy-impact",
+            "company-event",
+            "myth-vs-data"
+          ]
+        },
+        "requireClaimEvidence": {
+          "type": "boolean"
+        },
+        "requireNumericDataRef": {
+          "type": "boolean"
+        }
+      }
+    },
+    "visual": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "brandProfileId",
+        "themeAllowlist",
+        "motionProfileAllowlist",
+        "headerPolicy",
+        "watermark"
+      ],
+      "properties": {
+        "brandProfileId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+        },
+        "themeAllowlist": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"
+          }
+        },
+        "motionProfileAllowlist": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "restrained",
+              "editorial",
+              "kinetic",
+              "technical",
+              "cinematic"
+            ]
+          }
+        },
+        "headerPolicy": {
+          "enum": [
+            "optional-centered",
+            "required-centered",
+            "hidden"
+          ]
+        },
+        "watermark": {
+          "type": "boolean"
+        }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "humanGates"
+      ],
+      "properties": {
+        "humanGates": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "story-approved",
+              "preview-approved",
+              "publish-confirmed"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "minMaxPositive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "max": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "minMaxPositiveInteger": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "min",
+        "max"
+      ],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

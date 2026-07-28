@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "id": "economia-historias",
+  "label": "Economía e historias",
+  "language": "es",
+  "formats": [
+    "landscape"
+  ],
+  "episode": {
+    "targetMinutes": {
+      "min": 6,
+      "max": 10
+    },
+    "sourceCount": {
+      "min": 3,
+      "max": 6
+    }
+  },
+  "research": {
+    "lookbackHours": 72,
+    "minimumIndependentSources": 2,
+    "connectors": [
+      "manual",
+      "rss"
+    ]
+  },
+  "editorial": {
+    "defaultTemplate": "causal-explainer",
+    "requireClaimEvidence": true,
+    "requireNumericDataRef": true
+  },
+  "visual": {
+    "brandProfileId": "economia-historias",
+    "themeAllowlist": [
+      "editorial-ivory",
+      "signal-cobalt",
+      "oxide-documentary"
+    ],
+    "motionProfileAllowlist": [
+      "restrained",
+      "editorial",
+      "technical",
+      "cinematic"
+    ],
+    "headerPolicy": "optional-centered",
+    "watermark": false
+  },
+  "workflow": {
+    "humanGates": [
+      "story-approved",
+      "preview-approved",
+      "publish-confirmed"
+    ]
+  }
+}

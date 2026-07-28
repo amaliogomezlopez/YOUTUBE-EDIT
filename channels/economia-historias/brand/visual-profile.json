@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "id": "economia-historias",
+  "label": "Economía e historias",
+  "format": {
+    "id": "landscape",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30
+  },
+  "typography": {
+    "display": "Schibsted Grotesk",
+    "data": "Fragment Mono"
+  },
+  "palette": {
+    "paper": "#F3EBDD",
+    "ink": "#16202A",
+    "cobalt": "#2457E6",
+    "oxide": "#A64B2A",
+    "positive": "#2F7D5A",
+    "negative": "#B83B3B"
+  },
+  "safeZonePercent": 6,
+  "headerPolicy": "optional-centered",
+  "watermark": false
+}

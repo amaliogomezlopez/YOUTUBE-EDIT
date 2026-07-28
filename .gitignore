@@ -10,6 +10,7 @@ data/fonts/*
 data/models/*
 data/review/*
 data/transcriptions/*
+data/channels/*
 data/*.log
 data/.shortsmith.lock
 data/secrets/*
@@ -29,3 +30,5 @@ samples/input/*.mp4
 !data/tmp/.gitkeep
 !data/carousels/.gitkeep
 !data/fonts/.gitkeep
+!data/channels/.gitkeep
+remotion-animations/public/assets/library/economia-historias/episodes/*

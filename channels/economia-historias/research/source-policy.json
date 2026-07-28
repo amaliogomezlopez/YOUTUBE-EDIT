@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "connectors": {
+    "manual": {
+      "enabled": true
+    },
+    "rss": {
+      "enabled": true
+    },
+    "json-feed": {
+      "enabled": false
+    }
+  },
+  "network": {
+    "allowedProtocols": [
+      "https:"
+    ],
+    "allowedHosts": [],
+    "maximumResponseBytes": 5242880,
+    "timeoutMs": 15000,
+    "maximumRedirects": 3
+  },
+  "retention": {
+    "rawContentDays": 30,
+    "shortExcerptCharacters": 320
+  },
+  "requirePublisher": true,
+  "requirePublishedAt": true
+}
