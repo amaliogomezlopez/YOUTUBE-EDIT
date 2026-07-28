@@ -39,6 +39,7 @@ import {
   runReviewQa,
   updateReviewSession
 } from './lib/remotion-review.js';
+import {searchEditorialAssets} from './lib/editorial-asset-search.js';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const REMOTION_PUBLIC_DIR = path.join(ROOT, 'remotion-animations', 'public');
@@ -444,6 +445,30 @@ async function handleApi(req, res, url) {
   }
   if (req.method === 'GET' && url.pathname === '/api/fonts') {
     sendJson(res, 200, {fonts: await dashboardFonts()});
+    return;
+  }
+  if (req.method === 'GET' && url.pathname === '/api/editorial-assets/search') {
+    try {
+      sendJson(res, 200, await searchEditorialAssets({
+        query: url.searchParams.get('q'),
+        kind: url.searchParams.get('kind') || 'image',
+        limit: url.searchParams.get('limit') || 18
+      }));
+    } catch (error) {
+      const status = Number(error?.status);
+      if (status >= 400 && status < 500) {
+        sendJson(res, status, {
+          error: error.message,
+          code: error.code || 'INVALID_ASSET_SEARCH'
+        });
+      } else {
+        console.error(`Editorial asset search failed: ${error?.name || 'Error'} (${error?.code || 'ASSET_SEARCH_FAILED'})`);
+        sendJson(res, 502, {
+          error: 'No se pudo completar la búsqueda de assets.',
+          code: 'ASSET_SEARCH_FAILED'
+        });
+      }
+    }
     return;
   }
   if (req.method === 'GET' && url.pathname === '/api/remotion-review/catalog') {

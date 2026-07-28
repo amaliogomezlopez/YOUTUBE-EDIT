@@ -610,7 +610,13 @@
       "tool-stack"
     ],
     "images": [
-      "demo-index-2025"
+      "demo-index-2025",
+      "finance-cavaliers-alphabet",
+      "finance-cavaliers-apple",
+      "finance-cavaliers-market-screen",
+      "finance-cavaliers-meta",
+      "finance-cavaliers-nvidia",
+      "finance-cavaliers-tesla"
     ],
     "selectionModes": [
       "deterministic-catalog",

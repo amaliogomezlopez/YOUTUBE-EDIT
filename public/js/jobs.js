@@ -561,7 +561,7 @@ export function initJobs() {
   }
 
   function activateView(hash = location.hash) {
-    const target = ['#production-view', '#library-view', '#stories-view', '#carousels-view'].includes(hash) ? hash : '#production-view';
+    const target = ['#production-view', '#library-view', '#assets-view', '#stories-view', '#carousels-view'].includes(hash) ? hash : '#production-view';
     $$('.view-section').forEach((view) => { view.hidden = `#${view.id}` !== target; });
     $$('.nav-item').forEach((item) => {
       const active = item.getAttribute('href') === target;

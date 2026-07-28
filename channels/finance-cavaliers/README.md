@@ -42,6 +42,23 @@ data/channels/finance-cavaliers/episodes/<episode-id>/
 Todo `data/channels/` está ignorado por Git para evitar publicar contenido,
 audios o fuentes privadas.
 
+## Buscador de assets
+
+La vista `Assets` de Shortsmith combina:
+
+- el catálogo local registrado, disponible sin conexión;
+- Pexels para fotografías y vídeos, con `PEXELS_API_KEY`;
+- Brandfetch para buscar empresas y logos por nombre, dominio o ticker, con
+  `BRANDFETCH_CLIENT_ID`.
+
+Los resultados remotos son candidatos, no assets de render. Antes de usarlos
+se importan a `remotion-animations/public/assets/library/`, se normalizan y se
+registran con URL de origen, autor, licencia y hash. Remotion nunca descarga
+imágenes o logos durante el render.
+
+Los logos identifican a una empresa en contexto editorial y no implican
+afiliación. Deben respetarse las condiciones y derechos de marca del titular.
+
 ## Límites
 
 Compartido:

@@ -29,6 +29,10 @@
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 8.5a2 2 0 0 1 2-2h4l2 2.5h7a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z"/></svg>
             <span><strong>Biblioteca</strong><small>Proyectos recientes</small></span>
           </a>
+          <a class="nav-item" id="nav-assets" href="#assets-view">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 11.5l2-2 2 2 2.5-3"/></svg>
+            <span><strong>Assets</strong><small>Imágenes, vídeo y logos</small></span>
+          </a>
           <a class="nav-item" id="nav-stories" href="#stories-view">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
             <span><strong>Stories</strong><small>Secuencias 9:16</small></span>
@@ -304,6 +308,22 @@
             </div>
             <div id="storage-cleanup-preview" class="storage-preview" aria-live="polite"></div>
           </section>
+        </section>
+
+        <section id="assets-view" class="view-section assets-view" aria-labelledby="assets-title" hidden>
+          <header class="section-header">
+            <div><span class="section-label">Biblioteca visual con procedencia</span><h2 id="assets-title">Busca imágenes, vídeos y logos empresariales</h2><p>Los resultados remotos sirven para seleccionar recursos. Antes de renderizar, se importan a la biblioteca local con licencia, autor y hash.</p></div>
+            <span class="evidence-badge">Render siempre local</span>
+          </header>
+          <form id="asset-search-form" class="asset-search-form">
+            <label class="asset-query"><span>Qué necesitas</span><input name="query" type="search" minlength="2" maxlength="120" required autocomplete="off" placeholder="NVIDIA, centros de datos, mercados…"></label>
+            <label><span>Tipo</span><select name="kind"><option value="image">Imágenes</option><option value="video">Vídeos</option><option value="logo">Logos de empresas</option></select></label>
+            <button class="primary-action compact" type="submit">Buscar assets</button>
+          </form>
+          <p id="asset-search-note" class="asset-search-note" aria-live="polite">El catálogo local funciona sin conexión. Pexels y Brandfetch requieren sus credenciales en <code>.env</code>.</p>
+          <div id="asset-search-results" class="asset-search-results" aria-live="polite">
+            <div class="empty-state compact-empty"><div><strong>Busca por concepto o empresa</strong><p>Los resultados mostrarán proveedor, autor, licencia y fuente original.</p></div></div>
+          </div>
         </section>
 
         <section id="stories-view" class="view-section stories-view" aria-labelledby="stories-title" hidden>

@@ -37,6 +37,13 @@ const chartDatumSchema = z.object({
   value: z.number(),
 });
 
+const sceneAssetSchema = z.object({
+  id: z.string(),
+  kind: z.enum(["image", "logo", "video"]),
+  label: z.string(),
+  path: z.string(),
+});
+
 export const editorialSceneSchema = z.object({
   id: z.string(),
   startSeconds: z.number().min(0),
@@ -52,6 +59,7 @@ export const editorialSceneSchema = z.object({
   valueLabels: z.array(z.string()).max(20),
   metric: metricSchema.optional(),
   chartData: z.array(chartDatumSchema).max(500),
+  assets: z.array(sceneAssetSchema).max(20).default([]),
 });
 
 export const editorialEpisodeSchema = z.object({
@@ -94,6 +102,7 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
       values: [],
       valueLabels: [],
       chartData: [],
+      assets: [],
     },
     {
       id: "scene-demo-002",
@@ -108,6 +117,7 @@ export const defaultEditorialEpisodeProps: EditorialEpisodeProps = {
       values: [],
       valueLabels: [],
       chartData: [],
+      assets: [],
     },
   ],
 };

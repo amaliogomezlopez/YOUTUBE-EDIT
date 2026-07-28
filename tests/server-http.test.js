@@ -76,6 +76,8 @@ test('HTTP server applies security headers, CSRF and sanitized queue DTOs', {tim
     assert.match(page.headers.get('content-security-policy'), /frame-ancestors 'none'/);
     assert.equal(page.headers.get('x-frame-options'), 'DENY');
     const pageHtml = await page.text();
+    assert.match(pageHtml, /id="assets-view"/);
+    assert.match(pageHtml, /id="asset-search-form"/);
     assert.match(pageHtml, /id="carousels-view"/);
     assert.match(pageHtml, /data-caption-studio/);
     assert.match(pageHtml, /name="subtitleHeroScale"/);
@@ -83,6 +85,9 @@ test('HTTP server applies security headers, CSRF and sanitized queue DTOs', {tim
     const carouselModule = await fetch(`${baseUrl}/js/carousels.js`, {headers: authHeaders});
     assert.equal(carouselModule.status, 200);
     assert.match(carouselModule.headers.get('content-type'), /javascript/);
+    const assetModule = await fetch(`${baseUrl}/js/assets.js`, {headers: authHeaders});
+    assert.equal(assetModule.status, 200);
+    assert.match(assetModule.headers.get('content-type'), /javascript/);
     const fontsResponse = await fetch(`${baseUrl}/api/fonts`, {headers: authHeaders});
     assert.equal(fontsResponse.status, 200);
     const fonts = await fontsResponse.json();

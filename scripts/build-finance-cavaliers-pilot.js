@@ -20,6 +20,44 @@ const DEFAULT_EPISODE_DIRECTORY = path.join(
   '1'
 );
 const REFERENCE_URL = 'https://www.youtube.com/watch?v=QNFLN6IvB88';
+const COMPANY_LOGO_ASSETS = [
+  {
+    id: 'finance-cavaliers-nvidia',
+    kind: 'logo',
+    label: 'NVIDIA',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-nvidia.png'
+  },
+  {
+    id: 'finance-cavaliers-apple',
+    kind: 'logo',
+    label: 'APPLE',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-apple.png'
+  },
+  {
+    id: 'finance-cavaliers-alphabet',
+    kind: 'logo',
+    label: 'ALPHABET',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-alphabet.png'
+  },
+  {
+    id: 'finance-cavaliers-meta',
+    kind: 'logo',
+    label: 'META',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-meta.png'
+  },
+  {
+    id: 'finance-cavaliers-tesla',
+    kind: 'logo',
+    label: 'TESLA',
+    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-tesla.png'
+  }
+];
+const MARKET_IMAGE_ASSET = {
+  id: 'finance-cavaliers-market-screen',
+  kind: 'image',
+  label: 'Pantalla de mercados',
+  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-screen.jpg'
+};
 const SLOOS_DDP_URL =
   'https://www.federalreserve.gov/datadownload/Choose.aspx?rel=sloos';
 const SLOOS_RELEASE_URL =
@@ -911,6 +949,14 @@ async function main() {
       group.endSeconds
     );
     const status = factualStatusFor(sceneClaims);
+    const companyAssets =
+      midpoint >= 37 && midpoint < 405
+        ? COMPANY_LOGO_ASSETS
+        : [];
+    const sceneAssets = [
+      ...companyAssets,
+      ...(index === 1 ? [MARKET_IMAGE_ASSET] : [])
+    ];
     const words = allWords
       .map((word, wordIndex) => ({...word, wordIndex}))
       .filter((word) =>
@@ -959,19 +1005,23 @@ async function main() {
         index % 4 === 0 ? 'focus.path-follow' : 'focus.accent-only',
         'exit.clean-fade'
       ],
-      assetRefs: kind === 'brand-cta' ? ['finance-cavaliers-logo'] : [],
+      assetRefs: [
+        ...(kind === 'brand-cta' ? ['finance-cavaliers-logo'] : []),
+        ...sceneAssets.map((asset) => asset.id)
+      ],
       themeId: index % 5 === 0 ? 'oxide-documentary' : 'signal-cobalt',
       motionProfile: index % 7 === 0 ? 'kinetic' : 'editorial',
       soundProfile: 'narration-first',
       soundDecision: 'silence',
       header: {
         text: beat.title,
-        position: 'top-left'
+        position: 'centered'
       },
       props: {
         kind,
         supportingText: beat.supporting,
         factualStatus: status,
+        assets: sceneAssets,
         ...kindData(kind, sloos)
       },
       fallback: {
@@ -1048,7 +1098,8 @@ async function main() {
       values: scene.props.values ?? [],
       valueLabels: scene.props.valueLabels ?? [],
       metric: scene.props.metric,
-      chartData: scene.props.chartData ?? []
+      chartData: scene.props.chartData ?? [],
+      assets: scene.props.assets ?? []
     }))
   };
 

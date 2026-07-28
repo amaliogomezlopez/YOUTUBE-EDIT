@@ -109,93 +109,189 @@ const FrameBackground: React.FC<{accentColor: string}> = ({accentColor}) => {
 
 const SceneHeader: React.FC<{
   scene: EditorialScene;
-  accentColor: string;
-}> = ({scene, accentColor}) => {
+}> = ({scene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const reveal = progress(frame, fps, 0.05, 0.55);
   const headlineSize = Math.max(
-    44,
+    42,
     Math.min(
-      66,
+      62,
       fitText({
         text: scene.headline,
-        withinWidth: 1180,
+        withinWidth: 1420,
         fontFamily: MOTION_FONT_FAMILY,
         fontWeight: "800",
       }).fontSize,
     ),
   );
   return (
-    <>
+    <div
+      style={{
+        alignItems: "center",
+        display: "flex",
+        flexDirection: "column",
+        left: 150,
+        opacity: reveal,
+        position: "absolute",
+        right: 150,
+        textAlign: "center",
+        top: 48,
+        transform: `translateY(${interpolate(reveal, [0, 1], [-16, 0])}px)`,
+        zIndex: 5,
+      }}
+    >
+      <div
+        style={{
+          color: COLORS.white,
+          fontFamily: MOTION_FONT_FAMILY,
+          fontSize: headlineSize,
+          fontWeight: 840,
+          letterSpacing: -1.7,
+          lineHeight: 1,
+          maxWidth: 1420,
+        }}
+      >
+        {scene.headline}
+      </div>
+      <div
+        style={{
+          color: COLORS.muted,
+          fontFamily: MOTION_FONT_FAMILY,
+          fontSize: 22,
+          fontWeight: 540,
+          lineHeight: 1.25,
+          marginTop: 12,
+          maxWidth: 1180,
+        }}
+      >
+        {scene.supportingText}
+      </div>
+    </div>
+  );
+};
+
+const normalizeCompanyLabel = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const logoForLabel = (scene: EditorialScene, label: string) =>
+  scene.assets.find(
+    (asset) =>
+      asset.kind === "logo" &&
+      normalizeCompanyLabel(asset.label) === normalizeCompanyLabel(label),
+  );
+
+const CompanyMark: React.FC<{
+  scene: EditorialScene;
+  label: string;
+  size: number;
+}> = ({scene, label, size}) => {
+  const asset = logoForLabel(scene, label);
+  if (!asset) {
+    return (
       <div
         style={{
           alignItems: "center",
+          color: COLORS.white,
           display: "flex",
-          gap: 14,
-          left: 92,
-          opacity: reveal,
-          position: "absolute",
-          top: 48,
-          zIndex: 5,
+          fontFamily: MOTION_FONT_FAMILY,
+          fontSize: Math.round(size * 0.42),
+          fontWeight: 900,
+          height: size,
+          justifyContent: "center",
+          width: size,
         }}
       >
+        {label.slice(0, 1)}
+      </div>
+    );
+  }
+  return (
+    <Img
+      src={staticFile(asset.path)}
+      style={{
+        height: size,
+        objectFit: "contain",
+        width: size,
+      }}
+    />
+  );
+};
+
+const CompanyLogoRibbon: React.FC<{scene: EditorialScene}> = ({scene}) => {
+  const logos = scene.assets.filter((asset) => asset.kind === "logo").slice(0, 7);
+  if (!logos.length) return null;
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        bottom: 76,
+        display: "flex",
+        gap: 22,
+        justifyContent: "center",
+        left: 180,
+        position: "absolute",
+        right: 180,
+        zIndex: 4,
+      }}
+    >
+      {logos.map((asset) => (
         <div
+          key={asset.id}
           style={{
-            background: accentColor,
-            height: 5,
-            width: 54 * reveal,
-          }}
-        />
-        <div
-          style={{
-            color: accentColor,
-            fontFamily: MOTION_FONT_FAMILY,
-            fontSize: 18,
-            fontWeight: 700,
-            letterSpacing: 2.2,
+            alignItems: "center",
+            background: alpha(COLORS.surface, 0.9),
+            border: `1px solid ${alpha(COLORS.white, 0.12)}`,
+            borderRadius: 12,
+            display: "flex",
+            height: 56,
+            justifyContent: "center",
+            width: 72,
           }}
         >
-          FINANCE CAVALIERS · EVIDENCIA
+          <Img
+            src={staticFile(asset.path)}
+            style={{height: 34, objectFit: "contain", width: 42}}
+          />
         </div>
-      </div>
-      <div
+      ))}
+    </div>
+  );
+};
+
+const AssetBackdrop: React.FC<{scene: EditorialScene}> = ({scene}) => {
+  const frame = useCurrentFrame();
+  const {durationInFrames} = useVideoConfig();
+  const asset = scene.assets.find((candidate) => candidate.kind === "image");
+  if (!asset) return null;
+  const travel = interpolate(
+    frame,
+    [0, Math.max(1, durationInFrames - 1)],
+    [0, 1],
+    clamp,
+  );
+  return (
+    <AbsoluteFill style={{overflow: "hidden", zIndex: 1}}>
+      <Img
+        src={staticFile(asset.path)}
         style={{
-          left: 92,
-          opacity: reveal,
+          height: "112%",
+          left: `${-6 + travel * -2}%`,
+          objectFit: "cover",
+          opacity: 0.34,
           position: "absolute",
-          top: 92,
-          transform: `translateY(${interpolate(reveal, [0, 1], [-16, 0])}px)`,
-          zIndex: 5,
+          top: "-6%",
+          transform: `scale(${1.02 + travel * 0.06})`,
+          width: "112%",
         }}
-      >
-        <div
-          style={{
-            color: COLORS.white,
-            fontFamily: MOTION_FONT_FAMILY,
-            fontSize: headlineSize,
-            fontWeight: 840,
-            letterSpacing: -1.7,
-            lineHeight: 1,
-            maxWidth: 1260,
-          }}
-        >
-          {scene.headline}
-        </div>
-        <div
-          style={{
-            color: COLORS.muted,
-            fontFamily: MOTION_FONT_FAMILY,
-            fontSize: 23,
-            fontWeight: 540,
-            marginTop: 12,
-            maxWidth: 1100,
-          }}
-        >
-          {scene.supportingText}
-        </div>
-      </div>
-    </>
+      />
+      <AbsoluteFill
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(5,8,23,.42), rgba(5,8,23,.82) 55%, #050817 100%)",
+        }}
+      />
+    </AbsoluteFill>
   );
 };
 
@@ -395,9 +491,9 @@ const Orbit: React.FC<{
       {labels.map((label, index) => {
         const angle = (index / labels.length) * Math.PI * 2 - Math.PI / 2 + orbit;
         const radiusX = 520;
-        const radiusY = 260;
+        const radiusY = 245;
         const x = 864 + Math.cos(angle) * radiusX;
-        const y = 410 + Math.sin(angle) * radiusY;
+        const y = 565 + Math.sin(angle) * radiusY;
         const reveal = progress(frame, fps, 0.2 + index * 0.16, 0.8 + index * 0.16);
         return (
           <div
@@ -418,7 +514,17 @@ const Orbit: React.FC<{
               transform: `translate(-50%, -50%) scale(${0.82 + reveal * 0.18})`,
             }}
           >
-            {label}
+            <div
+              style={{
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+              }}
+            >
+              <CompanyMark label={label} scene={scene} size={42} />
+              <span>{label}</span>
+            </div>
           </div>
         );
       })}
@@ -490,16 +596,23 @@ const BarPanel: React.FC<{
             />
             <div
               style={{
+                alignItems: "center",
                 color: COLORS.muted,
+                display: "flex",
+                flexDirection: "column",
                 fontFamily: MOTION_FONT_FAMILY,
                 fontSize: compact ? 14 : 17,
                 fontWeight: 700,
+                gap: 8,
                 lineHeight: 1.2,
                 marginTop: 16,
                 minHeight: 42,
                 textAlign: "center",
               }}
             >
+              {logoForLabel(scene, labels[index]) ? (
+                <CompanyMark label={labels[index]} scene={scene} size={32} />
+              ) : null}
               {labels[index]}
             </div>
           </div>
@@ -1057,8 +1170,8 @@ const EditorialGuard: React.FC<{
         letterSpacing: 1.2,
         padding: "12px 18px",
         position: "absolute",
-        right: 84,
-        top: 48,
+        bottom: 28,
+        right: 58,
         zIndex: 20,
       }}
     >
@@ -1134,10 +1247,16 @@ export const FinanceEditorialScene: React.FC<{
       }}
     >
       <FrameBackground accentColor={accentColor} />
-      {headerVisible ? <SceneHeader scene={scene} accentColor={accentColor} /> : null}
+      <AssetBackdrop scene={scene} />
+      {headerVisible ? <SceneHeader scene={scene} /> : null}
       <AbsoluteFill style={{zIndex: 2}}>{content}</AbsoluteFill>
       {headerVisible ? (
         <SourceFooter label={scene.sourceLabel} conceptual={conceptual} />
+      ) : null}
+      {headerVisible &&
+      scene.assets.length > 0 &&
+      !["company-orbit", "mag7-weights", "sector-bars"].includes(scene.kind) ? (
+        <CompanyLogoRibbon scene={scene} />
       ) : null}
       <EditorialGuard scene={scene} previewMode={previewMode} />
     </AbsoluteFill>

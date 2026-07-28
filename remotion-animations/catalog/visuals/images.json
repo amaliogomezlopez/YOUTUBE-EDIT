@@ -34,6 +34,158 @@
       "assetType": "chart",
       "treatment": "natural",
       "importedAt": "2026-07-27T11:19:29.581Z"
+    },
+    {
+      "id": "finance-cavaliers-alphabet",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-alphabet.png",
+      "alt": "Símbolo de Google usado para identificar Alphabet",
+      "width": 80,
+      "height": 80,
+      "sha256": "248f3d4c43958fbbe56bf31088a976c1565678362927bc4710f04f2bf2813e6a",
+      "sourceSha256": "147b64b183daad84440103815845150903f6175357419b0ccf2e5a6b622e62fa",
+      "source": "https://cdn.simpleicons.org/google/4285F4",
+      "author": "Simple Icons contributors",
+      "license": "Simple Icons CC0; trademark rights retained by brand owner",
+      "attribution": "Icono obtenido de Simple Icons; uso editorial nominativo, sin afiliación.",
+      "tags": [
+        "empresa",
+        "tecnología",
+        "alphabet",
+        "google"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T18:49:55.664Z"
+    },
+    {
+      "id": "finance-cavaliers-apple",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-apple.png",
+      "alt": "Símbolo de Apple",
+      "width": 80,
+      "height": 80,
+      "sha256": "a6539133fb468e3c2444d03450700d9e00edb47f18d014a390aa30f8f3cdf244",
+      "sourceSha256": "b3ae4e57a61d141b1deaedb7328f49aeb94e109b2438eab2c83f33f0b987964f",
+      "source": "https://cdn.simpleicons.org/apple/FFFFFF",
+      "author": "Simple Icons contributors",
+      "license": "Simple Icons CC0; trademark rights retained by brand owner",
+      "attribution": "Icono obtenido de Simple Icons; uso editorial nominativo, sin afiliación.",
+      "tags": [
+        "empresa",
+        "tecnología",
+        "apple"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T18:49:54.345Z"
+    },
+    {
+      "id": "finance-cavaliers-market-screen",
+      "publicPath": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-screen.jpg",
+      "alt": "Pantalla con gráficas y datos de mercados financieros",
+      "width": 4618,
+      "height": 2598,
+      "sha256": "1539d370f9bfc94c950f77263318d4742aa08d3a741faeb8c1e6f437a72d9aed",
+      "sourceSha256": "8fc3c7f4ef684b76ea8b6a95e3c83ec3def8f674f7ba28d72330c334a352946a",
+      "source": "https://www.pexels.com/photo/stock-exchange-charts-4960438/",
+      "author": "George Morina",
+      "license": "Pexels License",
+      "attribution": "Foto de George Morina en Pexels.",
+      "tags": [
+        "mercados",
+        "finanzas",
+        "pantalla",
+        "gráficas"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "photo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T18:55:39.905Z"
+    },
+    {
+      "id": "finance-cavaliers-meta",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-meta.png",
+      "alt": "Logotipo de Meta",
+      "width": 80,
+      "height": 80,
+      "sha256": "2baa48cb9b1c16cdf898f93b68bf39342987e547c607a558d33759d4861caf3a",
+      "sourceSha256": "bd0e76c68aa4af5b07e874c70a8318677f0d19610c764fadb4f7823d0cc7e21d",
+      "source": "https://cdn.simpleicons.org/meta/0866FF",
+      "author": "Simple Icons contributors",
+      "license": "Simple Icons CC0; trademark rights retained by brand owner",
+      "attribution": "Icono obtenido de Simple Icons; uso editorial nominativo, sin afiliación.",
+      "tags": [
+        "empresa",
+        "tecnología",
+        "meta"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T18:49:57.028Z"
+    },
+    {
+      "id": "finance-cavaliers-nvidia",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-nvidia.png",
+      "alt": "Logotipo de NVIDIA",
+      "width": 80,
+      "height": 80,
+      "sha256": "d274010019ea4cdc4c6ffb1143c6c3aa774d7b026405e238751d538361ec2ea0",
+      "sourceSha256": "db04aa87719392f22aa280fa0c9086d70d9e805024749747676fea820f7b00b4",
+      "source": "https://cdn.simpleicons.org/nvidia/76B900",
+      "author": "Simple Icons contributors",
+      "license": "Simple Icons CC0; trademark rights retained by brand owner",
+      "attribution": "Icono obtenido de Simple Icons; uso editorial nominativo, sin afiliación.",
+      "tags": [
+        "empresa",
+        "tecnología",
+        "nvidia"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T18:49:53.101Z"
+    },
+    {
+      "id": "finance-cavaliers-tesla",
+      "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-tesla.png",
+      "alt": "Logotipo de Tesla",
+      "width": 80,
+      "height": 80,
+      "sha256": "a715b8e83482cfd4a0ce1215563f08c8a0b0912024d387bb7bbeeb7b52edd44f",
+      "sourceSha256": "118e29065871f86e722839cfe48ad9c8d38c26788720cef5794ac92bd424323c",
+      "source": "https://cdn.simpleicons.org/tesla/E82127",
+      "author": "Simple Icons contributors",
+      "license": "Simple Icons CC0; trademark rights retained by brand owner",
+      "attribution": "Icono obtenido de Simple Icons; uso editorial nominativo, sin afiliación.",
+      "tags": [
+        "empresa",
+        "automoción",
+        "tesla"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-28T18:49:58.508Z"
     }
   ]
 }
