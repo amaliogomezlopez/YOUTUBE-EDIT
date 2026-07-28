@@ -13,6 +13,9 @@ Shortsmith remains a local-first Node.js application, but long-running work is s
 5. Publishers persist a run before contacting a platform. Upload sessions and remote processing IDs are saved so work can reconcile after a restart.
 6. The browser only calls local `/api/*` endpoints. It renders queue and publishing state, and requires a human confirmation before publication.
 7. A single-instance lock prevents two servers from mutating the same queue files. Scheduled work is persisted as `runAfter` and recovered on startup.
+8. Investigated editorial episodes use a channel-neutral domain module. Their
+   manifest is revisioned and atomic, while channel identity and policy remain
+   versioned configuration under `channels/`.
 
 ## Job state contract
 
@@ -74,3 +77,14 @@ Additional queue metadata is stored under `queue`: attempt, maximum attempts, po
 - FFmpeg smoke tests for crop, fit, PIP, manual in/out and cancellation.
 - Dashboard tests for long text, empty state, network errors and repeated actions.
 - No test performs a real external publication.
+
+## Editorial episode boundary
+
+- `src/modules/editorial-video/` may reuse shared adapters, but shared
+  libraries never import a concrete channel.
+- `channels/<channel-id>/` stores brand, policy and prompts; runtime evidence
+  and media stay under ignored `data/channels/`.
+- Every manifest update requires the current revision. Public DTOs omit local
+  files, queue payloads, provider errors and publication idempotency keys.
+- Expensive editorial stages use `PersistentJobQueue`; no second queue,
+  server, LLM, STT or Remotion project is introduced.

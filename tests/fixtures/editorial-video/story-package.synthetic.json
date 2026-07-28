@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "episodeId": "episode-20260728090000-deadbeef",
+  "title": "La historia del índice Alfa",
+  "thesis": "Un movimiento puede estar claro aunque su causa siga discutida.",
+  "audiencePromise": "Entender el dato y la incertidumbre sin inventar una explicación.",
+  "narrativeTemplate": "causal-explainer",
+  "hook": "El índice subió doce puntos, pero las fuentes no coinciden en el porqué.",
+  "beats": [
+    {
+      "id": "beat-hook",
+      "order": 0,
+      "narrativeFunction": "hook",
+      "claimRefs": [
+        "claim-output"
+      ],
+      "emotion": "curiosidad",
+      "visualObjective": "Mostrar la variación confirmada.",
+      "estimatedDurationSeconds": 15
+    },
+    {
+      "id": "beat-counterpoint",
+      "order": 1,
+      "narrativeFunction": "counterpoint",
+      "claimRefs": [
+        "claim-cause"
+      ],
+      "emotion": "incertidumbre",
+      "visualObjective": "Contrastar las explicaciones sin resolverlas.",
+      "estimatedDurationSeconds": 20
+    }
+  ],
+  "scriptSections": [
+    {
+      "id": "section-opening",
+      "order": 0,
+      "heading": "El dato",
+      "text": "El índice Alfa pasó de cien a ciento doce unidades.",
+      "claimRefs": [
+        "claim-output"
+      ],
+      "sourceRefs": [
+        "source-alpha"
+      ]
+    },
+    {
+      "id": "section-cause",
+      "order": 1,
+      "heading": "La duda",
+      "text": "Las fuentes de prueba no coinciden sobre la causa.",
+      "claimRefs": [
+        "claim-cause"
+      ],
+      "sourceRefs": [
+        "source-alpha",
+        "source-beta"
+      ]
+    }
+  ],
+  "claimRefs": [
+    "claim-output",
+    "claim-cause"
+  ],
+  "sourceRefs": [
+    "source-alpha",
+    "source-beta"
+  ],
+  "estimatedDurationSeconds": 35,
+  "disclaimerRefs": [
+    "disclaimer-editorial"
+  ],
+  "dossierRevision": 1,
+  "dossierSha256": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  "approval": {
+    "status": "pending",
+    "approvedAt": null,
+    "approvedRevision": null,
+    "notes": ""
+  },
+  "generatedAt": "2026-07-28T09:05:00.000Z"
+}

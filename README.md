@@ -17,6 +17,8 @@ Herramienta local para convertir un vídeo largo en transcripción, clips vertic
 - Subtítulos progresivos editables: presets, jerarquía visual, palabras acumulativas, fuentes locales y fallback por palabra o línea.
 - Dashboard local organizado en Producción, Biblioteca, Storysmith y Carouselsmith.
 - Carouselsmith independiente: 10 layouts, imágenes importadas o generadas, overlays SVG, edición persistente y exportación PNG/JPEG 4:5 y 9:16.
+- Fundaciones de vídeo editorial investigado: canales configurables, dossiers
+  trazables, manifests revisionados, estados con gates y CLI local.
 - Animation Scout local: muestreo visual denso, hojas de contacto, perfil de movimiento y análisis multimodal opcional para llevar referencias a Remotion.
 - Ingestión local de gráficas para preparar assets, calibrar ejes, seleccionar tramos y generar props de Remotion con fallback controlado.
 - Review Studio de Remotion con Player, variantes A/B/C, contexto de vídeo,
@@ -103,6 +105,24 @@ Los resultados quedan en:
 data/output/<job-id>/<clip-id>/short.mp4
 data/output/<job-id>/<clip-id>/metadata.json
 ```
+
+## Episodios editoriales de economía
+
+El canal provisional `economia-historias` ya dispone de configuración,
+schemas, repositorio persistente, máquina de estados y CLI. La UI permanece
+oculta hasta completar el piloto:
+
+```powershell
+npm run editorial-video -- channels
+npm run editorial-video -- create --channel economia-historias
+npm run editorial-video -- list --channel economia-historias
+npm run editorial-video -- show --episode <episode-id>
+```
+
+Los episodios viven en `data/channels/` y no se versionan. Este primer hito no
+recupera noticias, llama a modelos, transcribe, renderiza ni publica. Consulta
+[docs/editorial-video-foundations.md](docs/editorial-video-foundations.md)
+para los contratos y el flujo de recuperación.
 
 ## Scouting visual de animaciones
 

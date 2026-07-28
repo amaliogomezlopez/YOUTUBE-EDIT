@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "episodeId": "episode-20260728090000-deadbeef",
+  "topic": "Movimiento de un índice completamente sintético",
+  "selectedCluster": {
+    "id": "cluster-alpha",
+    "title": "El índice Alfa se mueve",
+    "sourceRefs": [
+      "source-alpha",
+      "source-beta",
+      "source-gamma"
+    ],
+    "score": 78,
+    "reasons": [
+      "Tres fuentes ficticias",
+      "Una contradicción explícita"
+    ]
+  },
+  "sources": [
+    {
+      "id": "source-alpha",
+      "title": "El índice sintético aumenta durante el trimestre",
+      "publisher": "Publicación Alfa",
+      "canonicalUrl": "fixture://finance/source-alpha",
+      "publishedAt": "2026-07-27T08:00:00.000Z",
+      "sourceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "status": "ready"
+    },
+    {
+      "id": "source-beta",
+      "title": "Otra explicación para el movimiento ficticio",
+      "publisher": "Publicación Beta",
+      "canonicalUrl": "fixture://finance/source-beta",
+      "publishedAt": "2026-07-27T10:00:00.000Z",
+      "sourceHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "status": "ready"
+    },
+    {
+      "id": "source-gamma",
+      "title": "Contexto del escenario de prueba",
+      "publisher": "Publicación Gamma",
+      "canonicalUrl": "fixture://finance/source-gamma",
+      "publishedAt": "2026-07-26T12:00:00.000Z",
+      "sourceHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "status": "ready"
+    }
+  ],
+  "claims": [
+    {
+      "id": "claim-output",
+      "statement": "El índice sintético pasó de 100 a 112 unidades.",
+      "type": "numeric",
+      "sourceRefs": [
+        "source-alpha"
+      ],
+      "dataRefs": [
+        "data-index"
+      ],
+      "effectiveAt": "2026-06-30T00:00:00.000Z",
+      "confidence": 1,
+      "status": "supported",
+      "notes": "Dato inventado únicamente para pruebas offline."
+    },
+    {
+      "id": "claim-cause",
+      "statement": "Las fuentes ficticias discrepan sobre la causa.",
+      "type": "causal",
+      "sourceRefs": [
+        "source-alpha",
+        "source-beta"
+      ],
+      "dataRefs": [],
+      "effectiveAt": null,
+      "confidence": 0.6,
+      "status": "disputed",
+      "notes": "La contradicción debe conservarse."
+    }
+  ],
+  "dataAssets": [
+    {
+      "id": "data-index",
+      "kind": "series",
+      "sourceUrl": "fixture://finance/data-index",
+      "provider": "Fixture local",
+      "retrievedAt": "2026-07-28T09:00:00.000Z",
+      "timezone": "UTC",
+      "frequency": "trimestral",
+      "unit": "puntos sintéticos",
+      "currency": null,
+      "columns": [
+        "date",
+        "value"
+      ],
+      "range": {
+        "start": "2026-Q1",
+        "end": "2026-Q2"
+      },
+      "localFile": "research/data-index.synthetic.csv",
+      "sha256": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+      "license": "Fixture sintético",
+      "status": "confirmed"
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity-index-alpha",
+      "name": "Índice Alfa",
+      "type": "índice sintético",
+      "aliases": [
+        "Alfa"
+      ]
+    }
+  ],
+  "timeline": [
+    {
+      "at": "2026-06-30T00:00:00.000Z",
+      "label": "El índice sintético alcanza 112 unidades.",
+      "claimRefs": [
+        "claim-output"
+      ],
+      "sourceRefs": [
+        "source-alpha"
+      ]
+    }
+  ],
+  "contradictions": [
+    {
+      "id": "contradiction-cause",
+      "claimRefs": [
+        "claim-cause"
+      ],
+      "summary": "Las causas propuestas no coinciden.",
+      "status": "open"
+    }
+  ],
+  "unknowns": [
+    "No existe una causa confirmada en el fixture."
+  ],
+  "editorialWarnings": [
+    "Contenido totalmente sintético; no publicar."
+  ],
+  "generatedAt": "2026-07-28T09:00:00.000Z"
+}

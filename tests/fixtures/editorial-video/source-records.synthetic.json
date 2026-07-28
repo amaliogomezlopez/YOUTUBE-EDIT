@@ -1,0 +1,105 @@
+[
+  {
+    "version": 1,
+    "id": "source-alpha",
+    "connectorId": "fixture",
+    "url": "fixture://finance/source-alpha",
+    "canonicalUrl": "fixture://finance/source-alpha",
+    "publisher": "Publicación Alfa",
+    "title": "El índice sintético aumenta durante el trimestre",
+    "author": "Autora Alfa",
+    "publishedAt": "2026-07-27T08:00:00.000Z",
+    "retrievedAt": "2026-07-28T09:00:00.000Z",
+    "language": "es",
+    "contentType": "article",
+    "summary": "Una fuente ficticia describe un aumento del índice de prueba.",
+    "shortExcerpts": [
+      "El índice ficticio pasó de 100 a 112 unidades."
+    ],
+    "entities": [
+      {
+        "name": "Índice Alfa",
+        "type": "other",
+        "ticker": null
+      }
+    ],
+    "topics": [
+      "macroeconomía sintética"
+    ],
+    "sourceHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "usagePolicy": {
+      "maySynthesize": true,
+      "mayQuote": true,
+      "maximumExcerptCharacters": 320,
+      "retentionDays": 1,
+      "license": "Fixture sintético"
+    },
+    "status": "ready"
+  },
+  {
+    "version": 1,
+    "id": "source-beta",
+    "connectorId": "fixture",
+    "url": "fixture://finance/source-beta",
+    "canonicalUrl": "fixture://finance/source-beta",
+    "publisher": "Publicación Beta",
+    "title": "Otra explicación para el movimiento ficticio",
+    "author": null,
+    "publishedAt": "2026-07-27T10:00:00.000Z",
+    "retrievedAt": "2026-07-28T09:00:00.000Z",
+    "language": "es",
+    "contentType": "report",
+    "summary": "Una segunda fuente ficticia propone una causa diferente.",
+    "shortExcerpts": [
+      "La causa no puede aislarse con la evidencia disponible."
+    ],
+    "entities": [
+      {
+        "name": "Índice Alfa",
+        "type": "other",
+        "ticker": null
+      }
+    ],
+    "topics": [
+      "macroeconomía sintética"
+    ],
+    "sourceHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "usagePolicy": {
+      "maySynthesize": true,
+      "mayQuote": false,
+      "maximumExcerptCharacters": 0,
+      "retentionDays": 1,
+      "license": "Fixture sintético"
+    },
+    "status": "ready"
+  },
+  {
+    "version": 1,
+    "id": "source-gamma",
+    "connectorId": "fixture",
+    "url": "fixture://finance/source-gamma",
+    "canonicalUrl": "fixture://finance/source-gamma",
+    "publisher": "Publicación Gamma",
+    "title": "Contexto del escenario de prueba",
+    "author": "Equipo Gamma",
+    "publishedAt": "2026-07-26T12:00:00.000Z",
+    "retrievedAt": "2026-07-28T09:00:00.000Z",
+    "language": "es",
+    "contentType": "manual",
+    "summary": "Una tercera fuente aporta contexto puramente ficticio.",
+    "shortExcerpts": [],
+    "entities": [],
+    "topics": [
+      "fixture"
+    ],
+    "sourceHash": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+    "usagePolicy": {
+      "maySynthesize": true,
+      "mayQuote": false,
+      "maximumExcerptCharacters": 0,
+      "retentionDays": 1,
+      "license": "Fixture sintético"
+    },
+    "status": "ready"
+  }
+]

@@ -6,6 +6,7 @@
   "description": "Local creator workflow for transcripts, vertical clips, metadata, stories and official multi-platform publishing.",
   "scripts": {
     "process": "node src/cli.js process",
+    "editorial-video": "node scripts/editorial-video.js",
     "carousel": "node src/modules/carousels/cli.js",
     "scout:animations": "node scripts/animation-scout.js",
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",
