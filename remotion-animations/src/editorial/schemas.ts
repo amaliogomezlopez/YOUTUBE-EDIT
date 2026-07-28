@@ -80,6 +80,7 @@ const semanticCueSchema = z.object({
     "digital-count",
     "processing",
     "pop",
+    "alert-sting",
   ]).optional(),
 });
 

@@ -57,7 +57,7 @@ function parseArgs(argv) {
   return args;
 }
 
-async function exportTranscript({input, output}) {
+export async function exportTranscript({input, output}) {
   const inputFile = path.resolve(input);
   const outputDirectory = path.resolve(output || path.dirname(inputFile));
   const payload = JSON.parse(await readFile(inputFile, 'utf8'));

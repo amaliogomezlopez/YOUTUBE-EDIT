@@ -3,6 +3,11 @@ import {
   DATA_FONT_FAMILY,
   FINANCE_FONT_FAMILY as MOTION_FONT_FAMILY,
 } from "../motion/fonts";
+import {
+  connectorEndpointAtRect,
+  resolveSafeOverlayRect,
+} from "./layoutSafety";
+import type {LayoutRect} from "./layoutSafety";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -149,6 +154,7 @@ const PhraseBadge: React.FC<{
   y?: number;
   align?: "left" | "center" | "right";
   size?: number;
+  avoidRects?: readonly LayoutRect[];
 }> = ({
   scene,
   cueId,
@@ -157,12 +163,31 @@ const PhraseBadge: React.FC<{
   y = 90,
   align = "center",
   size = 38,
+  avoidRects = [],
 }) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const cue = cueFor(scene, cueId);
   const amount = cueAmount(scene, cueId, frame, fps);
   const color = toneColor(cue?.tone ?? "neutral");
+  const label = cue?.label ?? fallback;
+  const estimatedWidth = Math.max(132, label.length * size * 0.59 + 44);
+  const estimatedHeight = size + 34;
+  const preferredLeft =
+    align === "center"
+      ? x - estimatedWidth / 2
+      : align === "right"
+        ? x - estimatedWidth
+        : x;
+  const placement = resolveSafeOverlayRect({
+    preferred: {
+      left: preferredLeft,
+      right: preferredLeft + estimatedWidth,
+      top: y,
+      bottom: y + estimatedHeight,
+    },
+    avoid: avoidRects,
+  });
   return (
     <div
       style={{
@@ -174,22 +199,71 @@ const PhraseBadge: React.FC<{
         fontFamily: MOTION_FONT_FAMILY,
         fontSize: size,
         fontWeight: 850,
-        left: x,
+        left: placement.left,
         letterSpacing: -1,
         opacity: amount,
         padding: "12px 22px 14px",
         position: "absolute",
         textAlign: align,
-        top: y,
-        transform: `translateX(${
-          align === "center" ? "-50%" : align === "right" ? "-100%" : "0"
-        }) scale(${0.94 + amount * 0.06})`,
+        top: placement.top,
+        transform: `scale(${0.94 + amount * 0.06})`,
         transformOrigin: align,
         whiteSpace: "nowrap",
         zIndex: 8,
       }}
     >
-      {cue?.label ?? fallback}
+      {label}
+    </div>
+  );
+};
+
+const AlertSignal: React.FC<{amount: number}> = ({amount}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const beat = 1 + pulse(frame, fps, 0.62) * 0.06 * amount;
+  return (
+    <div
+      style={{
+        alignItems: "center",
+        display: "flex",
+        height: 112,
+        justifyContent: "center",
+        left: 72,
+        opacity: amount,
+        position: "absolute",
+        top: 2,
+        transform: `scale(${(0.72 + amount * 0.28) * beat})`,
+        width: 112,
+        zIndex: 7,
+      }}
+    >
+      <svg height="104" viewBox="0 0 104 104" width="104">
+        <circle
+          cx="52"
+          cy="52"
+          fill="none"
+          opacity={0.24 + pulse(frame, fps, 0.8) * 0.24}
+          r={42 + pulse(frame, fps, 0.8) * 7}
+          stroke={COLORS.white}
+          strokeWidth="3"
+        />
+        <path
+          d="M52 8 L98 91 H6 Z"
+          fill={COLORS.white}
+          stroke={alpha(COLORS.background, 0.28)}
+          strokeLinejoin="round"
+          strokeWidth="4"
+        />
+        <rect
+          fill={COLORS.negative}
+          height="39"
+          rx="5"
+          width="10"
+          x="47"
+          y="33"
+        />
+        <circle cx="52" cy="81" fill={COLORS.negative} r="6" />
+      </svg>
     </div>
   );
 };
@@ -567,6 +641,12 @@ const MarketHealth: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const yTicks = Array.from({length: 5}, (_, index) =>
     range.min + (index / 4) * (range.max - range.min),
   );
+  const axisSafeZone: LayoutRect = {
+    left: plot.left - 92,
+    right: plot.right + 30,
+    top: plot.bottom,
+    bottom: plot.bottom + 76,
+  };
   return (
     <>
       <SectionTitle
@@ -731,6 +811,7 @@ const MarketHealth: React.FC<{scene: EditorialScene}> = ({scene}) => {
       />
       <PhraseBadge
         cueId="first-view"
+        avoidRects={[axisSafeZone]}
         fallback="A PRIMERA VISTA"
         scene={scene}
         x={960}
@@ -739,6 +820,7 @@ const MarketHealth: React.FC<{scene: EditorialScene}> = ({scene}) => {
       />
       <PhraseBadge
         cueId="healthy"
+        avoidRects={[axisSafeZone]}
         fallback="SALUDABLE"
         scene={scene}
         x={960}
@@ -747,6 +829,7 @@ const MarketHealth: React.FC<{scene: EditorialScene}> = ({scene}) => {
       />
       <PhraseBadge
         cueId="corrections"
+        avoidRects={[axisSafeZone]}
         fallback="CORRECCIÓN RECIENTE"
         scene={scene}
         x={960}
@@ -955,6 +1038,7 @@ const MarketContrast: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const secondary = scene.secondaryChartData;
   const primaryOpacity = 1 - second * 0.75;
   const recentIndex = Math.max(0, Math.round(secondary.length * 0.66));
+  const alertActive = however > 0.08;
   return (
     <>
       <div
@@ -970,14 +1054,15 @@ const MarketContrast: React.FC<{scene: EditorialScene}> = ({scene}) => {
           zIndex: 4,
         }}
       />
+      <AlertSignal amount={however} />
       <SectionTitle
         subtitle={
-          however > 0.5
+          alertActive
             ? "La fuerza relativa cuenta una historia distinta"
             : "El precio sigue cerca de máximos"
         }
-        title={however > 0.5 ? "SIN EMBARGO" : "TODO EL MUNDO LO CELEBRA"}
-        tone={however > 0.5 ? COLORS.white : COLORS.positive}
+        title={alertActive ? "SIN EMBARGO" : "TODO EL MUNDO LO CELEBRA"}
+        tone={alertActive ? COLORS.white : COLORS.positive}
       />
       <div
         style={{
@@ -1095,6 +1180,13 @@ const Mag7Relationship: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const logos = cueEntered(scene, "seven", frame, fps);
   const relation = cueEntered(scene, "relationship", frame, fps);
   const labels = scene.labels.slice(0, 7);
+  const cardScale = 0.9 + relation * 0.1;
+  const targetRect: LayoutRect = {
+    left: 960 - 250 * cardScale,
+    right: 960 + 250 * cardScale,
+    top: 585 - 85 * cardScale,
+    bottom: 585 + 85 * cardScale,
+  };
   return (
     <>
       <SectionTitle
@@ -1188,6 +1280,12 @@ const Mag7Relationship: React.FC<{scene: EditorialScene}> = ({scene}) => {
       >
         {labels.map((label, index) => {
           const x = 169 + index * 263.5;
+          const source = {x, y: 350};
+          const endpoint = connectorEndpointAtRect({
+            source,
+            target: targetRect,
+            gap: 5,
+          });
           return (
             <line
               key={label}
@@ -1195,10 +1293,10 @@ const Mag7Relationship: React.FC<{scene: EditorialScene}> = ({scene}) => {
               stroke={alpha(COLORS.cyan, 0.66)}
               strokeDasharray="8 8"
               strokeWidth={2.5}
-              x1={x}
-              x2={960}
-              y1={350}
-              y2={555}
+              x1={source.x}
+              x2={endpoint.x}
+              y1={source.y}
+              y2={endpoint.y}
             />
           );
         })}

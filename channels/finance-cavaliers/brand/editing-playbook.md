@@ -95,6 +95,38 @@ Antes de aprobar una escena:
 - confirmar que no hay una pausa accidental de foco superior a 1,5 segundos;
 - registrar el patrón usado para evitar monotonía en escenas posteriores.
 
+## 8. Seguridad espacial
+
+- Toda etiqueta, tarjeta o llamada usa un carril reservado y declara las zonas
+  que no puede tapar: ejes, fechas, unidades, fuentes y otras anotaciones.
+- Una tarjeta no se coloca sólo con coordenadas fijas. Se calcula su caja
+  completa y se desplaza al slot libre más cercano cuando colisiona.
+- Los conectores terminan en la primera intersección con el borde exterior de
+  su tarjeta. Nunca apuntan al centro atravesando su contenido.
+- Dejar entre 4 y 8 píxeles de respiración antes del borde cuando la línea sea
+  discontinua, tenga brillo o incorpore una punta.
+- Revisar siempre los frames de entrada y salida: una tarjeta escalada también
+  cambia temporalmente el punto de contacto de sus conectores.
+
+## 9. Alertas narrativas
+
+- Un giro explícito —«sin embargo», «atención», «pero»— puede activar el
+  patrón `alert-sting`: icono grande, pulso corto, cambio rojo y golpe sonoro.
+- La alerta aparece con la palabra, no antes, y no permanece como decoración.
+- El icono debe tener una única función narrativa y dejar libre el título.
+
+## 10. Pausas de locución
+
+- Separación estándar entre clips: 0,7 segundos.
+- Las pausas internas superiores a 0,95 segundos se reducen a 0,55 segundos.
+- Un segundo pase basado en tiempos de palabra limita a 0,7 segundos cualquier
+  hueco residual causado por ruido ambiente que `silencedetect` no reconozca.
+- Se preservan respiraciones naturales y pausas expresivas cortas.
+- Ningún silencio accidental puede superar un segundo; una pausa mayor exige
+  una decisión editorial registrada.
+- Después de modificar el audio se recalculan transcripción, escenas y
+  `semanticCue`; nunca se desplaza sólo la pista de audio.
+
 ## Ejemplo de cue
 
 ```json

@@ -1582,22 +1582,33 @@ const cuesForEditorialScene = (
     "digital-count": {file: SOUND_FILES.digitalCount, duration: 0.51, volume: 0.18},
     processing: {file: SOUND_FILES.processing, duration: 1.2, volume: 0.1},
     pop: {file: SOUND_FILES.pop, duration: 0.42, volume: 0.12},
+    "alert-sting": {file: SOUND_FILES.softImpact, duration: 0.58, volume: 0.66},
   } as const;
   if (scene.semanticCues.some((semanticCue) => semanticCue.sound)) {
     return scene.semanticCues
       .filter((semanticCue) => semanticCue.sound)
-      .map((semanticCue) => {
+      .flatMap((semanticCue) => {
         const config = semanticSoundFiles[semanticCue.sound!];
         const emphasis =
           semanticCue.tone === "negative" || semanticCue.action === "verify"
             ? 1.12
             : 1;
-        return cue(
+        const primary = cue(
           config.file,
           semanticCue.atSeconds,
           config.duration,
           config.volume * emphasis,
         );
+        if (semanticCue.sound !== "alert-sting") return [primary];
+        return [
+          primary,
+          cue(
+            SOUND_FILES.uiPulse,
+            semanticCue.atSeconds + 0.13,
+            0.22,
+            0.5,
+          ),
+        ];
       })
       .filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
   }

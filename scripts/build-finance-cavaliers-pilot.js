@@ -83,11 +83,11 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'El mercado empieza a separarse',
     supportingText: 'Dos señales reales, normalizadas para poder compararlas.',
     semanticCues: [
-      {id: 'decade', atSeconds: 0.82, durationSeconds: 1.35, action: 'highlight', target: 'context', label: 'MÁS DE UNA DÉCADA', tone: 'gold', sound: 'smooth-whoosh'},
-      {id: 'two-lines', atSeconds: 4.6, durationSeconds: 1.2, action: 'reveal', target: 'series-seeds', label: 'DOS LÍNEAS', tone: 'cyan', sound: 'data-tick'},
-      {id: 'lines-reveal', atSeconds: 4.9, durationSeconds: 2.5, action: 'reveal', target: 'both-series', tone: 'neutral', sound: 'rise-whoosh'},
-      {id: 'separation', atSeconds: 7.58, durationSeconds: 2.2, action: 'shade', target: 'divergence-gap', tone: 'negative', sound: 'quick-whip'},
-      {id: 'drastic', atSeconds: 8.46, durationSeconds: 1.35, action: 'highlight', target: 'divergence-gap', label: 'SEPARACIÓN DRÁSTICA', tone: 'negative', sound: 'soft-impact'}
+      {id: 'decade', anchorText: 'Por', atSeconds: 0.82, durationSeconds: 1.35, action: 'highlight', target: 'context', label: 'MÁS DE UNA DÉCADA', tone: 'gold', sound: 'smooth-whoosh'},
+      {id: 'two-lines', anchorText: 'dos', atSeconds: 4.6, durationSeconds: 1.2, action: 'reveal', target: 'series-seeds', label: 'DOS LÍNEAS', tone: 'cyan', sound: 'data-tick'},
+      {id: 'lines-reveal', anchorText: 'líneas', atSeconds: 4.9, durationSeconds: 2.5, action: 'reveal', target: 'both-series', tone: 'neutral', sound: 'rise-whoosh'},
+      {id: 'separation', anchorText: 'separando', atSeconds: 7.58, durationSeconds: 2.2, action: 'shade', target: 'divergence-gap', tone: 'negative', sound: 'quick-whip'},
+      {id: 'drastic', anchorText: 'drástica', atSeconds: 8.46, durationSeconds: 1.35, action: 'highlight', target: 'divergence-gap', label: 'SEPARACIÓN DRÁSTICA', tone: 'negative', sound: 'soft-impact'}
     ]
   },
   {
@@ -95,9 +95,9 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'Superficie / señal interna',
     supportingText: 'La misma pantalla cuenta dos historias distintas.',
     semanticCues: [
-      {id: 'reveal', atSeconds: 0.1, durationSeconds: 1.25, action: 'scan', target: 'chart-layers', label: 'LO QUE REVELA', tone: 'neutral', sound: 'processing'},
-      {id: 'below-surface', atSeconds: 4, durationSeconds: 2.3, action: 'reveal', target: 'relative-layer', label: 'BAJO LA SUPERFICIE', tone: 'negative', sound: 'smooth-whoosh'},
-      {id: 'first-line', atSeconds: 6.54, durationSeconds: 2.05, action: 'zoom', target: 'spy-layer', label: 'PRIMERA LÍNEA', tone: 'gold', sound: 'ui-pulse'}
+      {id: 'reveal', anchorText: 'revela', atSeconds: 0.1, durationSeconds: 1.25, action: 'scan', target: 'chart-layers', label: 'LO QUE REVELA', tone: 'neutral', sound: 'processing'},
+      {id: 'below-surface', anchorText: 'bajo', atSeconds: 4, durationSeconds: 2.3, action: 'reveal', target: 'relative-layer', label: 'BAJO LA SUPERFICIE', tone: 'negative', sound: 'smooth-whoosh'},
+      {id: 'first-line', anchorText: 'primera', atSeconds: 6.54, durationSeconds: 2.05, action: 'zoom', target: 'spy-layer', label: 'PRIMERA LÍNEA', tone: 'gold', sound: 'ui-pulse'}
     ]
   },
   {
@@ -105,10 +105,10 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'El precio parece saludable',
     supportingText: 'Cierre de SPY normalizado a base 100.',
     semanticCues: [
-      {id: 'price', atSeconds: 0.5, durationSeconds: 1.25, action: 'focus', target: 'spy-line', label: 'PRECIO DEL S&P 500', tone: 'gold', sound: 'data-tick'},
-      {id: 'first-view', atSeconds: 4.47, durationSeconds: 1.25, action: 'highlight', target: 'full-chart', label: 'A PRIMERA VISTA', tone: 'positive', sound: 'pop'},
-      {id: 'healthy', atSeconds: 6.59, durationSeconds: 1.45, action: 'shade', target: 'chart-background', label: 'SALUDABLE', tone: 'positive', sound: 'success-chime'},
-      {id: 'corrections', atSeconds: 8.55, durationSeconds: 2.1, action: 'zoom', target: '2026-05-28/2026-06-26', label: 'CORRECCIÓN RECIENTE', tone: 'negative', sound: 'quick-whip'}
+      {id: 'price', anchorText: 'precio', atSeconds: 0.5, durationSeconds: 1.25, action: 'focus', target: 'spy-line', label: 'PRECIO DEL S&P 500', tone: 'gold', sound: 'data-tick'},
+      {id: 'first-view', anchorText: 'primera', atSeconds: 4.47, durationSeconds: 1.25, action: 'highlight', target: 'full-chart', label: 'A PRIMERA VISTA', tone: 'positive', sound: 'pop'},
+      {id: 'healthy', anchorText: 'saludable', atSeconds: 6.59, durationSeconds: 1.45, action: 'shade', target: 'chart-background', label: 'SALUDABLE', tone: 'positive', sound: 'success-chime'},
+      {id: 'corrections', anchorText: 'correcciones', atSeconds: 8.55, durationSeconds: 2.1, action: 'zoom', target: '2026-05-28/2026-06-26', label: 'CORRECCIÓN RECIENTE', tone: 'negative', sound: 'quick-whip'}
     ]
   },
   {
@@ -116,11 +116,11 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'Recuperación del índice',
     supportingText: 'Cambio desde la base inicial de la serie.',
     semanticCues: [
-      {id: 'revalued', atSeconds: 0.48, durationSeconds: 1.35, action: 'reveal', target: 'recovery-arrow', label: 'REVALORIZADO', tone: 'positive', sound: 'rise-whoosh'},
-      {id: 'recovered', atSeconds: 3.1, durationSeconds: 1.4, action: 'highlight', target: 'base-gain', label: 'RECUPERANDO TERRENO', tone: 'positive', sound: 'digital-count'},
-      {id: 'highs', atSeconds: 5.3, durationSeconds: 1.3, action: 'zoom', target: 'latest-spy-value', label: 'MÁXIMOS', tone: 'positive', sound: 'soft-impact'},
-      {id: 'historical', atSeconds: 6.02, durationSeconds: 1.2, action: 'focus', target: 'latest-spy-value', label: 'HISTÓRICOS', tone: 'gold', sound: 'ui-pulse'},
-      {id: 'celebrate', atSeconds: 7.72, durationSeconds: 0.4, action: 'highlight', target: 'market-recovery', label: 'EL MERCADO LO CELEBRA', tone: 'positive', sound: 'success-chime'}
+      {id: 'revalued', anchorText: 'revalorizado', atSeconds: 0.48, durationSeconds: 1.35, action: 'reveal', target: 'recovery-arrow', label: 'REVALORIZADO', tone: 'positive', sound: 'rise-whoosh'},
+      {id: 'recovered', anchorText: 'recuperando', atSeconds: 3.1, durationSeconds: 1.4, action: 'highlight', target: 'base-gain', label: 'RECUPERANDO TERRENO', tone: 'positive', sound: 'digital-count'},
+      {id: 'highs', anchorText: 'máximos', atSeconds: 5.3, durationSeconds: 1.3, action: 'zoom', target: 'latest-spy-value', label: 'MÁXIMOS', tone: 'positive', sound: 'soft-impact'},
+      {id: 'historical', anchorText: 'históricos', atSeconds: 6.02, durationSeconds: 1.2, action: 'focus', target: 'latest-spy-value', label: 'HISTÓRICOS', tone: 'gold', sound: 'ui-pulse'},
+      {id: 'celebrate', anchorText: 'celebra', atSeconds: 7.72, durationSeconds: 0.4, action: 'highlight', target: 'market-recovery', label: 'EL MERCADO LO CELEBRA', tone: 'positive', sound: 'success-chime'}
     ]
   },
   {
@@ -128,9 +128,9 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'Sin embargo',
     supportingText: 'La fuerza relativa cuenta una historia distinta.',
     semanticCues: [
-      {id: 'however', atSeconds: 1.58, durationSeconds: 4.8, action: 'highlight', target: 'scene-tone', label: 'SIN EMBARGO', tone: 'negative', sound: 'soft-impact'},
-      {id: 'second-line', atSeconds: 3.72, durationSeconds: 2.55, action: 'focus', target: 'relative-line', label: 'SEGUNDA LÍNEA', tone: 'cyan', sound: 'data-tick'},
-      {id: 'distinct', atSeconds: 5.96, durationSeconds: 0.45, action: 'shade', target: 'recent-relative-segment', label: 'ALGO MUY DISTINTO', tone: 'negative', sound: 'quick-whip'}
+      {id: 'however', anchorText: 'Sin', atSeconds: 1.58, durationSeconds: 4.8, action: 'highlight', target: 'scene-tone', label: 'SIN EMBARGO', tone: 'negative', sound: 'alert-sting'},
+      {id: 'second-line', anchorText: 'segunda', atSeconds: 3.72, durationSeconds: 2.55, action: 'focus', target: 'relative-line', label: 'SEGUNDA LÍNEA', tone: 'cyan', sound: 'data-tick'},
+      {id: 'distinct', anchorText: 'distinto', atSeconds: 5.96, durationSeconds: 0.45, action: 'shade', target: 'recent-relative-segment', label: 'ALGO MUY DISTINTO', tone: 'negative', sound: 'quick-whip'}
     ]
   },
   {
@@ -138,8 +138,8 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'Los siete magníficos',
     supportingText: 'Siete compañías comparadas como grupo frente al índice.',
     semanticCues: [
-      {id: 'seven', atSeconds: 2.68, durationSeconds: 1.4, action: 'reveal', target: 'seven-company-logos', label: 'SIETE EMPRESAS', tone: 'gold', sound: 'rise-whoosh'},
-      {id: 'relationship', atSeconds: 4.32, durationSeconds: 1.55, action: 'connect', target: 'mag7-to-spy', label: 'EN RELACIÓN CON EL MERCADO', tone: 'cyan', sound: 'data-tick'}
+      {id: 'seven', anchorText: 'siete', atSeconds: 2.68, durationSeconds: 1.4, action: 'reveal', target: 'seven-company-logos', label: 'SIETE EMPRESAS', tone: 'gold', sound: 'rise-whoosh'},
+      {id: 'relationship', anchorText: 'relación', atSeconds: 4.32, durationSeconds: 1.55, action: 'connect', target: 'mag7-to-spy', label: 'EN RELACIÓN CON EL MERCADO', tone: 'cyan', sound: 'data-tick'}
     ]
   },
   {
@@ -147,11 +147,11 @@ const FIRST_MINUTE_BLUEPRINTS = [
     headline: 'La cifra debe coincidir',
     supportingText: 'La locución y la serie deben medir exactamente lo mismo.',
     semanticCues: [
-      {id: 'months', atSeconds: 0.56, durationSeconds: 2.1, action: 'focus', target: 'measurement-window', label: 'ÚLTIMOS MESES', tone: 'neutral', sound: 'ui-pulse'},
-      {id: 'lost', atSeconds: 3.3, durationSeconds: 2.2, action: 'reveal', target: 'narrated-loss', label: 'HAN PERDIDO', tone: 'negative', sound: 'smooth-whoosh'},
-      {id: 'twenty', atSeconds: 5.48, durationSeconds: 1.45, action: 'highlight', target: 'narrated-20-percent', label: '20% EN LA LOCUCIÓN', tone: 'negative', sound: 'soft-impact'},
-      {id: 'verified', atSeconds: 6.94, durationSeconds: 6.6, action: 'verify', target: 'mags-spy-supported-value', label: 'SERIE REPRODUCIBLE', tone: 'cyan', sound: 'data-tick'},
-      {id: 'strange', atSeconds: 14.09, durationSeconds: 2.3, action: 'highlight', target: 'claim-mismatch', label: 'SUMAMENTE EXTRAÑO', tone: 'negative', sound: 'soft-impact'}
+      {id: 'months', anchorText: 'últimos', atSeconds: 0.56, durationSeconds: 2.1, action: 'focus', target: 'measurement-window', label: 'ÚLTIMOS MESES', tone: 'neutral', sound: 'ui-pulse'},
+      {id: 'lost', anchorText: 'perdido', atSeconds: 3.3, durationSeconds: 2.2, action: 'reveal', target: 'narrated-loss', label: 'HAN PERDIDO', tone: 'negative', sound: 'smooth-whoosh'},
+      {id: 'twenty', anchorText: '20', atSeconds: 5.48, durationSeconds: 1.45, action: 'highlight', target: 'narrated-20-percent', label: '20% EN LA LOCUCIÓN', tone: 'negative', sound: 'soft-impact'},
+      {id: 'verified', anchorText: 'relativo', atSeconds: 6.94, durationSeconds: 6.6, action: 'verify', target: 'mags-spy-supported-value', label: 'SERIE REPRODUCIBLE', tone: 'cyan', sound: 'data-tick'},
+      {id: 'strange', anchorText: 'sumamente', atSeconds: 14.09, durationSeconds: 2.3, action: 'highlight', target: 'claim-mismatch', label: 'SUMAMENTE EXTRAÑO', tone: 'negative', sound: 'soft-impact'}
     ]
   }
 ];
@@ -171,6 +171,90 @@ const SP500_2022_URL =
 function round(value, decimals = 3) {
   const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;
+}
+
+function normalizeCueToken(value) {
+  return String(value ?? '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9%]/g, '');
+}
+
+function resolveSemanticCues(cues, words, sceneStartSeconds) {
+  const normalizedWords = words.map((word) => normalizeCueToken(word.text));
+  return cues.map((definition) => {
+    const {
+      anchorText,
+      anchorOffsetSeconds = 0,
+      ...cue
+    } = definition;
+    if (!anchorText) return cue;
+    const anchorTokens = String(anchorText)
+      .split(/\s+/)
+      .map(normalizeCueToken)
+      .filter(Boolean);
+    const anchorIndex = normalizedWords.findIndex((_, index) =>
+      anchorTokens.every(
+        (token, offset) => normalizedWords[index + offset] === token
+      )
+    );
+    if (anchorIndex < 0) return cue;
+    return {
+      ...cue,
+      atSeconds: round(Math.max(
+        0,
+        Number(words[anchorIndex].start) -
+          sceneStartSeconds +
+          anchorOffsetSeconds
+      ))
+    };
+  });
+}
+
+async function readLegacyTimeMap(narrationRun) {
+  try {
+    const payload = JSON.parse(await readFile(
+      path.join(narrationRun, 'legacy-time-map.json'),
+      'utf8'
+    ));
+    return Array.isArray(payload.mapping) ? payload.mapping : [];
+  } catch (error) {
+    if (error?.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+function mapSourceToOutput(seconds, mapping) {
+  if (!mapping.length) return seconds;
+  const segment = mapping.find((candidate) =>
+    seconds >= candidate.sourceStartSeconds &&
+    seconds <= candidate.sourceEndSeconds
+  );
+  if (segment) {
+    return segment.outputStartSeconds +
+      (seconds - segment.sourceStartSeconds);
+  }
+  const previous = [...mapping]
+    .reverse()
+    .find((candidate) => seconds > candidate.sourceEndSeconds);
+  return previous?.outputEndSeconds ?? mapping[0].outputStartSeconds;
+}
+
+function mapOutputToSource(seconds, mapping) {
+  if (!mapping.length) return seconds;
+  const segment = mapping.find((candidate) =>
+    seconds >= candidate.outputStartSeconds &&
+    seconds <= candidate.outputEndSeconds
+  );
+  if (segment) {
+    return segment.sourceStartSeconds +
+      (seconds - segment.outputStartSeconds);
+  }
+  const previous = [...mapping]
+    .reverse()
+    .find((candidate) => seconds > candidate.outputEndSeconds);
+  return previous?.sourceEndSeconds ?? mapping[0].sourceStartSeconds;
 }
 
 function sha256(value) {
@@ -387,8 +471,11 @@ const BEATS = [
   }
 ];
 
-function beatFor(seconds) {
-  return BEATS.find((beat) => seconds >= beat.start && seconds < beat.end) ?? BEATS.at(-1);
+function beatFor(seconds, legacyTimeMap = []) {
+  const sourceSeconds = mapOutputToSource(seconds, legacyTimeMap);
+  return BEATS.find(
+    (beat) => sourceSeconds >= beat.start && sourceSeconds < beat.end
+  ) ?? BEATS.at(-1);
 }
 
 function patternForKind(kind) {
@@ -702,6 +789,7 @@ async function main() {
     readFile(sloosFile, 'utf8').then(JSON.parse),
     readFile(MARKET_SERIES_FILE, 'utf8').then(JSON.parse)
   ]);
+  const legacyTimeMap = await readLegacyTimeMap(narrationRun);
   const durationSeconds = Number(
     narrationResult.masterDurationSeconds ??
     narrationResult.outputDurationSeconds ??
@@ -857,7 +945,7 @@ async function main() {
     )
   ];
 
-  const claims = [
+  const sourceClaims = [
     makeClaim({
       id: 'claim-mag7-relative-minus-20',
       statement: 'Las Mag 7 han perdido cerca de 20% de valor relativo en los últimos meses.',
@@ -1006,6 +1094,17 @@ async function main() {
       range: {startSeconds: 563, endSeconds: 616}
     })
   ];
+  const claims = sourceClaims.map((claim) => ({
+    ...claim,
+    range: claim.range ? {
+      startSeconds: round(
+        mapSourceToOutput(claim.range.startSeconds, legacyTimeMap)
+      ),
+      endSeconds: round(
+        mapSourceToOutput(claim.range.endSeconds, legacyTimeMap)
+      )
+    } : claim.range
+  }));
 
   const dataAssets = [
     {
@@ -1131,7 +1230,7 @@ async function main() {
   const groups = buildSceneGroups(transcript.segments, durationSeconds);
   const renderScenes = groups.map((group, index) => {
     const midpoint = (group.startSeconds + group.endSeconds) / 2;
-    const beat = beatFor(midpoint);
+    const beat = beatFor(midpoint, legacyTimeMap);
     const blueprint = FIRST_MINUTE_BLUEPRINTS[index];
     const kind =
       blueprint?.kind ??
@@ -1241,7 +1340,11 @@ async function main() {
         factualStatus: status,
         assets: sceneAssets,
         focusTarget: kind === 'split-lines' ? 'both' : undefined,
-        semanticCues: blueprint?.semanticCues ?? [],
+        semanticCues: resolveSemanticCues(
+          blueprint?.semanticCues ?? [],
+          words,
+          group.startSeconds
+        ),
         ...kindData(kind, sloos, marketSeries)
       },
       fallback: {
@@ -1331,12 +1434,36 @@ async function main() {
     ...renderProps,
     soundEnabled: false
   };
+  const firstMinuteSceneCount = Math.min(
+    FIRST_MINUTE_BLUEPRINTS.length,
+    renderProps.scenes.length
+  );
+  const firstMinuteScenes = renderProps.scenes.slice(0, firstMinuteSceneCount);
+  const firstMinuteDurationSeconds =
+    firstMinuteScenes.at(-1)?.endSeconds ?? Math.min(60, durationSeconds);
+  const firstMinuteRenderProps = {
+    ...renderProps,
+    durationSeconds: firstMinuteDurationSeconds,
+    scenes: firstMinuteScenes
+  };
+  const firstMinuteSilentRenderProps = {
+    ...firstMinuteRenderProps,
+    soundEnabled: false
+  };
 
   const visualPlanFile = path.join(visualsDirectory, 'visual-plan.json');
   const renderPropsFile = path.join(visualsDirectory, 'render-props.json');
   const silentRenderPropsFile = path.join(
     visualsDirectory,
     'render-props-silent.json'
+  );
+  const firstMinuteRenderPropsFile = path.join(
+    visualsDirectory,
+    'render-props-first-minute.json'
+  );
+  const firstMinuteSilentRenderPropsFile = path.join(
+    visualsDirectory,
+    'render-props-first-minute-silent.json'
   );
   const dossierFile = path.join(researchDirectory, 'research-dossier.json');
   const auditJsonFile = path.join(researchDirectory, 'factual-audit.json');
@@ -1414,6 +1541,16 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
       `${JSON.stringify(silentRenderProps, null, 2)}\n`,
       'utf8'
     ),
+    writeFile(
+      firstMinuteRenderPropsFile,
+      `${JSON.stringify(firstMinuteRenderProps, null, 2)}\n`,
+      'utf8'
+    ),
+    writeFile(
+      firstMinuteSilentRenderPropsFile,
+      `${JSON.stringify(firstMinuteSilentRenderProps, null, 2)}\n`,
+      'utf8'
+    ),
     writeFile(guideFile, guide, 'utf8')
   ]);
   console.log(`Dossier: ${dossierFile}`);
@@ -1422,6 +1559,8 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
   console.log(`Plan visual: ${visualPlanFile}`);
   console.log(`Props Remotion: ${renderPropsFile}`);
   console.log(`Props sin efectos: ${silentRenderPropsFile}`);
+  console.log(`Props primer minuto: ${firstMinuteRenderPropsFile}`);
+  console.log(`Props primer minuto sin efectos: ${firstMinuteSilentRenderPropsFile}`);
   console.log(`Escenas: ${renderScenes.length}`);
   console.log(`Publicable: ${auditJson.publishable ? 'sí' : 'no'}`);
 }

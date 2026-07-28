@@ -6,11 +6,11 @@ import {fileURLToPath} from 'node:url';
 import {makeId, parseCliArgs, run} from '../src/lib/utils.js';
 
 const DEFAULTS = Object.freeze({
-  clipGapSeconds: 1,
-  internalGapSeconds: 0.65,
-  compressSilenceAfterSeconds: 1.25,
-  silenceDetectionSeconds: 0.35,
-  edgePaddingSeconds: 0.12,
+  clipGapSeconds: 0.7,
+  internalGapSeconds: 0.55,
+  compressSilenceAfterSeconds: 0.95,
+  silenceDetectionSeconds: 0.28,
+  edgePaddingSeconds: 0.1,
   targetLufs: -16,
   truePeakDb: -1.5,
   loudnessRange: 11,
@@ -26,11 +26,11 @@ Uso:
 
 Opciones:
   --output                    Raíz de runs. Default: <input>/narration/runs
-  --clip-gap                  Silencio entre clips. Default: 1
-  --internal-gap              Silencio conservado dentro de pausas largas. Default: 0.65
-  --compress-silence-after    Comprime pausas internas más largas que este valor. Default: 1.25
-  --silence-detection         Duración mínima detectada por FFmpeg. Default: 0.35
-  --edge-padding              Margen de seguridad antes/después de voz. Default: 0.12
+  --clip-gap                  Silencio entre clips. Default: 0.7
+  --internal-gap              Silencio conservado dentro de pausas largas. Default: 0.55
+  --compress-silence-after    Comprime pausas internas más largas que este valor. Default: 0.95
+  --silence-detection         Duración mínima detectada por FFmpeg. Default: 0.28
+  --edge-padding              Margen de seguridad antes/después de voz. Default: 0.1
   --target-lufs               Sonoridad objetivo por clip. Default: -16
   --help                      Muestra esta ayuda
 

@@ -8,6 +8,7 @@
     "process": "node src/cli.js process",
     "editorial-video": "node scripts/editorial-video.js",
     "episode:narration": "node scripts/prepare-episode-narration.js",
+    "episode:narration:tighten": "node scripts/tighten-narration-pacing.js",
     "episode:transcript:export": "node scripts/export-faster-whisper-transcript.js",
     "episode:sloos:extract": "node scripts/extract-fed-sloos-series.js",
     "episode:finance-cavaliers:market-series": "node scripts/build-finance-cavaliers-market-series.js",
