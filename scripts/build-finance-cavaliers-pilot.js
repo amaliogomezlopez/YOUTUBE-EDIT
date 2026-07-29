@@ -110,6 +110,12 @@ const MARKET_ANALYST_IMAGE_ASSET = {
   label: 'Analista de mercados',
   path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-analyst.jpg'
 };
+const NYSE_IMAGE_ASSET = {
+  id: 'finance-cavaliers-nyse-facade',
+  kind: 'image',
+  label: 'Fachada de la Bolsa de Nueva York',
+  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-nyse-facade.jpg'
+};
 const FIRST_MINUTE_BLUEPRINTS = [
   {
     kind: 'market-seed',
@@ -279,6 +285,7 @@ const THIRD_MINUTE_BLUEPRINTS = [
     supportingText: 'La narrativa de dominio creció hasta parecer incuestionable.',
     semanticCues: [
       {id: 'dominant-force', anchorText: 'dominante', atSeconds: 0.4, durationSeconds: 2.3, action: 'zoom', target: 'dominant-core', label: 'FUERZA DOMINANTE', tone: 'gold', sound: 'soft-impact'},
+      {id: 'institution-cutaway', anchorText: 'economía', atSeconds: 1.25, durationSeconds: 1.7, action: 'reveal', target: 'nyse-facade', label: 'WALL STREET', tone: 'neutral', sound: 'smooth-whoosh'},
       {id: 'unstoppable', anchorText: 'imparables', atSeconds: 4.2, durationSeconds: 2, action: 'highlight', target: 'unstoppable-ring', label: 'IMPARABLES', tone: 'positive', sound: 'success-chime'},
       {id: 'no-competition', anchorText: 'nadie', atSeconds: 6.3, durationSeconds: 2.5, action: 'focus', target: 'competition-lock', label: 'NADIE PODÍA COMPETIR', tone: 'cyan', sound: 'processing'},
       {id: 'approaching-peak', anchorText: 'punto', atSeconds: 9.3, durationSeconds: 1.9, action: 'zoom', target: 'peak-warning', label: 'CERCA DEL PUNTO MÁS ALTO', tone: 'negative', sound: 'tension-swell'}
@@ -1479,7 +1486,8 @@ async function main() {
       ...companyAssets,
       ...(kind === 'market-ticker' && index % 4 === 1 ? [MARKET_IMAGE_ASSET] : []),
       ...(kind === 'ai-core' ? [AI_SERVERS_IMAGE_ASSET] : []),
-      ...(kind === 'correction-alert' ? [MARKET_ANALYST_IMAGE_ASSET] : [])
+      ...(kind === 'correction-alert' ? [MARKET_ANALYST_IMAGE_ASSET] : []),
+      ...(kind === 'dominance-facade' ? [NYSE_IMAGE_ASSET] : [])
     ];
     const words = allWords
       .map((word, wordIndex) => ({...word, wordIndex}))

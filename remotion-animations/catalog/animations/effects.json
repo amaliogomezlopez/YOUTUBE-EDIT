@@ -569,6 +569,25 @@
       ]
     },
     {
+      "id": "focus.boundary-clipped-connectors",
+      "category": "focus",
+      "phase": "build",
+      "status": "ready",
+      "implementation": {
+        "component": "ContagionSpread",
+        "source": "src/editorial/ThirdMinuteNarrativeScene.tsx",
+        "demoCompositionId": "Finance-Cavaliers-Episode"
+      },
+      "purpose": "Conectar nodos sin que las líneas penetren en círculos, tarjetas ni etiquetas.",
+      "selectWhen": "Un diagrama radial o causal une un núcleo con tarjetas periféricas.",
+      "constraints": [
+        "Calcular el inicio en la intersección con el borde del origen.",
+        "Calcular el final en la intersección con el borde del destino.",
+        "Mantener etiquetas fuera del recorrido del conector.",
+        "Recalcular ambos extremos si los nodos cambian de escala o posición."
+      ]
+    },
+    {
       "id": "sound.semantic-cue",
       "category": "sound",
       "phase": "focus",

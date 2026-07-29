@@ -177,6 +177,9 @@ npm run episode:review-block -- --props "<render-props-master>" `
 - Los conectores terminan en el borde del destino y las tarjetas posteriores
   ocupan carriles libres. Si no existe uno, se retira o recoloca el elemento
   anterior antes de revelar el nuevo.
+- En diagramas radiales se calculan ambas intersecciones: la línea nace en el
+  borde exterior del núcleo y termina en el borde de la tarjeta. El centro de
+  cualquiera de los dos objetos nunca puede quedar atravesado.
 - En cronologías occidentales, el pasado queda a la izquierda y el presente a
   la derecha. Un rebobinado parte del presente y avanza hacia la izquierda.
 
@@ -247,6 +250,18 @@ npm run episode:review-block -- --props "<render-props-master>" `
 - No se apila automáticamente el mismo `whoosh` en todos los zooms. Se reparten
   pulsos, shimmer, impactos, tensión, rebobinado, sonidos de interfaz o
   silencio intencional según la transformación visible.
+
+## 19. Propagación y contagio
+
+- El contagio no se representa con una caja global que cubre la escena. El
+  origen emite ondas y cada destino cambia individualmente de estado.
+- La secuencia mínima por destino es: llegada de señal, cambio de color,
+  desplazamiento o vibración breve e insignia de alerta. Los destinos se
+  activan con un desfase visible para comunicar propagación.
+- La etiqueta del fenómeno queda fuera del núcleo y por encima de sus ondas.
+  No se imprime dentro de círculos, líneas discontinuas o partículas.
+- El patrón reutilizable es `process.contagion-spread` y sus conectores usan
+  `focus.boundary-clipped-connectors`.
 
 ## Ejemplo de cue
 

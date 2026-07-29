@@ -372,6 +372,17 @@
       ]
     },
     {
+      "id": "process.contagion-spread",
+      "status": "ready",
+      "compositionId": "Finance-Cavaliers-Episode",
+      "variants": [],
+      "component": "ContagionSpread",
+      "ingestion": null,
+      "supportedFormats": [
+        "landscape"
+      ]
+    },
+    {
       "id": "process.funnel-filter",
       "status": "ready",
       "compositionId": "Pattern-Funnel-Filter",
@@ -469,6 +480,11 @@
       "id": "focus.accent-only",
       "status": "primitive",
       "component": "Tratamiento por props de color"
+    },
+    {
+      "id": "focus.boundary-clipped-connectors",
+      "status": "ready",
+      "component": "ContagionSpread"
     },
     {
       "id": "focus.count-impact",
@@ -623,6 +639,7 @@
       "finance-cavaliers-meta",
       "finance-cavaliers-microsoft",
       "finance-cavaliers-nvidia",
+      "finance-cavaliers-nyse-facade",
       "finance-cavaliers-tesla"
     ],
     "selectionModes": [

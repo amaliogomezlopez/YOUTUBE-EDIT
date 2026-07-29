@@ -714,6 +714,28 @@
       "durationSeconds": {"min": 4, "max": 7},
       "defaultFormat": "overlay-alpha",
       "promptKey": "time-concept"
+    },
+    {
+      "id": "process.contagion-spread",
+      "family": "process",
+      "label": "Propagación radial por estados",
+      "status": "ready",
+      "implementation": {
+        "component": "ContagionSpread",
+        "compositionId": "Finance-Cavaliers-Episode",
+        "source": "src/editorial/ThirdMinuteNarrativeScene.tsx"
+      },
+      "communicates": "Un deterioro nace en un núcleo y cambia progresivamente el estado de varios destinos.",
+      "selectWhen": "La locución describe contagio, propagación, infección o transmisión desde un origen identificable.",
+      "rejectWhen": "Los destinos no están relacionados con el origen o la propagación solo sería decorativa.",
+      "evidenceRequired": ["origen", "destinos afectados", "dirección de propagación"],
+      "acceptedAssets": ["logo", "icon"],
+      "motionVerb": "propagar e infectar",
+      "focusTreatments": ["path-follow", "accent-only", "camera-zoom"],
+      "soundProfile": "process-flow",
+      "durationSeconds": {"min": 7, "max": 10},
+      "defaultFormat": "fullscreen",
+      "promptKey": "process"
     }
   ]
 }

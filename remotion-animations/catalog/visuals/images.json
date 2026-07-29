@@ -344,6 +344,31 @@
       "importedAt": "2026-07-28T18:49:53.101Z"
     },
     {
+      "id": "finance-cavaliers-nyse-facade",
+      "publicPath": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-nyse-facade.jpg",
+      "alt": "Fachada de la Bolsa de Nueva York",
+      "width": 5433,
+      "height": 3767,
+      "sha256": "15867a5cdd284f811b8e32a465126dfc6d65a176e70d9ee96a975aa275b4cc3b",
+      "sourceSha256": "9aeb5a256058fcbd9a1859f16b4c8665a0e1e6cc59efa7769b17a0edfc7425d7",
+      "source": "https://www.pexels.com/photo/the-new-york-stock-exchange-building-exterior-8878493/",
+      "license": "Pexels License",
+      "tags": [
+        "finance cavaliers",
+        "wall street",
+        "nyse",
+        "institucion",
+        "mercado"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "photo",
+      "treatment": "natural",
+      "importedAt": "2026-07-29T11:41:25.003Z"
+    },
+    {
       "id": "finance-cavaliers-tesla",
       "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-tesla.png",
       "alt": "Logotipo de Tesla",
