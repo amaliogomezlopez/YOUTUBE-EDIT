@@ -19,6 +19,7 @@ import {
 } from "../motion/SoundDesign";
 import {MarketNarrativeScene} from "./MarketNarrativeScene";
 import {SecondMinuteNarrativeScene} from "./SecondMinuteNarrativeScene";
+import {ThirdMinuteNarrativeScene} from "./ThirdMinuteNarrativeScene";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -1624,6 +1625,16 @@ const cuesForEditorialScene = (
       duration: 0.72,
       volume: 0.34,
     },
+    keyboard: {
+      file: SOUND_FILES.keyboard,
+      duration: 1.55,
+      volume: 0.12,
+    },
+    "data-loading": {
+      file: SOUND_FILES.dataLoading,
+      duration: 1.8,
+      volume: 0.11,
+    },
   } as const;
   if (scene.semanticCues.some((semanticCue) => semanticCue.sound)) {
     return scene.semanticCues
@@ -1766,6 +1777,13 @@ export const FinanceEditorialScene: React.FC<{
     case "history-rewind":
       content = <SecondMinuteNarrativeScene scene={scene} />;
       break;
+    case "historical-leaders":
+    case "dominance-facade":
+    case "leadership-lag":
+    case "contagion-spread":
+    case "claim-evidence-gap":
+      content = <ThirdMinuteNarrativeScene scene={scene} />;
+      break;
     case "split-lines":
       content = <SplitLines scene={scene} accentColor={accentColor} />;
       break;
@@ -1815,6 +1833,11 @@ export const FinanceEditorialScene: React.FC<{
     "market-contrast",
     "mag7-relationship",
     "claim-audit",
+    "historical-leaders",
+    "dominance-facade",
+    "leadership-lag",
+    "contagion-spread",
+    "claim-evidence-gap",
   ].includes(scene.kind);
   const footerVisible =
     Boolean(scene.sourceLabel) && DATA_SOURCE_KINDS.has(scene.kind);
@@ -1845,6 +1868,11 @@ export const FinanceEditorialScene: React.FC<{
         "bubble-trigger",
         "market-gravity",
         "history-rewind",
+        "historical-leaders",
+        "dominance-facade",
+        "leadership-lag",
+        "contagion-spread",
+        "claim-evidence-gap",
       ].includes(scene.kind) ? (
         <CompanyLogoRibbon scene={scene} />
       ) : null}

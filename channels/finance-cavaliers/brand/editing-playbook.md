@@ -231,6 +231,23 @@ npm run episode:review-block -- --props "<render-props-master>" `
 - Preferir efectos propios sintetizados y registrados. Los assets `library-*`
   solo se publican cuando su licencia haya sido verificada.
 
+## 18. Bloques aprobados y continuidad de producción
+
+- Un bloque pasa a `exports/production-ready/` únicamente después del visto
+  bueno explícito del usuario. La copia aprobada conserva rango de narración,
+  duración renderizada y hash SHA-256 en `manifest.json`.
+- Las versiones pendientes permanecen separadas en `exports/review/block-XX/`.
+  Una corrección futura nunca sobrescribe ni reinterpreta una copia aprobada.
+- Antes de diseñar el bloque siguiente se revisan las seis escenas anteriores.
+  Se alternan logos, diagramas causales, cronologías, metáforas físicas,
+  imágenes y gráficas verificadas para no repetir una única geometría.
+- El punto de anclaje de cada zoom coincide con la palabra pronunciada. El
+  acercamiento deja tiempo de lectura y vuelve a una vista que prepara el
+  siguiente foco.
+- No se apila automáticamente el mismo `whoosh` en todos los zooms. Se reparten
+  pulsos, shimmer, impactos, tensión, rebobinado, sonidos de interfaz o
+  silencio intencional según la transformación visible.
+
 ## Ejemplo de cue
 
 ```json

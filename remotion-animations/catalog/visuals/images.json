@@ -141,6 +141,78 @@
       "importedAt": "2026-07-28T18:49:54.345Z"
     },
     {
+      "id": "finance-cavaliers-cisco",
+      "publicPath": "assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-cisco.png",
+      "alt": "Logo de Cisco",
+      "width": 128,
+      "height": 128,
+      "sha256": "99ca8d2bf7b1c3077c67823b1ff1d56b60538c0bbefffee609353e6d8ffe838f",
+      "sourceSha256": "eec85dfd093fd84f305eed0793dfe70655c323d7cc5aec8f90af286933b19365",
+      "source": "Brandfetch · cisco.com",
+      "license": "Marca registrada; uso editorial",
+      "tags": [
+        "finance cavaliers",
+        "cisco",
+        "puntocom",
+        "empresa"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-29T10:29:50.779Z"
+    },
+    {
+      "id": "finance-cavaliers-dell",
+      "publicPath": "assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-dell.png",
+      "alt": "Logo de Dell",
+      "width": 128,
+      "height": 128,
+      "sha256": "769dc49dcbd0be2bff50925b64dd096c6e3de86581442de6196b25621fc2b41a",
+      "sourceSha256": "2217a9de776f1ec4a6d8b4908f9816ee3fcec8c9a5e1212b88f070ab9f882d79",
+      "source": "Brandfetch · dell.com",
+      "license": "Marca registrada; uso editorial",
+      "tags": [
+        "finance cavaliers",
+        "dell",
+        "puntocom",
+        "empresa"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-29T10:30:11.265Z"
+    },
+    {
+      "id": "finance-cavaliers-intel",
+      "publicPath": "assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-intel.png",
+      "alt": "Logo de Intel",
+      "width": 128,
+      "height": 128,
+      "sha256": "4dd9193d8a27594eb1e917d50a16bd017ab95f8481b18516e580a25e0802dddb",
+      "sourceSha256": "5753f2f567f49886ce87f53af89894892172fc595ab5f3ab04b6ebecf3baa790",
+      "source": "Brandfetch · intel.com",
+      "license": "Marca registrada; uso editorial",
+      "tags": [
+        "finance cavaliers",
+        "intel",
+        "puntocom",
+        "empresa"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "logo",
+      "treatment": "natural",
+      "importedAt": "2026-07-29T10:30:11.160Z"
+    },
+    {
       "id": "finance-cavaliers-market-analyst",
       "publicPath": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-analyst.jpg",
       "alt": "Analista financiero observando datos en varias pantallas",

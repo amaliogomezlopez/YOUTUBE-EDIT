@@ -71,6 +71,27 @@ const COMPANY_LOGO_ASSETS = [
     path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-tesla.png'
   }
 ];
+const DOTCOM_LOGO_ASSETS = [
+  {
+    id: 'finance-cavaliers-cisco',
+    kind: 'logo',
+    label: 'CISCO',
+    path: 'assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-cisco.png'
+  },
+  COMPANY_LOGO_ASSETS.find((asset) => asset.label === 'MICROSOFT'),
+  {
+    id: 'finance-cavaliers-intel',
+    kind: 'logo',
+    label: 'INTEL',
+    path: 'assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-intel.png'
+  },
+  {
+    id: 'finance-cavaliers-dell',
+    kind: 'logo',
+    label: 'DELL',
+    path: 'assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-dell.png'
+  }
+].filter(Boolean);
 const MARKET_IMAGE_ASSET = {
   id: 'finance-cavaliers-market-screen',
   kind: 'image',
@@ -238,9 +259,67 @@ const SECOND_MINUTE_BLUEPRINTS = [
     ]
   }
 ];
+const THIRD_MINUTE_BLUEPRINTS = [
+  {
+    kind: 'historical-leaders',
+    headline: 'Los cuatro jinetes de la puntocom',
+    supportingText: 'Cuatro nombres concentraron la narrativa tecnológica de finales de los noventa.',
+    semanticCues: [
+      {id: 'dotcom-era', anchorText: 'burbuja', atSeconds: 0.5, durationSeconds: 1.8, action: 'zoom', target: 'dotcom-era', label: 'FINALES DE LOS 90', tone: 'gold', sound: 'keyboard'},
+      {id: 'four-horsemen', anchorText: 'cuatro', atSeconds: 4.1, durationSeconds: 1.5, action: 'reveal', target: 'dotcom-company-row', label: 'LOS CUATRO JINETES', tone: 'cyan', sound: 'rise-whoosh'},
+      {id: 'company-cisco', anchorText: 'Cisco', atSeconds: 7.1, durationSeconds: 0.85, action: 'focus', target: 'dotcom-company-cisco', label: 'CISCO', tone: 'cyan', sound: 'logo-shimmer'},
+      {id: 'company-microsoft', anchorText: 'Microsoft', atSeconds: 8.1, durationSeconds: 0.85, action: 'focus', target: 'dotcom-company-microsoft', label: 'MICROSOFT', tone: 'cyan', sound: 'logo-shimmer'},
+      {id: 'company-intel', anchorText: 'Intel', atSeconds: 9.1, durationSeconds: 0.85, action: 'focus', target: 'dotcom-company-intel', label: 'INTEL', tone: 'cyan', sound: 'logo-shimmer'},
+      {id: 'company-dell', anchorText: 'Dell', atSeconds: 10.1, durationSeconds: 0.9, action: 'focus', target: 'dotcom-company-dell', label: 'DELL', tone: 'cyan', sound: 'logo-shimmer'}
+    ]
+  },
+  {
+    kind: 'dominance-facade',
+    headline: 'Parecían imparables',
+    supportingText: 'La narrativa de dominio creció hasta parecer incuestionable.',
+    semanticCues: [
+      {id: 'dominant-force', anchorText: 'dominante', atSeconds: 0.4, durationSeconds: 2.3, action: 'zoom', target: 'dominant-core', label: 'FUERZA DOMINANTE', tone: 'gold', sound: 'soft-impact'},
+      {id: 'unstoppable', anchorText: 'imparables', atSeconds: 4.2, durationSeconds: 2, action: 'highlight', target: 'unstoppable-ring', label: 'IMPARABLES', tone: 'positive', sound: 'success-chime'},
+      {id: 'no-competition', anchorText: 'nadie', atSeconds: 6.3, durationSeconds: 2.5, action: 'focus', target: 'competition-lock', label: 'NADIE PODÍA COMPETIR', tone: 'cyan', sound: 'processing'},
+      {id: 'approaching-peak', anchorText: 'punto', atSeconds: 9.3, durationSeconds: 1.9, action: 'zoom', target: 'peak-warning', label: 'CERCA DEL PUNTO MÁS ALTO', tone: 'negative', sound: 'tension-swell'}
+    ]
+  },
+  {
+    kind: 'leadership-lag',
+    headline: 'La debilidad apareció antes',
+    supportingText: 'Los líderes empezaron a quedarse atrás antes del techo general.',
+    semanticCues: [
+      {id: 'peak', anchorText: 'alto', atSeconds: 0.4, durationSeconds: 1.5, action: 'zoom', target: 'market-peak', label: 'TECHO DEL MERCADO', tone: 'gold', sound: 'soft-impact'},
+      {id: 'months-before', anchorText: 'meses', atSeconds: 4.1, durationSeconds: 2.2, action: 'focus', target: 'early-window', label: 'MESES ANTES', tone: 'cyan', sound: 'rewind-sweep'},
+      {id: 'leaders-lag', anchorText: 'líderes', atSeconds: 7.1, durationSeconds: 3.2, action: 'zoom', target: 'leaders-drop', label: 'LOS LÍDERES SE QUEDAN ATRÁS', tone: 'negative', sound: 'quick-whip'}
+    ]
+  },
+  {
+    kind: 'contagion-spread',
+    headline: 'La debilidad dejó de ser secreta',
+    supportingText: 'El deterioro pasó de los líderes al resto del mercado.',
+    semanticCues: [
+      {id: 'quiet-weakness', anchorText: 'silencio', atSeconds: 0.3, durationSeconds: 2.4, action: 'focus', target: 'weak-leaders', label: 'DEBILIDAD SILENCIOSA', tone: 'negative', sound: 'data-loading'},
+      {id: 'performance-fades', anchorText: 'flojear', atSeconds: 3.2, durationSeconds: 2.1, action: 'highlight', target: 'leader-pulse', label: 'EL RENDIMIENTO FLOJEA', tone: 'negative', sound: 'digital-count'},
+      {id: 'contagion', anchorText: 'contagiándose', atSeconds: 5.7, durationSeconds: 3.3, action: 'zoom', target: 'contagion-wave', label: 'CONTAGIO', tone: 'negative', sound: 'bubble-burst'},
+      {id: 'whole-market', anchorText: 'mercado', atSeconds: 8.2, durationSeconds: 1.1, action: 'focus', target: 'whole-market-grid', label: 'TODO EL MERCADO', tone: 'negative', sound: 'alert-sting'}
+    ]
+  },
+  {
+    kind: 'claim-evidence-gap',
+    headline: 'La cifra necesita una fuente',
+    supportingText: 'No convertimos una afirmación no verificada en una gráfica.',
+    semanticCues: [
+      {id: 'four-companies', anchorText: 'cuatro', atSeconds: 0.5, durationSeconds: 2, action: 'reveal', target: 'claim-companies', label: 'CUATRO COMPAÑÍAS', tone: 'cyan', sound: 'logo-shimmer'},
+      {id: 'claimed-thirty', anchorText: '30', atSeconds: 4.1, durationSeconds: 3, action: 'verify', target: 'unsupported-thirty', label: '≈ 30 % · SIN VERIFICAR', tone: 'negative', sound: 'alert-sting'},
+      {id: 'index-impact', anchorText: 'índice', atSeconds: 9.1, durationSeconds: 2.6, action: 'zoom', target: 'index-risk', label: 'EL PESO AMPLIFICA EL IMPACTO', tone: 'gold', sound: 'tension-swell'}
+    ]
+  }
+];
 const EDITORIAL_BLUEPRINTS = [
   ...FIRST_MINUTE_BLUEPRINTS,
-  ...SECOND_MINUTE_BLUEPRINTS
+  ...SECOND_MINUTE_BLUEPRINTS,
+  ...THIRD_MINUTE_BLUEPRINTS
 ];
 const SLOOS_DDP_URL =
   'https://www.federalreserve.gov/datadownload/Choose.aspx?rel=sloos';
@@ -581,6 +660,11 @@ function patternForKind(kind) {
     'bubble-trigger': 'concept.accumulation',
     'market-gravity': 'comparison.common-baseline',
     'history-rewind': 'time.timeline-milestones',
+    'historical-leaders': 'asset.logo-ecosystem',
+    'dominance-facade': 'data.part-to-whole',
+    'leadership-lag': 'data.line-trend-zoom',
+    'contagion-spread': 'process.signal-flow',
+    'claim-evidence-gap': 'comparison.before-after-wipe',
     'market-ticker': 'data.hero-metric',
     'kinetic-text': 'text.kinetic-phrase',
     'company-orbit': 'concept.scale-proportion',
@@ -743,6 +827,17 @@ function kindData(kind, sloos, marketSeries) {
   }
   if (kind === 'split-lines') {
     return marketData;
+  }
+  if ([
+    'historical-leaders',
+    'dominance-facade',
+    'leadership-lag',
+    'contagion-spread',
+    'claim-evidence-gap'
+  ].includes(kind)) {
+    return {
+      labels: ['CISCO', 'MICROSOFT', 'INTEL', 'DELL']
+    };
   }
   if (kind === 'market-ticker') {
     return {
@@ -1371,7 +1466,15 @@ async function main() {
       'market-ticker'
     ].includes(kind)
       ? COMPANY_LOGO_ASSETS
-      : [];
+      : [
+          'historical-leaders',
+          'dominance-facade',
+          'leadership-lag',
+          'contagion-spread',
+          'claim-evidence-gap'
+        ].includes(kind)
+        ? DOTCOM_LOGO_ASSETS
+        : [];
     const sceneAssets = [
       ...companyAssets,
       ...(kind === 'market-ticker' && index % 4 === 1 ? [MARKET_IMAGE_ASSET] : []),

@@ -22,6 +22,11 @@ export const editorialSceneKindSchema = z.enum([
   "bubble-trigger",
   "market-gravity",
   "history-rewind",
+  "historical-leaders",
+  "dominance-facade",
+  "leadership-lag",
+  "contagion-spread",
+  "claim-evidence-gap",
   "market-ticker",
   "kinetic-text",
   "company-orbit",
@@ -92,6 +97,8 @@ const semanticCueSchema = z.object({
     "needle-strike",
     "bubble-burst",
     "rewind-sweep",
+    "keyboard",
+    "data-loading",
   ]).optional(),
 });
 
