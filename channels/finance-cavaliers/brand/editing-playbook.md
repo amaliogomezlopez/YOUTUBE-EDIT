@@ -193,6 +193,44 @@ npm run episode:review-block -- --props "<render-props-master>" `
 - Alternar zoom, aislamiento por color, subrayado y cambio de escala para que
   el zoom atraiga atención sin convertirse en un tic repetitivo.
 
+## 15. Entidades mencionadas
+
+- Cuando la locución enumera empresas, personas, países o productos, cada
+  entidad se activa en su palabra exacta. La tarjeta correspondiente aumenta
+  brevemente de escala, gana contraste y glow, mientras sus pares se atenúan.
+- La activación vuelve al estado base antes de la siguiente entidad. No se
+  resaltan todas las tarjetas a la vez si la voz las recorre una a una.
+- Los tiempos se obtienen de las palabras de la transcripción, no de una
+  estimación visual del editor.
+
+## 16. Fuentes visibles y procedencia interna
+
+- El rótulo `FUENTE` solo aparece junto a una gráfica, tabla o visualización de
+  datos reales. Debe nombrar la fuente de los datos: Yahoo Finance, Reserva
+  Federal, State Street u otra fuente verificable.
+- Pexels, Pixabay y bancos equivalentes son procedencia del asset, no fuente
+  factual. Su autor, URL y licencia se conservan en el catálogo y los
+  manifiestos, pero nunca se imprimen como `FUENTE` en pantalla.
+- Las ilustraciones conceptuales tampoco llevan un falso pie de fuente. Si
+  necesitan advertencia editorial, se registra en QA o metadata, no ocupando
+  la zona de la fuente de datos.
+
+## 17. Metáforas literales y sonido distintivo
+
+- Si la locución describe una acción visual concreta —pinchar, estallar,
+  arrastrar, rebobinar— la animación debe ejecutar ese verbo, no limitarse a
+  mostrar una etiqueta.
+- Agujas, flechas y conectores avanzan hasta el borde del objetivo; el impacto
+  precede a la transformación y el objeto responde con deformación, rotura,
+  partículas o cambio de estado.
+- El texto situado sobre geometría compleja usa una placa oscura de contraste
+  y queda por encima de grietas, iconos y partículas.
+- Mantener familias sonoras diferenciadas para interfaz, datos, zoom, tensión,
+  impacto, rotura y rebobinado. Evitar encadenar los mismos tres o cuatro
+  efectos en escenas consecutivas.
+- Preferir efectos propios sintetizados y registrados. Los assets `library-*`
+  solo se publican cuando su licencia haya sido verificada.
+
 ## Ejemplo de cue
 
 ```json

@@ -176,7 +176,12 @@ const SECOND_MINUTE_BLUEPRINTS = [
       {id: 'same-companies', anchorText: 'mismas', atSeconds: 0.4, durationSeconds: 1.6, action: 'reveal', target: 'company-logos', label: 'LAS MISMAS EMPRESAS', tone: 'gold', sound: 'rise-whoosh'},
       {id: 'engine', anchorText: 'motor', atSeconds: 3.6, durationSeconds: 3, action: 'focus', target: 'market-engine', label: 'MOTOR DEL ÍNDICE', tone: 'gold', sound: 'digital-count'},
       {id: 'whole-market', anchorText: 'mercado', atSeconds: 4.6, durationSeconds: 2.1, action: 'connect', target: 'market-output', label: 'TODO EL MERCADO', tone: 'cyan', sound: 'soft-impact'},
-      {id: 'named-companies', anchorText: 'Microsoft', atSeconds: 6.2, durationSeconds: 5.4, action: 'highlight', target: 'named-company-logos', label: 'MICROSOFT · NVIDIA · ALPHABET · AMAZON · META', tone: 'cyan', sound: 'data-tick'}
+      {id: 'named-companies', anchorText: 'Microsoft', atSeconds: 6.2, durationSeconds: 5.4, action: 'highlight', target: 'named-company-logos', label: 'MICROSOFT · NVIDIA · ALPHABET · AMAZON · META', tone: 'cyan'},
+      {id: 'company-microsoft', anchorText: 'Microsoft', atSeconds: 6.28, durationSeconds: 0.82, action: 'focus', target: 'company-card-microsoft', label: 'MICROSOFT', tone: 'cyan', sound: 'logo-shimmer'},
+      {id: 'company-nvidia', anchorText: 'Nvidia', atSeconds: 7.34, durationSeconds: 0.82, action: 'focus', target: 'company-card-nvidia', label: 'NVIDIA', tone: 'positive', sound: 'logo-shimmer'},
+      {id: 'company-alphabet', anchorText: 'Alphabet', atSeconds: 8.24, durationSeconds: 0.82, action: 'focus', target: 'company-card-alphabet', label: 'ALPHABET', tone: 'cyan', sound: 'logo-shimmer'},
+      {id: 'company-amazon', anchorText: 'Amazon', atSeconds: 9.1, durationSeconds: 0.82, action: 'focus', target: 'company-card-amazon', label: 'AMAZON', tone: 'gold', sound: 'logo-shimmer'},
+      {id: 'company-meta', anchorText: 'Meta', atSeconds: 9.86, durationSeconds: 0.9, action: 'focus', target: 'company-card-meta', label: 'META', tone: 'cyan', sound: 'logo-shimmer'}
     ]
   },
   {
@@ -206,8 +211,8 @@ const SECOND_MINUTE_BLUEPRINTS = [
     supportingText: 'Una advertencia, no una predicción demostrada.',
     semanticCues: [
       {id: 'warning', anchorText: 'Advierte', atSeconds: 0.3, durationSeconds: 1.4, action: 'reveal', target: 'warning-label', label: 'ADVERTENCIA', tone: 'negative', sound: 'ui-pulse'},
-      {id: 'catalyst', anchorText: 'catavizador', atSeconds: 2.1, durationSeconds: 2.2, action: 'connect', target: 'catalyst-pin', label: 'CATALIZADOR', tone: 'gold', sound: 'quick-whip'},
-      {id: 'bubble', anchorText: 'burbuja', atSeconds: 5.4, durationSeconds: 2.4, action: 'highlight', target: 'tech-bubble', label: 'BURBUJA TECNOLÓGICA', tone: 'negative', sound: 'soft-impact'},
+      {id: 'catalyst', anchorText: 'catavizador', atSeconds: 2.1, durationSeconds: 2.2, action: 'connect', target: 'catalyst-pin', label: 'CATALIZADOR', tone: 'gold', sound: 'tension-swell'},
+      {id: 'bubble', anchorText: 'burbuja', atSeconds: 5.4, durationSeconds: 2.4, action: 'highlight', target: 'tech-bubble', label: 'BURBUJA TECNOLÓGICA', tone: 'negative', sound: 'bubble-burst'},
       {id: 'wall-street', anchorText: 'Wall', atSeconds: 8.6, durationSeconds: 2.3, action: 'focus', target: 'wall-street-rule', label: 'REGLA NO ESCRITA', tone: 'neutral', sound: 'smooth-whoosh'}
     ]
   },
@@ -229,7 +234,7 @@ const SECOND_MINUTE_BLUEPRINTS = [
     semanticCues: [
       {id: 'not-first', anchorText: 'primera', atSeconds: 0.5, durationSeconds: 1.8, action: 'highlight', target: 'not-first-time', label: 'NO ES LA PRIMERA VEZ', tone: 'gold', sound: 'ui-pulse'},
       {id: 'same-script', anchorText: 'visto', atSeconds: 2.5, durationSeconds: 2.6, action: 'reveal', target: 'history-track', label: 'EL MISMO LIBRETO', tone: 'cyan', sound: 'processing'},
-      {id: 'past', anchorText: 'pasado', atSeconds: 4.5, durationSeconds: 1.2, action: 'zoom', target: 'dotcom-destination', label: 'REBOBINAR', tone: 'negative', sound: 'quick-whip'}
+      {id: 'past', anchorText: 'pasado', atSeconds: 4.5, durationSeconds: 1.2, action: 'zoom', target: 'dotcom-destination', label: 'REBOBINAR', tone: 'negative', sound: 'rewind-sweep'}
     ]
   }
 ];

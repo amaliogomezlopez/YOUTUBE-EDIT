@@ -31,6 +31,11 @@ export const SOUND_FILES = {
   softImpact: "sfx/amaliometria-soft-impact.wav",
   successChime: "sfx/amaliometria-success-chime.wav",
   uiPulse: "sfx/amaliometria-ui-pulse.wav",
+  logoShimmer: "sfx/amaliometria-logo-shimmer.wav",
+  tensionSwell: "sfx/amaliometria-tension-swell.wav",
+  needleStrike: "sfx/amaliometria-needle-strike.wav",
+  bubbleBurst: "sfx/amaliometria-bubble-burst.wav",
+  rewindSweep: "sfx/amaliometria-rewind-sweep.wav",
 } as const;
 
 const soundCuesByScene: Record<

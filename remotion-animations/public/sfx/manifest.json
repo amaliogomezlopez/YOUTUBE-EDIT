@@ -60,6 +60,26 @@
     {
       "output": "amaliometria-success-chime.wav",
       "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-logo-shimmer.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-tension-swell.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-needle-strike.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-bubble-burst.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
+    },
+    {
+      "output": "amaliometria-rewind-sweep.wav",
+      "provenance": "Síntesis local determinista con FFmpeg."
     }
   ]
 }

@@ -307,9 +307,8 @@ const AssetBackdrop: React.FC<{scene: EditorialScene}> = ({scene}) => {
 
 const SourceFooter: React.FC<{
   label?: string;
-  conceptual?: boolean;
-}> = ({label, conceptual}) => {
-  const detail = label ?? (conceptual ? "ILUSTRACIÓN CONCEPTUAL · SIN ESCALA" : "");
+}> = ({label}) => {
+  const detail = label ?? "";
   if (!detail) return null;
   return (
     <div
@@ -355,6 +354,22 @@ const SourceFooter: React.FC<{
     </div>
   );
 };
+
+const DATA_SOURCE_KINDS = new Set([
+  "before-after",
+  "claim-audit",
+  "earnings-cards",
+  "mag7-weights",
+  "market-contrast",
+  "market-health",
+  "market-recovery",
+  "market-seed",
+  "market-xray",
+  "sector-bars",
+  "sloos-chart",
+  "split-lines",
+  "threshold-lanes",
+]);
 
 const MONTHS = [
   "ENE",
@@ -1584,6 +1599,31 @@ const cuesForEditorialScene = (
     processing: {file: SOUND_FILES.processing, duration: 1.2, volume: 0.1},
     pop: {file: SOUND_FILES.pop, duration: 0.42, volume: 0.12},
     "alert-sting": {file: SOUND_FILES.softImpact, duration: 0.58, volume: 0.66},
+    "logo-shimmer": {
+      file: SOUND_FILES.logoShimmer,
+      duration: 0.34,
+      volume: 0.36,
+    },
+    "tension-swell": {
+      file: SOUND_FILES.tensionSwell,
+      duration: 0.92,
+      volume: 0.34,
+    },
+    "needle-strike": {
+      file: SOUND_FILES.needleStrike,
+      duration: 0.2,
+      volume: 0.42,
+    },
+    "bubble-burst": {
+      file: SOUND_FILES.bubbleBurst,
+      duration: 0.68,
+      volume: 0.54,
+    },
+    "rewind-sweep": {
+      file: SOUND_FILES.rewindSweep,
+      duration: 0.72,
+      volume: 0.34,
+    },
   } as const;
   if (scene.semanticCues.some((semanticCue) => semanticCue.sound)) {
     return scene.semanticCues
@@ -1594,9 +1634,16 @@ const cuesForEditorialScene = (
           semanticCue.tone === "negative" || semanticCue.action === "verify"
             ? 1.12
             : 1;
-        const cameraDriven = ["focus", "highlight", "zoom", "verify"].includes(
-          semanticCue.action,
-        );
+        const specializedCameraSound = [
+          "bubble-burst",
+          "logo-shimmer",
+          "rewind-sweep",
+          "tension-swell",
+        ].includes(semanticCue.sound!);
+        const cameraDriven =
+          ["connect", "focus", "highlight", "zoom", "verify"].includes(
+            semanticCue.action,
+          ) && !specializedCameraSound;
         const primary = cue(
           config.file,
           semanticCue.atSeconds,
@@ -1633,7 +1680,18 @@ const cuesForEditorialScene = (
                 ),
               ]
             : [];
-        return [...cameraCues, primary, ...alertCues];
+        const eventCues =
+          semanticCue.sound === "bubble-burst"
+            ? [
+                cue(
+                  SOUND_FILES.needleStrike,
+                  Math.max(0, semanticCue.atSeconds - 0.035),
+                  0.2,
+                  0.46,
+                ),
+              ]
+            : [];
+        return [...cameraCues, ...eventCues, primary, ...alertCues];
       })
       .filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
   }
@@ -1689,17 +1747,6 @@ export const FinanceEditorialScene: React.FC<{
   soundMix,
 }) => {
   const {durationInFrames, fps} = useVideoConfig();
-  const conceptual = [
-    "market-ticker",
-    "kinetic-text",
-    "company-orbit",
-    "concentration-grid",
-    "historical-timeline",
-    "earnings-flow",
-    "credit-flow",
-  ].includes(scene.kind) ||
-    (scene.kind === "split-lines" &&
-      (scene.chartData.length < 2 || scene.secondaryChartData.length < 2));
   let content: React.ReactNode;
   switch (scene.kind) {
     case "market-seed":
@@ -1769,7 +1816,8 @@ export const FinanceEditorialScene: React.FC<{
     "mag7-relationship",
     "claim-audit",
   ].includes(scene.kind);
-  const footerVisible = scene.kind !== "brand-cta";
+  const footerVisible =
+    Boolean(scene.sourceLabel) && DATA_SOURCE_KINDS.has(scene.kind);
   return (
     <AbsoluteFill
       style={{
@@ -1783,7 +1831,7 @@ export const FinanceEditorialScene: React.FC<{
       {headerVisible ? <SceneHeader scene={scene} /> : null}
       <AbsoluteFill style={{zIndex: 2}}>{content}</AbsoluteFill>
       {footerVisible ? (
-        <SourceFooter label={scene.sourceLabel} conceptual={conceptual} />
+        <SourceFooter label={scene.sourceLabel} />
       ) : null}
       {headerVisible &&
       scene.assets.length > 0 &&

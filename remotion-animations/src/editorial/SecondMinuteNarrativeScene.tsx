@@ -84,6 +84,11 @@ const CAMERA_TARGETS: Record<string, [number, number]> = {
   "market-engine": [44, 54],
   "market-output": [72, 54],
   "named-company-logos": [50, 24],
+  "company-card-nvidia": [29, 24],
+  "company-card-microsoft": [43, 24],
+  "company-card-amazon": [50, 24],
+  "company-card-alphabet": [57, 24],
+  "company-card-meta": [64, 24],
   "ai-core": [50, 55],
   "gains-column": [62, 55],
   "decade-track": [50, 76],
@@ -91,6 +96,7 @@ const CAMERA_TARGETS: Record<string, [number, number]> = {
   "warning-signal": [50, 32],
   "tech-bubble": [62, 50],
   "wall-street-rule": [50, 78],
+  "catalyst-pin": [48, 50],
   "upward-force": [50, 35],
   "downward-force": [50, 68],
   abyss: [72, 80],
@@ -105,7 +111,7 @@ const CameraStage: React.FC<{
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const cameraCues = scene.semanticCues.filter((item) =>
-    ["focus", "highlight", "zoom", "verify"].includes(item.action),
+    ["connect", "focus", "highlight", "zoom", "verify"].includes(item.action),
   );
   const active = cameraCues
     .map((item) => ({
@@ -147,6 +153,11 @@ const LogoRow: React.FC<{
 }> = ({scene, labels = scene.labels, emphasis = 0}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
+  const cardFocuses = labels.slice(0, 7).map((label) => {
+    const normalized = label.replace(/[^a-z0-9]/gi, "").toLowerCase();
+    return flash(scene, `company-${normalized}`, frame, fps);
+  });
+  const activeCard = Math.max(0, ...cardFocuses);
   return (
     <div
       style={{
@@ -162,6 +173,9 @@ const LogoRow: React.FC<{
       {labels.slice(0, 7).map((label, index) => {
         const amount = reveal(frame, fps, 0.1 + index * 0.08, 0.58 + index * 0.08);
         const asset = logoFor(scene, label);
+        const cardFocus = cardFocuses[index] ?? 0;
+        const peerOpacity =
+          activeCard > 0.08 ? 0.46 + cardFocus * 0.54 : 1;
         return (
           <div
             key={label}
@@ -169,22 +183,22 @@ const LogoRow: React.FC<{
               alignItems: "center",
               background: alpha(C.panel, 0.94),
               border: `2px solid ${alpha(
-                emphasis > 0.15 ? C.cyan : C.white,
-                0.16 + emphasis * 0.68,
+                cardFocus > 0.08 ? C.cyan : C.white,
+                0.16 + cardFocus * 0.82 + emphasis * 0.08,
               )}`,
               borderRadius: 13,
-              boxShadow:
-                emphasis > 0.15
-                  ? `0 0 30px ${alpha(C.cyan, emphasis * 0.22)}`
-                  : "none",
+              boxShadow: `0 0 ${18 + cardFocus * 46}px ${alpha(
+                C.cyan,
+                cardFocus * 0.42,
+              )}`,
               display: "flex",
               flexDirection: "column",
               gap: 7,
               height: 112,
               justifyContent: "center",
-              opacity: amount,
-              transform: `translateY(${(1 - amount) * -20}px) scale(${
-                0.9 + amount * 0.1 + emphasis * 0.035
+              opacity: amount * peerOpacity,
+              transform: `translateY(${(1 - amount) * -20 - cardFocus * 16}px) scale(${
+                0.9 + amount * 0.1 + cardFocus * 0.14
               })`,
               width: 112,
             }}
@@ -582,6 +596,15 @@ const BubbleTrigger: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const {fps} = useVideoConfig();
   const catalyst = enter(scene, "catalyst", frame, fps);
   const bubble = enter(scene, "bubble", frame, fps);
+  const bubbleCue = cue(scene, "bubble");
+  const burst = bubbleCue
+    ? reveal(
+        frame,
+        fps,
+        bubbleCue.atSeconds + 0.12,
+        bubbleCue.atSeconds + 0.68,
+      )
+    : 0;
   const rule = flash(scene, "wall-street", frame, fps);
   return (
     <>
@@ -603,16 +626,35 @@ const BubbleTrigger: React.FC<{scene: EditorialScene}> = ({scene}) => {
           height: 430,
           justifyContent: "center",
           left: 745,
+          opacity: 1 - burst,
           position: "absolute",
           top: 310,
-          transform: `scale(${0.94 + bubble * 0.06})`,
+          transform: `scale(${0.94 + bubble * 0.06 + burst * 0.24})`,
           width: 430,
         }}
       >
-        TECNOLOGÍA
+        <div
+          style={{
+            background: alpha(C.bg, 0.94),
+            border: `2px solid ${alpha(C.white, 0.3)}`,
+            borderRadius: 10,
+            boxShadow: `0 8px 28px ${alpha(C.bg, 0.7)}`,
+            opacity: 1 - burst * 0.72,
+            padding: "12px 22px 14px",
+            position: "relative",
+            zIndex: 3,
+          }}
+        >
+          TECNOLOGÍA
+        </div>
         <svg
           height="270"
-          style={{left: 80, opacity: bubble, position: "absolute", top: 72}}
+          style={{
+            left: 80,
+            opacity: bubble * (1 - burst),
+            position: "absolute",
+            top: 72,
+          }}
           viewBox="0 0 270 270"
           width="270"
         >
@@ -626,16 +668,72 @@ const BubbleTrigger: React.FC<{scene: EditorialScene}> = ({scene}) => {
       </div>
       <div
         style={{
-          background: C.gold,
-          height: 8,
+          border: `7px solid ${alpha(C.cyan, 1 - burst)}`,
+          borderRadius: "50%",
+          height: 430,
+          left: 745,
+          opacity: burst * (1 - burst),
+          position: "absolute",
+          top: 310,
+          transform: `scale(${1 + burst * 0.72})`,
+          width: 430,
+        }}
+      />
+      {Array.from({length: 18}, (_, index) => {
+        const angle = (index / 18) * Math.PI * 2;
+        const distance = 100 + (index % 4) * 34;
+        const x = Math.cos(angle) * distance * burst;
+        const y = Math.sin(angle) * distance * burst;
+        return (
+          <div
+            key={index}
+            style={{
+              background: index % 3 === 0 ? C.red : C.cyan,
+              borderRadius: 3,
+              height: 7 + (index % 3) * 3,
+              left: 954,
+              opacity: burst * (1 - burst * 0.72),
+              position: "absolute",
+              top: 520,
+              transform: `translate(${x}px, ${y}px) rotate(${
+                index * 37 + burst * 160
+              }deg)`,
+              width: 30 + (index % 4) * 10,
+            }}
+          />
+        );
+      })}
+      <div
+        style={{
           left: 320,
           position: "absolute",
           top: 530,
-          transform: `rotate(-8deg) scaleX(${catalyst})`,
-          transformOrigin: "left",
-          width: 425,
+          transform: "rotate(-8deg)",
+          width: 440,
         }}
-      />
+      >
+        <div
+          style={{
+            background: `linear-gradient(90deg,${C.gold},${C.white})`,
+            boxShadow: `0 0 18px ${alpha(C.gold, 0.45)}`,
+            height: 8,
+            transform: `scaleX(${catalyst})`,
+            transformOrigin: "left",
+            width: 440,
+          }}
+        />
+        <div
+          style={{
+            borderBottom: "12px solid transparent",
+            borderLeft: `26px solid ${C.white}`,
+            borderTop: "12px solid transparent",
+            left: Math.max(0, catalyst * 440 - 4),
+            opacity: catalyst,
+            position: "absolute",
+            top: -8,
+          }}
+        />
+      </div>
       <div
         style={{
           color: C.gold,
@@ -660,6 +758,7 @@ const BubbleTrigger: React.FC<{scene: EditorialScene}> = ({scene}) => {
           fontSize: 30,
           fontWeight: 900,
           left: 555,
+          opacity: rule,
           padding: "15px 24px",
           position: "absolute",
           right: 555,
@@ -810,7 +909,13 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
         }}
       />
       {[
-        {x: 380, label: "PUNTOCOM", color: C.red, opacity: past},
+        {
+          x: 380,
+          label: "PUNTOCOM",
+          detail: "2000–2002",
+          color: C.red,
+          opacity: past,
+        },
         {x: 960, label: "MISMO LIBRETO", color: C.cyan, opacity: same},
         {x: 1540, label: "HOY", color: C.gold, opacity: 1},
       ].map((item, index) => (
@@ -839,6 +944,19 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
             }}
           />
           {item.label}
+          {"detail" in item ? (
+            <div
+              style={{
+                color: C.muted,
+                fontFamily: DATA_FONT_FAMILY,
+                fontSize: 18,
+                letterSpacing: 1,
+                marginTop: 7,
+              }}
+            >
+              {item.detail}
+            </div>
+          ) : null}
         </div>
       ))}
       <div

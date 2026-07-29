@@ -87,6 +87,11 @@ const semanticCueSchema = z.object({
     "processing",
     "pop",
     "alert-sting",
+    "logo-shimmer",
+    "tension-swell",
+    "needle-strike",
+    "bubble-burst",
+    "rewind-sweep",
   ]).optional(),
 });
 
