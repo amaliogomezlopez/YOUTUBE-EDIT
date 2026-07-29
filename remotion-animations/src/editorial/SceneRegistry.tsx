@@ -1567,6 +1567,36 @@ type KindFallback = {
 const KIND_FALLBACK: Partial<
   Record<EditorialScene["kind"], KindFallback>
 > = {
+  "market-seed": {
+    reason:
+      "La escena exige dos series, semillas y el área de divergencia; el adaptador line-trend genérico solo conserva una serie.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
+  "market-xray": {
+    reason:
+      "La relación superficie/señal interna necesita dos planos, scanner y aislamiento semántico; common-baseline aplana esa jerarquía.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
+  "market-health": {
+    reason:
+      "La escena necesita ejes, tramo de corrección y zoom sobre evidencia fechada; el adaptador genérico no conserva esos focos.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
+  "market-recovery": {
+    reason:
+      "La recuperación combina flecha, métrica derivada y estado de mercado; hero-metric por sí solo pierde la transformación narrativa.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
+  "market-contrast": {
+    reason:
+      "El giro compara dos líneas y atenúa la primera mientras revela el tramo reciente de la segunda; common-baseline no expresa el giro.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
+  "mag7-relationship": {
+    reason:
+      "La escena dispone de siete logos gestionados y conectores hacia MAGS/SPY; signal-flow sustituye indebidamente las entidades por texto.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
   "claim-audit": {
     reason:
       "`comparison.before-after-wipe` exige dos capturas del mismo encuadre; la escena aporta cifras auditadas, no imágenes.",
@@ -1663,6 +1693,12 @@ assertRoutesInSync(ROUTED_COMPOSITION_IDS, Object.keys(KIND_FALLBACK));
 
 /** Kinds cuyo cuadro lo dibuja el componente heredado, cabecera incluida. */
 const LEGACY_FRAME_KINDS = new Set<string>([
+  "market-seed",
+  "market-xray",
+  "market-health",
+  "market-recovery",
+  "market-contrast",
+  "mag7-relationship",
   "claim-audit",
   "dominance-facade",
   "leadership-lag",

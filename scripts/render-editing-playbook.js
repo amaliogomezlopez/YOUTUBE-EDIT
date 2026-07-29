@@ -10,7 +10,10 @@
 import {readFile, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
-import {auditRuleCoverage} from '../src/modules/editorial-video/visuals/rules-engine.js';
+import {
+  auditRuleCoverage,
+  loadCustomChecks
+} from '../src/modules/editorial-video/visuals/rules-engine.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -113,6 +116,7 @@ async function main() {
   const check = argv.includes('--check');
   const rulesFile = path.join(ROOT, 'channels', channelId, 'brand', 'editing-rules.json');
   const outputFile = path.join(ROOT, 'channels', channelId, 'brand', 'editing-playbook.md');
+  await loadCustomChecks();
   const ruleSet = JSON.parse(await readFile(rulesFile, 'utf8'));
   const markdown = renderPlaybook(ruleSet);
   if (check) {

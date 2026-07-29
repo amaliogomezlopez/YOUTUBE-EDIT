@@ -27,6 +27,12 @@
     "Pattern-Kinetic-Phrase": "typography"
   },
   "kindFallback": [
+    {"kind": "market-seed", "reason": "La escena exige dos series, semillas y el área de divergencia; el adaptador line-trend genérico solo conserva una serie."},
+    {"kind": "market-xray", "reason": "La relación superficie/señal interna necesita dos planos, scanner y aislamiento semántico; common-baseline aplana esa jerarquía."},
+    {"kind": "market-health", "reason": "La escena necesita ejes, tramo de corrección y zoom sobre evidencia fechada; el adaptador genérico no conserva esos focos."},
+    {"kind": "market-recovery", "reason": "La recuperación combina flecha, métrica derivada y estado de mercado; hero-metric por sí solo pierde la transformación narrativa."},
+    {"kind": "market-contrast", "reason": "El giro compara dos líneas y atenúa la primera mientras revela el tramo reciente de la segunda; common-baseline no expresa el giro."},
+    {"kind": "mag7-relationship", "reason": "La escena dispone de siete logos gestionados y conectores hacia MAGS/SPY; signal-flow sustituye indebidamente las entidades por texto."},
     {"kind": "claim-audit", "reason": "`comparison.before-after-wipe` exige dos capturas del mismo encuadre; la escena aporta cifras auditadas, no imágenes."},
     {"kind": "bubble-trigger", "reason": "`concept.scale-proportion` necesita una proporción declarada; la escena no aporta ni cifras ni etiquetas comparables."},
     {"kind": "market-gravity", "reason": "Misma carencia que bubble-trigger: la escena es una metáfora sin magnitudes que el patrón cuantitativo pueda representar."},

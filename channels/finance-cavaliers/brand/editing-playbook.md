@@ -19,7 +19,7 @@ Este contrato convierte la locución en decisiones visuales reutilizables. Cada 
 | `catalog` | Regla universal del catálogo: aplica a cualquier canal. |
 | `channel` | Regla de marca de Finance Cavaliers. |
 
-Reglas: **59** · con validador automático: **42** · marcadas `manual`: **17** · sin implementar: **0**.
+Reglas: **60** · con validador automático: **43** · marcadas `manual`: **17** · sin implementar: **0**.
 
 Una regla `channel` aplicada en dos canales asciende a `catalog` y se documenta en capabilities.manifest.json (ANM-I06).
 
@@ -86,6 +86,14 @@ Si falla una condición de equivalencia, la escena queda `blocked` y la preview 
 Las gráficas publicables incluyen ejes, unidades, fechas, fuente y definición; las comparaciones sin escala se marcan como conceptuales.
 
 **Validador:** revisión humana (sin comprobación geométrica posible)
+
+### FC-R-024 · `error` · `catalog`
+
+Un adaptador de patrón no puede simplificar la evidencia narrativa de una escena: si la locución y el plan exigen dos series debe renderizar ambas y su relación; si nombra entidades con logos disponibles debe usar esos assets y conservar los cues de foco.
+
+**Por qué:** La migración del episodio 1 a patrones genéricos descartó secondaryChartData y sustituyó siete logos por texto, aunque el plan conservaba ambas evidencias.
+
+**Validador:** `pattern-evidence-preserved`
 
 ## 3. Ritmo y variedad
 

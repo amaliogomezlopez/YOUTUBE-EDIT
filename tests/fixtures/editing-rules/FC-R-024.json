@@ -1,0 +1,47 @@
+{
+  "ruleId": "FC-R-024",
+  "statement": "Un adaptador de patrón no puede simplificar la evidencia narrativa de una escena: si la locución y el plan exigen dos series debe renderizar ambas y su relación; si nombra entidades con logos disponibles debe usar esos assets y conservar los cues de foco.",
+  "check": "pattern-evidence-preserved",
+  "expect": "fail",
+  "note": "Plan mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "words": [
+      {
+        "text": "ejemplo",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "mínimo",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "market-seed",
+        "patternId": "data.line-trend-zoom",
+        "renderMode": "pattern",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "line",
+        "emphasis": "zoom",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "chartData": [
+          {"label": "A", "value": 100},
+          {"label": "B", "value": 105}
+        ],
+        "secondaryChartData": [
+          {"label": "A", "value": 100},
+          {"label": "B", "value": 91}
+        ]
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}
