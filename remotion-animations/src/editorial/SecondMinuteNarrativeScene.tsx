@@ -345,7 +345,7 @@ const BubbleTrigger: React.FC<{scene: EditorialScene}> = ({scene}) => {
           top: 444,
         }}
       >
-        CATALIZADOR →
+        SEÑAL A VIGILAR →
       </div>
       <div
         style={{
@@ -364,7 +364,7 @@ const BubbleTrigger: React.FC<{scene: EditorialScene}> = ({scene}) => {
           textAlign: "center",
         }}
       >
-        REGLA NO ESCRITA DE WALL STREET
+        HIPÓTESIS, NO CERTEZA
       </div>
       <Tag fallback="BURBUJA TECNOLÓGICA" id="bubble" scene={scene} top={210} />
     </>
@@ -515,7 +515,7 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
           color: C.red,
           opacity: past,
         },
-        {x: 960, label: "MISMO LIBRETO", color: C.cyan, opacity: same},
+        {x: 960, label: "VARIABLES", color: C.cyan, opacity: same},
         {x: 1540, label: "HOY", color: C.gold, opacity: 1},
       ].map((item, index) => (
         <div
@@ -575,7 +575,7 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
           top: 760,
         }}
       >
-        ESTO YA OCURRIÓ
+        CONCENTRACIÓN + VALORACIÓN
       </div>
       <Tag fallback="NO ES LA PRIMERA VEZ" id="not-first" scene={scene} top={210} />
       <Tag fallback="REBOBINAR" id="past" scene={scene} top={210} />

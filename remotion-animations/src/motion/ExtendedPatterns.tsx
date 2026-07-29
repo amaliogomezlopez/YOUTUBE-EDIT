@@ -884,6 +884,9 @@ const Accumulation: React.FC<ExtendedPatternProps> = (props) => {
     <div style={{height: "100%", opacity: intro, position: "relative"}}>
       <div
         style={{
+          background: props.imagePath
+            ? rgba(theme.background, 0.38)
+            : undefined,
           border: `3px solid ${rgba(theme.muted, 0.48)}`,
           bottom: portrait ? "12%" : "8%",
           height: portrait ? "64%" : "70%",
@@ -893,6 +896,28 @@ const Accumulation: React.FC<ExtendedPatternProps> = (props) => {
           width: portrait ? "72%" : "54%",
         }}
       >
+        {props.imagePath ? (
+          <>
+            <Img
+              src={staticFile(props.imagePath)}
+              style={{
+                height: "100%",
+                objectFit: "cover",
+                opacity: 0.56,
+                position: "absolute",
+                width: "100%",
+              }}
+            />
+            <AbsoluteFill
+              style={{
+                background: `linear-gradient(180deg, ${rgba(
+                  theme.background,
+                  0.08,
+                )}, ${rgba(theme.background, 0.82)})`,
+              }}
+            />
+          </>
+        ) : null}
         {dots.map((dot) => {
           const column = dot % (portrait ? 4 : 6);
           const row = Math.floor(dot / (portrait ? 4 : 6));

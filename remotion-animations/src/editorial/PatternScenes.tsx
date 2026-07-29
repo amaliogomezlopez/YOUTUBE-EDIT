@@ -411,7 +411,8 @@ const makeExtendedScene = (
           ? `${scene.metric.value.toLocaleString("es-ES")}${scene.metric.suffix} · ${scene.metric.label}`
           : (scene.valueLabels[0] ?? ""),
         items,
-        imagePath: "",
+        imagePath:
+          scene.assets.find((asset) => asset.kind === "image")?.path ?? "",
         focalPoint: {x: 50, y: 50},
         accentColor,
         // La mezcla la decide el director (ANM-D04); el patrón no añade sonido.
