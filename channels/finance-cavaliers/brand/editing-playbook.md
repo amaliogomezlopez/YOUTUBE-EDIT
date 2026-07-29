@@ -163,6 +163,36 @@ npm run episode:review-block -- --props "<render-props-master>" `
 - Una fotografía aporta contexto o atmósfera. Nunca se usa como fuente de una
   cifra, una curva o una afirmación económica.
 
+## 13. Geometría segura y continuidad espacial
+
+- Toda tarjeta, etiqueta o llamada que aparezca tarde tiene una zona reservada
+  desde el diseño inicial. No puede cubrir texto, cifras, logos, dibujos ni el
+  objeto que está explicando.
+- Se revisan entrada, máximo desplazamiento y salida de cada objeto móvil
+  contra las cajas de las etiquetas. La comprobación cubre toda la duración,
+  no solo el frame final.
+- Las etiquetas que nombran un objeto se colocan fuera de su silueta, con
+  separación visible. El nombre de un motor, nodo o gráfico no se imprime
+  dentro si sus trazos reducen el contraste.
+- Los conectores terminan en el borde del destino y las tarjetas posteriores
+  ocupan carriles libres. Si no existe uno, se retira o recoloca el elemento
+  anterior antes de revelar el nuevo.
+- En cronologías occidentales, el pasado queda a la izquierda y el presente a
+  la derecha. Un rebobinado parte del presente y avanza hacia la izquierda.
+
+## 14. Cámara y zoom narrativo
+
+- Usar zoom in y zoom out sobre el objeto exacto mencionado: línea, fecha,
+  empresa, dato, nodo o región. El origen de cámara se declara semánticamente
+  por escena.
+- Cada acercamiento conserva márgenes seguros y vuelve con suavidad antes del
+  siguiente foco. No puede cortar títulos, fuentes ni etiquetas.
+- Los zooms significativos llevan un whoosh corto de entrada y otro más suave
+  de salida, mezclados por debajo de la locución. No se sonorizan movimientos
+  decorativos sin función narrativa.
+- Alternar zoom, aislamiento por color, subrayado y cambio de escala para que
+  el zoom atraiga atención sin convertirse en un tic repetitivo.
+
 ## Ejemplo de cue
 
 ```json

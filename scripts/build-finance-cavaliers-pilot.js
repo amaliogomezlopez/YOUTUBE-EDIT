@@ -174,7 +174,7 @@ const SECOND_MINUTE_BLUEPRINTS = [
     supportingText: 'Las mismas compañías que impulsaron el índice.',
     semanticCues: [
       {id: 'same-companies', anchorText: 'mismas', atSeconds: 0.4, durationSeconds: 1.6, action: 'reveal', target: 'company-logos', label: 'LAS MISMAS EMPRESAS', tone: 'gold', sound: 'rise-whoosh'},
-      {id: 'engine', anchorText: 'motor', atSeconds: 3.6, durationSeconds: 3, action: 'focus', target: 'market-engine', label: 'MOTOR ABSOLUTO', tone: 'gold', sound: 'digital-count'},
+      {id: 'engine', anchorText: 'motor', atSeconds: 3.6, durationSeconds: 3, action: 'focus', target: 'market-engine', label: 'MOTOR DEL ÍNDICE', tone: 'gold', sound: 'digital-count'},
       {id: 'whole-market', anchorText: 'mercado', atSeconds: 4.6, durationSeconds: 2.1, action: 'connect', target: 'market-output', label: 'TODO EL MERCADO', tone: 'cyan', sound: 'soft-impact'},
       {id: 'named-companies', anchorText: 'Microsoft', atSeconds: 6.2, durationSeconds: 5.4, action: 'highlight', target: 'named-company-logos', label: 'MICROSOFT · NVIDIA · ALPHABET · AMAZON · META', tone: 'cyan', sound: 'data-tick'}
     ]

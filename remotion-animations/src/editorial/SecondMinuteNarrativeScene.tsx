@@ -80,6 +80,57 @@ const reveal = (
     easing: Easing.bezier(0.16, 1, 0.3, 1),
   });
 
+const CAMERA_TARGETS: Record<string, [number, number]> = {
+  "market-engine": [44, 54],
+  "market-output": [72, 54],
+  "named-company-logos": [50, 24],
+  "ai-core": [50, 55],
+  "gains-column": [62, 55],
+  "decade-track": [50, 76],
+  "correction-zone": [50, 54],
+  "warning-signal": [50, 32],
+  "tech-bubble": [62, 50],
+  "wall-street-rule": [50, 78],
+  "upward-force": [50, 35],
+  "downward-force": [50, 68],
+  abyss: [72, 80],
+  "not-first-time": [50, 30],
+  "dotcom-destination": [20, 58],
+};
+
+const CameraStage: React.FC<{
+  scene: EditorialScene;
+  children: React.ReactNode;
+}> = ({scene, children}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const cameraCues = scene.semanticCues.filter((item) =>
+    ["focus", "highlight", "zoom", "verify"].includes(item.action),
+  );
+  const active = cameraCues
+    .map((item) => ({
+      item,
+      amount: flash(scene, item.id, frame, fps),
+    }))
+    .sort((left, right) => right.amount - left.amount)[0];
+  const amount = active?.amount ?? 0;
+  const target = CAMERA_TARGETS[active?.item.target ?? ""] ?? [50, 50];
+  const scale = 1 + amount * 0.085;
+  return (
+    <div
+      style={{
+        height: "100%",
+        position: "absolute",
+        transform: `scale(${scale})`,
+        transformOrigin: `${target[0]}% ${target[1]}%`,
+        width: "100%",
+      }}
+    >
+      {children}
+    </div>
+  );
+};
+
 const logoFor = (scene: EditorialScene, label: string) => {
   const normalized = label.replace(/[^a-z0-9]/gi, "").toLowerCase();
   return scene.assets.find(
@@ -168,10 +219,21 @@ const Tag: React.FC<{
   id: string;
   fallback: string;
   top?: number;
-}> = ({scene, id, fallback, top = 790}) => {
+  left?: number | string;
+  persistent?: boolean;
+}> = ({
+  scene,
+  id,
+  fallback,
+  top = 790,
+  left = "50%",
+  persistent = false,
+}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const amount = flash(scene, id, frame, fps);
+  const amount = persistent
+    ? enter(scene, id, frame, fps)
+    : flash(scene, id, frame, fps);
   const item = cue(scene, id);
   const color =
     item?.tone === "negative"
@@ -192,7 +254,7 @@ const Tag: React.FC<{
         fontFamily: FINANCE_FONT_FAMILY,
         fontSize: 28,
         fontWeight: 900,
-        left: "50%",
+        left,
         opacity: amount,
         padding: "11px 22px 13px",
         position: "absolute",
@@ -214,6 +276,7 @@ const MarketEngine: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const output = enter(scene, "whole-market", frame, fps);
   const named = flash(scene, "named-companies", frame, fps);
   const spin = (frame / fps) * (26 + engine * 34);
+  const teeth = 16;
   return (
     <>
       <LogoRow emphasis={named} scene={scene} />
@@ -242,35 +305,47 @@ const MarketEngine: React.FC<{scene: EditorialScene}> = ({scene}) => {
             width: 300,
           }}
         >
-          {Array.from({length: 8}, (_, index) => (
+          {Array.from({length: teeth}, (_, index) => (
             <div
               key={index}
               style={{
                 background: index % 2 ? C.gold : C.cyan,
-                height: 88,
-                left: 144,
-                opacity: 0.72,
+                borderRadius: 4,
+                height: 38,
+                left: 142,
+                opacity: 0.82,
                 position: "absolute",
-                top: 47,
-                transform: `rotate(${spin + index * 45}deg)`,
-                transformOrigin: "6px 103px",
-                width: 12,
+                top: 18,
+                transform: `rotate(${spin + index * (360 / teeth)}deg)`,
+                transformOrigin: "8px 132px",
+                width: 16,
               }}
             />
           ))}
           <div
             style={{
-              color: C.white,
-              fontFamily: FINANCE_FONT_FAMILY,
-              fontSize: 31,
-              fontWeight: 900,
+              alignItems: "center",
+              background: alpha(C.bg, 0.96),
+              border: `4px solid ${alpha(C.cyan, 0.78)}`,
+              borderRadius: "50%",
+              boxShadow: `inset 0 0 28px ${alpha(C.cyan, 0.22)}`,
+              display: "flex",
+              height: 112,
+              justifyContent: "center",
               position: "relative",
-              textAlign: "center",
+              width: 112,
             }}
           >
-            MOTOR
-            <br />
-            DEL ÍNDICE
+            <div
+              style={{
+                background: C.gold,
+                border: `10px solid ${C.panel}`,
+                borderRadius: "50%",
+                boxShadow: `0 0 24px ${alpha(C.gold, 0.46)}`,
+                height: 54,
+                width: 54,
+              }}
+            />
           </div>
         </div>
         <div
@@ -306,8 +381,8 @@ const MarketEngine: React.FC<{scene: EditorialScene}> = ({scene}) => {
           MERCADO
         </div>
       </div>
-      <Tag fallback="MOTOR ABSOLUTO" id="engine" scene={scene} />
-      <Tag fallback="TODO EL MERCADO" id="whole-market" scene={scene} />
+      <Tag fallback="MOTOR DEL ÍNDICE" id="engine" scene={scene} top={330} />
+      <Tag fallback="TODO EL MERCADO" id="whole-market" scene={scene} top={770} />
     </>
   );
 };
@@ -680,7 +755,14 @@ const MarketGravity: React.FC<{scene: EditorialScene}> = ({scene}) => {
           top: 670,
         }}
       />
-      <Tag fallback="ABISMO" id="abyss" scene={scene} top={825} />
+      <Tag
+        fallback="ABISMO"
+        id="abyss"
+        left={1390}
+        persistent
+        scene={scene}
+        top={835}
+      />
     </>
   );
 };
@@ -698,7 +780,7 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
           fontFamily: DATA_FONT_FAMILY,
           fontSize: 132,
           fontWeight: 900,
-          left: 530,
+          left: 1210,
           opacity: past,
           position: "absolute",
           top: 300,
@@ -721,16 +803,16 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
         style={{
           background: C.cyan,
           height: 6,
-          left: 380,
+          right: 380,
           position: "absolute",
           top: 570,
           width: 1160 * past,
         }}
       />
       {[
-        {x: 380, label: "HOY", color: C.gold, opacity: 1},
+        {x: 380, label: "PUNTOCOM", color: C.red, opacity: past},
         {x: 960, label: "MISMO LIBRETO", color: C.cyan, opacity: same},
-        {x: 1540, label: "PUNTOCOM", color: C.red, opacity: past},
+        {x: 1540, label: "HOY", color: C.gold, opacity: 1},
       ].map((item, index) => (
         <div
           key={item.label}
@@ -787,10 +869,15 @@ const HistoryRewind: React.FC<{scene: EditorialScene}> = ({scene}) => {
 export const SecondMinuteNarrativeScene: React.FC<{
   scene: EditorialScene;
 }> = ({scene}) => {
-  if (scene.kind === "market-engine") return <MarketEngine scene={scene} />;
-  if (scene.kind === "ai-core") return <AiCore scene={scene} />;
-  if (scene.kind === "correction-alert") return <CorrectionAlert scene={scene} />;
-  if (scene.kind === "bubble-trigger") return <BubbleTrigger scene={scene} />;
-  if (scene.kind === "market-gravity") return <MarketGravity scene={scene} />;
-  return <HistoryRewind scene={scene} />;
+  let content: React.ReactNode;
+  if (scene.kind === "market-engine") content = <MarketEngine scene={scene} />;
+  else if (scene.kind === "ai-core") content = <AiCore scene={scene} />;
+  else if (scene.kind === "correction-alert")
+    content = <CorrectionAlert scene={scene} />;
+  else if (scene.kind === "bubble-trigger")
+    content = <BubbleTrigger scene={scene} />;
+  else if (scene.kind === "market-gravity")
+    content = <MarketGravity scene={scene} />;
+  else content = <HistoryRewind scene={scene} />;
+  return <CameraStage scene={scene}>{content}</CameraStage>;
 };

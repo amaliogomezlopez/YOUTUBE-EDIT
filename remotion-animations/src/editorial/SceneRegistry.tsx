@@ -1594,22 +1594,46 @@ const cuesForEditorialScene = (
           semanticCue.tone === "negative" || semanticCue.action === "verify"
             ? 1.12
             : 1;
+        const cameraDriven = ["focus", "highlight", "zoom", "verify"].includes(
+          semanticCue.action,
+        );
         const primary = cue(
           config.file,
           semanticCue.atSeconds,
           config.duration,
           config.volume * emphasis,
         );
-        if (semanticCue.sound !== "alert-sting") return [primary];
-        return [
-          primary,
-          cue(
-            SOUND_FILES.uiPulse,
-            semanticCue.atSeconds + 0.13,
-            0.22,
-            0.5,
-          ),
-        ];
+        const cameraCues = cameraDriven
+          ? [
+              cue(
+                SOUND_FILES.quickWhip,
+                Math.max(0, semanticCue.atSeconds - 0.04),
+                0.12,
+                0.11,
+              ),
+              cue(
+                SOUND_FILES.smoothWhoosh,
+                Math.max(
+                  semanticCue.atSeconds + 0.18,
+                  semanticCue.atSeconds + semanticCue.durationSeconds - 0.48,
+                ),
+                0.48,
+                0.065,
+              ),
+            ]
+          : [];
+        const alertCues =
+          semanticCue.sound === "alert-sting"
+            ? [
+                cue(
+                  SOUND_FILES.uiPulse,
+                  semanticCue.atSeconds + 0.13,
+                  0.22,
+                  0.5,
+                ),
+              ]
+            : [];
+        return [...cameraCues, primary, ...alertCues];
       })
       .filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
   }
