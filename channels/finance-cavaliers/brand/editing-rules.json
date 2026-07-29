@@ -730,6 +730,34 @@
         "recordedAt": "2026-07-29T19:48:09Z"
       },
       "fixture": "tests/fixtures/editing-rules/FC-R-182.json"
+    },
+    {
+      "id": "FC-R-062",
+      "section": "sound",
+      "statement": "Todo movimiento semántico fuerte de caída, arrastre, impacto o ruptura declara sonido sincronizado y con volumen perceptible durante la locución.",
+      "rationale": "Un cambio visual decisivo sin correspondencia sonora pierde dinamismo y jerarquía.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "semantic-motion-sound",
+      "origin": {
+        "feedback": "Todo movimiento semántico fuerte de caída, arrastre, impacto o ruptura debe llevar un efecto sonoro perceptible sincronizado con el mismo cue",
+        "recordedAt": "2026-07-29T20:44:02Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-062.json"
+    },
+    {
+      "id": "FC-R-133",
+      "section": "safe-geometry",
+      "statement": "Toda composición orbital distribuye sus elementos de forma equidistante y evita solapes entre participantes y núcleo durante toda la animación.",
+      "rationale": "Una órbita irregular o solapada parece accidental y dificulta reconocer las entidades.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "orbit-symmetry-clearance",
+      "origin": {
+        "feedback": "Los elementos de una órbita deben distribuirse simétricamente, sin superponerse entre sí ni invadir el núcleo",
+        "recordedAt": "2026-07-29T20:44:02Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-133.json"
     }
   ]
 }

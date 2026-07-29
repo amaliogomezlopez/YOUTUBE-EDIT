@@ -64,6 +64,8 @@ export const LogoEcosystem: React.FC<LogoEcosystemProps> = ({
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const orbit = (frame / fps) * 0.17;
+  const radiusX = 620;
+  const radiusY = 300;
   return (
     <div style={{height: "100%", position: "relative", width: "100%"}}>
       <div
@@ -87,7 +89,13 @@ export const LogoEcosystem: React.FC<LogoEcosystemProps> = ({
       >
         <Img
           src={staticFile(coreLogoPath)}
-          style={{height: 178, objectFit: "contain", width: 178}}
+          style={{
+            borderRadius: "50%",
+            height: 178,
+            mixBlendMode: "screen",
+            objectFit: "contain",
+            width: 178,
+          }}
         />
         {coreLabel ? (
           <span
@@ -106,8 +114,8 @@ export const LogoEcosystem: React.FC<LogoEcosystemProps> = ({
       {participants.map((participant, index) => {
         const angle =
           (index / participants.length) * Math.PI * 2 - Math.PI / 2 + orbit;
-        const x = 864 + Math.cos(angle) * 520;
-        const y = 565 + Math.sin(angle) * 245;
+        const x = Math.cos(angle) * radiusX;
+        const y = Math.sin(angle) * radiusY;
         const enter = reveal(frame, fps, 0.2 + index * 0.16, 0.8 + index * 0.16);
         return (
           <div
@@ -120,11 +128,11 @@ export const LogoEcosystem: React.FC<LogoEcosystemProps> = ({
               fontFamily: FINANCE_FONT_FAMILY,
               fontSize: 18,
               fontWeight: 700,
-              left: x,
+              left: `calc(50% + ${x}px)`,
               opacity: enter,
               padding: "15px 22px",
               position: "absolute",
-              top: y,
+              top: `calc(54% + ${y}px)`,
               transform: `translate(-50%, -50%) scale(${0.82 + enter * 0.18})`,
             }}
           >

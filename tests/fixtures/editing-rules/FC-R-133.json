@@ -1,0 +1,21 @@
+{
+  "ruleId": "FC-R-133",
+  "statement": "Toda composición orbital distribuye sus elementos de forma equidistante y evita solapes entre participantes y núcleo durante toda la animación.",
+  "check": "orbit-symmetry-clearance",
+  "expect": "fail",
+  "note": "Una órbita sin geometría simétrica ni holgura debe bloquear el plan.",
+  "context": {
+    "scenes": [
+      {
+        "id": "scene-fixture-orbit",
+        "componentKey": "market-engine",
+        "patternId": "asset.logo-ecosystem",
+        "geometry": "radial",
+        "orbitGeometry": {
+          "equalSpacing": false,
+          "minClearance": 0
+        }
+      }
+    ]
+  }
+}

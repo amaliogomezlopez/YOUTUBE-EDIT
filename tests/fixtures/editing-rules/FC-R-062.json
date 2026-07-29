@@ -1,0 +1,28 @@
+{
+  "ruleId": "FC-R-062",
+  "statement": "Todo movimiento semántico fuerte de caída, arrastre, impacto o ruptura declara sonido sincronizado y con volumen perceptible durante la locución.",
+  "check": "semantic-motion-sound",
+  "expect": "fail",
+  "note": "Un arrastre fuerte sin sonido perceptible debe bloquear el plan.",
+  "context": {
+    "scenes": [
+      {
+        "id": "scene-fixture-drag",
+        "componentKey": "market-gravity",
+        "cues": [
+          {
+            "id": "drag",
+            "target": "downward-force",
+            "label": "ARRASTRE"
+          }
+        ],
+        "soundPlan": [
+          {
+            "cueId": "drag",
+            "volume": 0.1
+          }
+        ]
+      }
+    ]
+  }
+}

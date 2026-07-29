@@ -19,7 +19,7 @@ Este contrato convierte la locución en decisiones visuales reutilizables. Cada 
 | `catalog` | Regla universal del catálogo: aplica a cualquier canal. |
 | `channel` | Regla de marca de Finance Cavaliers. |
 
-Reglas: **62** · con validador automático: **45** · marcadas `manual`: **17** · sin implementar: **0**.
+Reglas: **64** · con validador automático: **47** · marcadas `manual`: **17** · sin implementar: **0**.
 
 Una regla `channel` aplicada en dos canales asciende a `catalog` y se documenta en capabilities.manifest.json (ANM-I06).
 
@@ -232,6 +232,14 @@ Todo episodio genera además su variante silenciosa renderizable.
 
 **Validador:** `silent-variant-present`
 
+### FC-R-062 · `error` · `catalog`
+
+Todo movimiento semántico fuerte de caída, arrastre, impacto o ruptura declara sonido sincronizado y con volumen perceptible durante la locución.
+
+**Por qué:** Un cambio visual decisivo sin correspondencia sonora pierde dinamismo y jerarquía.
+
+**Validador:** `semantic-motion-sound`
+
 ## 7. Revisión
 
 ### FC-R-060 · `review` · `catalog`
@@ -358,6 +366,14 @@ Se revisan entrada, máximo desplazamiento y salida de cada objeto móvil contra
 Las etiquetas que nombran un objeto se colocan fuera de su silueta, con separación visible.
 
 **Validador:** revisión humana (sin comprobación geométrica posible)
+
+### FC-R-133 · `error` · `catalog`
+
+Toda composición orbital distribuye sus elementos de forma equidistante y evita solapes entre participantes y núcleo durante toda la animación.
+
+**Por qué:** Una órbita irregular o solapada parece accidental y dificulta reconocer las entidades.
+
+**Validador:** `orbit-symmetry-clearance`
 
 ## 14. Cámara y zoom narrativo
 

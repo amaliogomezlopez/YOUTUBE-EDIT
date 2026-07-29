@@ -13,7 +13,14 @@
  * que este registro, `pattern-routes.json` y `patterns.json` coinciden.
  */
 import React from "react";
-import {AbsoluteFill, useCurrentFrame, useVideoConfig} from "remotion";
+import {
+  AbsoluteFill,
+  Img,
+  interpolate,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import {z} from "zod";
 import {
   ContagionSpread,
@@ -536,6 +543,219 @@ const KineticPhraseScene: React.FC<PatternSceneProps> = ({
   return <KineticPhrase {...props} />;
 };
 
+const AiCoreScene: React.FC<PatternSceneProps> = ({scene, accentColor}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const seconds = frame / fps;
+  const reveal = (start: number) =>
+    interpolate(seconds, [start, start + 0.55], [0, 1], {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    });
+  const image = scene.assets.find((asset) => asset.kind === "image");
+  const logos = scene.assets.filter((asset) => asset.kind === "logo").slice(0, 5);
+  const steps = ["CÓMPUTO", "MODELOS", "PRODUCTOS", "RESULTADOS"];
+  return (
+    <AbsoluteFill style={{background: "#050817", color: "#FFF9E8"}}>
+      <div
+        style={{
+          fontFamily: "Inter, Arial, sans-serif",
+          left: 120,
+          position: "absolute",
+          right: 120,
+          textAlign: "center",
+          top: 48,
+        }}
+      >
+        <div style={{fontSize: 62, fontWeight: 900}}>{scene.headline}</div>
+        <div style={{color: "#9DB7DB", fontSize: 27, marginTop: 8}}>
+          {scene.supportingText}
+        </div>
+      </div>
+
+      <div
+        style={{
+          border: `2px solid ${accentColor}66`,
+          borderRadius: 22,
+          bottom: 150,
+          left: 115,
+          overflow: "hidden",
+          position: "absolute",
+          top: 225,
+          width: 540,
+        }}
+      >
+        {image ? (
+          <Img
+            src={staticFile(image.path)}
+            style={{height: "100%", objectFit: "cover", width: "100%"}}
+          />
+        ) : null}
+        <AbsoluteFill
+          style={{
+            background:
+              "linear-gradient(180deg, rgba(5,8,23,.08), rgba(5,8,23,.88))",
+          }}
+        />
+        <div
+          style={{
+            bottom: 34,
+            fontFamily: "Inter, Arial, sans-serif",
+            fontSize: 30,
+            fontWeight: 900,
+            left: 34,
+            position: "absolute",
+          }}
+        >
+          INFRAESTRUCTURA IA
+          <div style={{color: "#9DB7DB", fontSize: 19, marginTop: 7}}>
+            Centros de datos y capacidad de cómputo
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          gap: 15,
+          left: 705,
+          position: "absolute",
+          top: 246,
+        }}
+      >
+        {logos.map((logo, index) => (
+          <div
+            key={logo.id}
+            style={{
+              alignItems: "center",
+              background: "#101A33",
+              border: "1px solid #33415F",
+              borderRadius: 14,
+              display: "flex",
+              height: 112,
+              justifyContent: "center",
+              opacity: reveal(0.35 + index * 0.12),
+              transform: `translateY(${(1 - reveal(0.35 + index * 0.12)) * 18}px)`,
+              width: 128,
+            }}
+          >
+            <Img
+              src={staticFile(logo.path)}
+              style={{height: 66, objectFit: "contain", width: 82}}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          left: 710,
+          position: "absolute",
+          top: 455,
+        }}
+      >
+        {steps.map((step, index) => (
+          <React.Fragment key={step}>
+            <div
+              style={{
+                background: index === steps.length - 1 ? accentColor : "#101A33",
+                border: `2px solid ${index === steps.length - 1 ? accentColor : "#456080"}`,
+                borderRadius: 14,
+                color: index === steps.length - 1 ? "#050817" : "#FFF9E8",
+                fontFamily: "Inter, Arial, sans-serif",
+                fontSize: 22,
+                fontWeight: 900,
+                opacity: reveal(1.1 + index * 0.45),
+                padding: "22px 24px",
+              }}
+            >
+              {step}
+            </div>
+            {index < steps.length - 1 ? (
+              <div
+                style={{
+                  color: accentColor,
+                  fontSize: 42,
+                  opacity: reveal(1.35 + index * 0.45),
+                  padding: "0 12px",
+                }}
+              >
+                →
+              </div>
+            ) : null}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div
+        style={{
+          alignItems: "end",
+          bottom: 160,
+          display: "flex",
+          gap: 22,
+          height: 245,
+          position: "absolute",
+          right: 125,
+          width: 360,
+        }}
+      >
+        {[42, 58, 76, 100].map((height, index) => (
+          <div
+            key={height}
+            style={{
+              background:
+                index === 3
+                  ? `linear-gradient(180deg, ${accentColor}, #C68A16)`
+                  : "#38577A",
+              borderRadius: "10px 10px 0 0",
+              height: `${height * reveal(2.15 + index * 0.22)}%`,
+              width: 58,
+            }}
+          />
+        ))}
+        <div
+          style={{
+            color: accentColor,
+            fontFamily: "Inter, Arial, sans-serif",
+            fontSize: 24,
+            fontWeight: 900,
+            left: 0,
+            position: "absolute",
+            top: -42,
+          }}
+        >
+          LIDERAZGO BURSÁTIL · 10 AÑOS
+        </div>
+      </div>
+      <div
+        style={{
+          bottom: 50,
+          color: "#7184A4",
+          fontFamily: "Inter, Arial, sans-serif",
+          fontSize: 16,
+          left: 120,
+          position: "absolute",
+        }}
+      >
+        {scene.sourceLabel}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+const AccumulationScene: React.FC<PatternSceneProps> = (props) =>
+  props.scene.kind === "ai-core" ? (
+    <AiCoreScene {...props} />
+  ) : (
+    React.createElement(
+      makeExtendedScene("accumulation", "Pattern-Accumulation"),
+      props,
+    )
+  );
+
 export const PATTERN_SCENES: Record<string, PatternRoute> = {
   "Pattern-Logo-Ecosystem": {ownsFrame: false, Component: LogoEcosystemScene},
   "Pattern-Kinetic-Phrase": {ownsFrame: true, Component: KineticPhraseScene},
@@ -562,7 +782,7 @@ export const PATTERN_SCENES: Record<string, PatternRoute> = {
   },
   "Pattern-Accumulation": {
     ownsFrame: true,
-    Component: makeExtendedScene("accumulation", "Pattern-Accumulation"),
+    Component: AccumulationScene,
   },
   "Pattern-Funnel-Filter": {
     ownsFrame: true,
