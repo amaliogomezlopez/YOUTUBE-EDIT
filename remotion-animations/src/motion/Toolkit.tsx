@@ -471,6 +471,24 @@ export type LineChartZoomProps = {
   zoomScale?: number;
 };
 
+export const lineChartTickIndices = (
+  length: number,
+  maxTicks = 5,
+): number[] => {
+  const safeLength = Math.max(0, Math.floor(length));
+  const safeMaxTicks = Math.max(2, Math.floor(maxTicks));
+  if (safeLength <= safeMaxTicks) {
+    return Array.from({length: safeLength}, (_, index) => index);
+  }
+  return Array.from(
+    new Set(
+      Array.from({length: safeMaxTicks}, (_, index) =>
+        Math.round((index * (safeLength - 1)) / (safeMaxTicks - 1)),
+      ),
+    ),
+  );
+};
+
 export const LineChartZoom: React.FC<LineChartZoomProps> = ({
   data,
   width = 1320,
@@ -543,6 +561,7 @@ export const LineChartZoom: React.FC<LineChartZoomProps> = ({
     zoomEndSeconds,
   );
   const focusValue = safeData[safeFocusIndex].value;
+  const tickIndices = lineChartTickIndices(safeData.length);
 
   return (
     <svg height={height} viewBox={`0 0 ${width} ${height}`} width={width}>
@@ -609,19 +628,19 @@ export const LineChartZoom: React.FC<LineChartZoomProps> = ({
           })}
         </g>
       </g>
-      {safeData.map((item, index) => (
+      {tickIndices.map((index) => (
         <text
           fill={MOTION_COLORS.muted}
           fontFamily={MOTION_FONT_FAMILY}
           fontSize={21}
           fontWeight={650}
-          key={item.label}
+          key={`${safeData[index].label}-${index}`}
           opacity={interpolate(zoom, [0, 1], [1, 0.25], clamp)}
           textAnchor="middle"
           x={points[index].x}
           y={height - 30}
         >
-          {item.label}
+          {safeData[index].label}
         </text>
       ))}
       <g
