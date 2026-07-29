@@ -702,6 +702,34 @@
         "recordedAt": "2026-07-29T19:34:24Z"
       },
       "fixture": "tests/fixtures/editing-rules/FC-R-024.json"
+    },
+    {
+      "id": "FC-R-013",
+      "section": "word-first",
+      "statement": "El texto en pantalla no debe repetir literalmente frases de la locución; debe aportar contexto, método, evidencia, relación o conclusión nueva.",
+      "rationale": "La escena de control repetía «cerca de un 20%» y «sumamente extraño» en lugar de explicar por qué la serie no confirmaba la afirmación.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "screen-text-adds-information",
+      "origin": {
+        "feedback": "El texto en pantalla no debe repetir literalmente frases de la locución; debe aportar contexto, método, evidencia, relación o conclusión nueva.",
+        "recordedAt": "2026-07-29T19:47:52Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-013.json"
+    },
+    {
+      "id": "FC-R-182",
+      "section": "production-continuity",
+      "statement": "Las instrucciones internas de producción, como regrabar, conseguir material o completar una fuente, nunca aparecen en un frame publicable; se quedan en QA o pickups.",
+      "rationale": "El cierre mostraba al espectador una orden interna de regrabación que no aporta información editorial.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "no-production-copy-in-frame",
+      "origin": {
+        "feedback": "Las instrucciones internas de producción, como regrabar, conseguir material o completar una fuente, nunca aparecen en un frame publicable; se quedan en QA o pickups.",
+        "recordedAt": "2026-07-29T19:48:09Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-182.json"
     }
   ]
 }

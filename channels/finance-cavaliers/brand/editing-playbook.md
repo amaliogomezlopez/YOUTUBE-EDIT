@@ -19,7 +19,7 @@ Este contrato convierte la locución en decisiones visuales reutilizables. Cada 
 | `catalog` | Regla universal del catálogo: aplica a cualquier canal. |
 | `channel` | Regla de marca de Finance Cavaliers. |
 
-Reglas: **60** · con validador automático: **43** · marcadas `manual`: **17** · sin implementar: **0**.
+Reglas: **62** · con validador automático: **45** · marcadas `manual`: **17** · sin implementar: **0**.
 
 Una regla `channel` aplicada en dos canales asciende a `catalog` y se documenta en capabilities.manifest.json (ANM-I06).
 
@@ -64,6 +64,14 @@ El mismo estado focal no se mantiene más de 1,5 s sin un cambio de información
 **Por qué:** Un cursor o un pulso sostienen la atención, pero no sustituyen a un cambio real.
 
 **Validador:** `focus-hold-max`
+
+### FC-R-013 · `error` · `channel`
+
+El texto en pantalla no debe repetir literalmente frases de la locución; debe aportar contexto, método, evidencia, relación o conclusión nueva.
+
+**Por qué:** La escena de control repetía «cerca de un 20%» y «sumamente extraño» en lugar de explicar por qué la serie no confirmaba la afirmación.
+
+**Validador:** `screen-text-adds-information`
 
 ## 2. Contrato de verdad gráfica
 
@@ -438,6 +446,14 @@ No se apila automáticamente el mismo whoosh en todos los zooms: el sonido de c�
 Un bloque pasa a `exports/production-ready/` solo tras visto bueno explícito, conservando rango, duración y hash SHA-256.
 
 **Validador:** `production-ready-approved`
+
+### FC-R-182 · `error` · `channel`
+
+Las instrucciones internas de producción, como regrabar, conseguir material o completar una fuente, nunca aparecen en un frame publicable; se quedan en QA o pickups.
+
+**Por qué:** El cierre mostraba al espectador una orden interna de regrabación que no aporta información editorial.
+
+**Validador:** `no-production-copy-in-frame`
 
 ## 19. Propagación y contagio
 

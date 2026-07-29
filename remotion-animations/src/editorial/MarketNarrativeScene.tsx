@@ -1406,10 +1406,13 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const loss = cueEntered(scene, "lost", frame, fps);
-  const twenty = cueEntered(scene, "twenty", frame, fps);
   const verified = cueEntered(scene, "verified", frame, fps);
   const strange = cueAmount(scene, "strange", frame, fps);
   const verifiedValue = scene.metric?.value ?? -10.4;
+  const narratedReference = -20;
+  const percentagePointGap = Math.abs(
+    narratedReference - verifiedValue,
+  ).toFixed(1).replace(".", ",");
   const verifiedCue = cueFor(scene, "verified");
   const scanCycle = verifiedCue
     ? Math.max(0, ((frame / fps - verifiedCue.atSeconds) % 2.2) / 2.2)
@@ -1417,8 +1420,8 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
   return (
     <>
       <SectionTitle
-        subtitle="La locución y la métrica deben definir el mismo universo y periodo"
-        title="CONTROL DE COHERENCIA"
+        subtitle="Mismo cociente, mismo máximo de referencia y misma fecha de cierre"
+        title="LA SERIE DISPONIBLE NO CONFIRMA LA CIFRA"
         tone={COLORS.negative}
       />
       <div
@@ -1451,25 +1454,21 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
               fontWeight: 760,
             }}
           >
-            LOCUCIÓN
+            MÉTODO DE COMPARACIÓN
           </div>
           <div
             style={{
-              background: COLORS.negative,
-              borderRadius: 16,
-              color: COLORS.white,
-              display: "inline-block",
+              color: COLORS.gold,
               fontFamily: DATA_FONT_FAMILY,
-              fontSize: 126,
+              fontSize: 92,
               fontWeight: 800,
-              letterSpacing: -8,
+              letterSpacing: -5,
               lineHeight: 1,
               marginTop: 42,
-              opacity: twenty,
-              padding: "18px 28px 24px",
+              opacity: loss,
             }}
           >
-            −20%
+            MAGS ÷ SPY
           </div>
           <div
             style={{
@@ -1481,7 +1480,26 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
               marginTop: 30,
             }}
           >
-            “cerca de un 20% de su valor relativo”
+            Rendimiento relativo del grupo frente al índice, no caída del
+            precio aislado.
+          </div>
+          <div
+            style={{
+              borderTop: `1px solid ${alpha(COLORS.white, 0.18)}`,
+              color: COLORS.muted,
+              fontFamily: DATA_FONT_FAMILY,
+              fontSize: 18,
+              lineHeight: 1.5,
+              marginTop: 34,
+              opacity: loss,
+              paddingTop: 24,
+            }}
+          >
+            VENTANA AUDITADA
+            <br />
+            <span style={{color: COLORS.white}}>
+              29 OCT 2025 → 17 JUL 2026
+            </span>
           </div>
         </div>
         <div
@@ -1520,7 +1538,7 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
               position: "relative",
             }}
           >
-            SERIE REPRODUCIBLE ACTUAL
+            RESULTADO REPRODUCIBLE
           </div>
           <div
             style={{
@@ -1555,7 +1573,8 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
       <div
         style={{
           alignItems: "center",
-          background: alpha(COLORS.negative, 0.94),
+          background: alpha(COLORS.cyan, 0.17),
+          border: `1px solid ${alpha(COLORS.cyan, 0.72)}`,
           borderRadius: 14,
           bottom: 115,
           color: COLORS.white,
@@ -1566,39 +1585,15 @@ const ClaimAudit: React.FC<{scene: EditorialScene}> = ({scene}) => {
           gap: 18,
           justifyContent: "center",
           left: 420,
-          opacity: verified,
+          opacity: strange,
           padding: "18px 28px",
           position: "absolute",
           right: 420,
         }}
       >
-        <span style={{fontFamily: DATA_FONT_FAMILY, fontSize: 34}}>≠</span>
-        REGRABAR O CONSEGUIR LA SERIE EXACTA
+        <span style={{fontFamily: DATA_FONT_FAMILY, fontSize: 34}}>Δ</span>
+        DESVÍO FRENTE AL 20 % CITADO: {percentagePointGap} PUNTOS PORCENTUALES
       </div>
-      <PhraseBadge
-        cueId="lost"
-        fallback="HAN PERDIDO"
-        scene={scene}
-        x={960}
-        y={180}
-        size={31}
-      />
-      <PhraseBadge
-        cueId="twenty"
-        fallback="20% EN LA LOCUCIÓN"
-        scene={scene}
-        x={960}
-        y={180}
-        size={34}
-      />
-      <PhraseBadge
-        cueId="strange"
-        fallback="SUMAMENTE EXTRAÑO"
-        scene={scene}
-        x={960}
-        y={180}
-        size={38}
-      />
       <div
         style={{
           border: `4px solid ${COLORS.negative}`,

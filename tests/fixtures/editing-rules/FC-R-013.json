@@ -1,0 +1,22 @@
+{
+  "ruleId": "FC-R-013",
+  "statement": "El texto en pantalla no debe repetir literalmente frases de la locución; debe aportar contexto, método, evidencia, relación o conclusión nueva.",
+  "check": "screen-text-adds-information",
+  "expect": "fail",
+  "note": "Plan mínimo que repite literalmente la locución en pantalla.",
+  "context": {
+    "scenes": [
+      {
+        "id": "scene-fixture-repeated-copy",
+        "narrationText": "Esto es sumamente extraño para el mercado.",
+        "onScreenText": ["SUMAMENTE EXTRAÑO"],
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

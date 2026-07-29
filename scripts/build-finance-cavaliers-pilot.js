@@ -136,6 +136,14 @@ const FIRST_MINUTE_BLUEPRINTS = [
     kind: 'claim-audit',
     headline: 'La cifra debe coincidir',
     supportingText: 'La locución y la serie deben medir exactamente lo mismo.',
+    onScreenText: [
+      'LA SERIE DISPONIBLE NO CONFIRMA LA CIFRA',
+      'MAGS ÷ SPY',
+      'Rendimiento relativo del grupo frente al índice, no caída del precio aislado.',
+      '29 OCT 2025 → 17 JUL 2026',
+      'RESULTADO REPRODUCIBLE',
+      'DESVÍO FRENTE AL 20 % CITADO: 9,6 PUNTOS PORCENTUALES'
+    ],
     semanticCues: [
       {id: 'months', anchorText: 'últimos', atSeconds: 0.56, durationSeconds: 2.1, action: 'focus', target: 'measurement-window', label: 'ÚLTIMOS MESES', tone: 'neutral', sound: 'ui-pulse'},
       {id: 'lost', anchorText: 'perdido', atSeconds: 3.3, durationSeconds: 2.2, action: 'reveal', target: 'narrated-loss', label: 'HAN PERDIDO', tone: 'negative', sound: 'smooth-whoosh'},
@@ -1589,6 +1597,7 @@ async function main() {
       props: {
         kind,
         supportingText,
+        onScreenText: blueprint?.onScreenText ?? [],
         factualStatus: status,
         assets: sceneAssets,
         focusTarget: kind === 'split-lines' ? 'both' : undefined,
@@ -1708,6 +1717,7 @@ async function main() {
       headline: scene.header.text,
       supportingText: scene.props.supportingText,
       narrationText: scene.narrationText,
+      onScreenText: scene.props.onScreenText ?? [],
       factualStatus: scene.props.factualStatus,
       sourceLabel: scene.props.sourceLabel,
       labels: scene.props.labels ?? [],

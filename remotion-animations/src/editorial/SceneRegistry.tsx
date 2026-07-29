@@ -1362,34 +1362,10 @@ const BrandCta: React.FC<{
 const EditorialGuard: React.FC<{
   scene: EditorialScene;
   previewMode: "editorial" | "clean";
-}> = ({scene, previewMode}) => {
-  if (previewMode !== "editorial" || scene.factualStatus === "supported") {
-    return null;
-  }
-  const blocked = scene.factualStatus === "blocked";
-  return (
-    <div
-      style={{
-        alignItems: "center",
-        background: blocked ? alpha(COLORS.negative, 0.94) : alpha(COLORS.amber, 0.95),
-        color: blocked ? COLORS.white : COLORS.background,
-        display: "flex",
-        fontFamily: MOTION_FONT_FAMILY,
-        fontSize: 17,
-        fontWeight: 900,
-        gap: 12,
-        letterSpacing: 1.2,
-        padding: "12px 18px",
-        position: "absolute",
-        bottom: 28,
-        right: 58,
-        zIndex: 20,
-      }}
-    >
-      <span>{blocked ? "TOMA PENDIENTE" : "INTERPRETACIÓN"}</span>
-      <span style={{opacity: 0.72}}>· NO PUBLICAR ESTA PREVIEW</span>
-    </div>
-  );
+}> = () => {
+  // El estado editorial pertenece al manifiesto y a Review Studio. Nunca se
+  // quema una instrucción interna de producción dentro del frame.
+  return null;
 };
 
 const cue = (

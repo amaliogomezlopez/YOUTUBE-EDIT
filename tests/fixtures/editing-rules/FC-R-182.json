@@ -1,0 +1,22 @@
+{
+  "ruleId": "FC-R-182",
+  "statement": "Las instrucciones internas de producción, como regrabar, conseguir material o completar una fuente, nunca aparecen en un frame publicable; se quedan en QA o pickups.",
+  "check": "no-production-copy-in-frame",
+  "expect": "fail",
+  "note": "Plan mínimo que filtra una instrucción de producción al frame.",
+  "context": {
+    "scenes": [
+      {
+        "id": "scene-fixture-production-copy",
+        "narrationText": "La cifra no coincide con la serie.",
+        "onScreenText": ["REGRABAR O CONSEGUIR LA SERIE EXACTA"],
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}
