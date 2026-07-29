@@ -1,0 +1,203 @@
+{
+  "version": 1,
+  "channelId": "finance-cavaliers",
+  "purpose": "Registro de entidades del canal: nombre → alias → asset local. ANM-G02 elimina COMPANY_LOGO_ASSETS y DOTCOM_LOGO_ASSETS del script de build.",
+  "resolution": [
+    "1. Buscar el nombre o alias en este registro.",
+    "2. Si falta, `npm run channel:entities -- --resolve \"<nombre>\" --allow-remote` usa Brand Search API + Logo API, descarga, importa al catálogo gestionado y escribe la entrada aquí.",
+    "3. El render nunca toca la red: si el asset no existe localmente, el plan no valida (FC-R-110)."
+  ],
+  "groups": {
+    "magnificent-seven": ["nvidia", "apple", "microsoft", "amazon", "alphabet", "meta", "tesla"],
+    "dotcom-leaders": ["cisco", "microsoft", "intel", "dell"]
+  },
+  "entities": [
+    {
+      "id": "nvidia",
+      "name": "NVIDIA",
+      "aliases": ["Nvidia"],
+      "kind": "company",
+      "domain": "nvidia.com",
+      "label": "NVIDIA",
+      "asset": {
+        "id": "finance-cavaliers-nvidia",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-nvidia.png"
+      }
+    },
+    {
+      "id": "apple",
+      "name": "Apple",
+      "aliases": [],
+      "kind": "company",
+      "domain": "apple.com",
+      "label": "APPLE",
+      "asset": {
+        "id": "finance-cavaliers-apple",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-apple.png"
+      }
+    },
+    {
+      "id": "microsoft",
+      "name": "Microsoft",
+      "aliases": [],
+      "kind": "company",
+      "domain": "microsoft.com",
+      "label": "MICROSOFT",
+      "asset": {
+        "id": "finance-cavaliers-microsoft",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-microsoft.png"
+      }
+    },
+    {
+      "id": "amazon",
+      "name": "Amazon",
+      "aliases": [],
+      "kind": "company",
+      "domain": "amazon.com",
+      "label": "AMAZON",
+      "asset": {
+        "id": "finance-cavaliers-amazon",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-amazon.png"
+      }
+    },
+    {
+      "id": "alphabet",
+      "name": "Alphabet",
+      "aliases": ["Google"],
+      "kind": "company",
+      "domain": "abc.xyz",
+      "label": "ALPHABET",
+      "asset": {
+        "id": "finance-cavaliers-alphabet",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-alphabet.png"
+      }
+    },
+    {
+      "id": "meta",
+      "name": "Meta",
+      "aliases": ["Facebook"],
+      "kind": "company",
+      "domain": "meta.com",
+      "label": "META",
+      "asset": {
+        "id": "finance-cavaliers-meta",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-meta.png"
+      }
+    },
+    {
+      "id": "tesla",
+      "name": "Tesla",
+      "aliases": [],
+      "kind": "company",
+      "domain": "tesla.com",
+      "label": "TESLA",
+      "asset": {
+        "id": "finance-cavaliers-tesla",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-tesla.png"
+      }
+    },
+    {
+      "id": "cisco",
+      "name": "Cisco",
+      "aliases": ["Cisco Systems"],
+      "kind": "company",
+      "domain": "cisco.com",
+      "label": "CISCO",
+      "asset": {
+        "id": "finance-cavaliers-cisco",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-cisco.png"
+      }
+    },
+    {
+      "id": "intel",
+      "name": "Intel",
+      "aliases": [],
+      "kind": "company",
+      "domain": "intel.com",
+      "label": "INTEL",
+      "asset": {
+        "id": "finance-cavaliers-intel",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-intel.png"
+      }
+    },
+    {
+      "id": "dell",
+      "name": "Dell",
+      "aliases": [],
+      "kind": "company",
+      "domain": "dell.com",
+      "label": "DELL",
+      "asset": {
+        "id": "finance-cavaliers-dell",
+        "kind": "logo",
+        "path": "assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-dell.png"
+      }
+    },
+    {
+      "id": "federal-reserve",
+      "name": "Reserva Federal",
+      "aliases": ["Fed", "Federal Reserve"],
+      "kind": "institution",
+      "domain": "federalreserve.gov",
+      "label": "RESERVA FEDERAL",
+      "asset": null
+    },
+    {
+      "id": "sp-500",
+      "name": "S&P 500",
+      "aliases": ["SP500", "S&P"],
+      "kind": "index",
+      "domain": "spglobal.com",
+      "label": "S&P 500",
+      "asset": null
+    },
+    {
+      "id": "wall-street",
+      "name": "Wall Street",
+      "aliases": [],
+      "kind": "place",
+      "domain": null,
+      "label": "WALL STREET",
+      "asset": null
+    }
+  ],
+  "supportImages": [
+    {
+      "id": "finance-cavaliers-market-screen",
+      "kind": "image",
+      "concept": "pantalla de mercados",
+      "label": "Pantalla de mercados",
+      "path": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-screen.jpg"
+    },
+    {
+      "id": "finance-cavaliers-ai-servers",
+      "kind": "image",
+      "concept": "centro de datos",
+      "label": "Centro de datos",
+      "path": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-ai-servers.jpg"
+    },
+    {
+      "id": "finance-cavaliers-market-analyst",
+      "kind": "image",
+      "concept": "analista de mercados",
+      "label": "Analista de mercados",
+      "path": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-analyst.jpg"
+    },
+    {
+      "id": "finance-cavaliers-nyse-facade",
+      "kind": "image",
+      "concept": "bolsa de nueva york",
+      "label": "Fachada de la Bolsa de Nueva York",
+      "path": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-nyse-facade.jpg"
+    }
+  ]
+}

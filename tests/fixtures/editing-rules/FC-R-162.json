@@ -1,0 +1,38 @@
+{
+  "ruleId": "FC-R-162",
+  "expect": "fail",
+  "check": "library-asset-licensed",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [
+          {
+            "id": "library-whoosh-01",
+            "kind": "sfx",
+            "label": "Whoosh"
+          }
+        ],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

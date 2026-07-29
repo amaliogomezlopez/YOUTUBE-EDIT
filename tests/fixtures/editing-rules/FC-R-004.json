@@ -1,0 +1,39 @@
+{
+  "ruleId": "FC-R-004",
+  "expect": "fail",
+  "check": "cue-semantic-function",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [
+          {
+            "id": "decorativo",
+            "anchorWordIndex": 0,
+            "absoluteSeconds": 0.1,
+            "tone": "gold"
+          }
+        ],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

@@ -1,0 +1,146 @@
+Actúa como director creativo, director editorial y diseñador visual de una cuenta de Instagram especializada en IA, LLMs y tecnología.
+
+A partir de la siguiente noticia:
+
+[PEGA AQUÍ LA NOTICIA, ENLACE O RESUMEN]
+
+crea un carrusel de Instagram de entre 4 y 6 diapositivas para la cuenta [@Amaliometria].
+
+OBJETIVO
+
+Explicar la noticia de forma extremadamente visual, clara, rigurosa y fácil de compartir. El usuario debe comprender la idea principal en pocos segundos, incluso sin leer todo el texto.
+
+DIRECCIÓN ARTÍSTICA
+
+Mantén una estética tecnológica premium, minimalista y cinematográfica:
+
+- Formato vertical 4:5, 1080 × 1350 px.
+- Fondo negro o azul marino casi negro.
+- Contraste muy alto.
+- Paleta limitada: blanco, azul eléctrico, violeta y pequeños acentos cian.
+- Tipografía sans serif, muy grande, gruesa, moderna y limpia.
+- Titulares blancos con una o dos palabras clave en azul eléctrico o violeta.
+- Iluminación de estudio con reflejos de neón azul.
+- Objetos tridimensionales con acabado metálico, cromado, cristal o plástico brillante.
+- Sombras suaves, profundidad realista y aspecto de render 3D de alta calidad.
+- Composición limpia, ordenada y con mucho espacio negativo.
+- Sensación visual futurista, potente y sofisticada.
+- No recargar las diapositivas con adornos innecesarios.
+- Mantener exactamente el mismo sistema visual en todo el carrusel.
+
+Los visuales deben ser sorprendentes, memorables y fáciles de interpretar. Utiliza metáforas visuales 3D para explicar conceptos abstractos.
+
+Ejemplos de metáforas:
+
+- Potencia: logo con brazos musculosos, motor, cohete o núcleo energético.
+- Competencia: coches de carreras, pistas paralelas o posiciones cercanas.
+- Arquitectura Mixture-of-Experts: módulos, interruptores o expertos iluminados.
+- Código abierto: candado abierto, código liberado o caja transparente.
+- Infraestructura: racks, servidores, GPU o centros de datos.
+- Coste: etiqueta de precio, contador o balanza.
+- Seguridad y control: escudo, panel de mandos o límites visibles.
+- Contexto largo: túnel, biblioteca infinita o secuencia extensa.
+- Multimodalidad: cámara, texto, audio e imágenes conectados.
+- Workflow: nodos, circuitos o diagrama tridimensional.
+
+No uses imágenes decorativas sin relación con la información. Cada elemento visual debe ayudar a explicar una idea.
+
+ESTILO EDITORIAL
+
+- Directo, inteligente, accesible y ligeramente informal.
+- Muy poco texto.
+- Una sola idea por diapositiva.
+- Titulares de entre 3 y 9 palabras.
+- Como máximo, una frase breve de apoyo.
+- Priorizar cifras, comparaciones, diagramas y metáforas visuales.
+- Evitar párrafos.
+- Evitar clickbait, exageraciones y lenguaje promocional.
+- Diferenciar claramente entre hechos e interpretación.
+- No inventar cifras, fechas, citas, benchmarks ni características.
+- Utilizar únicamente datos presentes en la noticia o en las fuentes proporcionadas.
+- No afirmar que un modelo “lidera”, “supera” o “es el mejor” salvo que la fuente lo demuestre explícitamente.
+- Cuando una afirmación proceda de la empresa responsable, indicarlo con expresiones como “según la compañía” o “en sus propias evaluaciones”.
+
+ESTRUCTURA DEL CARRUSEL
+
+Diapositiva 01:
+Portada de impacto.
+Muy poco texto.
+Nombre del producto o noticia en grande.
+Una frase principal de entre 2 y 5 palabras.
+Crear un visual 3D protagonista que ocupe gran parte de la composición.
+Debe ser la diapositiva más llamativa del carrusel.
+
+Diapositiva 02:
+Contexto.
+Explicar visualmente qué ha ocurrido y cómo se posiciona la noticia.
+Utilizar una comparación, carrera, escala o escena sencilla.
+
+Diapositiva 03:
+Dato principal.
+Mostrar la cifra, arquitectura o característica más importante en tamaño enorme.
+La cifra debe ser el centro de la composición.
+Añadir un gráfico o representación 3D que permita entenderla rápidamente.
+
+Diapositiva 04:
+Implicación o limitación.
+Mostrar un contraste visual claro:
+abierto frente a ligero, potencia frente a coste, capacidad frente a infraestructura o promesa frente a realidad.
+
+Diapositiva 05:
+Aprendizaje práctico.
+Resumir entre dos y tres factores que una empresa, creador o desarrollador debería evaluar.
+Representarlos mediante objetos 3D o tarjetas visuales.
+
+Diapositiva 06:
+Cierre.
+Plantear una pregunta inteligente y concreta.
+Utilizar un diagrama visual sencillo de dos o tres elementos.
+Cerrar con “Te leo en comentarios”.
+
+ELEMENTOS FIJOS
+
+- Numeración superior izquierda: 01/06, 02/06, etc.
+- Cuenta [@Amaliometria] en la esquina superior derecha.
+- Fuente y fecha en la parte inferior.
+- Mantener márgenes de seguridad amplios.
+- No colocar información importante demasiado cerca de los bordes.
+- No añadir logotipos, marcas o nombres que no aparezcan en la noticia.
+- Cuando se proporcione un logo, conservar fielmente su forma y colores.
+- El logo puede transformarse en un objeto 3D, pero debe seguir siendo reconocible.
+
+TRATAMIENTO DEL TEXTO
+
+Todo el texto debe aparecer en español correcto.
+
+Respeta exactamente los textos aprobados:
+- Sin faltas de ortografía.
+- Sin letras deformadas.
+- Sin palabras inventadas.
+- Sin texto adicional generado automáticamente.
+- Sin repetir el titular.
+- Sin utilizar bloques largos.
+- No superar aproximadamente 20 palabras visibles por diapositiva, excepto la fuente.
+
+ENTREGA
+
+Primero, analiza la noticia y extrae:
+1. Hechos confirmados.
+2. Cifras verificables.
+3. Interpretaciones razonables.
+4. Posibles limitaciones.
+5. Fuente y fecha.
+
+Después, define para cada diapositiva:
+- Número.
+- Titular exacto.
+- Texto secundario exacto.
+- Palabras destacadas.
+- Metáfora visual.
+- Composición.
+- Elementos 3D.
+- Fuente.
+
+Finalmente, genera cada diapositiva como una imagen independiente de 1080 × 1350 px, manteniendo una coherencia absoluta de tipografía, iluminación, colores, márgenes y estilo 3D.
+
+El resultado debe parecer una campaña editorial tecnológica premium, no una plantilla genérica de redes sociales.

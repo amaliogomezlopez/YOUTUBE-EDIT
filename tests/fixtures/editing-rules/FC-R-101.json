@@ -1,0 +1,42 @@
+{
+  "ruleId": "FC-R-101",
+  "expect": "fail",
+  "check": "delivery-completeness",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": [],
+    "artifacts": {
+      "reviewBlocks": [
+        {
+          "id": "block-99",
+          "files": [
+            "render-props.json"
+          ]
+        }
+      ]
+    }
+  }
+}

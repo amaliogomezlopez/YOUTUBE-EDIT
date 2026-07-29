@@ -1,0 +1,43 @@
+{
+  "ruleId": "FC-R-081",
+  "expect": "fail",
+  "check": "alert-cue-transient",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [
+          {
+            "id": "alerta-pegada",
+            "anchorWordIndex": 0,
+            "absoluteSeconds": 0.1,
+            "action": "highlight",
+            "target": "phrase",
+            "tone": "negative",
+            "durationSeconds": 1,
+            "persist": true
+          }
+        ],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

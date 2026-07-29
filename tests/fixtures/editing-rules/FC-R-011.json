@@ -1,0 +1,35 @@
+{
+  "ruleId": "FC-R-011",
+  "expect": "fail",
+  "check": "blocked-scene-explains",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {
+          "factualStatus": "blocked",
+          "supportingText": "  "
+        }
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

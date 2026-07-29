@@ -1,0 +1,693 @@
+{
+  "version": 1,
+  "channelId": "finance-cavaliers",
+  "title": "Lenguaje de montaje — Finance Cavaliers",
+  "intro": "Este contrato convierte la locución en decisiones visuales reutilizables. Cada regla nació de una corrección real y tiene id estable, severidad y validador. `editing-playbook.md` se genera desde este fichero: nunca se edita a mano.",
+  "severities": {
+    "error": "Bloquea el build. El plan no se renderiza.",
+    "warning": "No bloquea, pero aparece en el informe y exige justificación.",
+    "review": "Requiere mirada humana; no hay comprobación geométrica posible."
+  },
+  "scopes": {
+    "catalog": "Regla universal del catálogo: aplica a cualquier canal.",
+    "channel": "Regla de marca de Finance Cavaliers."
+  },
+  "promotionPolicy": "Una regla `channel` aplicada en dos canales asciende a `catalog` y se documenta en capabilities.manifest.json (ANM-I06).",
+  "sections": [
+    {
+      "id": "word-first",
+      "number": 1,
+      "title": "La palabra manda"
+    },
+    {
+      "id": "graphic-truth",
+      "number": 2,
+      "title": "Contrato de verdad gráfica"
+    },
+    {
+      "id": "rhythm",
+      "number": 3,
+      "title": "Ritmo y variedad",
+      "notes": [
+        "Catálogo de rotación por contenido: gráfica completa con ejes; zoom sobre un tramo verificable; capa de superficie / capa interna; métrica cinética; logos y relaciones; comparación lado a lado; mapa causal; documento o captura atribuida; tarjeta de auditoría factual; silencio visual intencional antes de un giro.",
+        "El cambio puede ser de encuadre, foco, color, anotación, composición o tipo de visual; nunca un movimiento decorativo."
+      ]
+    },
+    {
+      "id": "focus-camera",
+      "number": 4,
+      "title": "Foco, cámara y anotación"
+    },
+    {
+      "id": "color",
+      "number": 5,
+      "title": "Color"
+    },
+    {
+      "id": "sound",
+      "number": 6,
+      "title": "Sonido"
+    },
+    {
+      "id": "review",
+      "number": 7,
+      "title": "Revisión"
+    },
+    {
+      "id": "spatial-safety",
+      "number": 8,
+      "title": "Seguridad espacial"
+    },
+    {
+      "id": "narrative-alerts",
+      "number": 9,
+      "title": "Alertas narrativas"
+    },
+    {
+      "id": "narration-pauses",
+      "number": 10,
+      "title": "Pausas de locución",
+      "notes": [
+        "Separación estándar entre clips: 0,7 s. Las pausas internas superiores a 0,95 s se reducen a 0,55 s.",
+        "Un segundo pase basado en tiempos de palabra limita a 0,7 s cualquier hueco residual que `silencedetect` no reconozca.",
+        "Se preservan respiraciones naturales y pausas expresivas cortas."
+      ]
+    },
+    {
+      "id": "approval-blocks",
+      "number": 11,
+      "title": "Entregas por bloques de aprobación",
+      "notes": [
+        "El bloque conserva en su manifiesto los tiempos absolutos del master y desplaza sus escenas a una línea temporal local que empieza en cero.",
+        "El audio se recorta desde el master ya compactado; no se vuelve a procesar la voz ni se encadenan copias con pérdidas.",
+        "Puede añadirse un `tail` máximo de dos segundos solo cuando existe silencio real tras la última palabra.",
+        "Comando base: `npm run episode:review-block -- --props <render-props-master> --from scene-008 --to scene-013 --id 02 --tail 0.6`"
+      ]
+    },
+    {
+      "id": "remote-assets",
+      "number": 12,
+      "title": "Assets remotos"
+    },
+    {
+      "id": "safe-geometry",
+      "number": 13,
+      "title": "Geometría segura y continuidad espacial"
+    },
+    {
+      "id": "narrative-camera",
+      "number": 14,
+      "title": "Cámara y zoom narrativo"
+    },
+    {
+      "id": "entities",
+      "number": 15,
+      "title": "Entidades mencionadas"
+    },
+    {
+      "id": "sources",
+      "number": 16,
+      "title": "Fuentes visibles y procedencia interna"
+    },
+    {
+      "id": "literal-metaphors",
+      "number": 17,
+      "title": "Metáforas literales y sonido distintivo"
+    },
+    {
+      "id": "production-continuity",
+      "number": 18,
+      "title": "Bloques aprobados y continuidad de producción"
+    },
+    {
+      "id": "contagion",
+      "number": 19,
+      "title": "Propagación y contagio"
+    },
+    {
+      "id": "divergence",
+      "number": 20,
+      "title": "Divergencia temporal en gráficas"
+    }
+  ],
+  "rules": [
+    {
+      "id": "FC-R-001",
+      "section": "word-first",
+      "statement": "Cada mención visualizable se convierte en un cue anclado al índice de palabra de la transcripción, no a un segundo escrito a mano.",
+      "rationale": "El segundo se invalida en cuanto se recorta una pausa; el índice de palabra sobrevive a la reedición.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "anchor-resolution"
+    },
+    {
+      "id": "FC-R-002",
+      "section": "word-first",
+      "statement": "El cambio visual empieza entre 0 y 0,4 s después de la palabra pronunciada.",
+      "rationale": "Antes de la palabra el efecto la anticipa y la delata; mucho después se lee como error de montaje.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "cue-word-anchoring",
+      "params": {
+        "maxDelaySeconds": 0.4
+      }
+    },
+    {
+      "id": "FC-R-003",
+      "section": "word-first",
+      "statement": "Toda cifra narrada —número, porcentaje o importe— tiene un cue visible.",
+      "rationale": "Es la promesa central del formato: cuando digo un dato, el dato aparece.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "number-cue-obligation",
+      "params": {
+        "minCoverage": 0.95
+      }
+    },
+    {
+      "id": "FC-R-004",
+      "section": "word-first",
+      "statement": "No se usan zooms, destellos ni sonidos sin función semántica declarada.",
+      "rationale": "El movimiento decorativo compite con la información y cansa.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "cue-semantic-function"
+    },
+    {
+      "id": "FC-R-005",
+      "section": "word-first",
+      "statement": "El mismo estado focal no se mantiene más de 1,5 s sin un cambio de información.",
+      "rationale": "Un cursor o un pulso sostienen la atención, pero no sustituyen a un cambio real.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "focus-hold-max"
+    },
+    {
+      "id": "FC-R-010",
+      "section": "graphic-truth",
+      "statement": "Una cifra narrada y una cifra visible solo conviven si coinciden métrica, universo, benchmark, ventana temporal, frecuencia y método de cálculo.",
+      "rationale": "Ajustar una curva para que parezca coincidir es falsear el dato.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-011",
+      "section": "graphic-truth",
+      "statement": "Si falla una condición de equivalencia, la escena queda `blocked` y la preview editorial muestra la discrepancia y la acción necesaria.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "blocked-scene-explains"
+    },
+    {
+      "id": "FC-R-012",
+      "section": "graphic-truth",
+      "statement": "Las gráficas publicables incluyen ejes, unidades, fechas, fuente y definición; las comparaciones sin escala se marcan como conceptuales.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-020",
+      "section": "rhythm",
+      "statement": "Ningún patrón dominante se repite más de dos veces dentro de una ventana de seis escenas sin excepción registrada.",
+      "rationale": "La monotonía de geometría es el defecto más visible en montajes largos.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "pattern-repetition-window"
+    },
+    {
+      "id": "FC-R-021",
+      "section": "rhythm",
+      "statement": "Toda escena de más de cuatro segundos tiene al menos un cambio secundario además del primario.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "scene-secondary-change"
+    },
+    {
+      "id": "FC-R-022",
+      "section": "rhythm",
+      "statement": "El hueco máximo sin evento visible es de 2,0 s (1,4 s en el hook, 1,5 s en un giro), salvo respiración declarada con `intent: \"breath\"`.",
+      "rationale": "El silencio visual es legítimo cuando es una decisión; no cuando es un olvido.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "event-gap-max"
+    },
+    {
+      "id": "FC-R-030",
+      "section": "focus-camera",
+      "statement": "El zoom habitual se mueve entre 1.06 y 1.18, con máximo editorial 1.28.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "camera-zoom-range",
+      "params": {
+        "min": 1.06,
+        "max": 1.28
+      }
+    },
+    {
+      "id": "FC-R-031",
+      "section": "focus-camera",
+      "statement": "Ejes, fuente y unidades permanecen legibles y fuera de la transformación de cámara.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-032",
+      "section": "focus-camera",
+      "statement": "Al enfocar una serie, las demás bajan a 15–35 % de opacidad y pierden brillo.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-033",
+      "section": "focus-camera",
+      "statement": "Las bandas de periodo empiezan y terminan en fechas reales del dataset.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-040",
+      "section": "color",
+      "statement": "Oro para precio y señal principal; cian para fuerza relativa o segunda lectura; verde para dato positivo confirmado; rojo solo para pérdida, contradicción, corrección o giro.",
+      "rationale": "El rojo usado como adorno destruye su valor de aviso.",
+      "scope": "channel",
+      "severity": "review",
+      "check": "tone-semantics",
+      "params": {
+        "tones": [
+          "gold",
+          "cyan",
+          "positive",
+          "negative",
+          "neutral"
+        ],
+        "scaffoldingKinds": [
+          "date",
+          "period"
+        ],
+        "reservedTones": [
+          "gold",
+          "negative"
+        ]
+      }
+    },
+    {
+      "id": "FC-R-041",
+      "section": "color",
+      "statement": "El fondo de una frase se colorea únicamente durante la mención, entre 0,6 y 1,4 segundos.",
+      "scope": "channel",
+      "severity": "review",
+      "check": "mention-highlight-duration",
+      "params": {
+        "minSeconds": 0.6,
+        "maxSeconds": 1.4,
+        "actions": [
+          "highlight",
+          "shade"
+        ]
+      }
+    },
+    {
+      "id": "FC-R-050",
+      "section": "sound",
+      "statement": "Cada efecto sonoro se vincula al mismo cue que activa el visual y se pide por familia, nunca por fichero.",
+      "rationale": "Pedir un fichero concreto es lo que produjo la repetición del episodio 1.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "sound-family-count"
+    },
+    {
+      "id": "FC-R-051",
+      "section": "sound",
+      "statement": "Ningún fichero de efecto supera el 12 % de las instancias sonoras del episodio.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "sound-file-share"
+    },
+    {
+      "id": "FC-R-052",
+      "section": "sound",
+      "statement": "El mismo fichero no se repite antes del cooldown que declara su familia (12 s si la familia no lo declara).",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "sound-file-cooldown",
+      "params": {
+        "cooldownSeconds": 12
+      }
+    },
+    {
+      "id": "FC-R-053",
+      "section": "sound",
+      "statement": "Máximo tres impactos perceptibles en ocho segundos.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "sound-impact-density"
+    },
+    {
+      "id": "FC-R-054",
+      "section": "sound",
+      "statement": "Dos alias semánticos nunca comparten fichero.",
+      "rationale": "En el episodio 1, `alert-sting` y `soft-impact` sonaban idénticos: el giro narrativo y el dato de cierre no se distinguían.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "sound-alias-uniqueness"
+    },
+    {
+      "id": "FC-R-055",
+      "section": "sound",
+      "statement": "El episodio declara una capa de lecho continua por acto.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "sound-bed-present"
+    },
+    {
+      "id": "FC-R-056",
+      "section": "sound",
+      "statement": "La capa de efectos se atenúa entre −4 y −6 dB durante la locución y se recupera en 180 ms.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "sound-ducking-present"
+    },
+    {
+      "id": "FC-R-057",
+      "section": "sound",
+      "statement": "Tres escenas consecutivas no repiten la misma secuencia de familias sonoras.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "sound-family-sequence"
+    },
+    {
+      "id": "FC-R-058",
+      "section": "sound",
+      "statement": "Todo episodio genera además su variante silenciosa renderizable.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "silent-variant-present"
+    },
+    {
+      "id": "FC-R-060",
+      "section": "review",
+      "statement": "Antes de aprobar una escena se comprueban el frame anterior, el de la palabra y el posterior, y se revisan cinco fotogramas distribuidos con audio.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-061",
+      "section": "review",
+      "statement": "Cada cifra visible se contrasta con su `claimRef` y su `dataRef`.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-070",
+      "section": "spatial-safety",
+      "statement": "Ninguna caja declarada se solapa con otra: etiquetas, tarjetas y llamadas ocupan carriles reservados.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "layout-no-overlap"
+    },
+    {
+      "id": "FC-R-071",
+      "section": "spatial-safety",
+      "statement": "Los conectores terminan en la primera intersección con el borde exterior de su destino; nunca apuntan al centro atravesando su contenido.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "connector-boundary-clipped"
+    },
+    {
+      "id": "FC-R-072",
+      "section": "spatial-safety",
+      "statement": "Se dejan entre 4 y 8 píxeles de respiración antes del borde cuando la línea es discontinua, tiene brillo o incorpora punta.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-080",
+      "section": "narrative-alerts",
+      "statement": "Un giro explícito («sin embargo», «atención», «pero») activa alerta con icono, pulso corto, cambio de color y golpe sonoro de la familia `impact`, precedido de riser.",
+      "scope": "channel",
+      "severity": "warning",
+      "check": "cue-word-anchoring"
+    },
+    {
+      "id": "FC-R-081",
+      "section": "narrative-alerts",
+      "statement": "La alerta aparece con la palabra, no antes, y no permanece como decoración.",
+      "scope": "channel",
+      "severity": "review",
+      "check": "alert-cue-transient",
+      "params": {
+        "alertTones": [
+          "negative"
+        ]
+      }
+    },
+    {
+      "id": "FC-R-090",
+      "section": "narration-pauses",
+      "statement": "Ningún silencio accidental supera un segundo; una pausa mayor exige decisión editorial registrada.",
+      "scope": "channel",
+      "severity": "warning",
+      "check": "narration-pause-max",
+      "params": {
+        "maxPauseSeconds": 1
+      }
+    },
+    {
+      "id": "FC-R-091",
+      "section": "narration-pauses",
+      "statement": "Después de modificar el audio se recalculan transcripción, escenas y cues; nunca se desplaza solo la pista de audio.",
+      "rationale": "Con anclaje por índice de palabra, recalcular es `reanchorCues`, no rehacer el episodio.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "anchor-resolution"
+    },
+    {
+      "id": "FC-R-100",
+      "section": "approval-blocks",
+      "statement": "El montaje largo se revisa en bloques de aproximadamente un minuto que empiezan y terminan en frontera semántica completa.",
+      "scope": "channel",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-101",
+      "section": "approval-blocks",
+      "statement": "Cada entrega incluye render-props, manifiesto, audio recortado, cinco stills de QA y un MP4 independiente.",
+      "scope": "channel",
+      "severity": "review",
+      "check": "delivery-completeness",
+      "params": {
+        "files": [
+          "render-props.json",
+          "manifest.json",
+          "audio.m4a",
+          "block.mp4"
+        ],
+        "minStills": 5
+      }
+    },
+    {
+      "id": "FC-R-110",
+      "section": "remote-assets",
+      "statement": "Todo asset está importado localmente antes del bundle: cero red durante el render.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "asset-local-presence"
+    },
+    {
+      "id": "FC-R-111",
+      "section": "remote-assets",
+      "statement": "Brand Search API resuelve nombre→dominio e icono; Logo API obtiene después la variante adecuada. Pexels y Pixabay se consultan en paralelo e intercalados.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-112",
+      "section": "remote-assets",
+      "statement": "Una fotografía aporta contexto o atmósfera; nunca es fuente de una cifra, una curva o una afirmación económica.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "photo-not-data-source",
+      "params": {
+        "photoKinds": [
+          "photo",
+          "stock",
+          "image"
+        ]
+      }
+    },
+    {
+      "id": "FC-R-120",
+      "section": "safe-geometry",
+      "statement": "En cronologías occidentales el pasado queda a la izquierda y el presente a la derecha; un rebobinado parte del presente hacia la izquierda.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "chronology-past-left"
+    },
+    {
+      "id": "FC-R-121",
+      "section": "safe-geometry",
+      "statement": "Se revisan entrada, máximo desplazamiento y salida de cada objeto móvil contra las cajas de las etiquetas.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-122",
+      "section": "safe-geometry",
+      "statement": "Las etiquetas que nombran un objeto se colocan fuera de su silueta, con separación visible.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-130",
+      "section": "narrative-camera",
+      "statement": "El origen de cámara se declara semánticamente por escena y el acercamiento vuelve con suavidad antes del siguiente foco.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-131",
+      "section": "narrative-camera",
+      "statement": "Se alternan zoom, aislamiento por color, subrayado y cambio de escala: ningún mecanismo de énfasis se repite en más de tres escenas seguidas.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "emphasis-rotation",
+      "params": {
+        "maxConsecutive": 3
+      }
+    },
+    {
+      "id": "FC-R-132",
+      "section": "narrative-camera",
+      "statement": "Todo `cue.target` pertenece a los `focusTargets` declarados por el patrón.",
+      "rationale": "Un typo en el target producía un zoom a ninguna parte que el schema aceptaba.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "cue-target-declared"
+    },
+    {
+      "id": "FC-R-140",
+      "section": "entities",
+      "statement": "Cada entidad narrada activa su tarjeta o su logo en su palabra exacta, mientras sus pares se atenúan.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "entity-cue-obligation",
+      "params": {
+        "minCoverage": 0.9
+      }
+    },
+    {
+      "id": "FC-R-141",
+      "section": "entities",
+      "statement": "La activación vuelve al estado base antes de la siguiente entidad; no se resaltan todas a la vez si la voz las recorre una a una.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-150",
+      "section": "sources",
+      "statement": "El rótulo FUENTE solo aparece junto a una visualización de datos reales y nombra la fuente de los datos.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "source-label-data-only"
+    },
+    {
+      "id": "FC-R-151",
+      "section": "sources",
+      "statement": "Pexels, Pixabay y equivalentes son procedencia del asset y viven en el catálogo y los manifiestos; nunca se imprimen como FUENTE.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "source-label-data-only"
+    },
+    {
+      "id": "FC-R-160",
+      "section": "literal-metaphors",
+      "statement": "Si la locución describe una acción visual concreta —pinchar, estallar, arrastrar, rebobinar— la animación ejecuta ese verbo.",
+      "rationale": "La minería de cues detecta el verbo y propone la metáfora; el agente no puede limitarse a rotularlo.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-161",
+      "section": "literal-metaphors",
+      "statement": "Se mantienen familias sonoras diferenciadas para interfaz, datos, cámara, tensión, impacto, rotura, rebobinado, revelado, confirmación y textura.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "sound-family-count"
+    },
+    {
+      "id": "FC-R-162",
+      "section": "literal-metaphors",
+      "statement": "Se prefieren efectos propios sintetizados y registrados; los assets `library-*` solo se publican con licencia verificada.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "library-asset-licensed",
+      "params": {
+        "libraryPrefix": "library-"
+      }
+    },
+    {
+      "id": "FC-R-170",
+      "section": "production-continuity",
+      "statement": "No se apila automáticamente el mismo whoosh en todos los zooms: el sonido de cámara se decide por familia y presupuesto, no por acción.",
+      "rationale": "La rama `cameraDriven` apilaba quickWhip+smoothWhoosh en casi todos los cues del episodio 1.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "sound-file-share"
+    },
+    {
+      "id": "FC-R-171",
+      "section": "production-continuity",
+      "statement": "Un bloque pasa a `exports/production-ready/` solo tras visto bueno explícito, conservando rango, duración y hash SHA-256.",
+      "scope": "channel",
+      "severity": "review",
+      "check": "production-ready-approved"
+    },
+    {
+      "id": "FC-R-180",
+      "section": "contagion",
+      "statement": "El contagio no se representa con una caja global: el origen emite ondas y cada destino cambia individualmente con desfase visible.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "contagion-no-global-box"
+    },
+    {
+      "id": "FC-R-181",
+      "section": "contagion",
+      "statement": "La etiqueta del fenómeno vive en capa independiente de cámara, con fondo opaco, por encima de la envolvente máxima de ondas y conectores.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    },
+    {
+      "id": "FC-R-190",
+      "section": "divergence",
+      "statement": "Cuando la locución compara el momento en que dos líneas se separan, el foco es el tramo completo de divergencia hasta el hito mencionado, con `focus.divergence-range`.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "divergence-range-for-interval"
+    },
+    {
+      "id": "FC-R-191",
+      "section": "divergence",
+      "statement": "Tras el zoom al intervalo, la escena queda al menos 1,2 s estable para lectura y ambas series siguen visibles.",
+      "scope": "catalog",
+      "severity": "review",
+      "check": "manual"
+    }
+  ]
+}

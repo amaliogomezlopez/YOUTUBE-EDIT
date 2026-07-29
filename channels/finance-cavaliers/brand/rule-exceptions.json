@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "channelId": "finance-cavaliers",
+  "purpose": "Excepciones aprobadas. Rebajan una regla a `review` para un episodio o escena concretos, siempre con motivo y con fecha. No silencian: la incidencia sigue apareciendo en el informe marcada como excepción.",
+  "policy": [
+    "Una excepción sin `reason` no se acepta.",
+    "Una excepción sin `episodeId` aplica a todo el canal: usarla solo cuando la regla sea estructuralmente inaplicable.",
+    "Al rehacer el material que motivó la excepción, se elimina la entrada."
+  ],
+  "exceptions": [
+    {
+      "ruleId": "FC-R-020",
+      "episodeId": "episode-finance-cavaliers-001",
+      "reason": "El episodio 1 se montó con `patternForKind` antes de que existiera el selector con ventana deslizante. La monotonía de patrón está diagnosticada en variety-report.json y se corrige al rediseñar los bloques, no parcheando el plan actual.",
+      "recordedAt": "2026-07-29",
+      "owner": "Amalio"
+    },
+    {
+      "ruleId": "FC-R-003",
+      "episodeId": "episode-finance-cavaliers-001",
+      "reason": "Cinco cifras del episodio 1 son claims marcados `blocked` en la auditoría factual: no se visualizan a propósito hasta regrabar la locución.",
+      "recordedAt": "2026-07-29",
+      "owner": "Amalio"
+    },
+    {
+      "ruleId": "FC-R-140",
+      "episodeId": "episode-finance-cavaliers-001",
+      "reason": "Dos menciones de entidad del episodio 1 caen en escenas sin tarjeta ni logo disponibles en el momento del montaje.",
+      "recordedAt": "2026-07-29",
+      "owner": "Amalio"
+    },
+    {
+      "ruleId": "FC-R-150",
+      "episodeId": "episode-finance-cavaliers-001",
+      "reason": "Revisar caso a caso qué escenas del episodio 1 imprimen FUENTE sobre geometría no tabular antes de decidir si se retira el rótulo o se cambia el visual.",
+      "recordedAt": "2026-07-29",
+      "owner": "Amalio"
+    },
+    {
+      "ruleId": "FC-R-151",
+      "episodeId": "episode-finance-cavaliers-001",
+      "reason": "Misma revisión que FC-R-150: procedencia de asset frente a fuente factual en las escenas heredadas.",
+      "recordedAt": "2026-07-29",
+      "owner": "Amalio"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "ruleId": "FC-R-070",
+  "expect": "fail",
+  "check": "layout-no-overlap",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [
+          {
+            "id": "tarjeta",
+            "x": 100,
+            "y": 100,
+            "width": 300,
+            "height": 120
+          },
+          {
+            "id": "etiqueta",
+            "x": 250,
+            "y": 150,
+            "width": 200,
+            "height": 80
+          }
+        ],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

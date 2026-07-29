@@ -32,3 +32,6 @@ samples/input/*.mp4
 !data/fonts/.gitkeep
 !data/channels/.gitkeep
 remotion-animations/public/assets/library/finance-cavaliers/episodes/*
+
+# Runs con raíz de datos propia: mismos jobs/output que data/, un nivel más abajo.
+data/opus5final-run/

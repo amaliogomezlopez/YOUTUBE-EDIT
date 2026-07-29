@@ -3,9 +3,21 @@
 Estos prompts trabajan con la skill `create-remotion-animations` y el módulo
 existente de Remotion. No crean otro proyecto ni sustituyen FFmpeg.
 
+> **Vídeo editorial largo (canal con transcripción por palabras):** el
+> procedimiento vive en
+> [`docs/animation-engine-operating-manual.md`](../docs/animation-engine-operating-manual.md).
+> La **primera acción** es leer `channels/<canal>/brand/editing-rules.json` —el
+> JSON, no el markdown— y `rule-exceptions.json`. Los cues no se escriben a
+> mano: los mina el director desde la transcripción. El sonido se pide por
+> **familia**, nunca por fichero. Un `cue.target` que no esté en los
+> `focusTargets` del patrón es error de build.
+
 Documentos que el agente debe leer antes de actuar:
 
+- `docs/animation-engine-operating-manual.md` (vídeo editorial largo);
 - `docs/remotion-animation-system.md`;
+- `remotion-animations/catalog/animations/pattern-bindings.json`;
+- `remotion-animations/catalog/sound/sfx.json`;
 - `remotion-animations/catalog/capabilities.manifest.json`;
 - `remotion-animations/catalog/animations/patterns.json`;
 - `remotion-animations/catalog/animations/effects.json`;

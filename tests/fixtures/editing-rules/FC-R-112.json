@@ -1,0 +1,48 @@
+{
+  "ruleId": "FC-R-112",
+  "expect": "fail",
+  "check": "photo-not-data-source",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [
+          {
+            "id": "cifra",
+            "anchorWordIndex": 0,
+            "absoluteSeconds": 0.1,
+            "action": "reveal",
+            "target": "foto-bolsa",
+            "tone": "gold",
+            "numericValue": 20
+          }
+        ],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [
+          {
+            "id": "foto-bolsa",
+            "kind": "photo",
+            "label": "Bolsa"
+          }
+        ],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

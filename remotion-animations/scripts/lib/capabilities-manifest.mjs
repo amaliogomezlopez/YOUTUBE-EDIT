@@ -45,6 +45,9 @@ export const buildCapabilitiesManifest = (projectRoot) => {
     sourceOfTruth: [
       "catalog/animations/patterns.json",
       "catalog/animations/effects.json",
+      "catalog/animations/pattern-bindings.json",
+      "catalog/sound/recipes.json",
+      "catalog/sound/sfx.json",
       "catalog/visuals/icons.json",
       "catalog/visuals/drawings.json",
       "catalog/visuals/images.json",
@@ -64,6 +67,14 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       buildReviewStudio: "npm run remotion:review:build",
       createReviewPackage:
         "npm run remotion:review:package -- --session <review-id>",
+      validateEpisodePlan:
+        "npm run episode:plan:validate -- --plan <visual-plan.json> --words <words.json>",
+      synthesizeSfx: "npm run sfx:synthesize",
+      renderChannelPlaybook: "npm run channel:playbook",
+      recordChannelFeedback:
+        'npm run channel:feedback -- --note "<corrección>" --section <id> --severity <error|warning|review>',
+      verifyChannelEntities:
+        "npm run channel:entities -- --channel <id> --verify",
     },
     schemas: {
       chartIngestion: "schemas/chart-ingestion-input.schema.json",
@@ -73,6 +84,35 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       reviewSession: "schemas/review-session.schema.json",
       visualQa: "schemas/visual-qa-report.schema.json",
       renderedVisualQa: "schemas/rendered-visual-qa-report.schema.json",
+    },
+    editorialEngine: {
+      manual: "docs/animation-engine-operating-manual.md",
+      director: "src/modules/editorial-video/visuals/",
+      temporalTruth:
+        "anchorWordIndex de la transcripción por palabras; atSeconds es derivado.",
+      channelRules: "channels/<canal>/brand/editing-rules.json",
+      ruleExceptions: "channels/<canal>/brand/rule-exceptions.json",
+      soundFamilies: [
+        "interface",
+        "data",
+        "camera",
+        "tension",
+        "impact",
+        "break",
+        "rewind",
+        "reveal",
+        "confirm",
+        "texture",
+      ],
+      soundVariantsPerFamily: 6,
+      reports: [
+        "cue-coverage.json",
+        "rhythm-report.json",
+        "sound-report.json",
+        "variety-report.json",
+        "plan-validation.json",
+        "episode-qa.json",
+      ],
     },
     artDirections: [
       "editorial-report",

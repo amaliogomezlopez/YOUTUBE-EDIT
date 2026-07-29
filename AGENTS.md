@@ -22,6 +22,31 @@ Debe cubrir:
 - Usar MiniMax M3 para estructurar el relato y un renderer SVG determinista para componer textos, flechas, etiquetas, color y layouts sin deformaciones.
 - Permitir temas y layouts variables manteniendo una identidad editorial consistente.
 
+## Motor de animacion editorial
+
+Si el encargo es "en esta carpeta estan los clips del episodio N, haz las
+animaciones", usar la skill `episodio-animado`
+(`.claude/skills/episodio-animado/SKILL.md`): lleva el flujo completo de carpeta
+de clips a bloques aprobados.
+
+Antes de tocar animaciones de un episodio editorial, leer
+`docs/animation-engine-operating-manual.md`. La primera accion del agente es
+leer `channels/<canal>/brand/editing-rules.json` (el JSON, no el markdown) y
+`channels/<canal>/brand/rule-exceptions.json`: son las reglas que el build va a
+ejecutar, con id estable y validador.
+
+Reglas duras del motor:
+
+- El indice de palabra de la transcripcion es la unica fuente de verdad
+  temporal. `atSeconds` es un derivado; escribirlo a mano hace fallar el build.
+- Los cues los mina `src/modules/editorial-video/visuals/cue-mining.js`. Un cue
+  manual solo se justifica por rotulo, destino u orden narrativo.
+- El sonido se pide por familia (`{family, intensity}`), nunca por fichero.
+- Una escena nueva se resuelve con el catalogo o el catalogo crece; nunca con un
+  componente de un solo uso.
+- Todo feedback del usuario se convierte en regla con
+  `npm run channel:feedback`, y la regla necesita validador y fixture.
+
 ## Estructura
 
 - `src/cli.js`: CLI principal.

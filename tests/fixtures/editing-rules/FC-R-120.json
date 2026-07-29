@@ -1,0 +1,39 @@
+{
+  "ruleId": "FC-R-120",
+  "expect": "fail",
+  "check": "chronology-past-left",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "history-rewind",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "timeline",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {
+          "chronology": "past-right"
+        }
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

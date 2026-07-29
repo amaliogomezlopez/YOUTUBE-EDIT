@@ -1,0 +1,42 @@
+{
+  "ruleId": "FC-R-110",
+  "expect": "fail",
+  "check": "asset-local-presence",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [
+          {
+            "id": "logo-remoto",
+            "path": "https://cdn.example.com/logo.png"
+          }
+        ],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "catalogFamily": "sound",
+  "designPrinciple": "Una familia por función narrativa. Nunca dos familias comparten fichero.",
+  "format": {
+    "codec": "pcm_s16le",
+    "sampleRate": 48000,
+    "channels": 2
+  },
+  "synthesis": {
+    "engine": "ffmpeg-aevalsrc",
+    "deterministic": true,
+    "note": "Las expresiones no pueden contener comas: ffmpeg las interpreta como separador de filtros."
+  },
+  "variantsPerFamily": 6,
+  "families": [
+    {
+      "id": "interface",
+      "role": "Interfaz: aparición de tarjetas, etiquetas, rótulos y cambios de estado de UI.",
+      "useFor": ["reveal", "highlight"],
+      "cooldownSeconds": 9,
+      "maxSharePercent": 12,
+      "defaultVolume": 0.42,
+      "recipe": {
+        "durationSeconds": [0.14, 0.02],
+        "expression": "(sin(2*PI*{f}*t)+0.28*sin(2*PI*{f2}*t))*exp(-t*{decay})*0.62",
+        "params": {
+          "f": [760, 92],
+          "f2": [1520, 184],
+          "decay": [22, 3]
+        },
+        "filters": "highpass=f=200"
+      }
+    },
+    {
+      "id": "data",
+      "role": "Datos: cifras, porcentajes, ticks de serie, avance de cursor sobre una curva.",
+      "useFor": ["highlight", "reveal", "verify"],
+      "cooldownSeconds": 6,
+      "maxSharePercent": 12,
+      "defaultVolume": 0.4,
+      "recipe": {
+        "durationSeconds": [0.11, 0.015],
+        "expression": "(sin(2*PI*{f}*t)*exp(-t*95)+0.22*(2*random(0)-1)*exp(-t*260))*0.7",
+        "params": {
+          "f": [1900, 235]
+        },
+        "filters": "highpass=f=420"
+      }
+    },
+    {
+      "id": "camera",
+      "role": "Cámara: zoom, barrido, recorrido y desplazamiento de encuadre.",
+      "useFor": ["zoom", "scan", "focus"],
+      "cooldownSeconds": 12,
+      "maxSharePercent": 10,
+      "defaultVolume": 0.22,
+      "recipe": {
+        "durationSeconds": [0.52, 0.07],
+        "expression": "(2*random(0)-1)*exp(-t*{decay})*(1-exp(-t*{attack}))*0.8",
+        "params": {
+          "decay": [5.2, 0.9],
+          "attack": [26, 5]
+        },
+        "filters": "highpass=f={hp},lowpass=f={lp}",
+        "filterParams": {
+          "hp": [320, 130],
+          "lp": [4400, -320]
+        }
+      }
+    },
+    {
+      "id": "tension",
+      "role": "Tensión: lecho ascendente antes de un giro, sostenido bajo la locución.",
+      "useFor": ["shade", "focus"],
+      "cooldownSeconds": 18,
+      "maxSharePercent": 10,
+      "defaultVolume": 0.26,
+      "recipe": {
+        "durationSeconds": [1.7, 0.22],
+        "expression": "(sin(2*PI*{f}*t)+0.62*sin(2*PI*{fb}*t)+0.2*sin(2*PI*{fh}*t))*(1-exp(-t*1.6))*exp(-t*0.34)*0.4",
+        "params": {
+          "f": [58, 7],
+          "fb": [61.5, 7.4],
+          "fh": [117, 14]
+        },
+        "filters": "lowpass=f=1600"
+      }
+    },
+    {
+      "id": "impact",
+      "role": "Impacto: giro narrativo, contradicción, dato de cierre, llegada de una aguja.",
+      "useFor": ["highlight", "verify", "connect"],
+      "cooldownSeconds": 10,
+      "maxSharePercent": 12,
+      "defaultVolume": 0.5,
+      "recipe": {
+        "durationSeconds": [0.56, 0.05],
+        "expression": "(sin(2*PI*({base}+{drop}*exp(-t*14))*t)*exp(-t*9)+0.3*(2*random(0)-1)*exp(-t*70))*0.82",
+        "params": {
+          "base": [44, 6],
+          "drop": [78, 17]
+        },
+        "filters": "lowpass=f=3200"
+      }
+    },
+    {
+      "id": "break",
+      "role": "Rotura: estallido, grieta, colapso, burbuja que pincha.",
+      "useFor": ["highlight", "shade"],
+      "cooldownSeconds": 16,
+      "maxSharePercent": 8,
+      "defaultVolume": 0.46,
+      "recipe": {
+        "durationSeconds": [0.62, 0.06],
+        "expression": "(2*random(0)-1)*exp(-t*{decay})*(1+0.6*sin(2*PI*{crackle}*t))*0.62",
+        "params": {
+          "decay": [9, 2.2],
+          "crackle": [28, 9]
+        },
+        "filters": "lowpass=f={lp},highpass=f=110",
+        "filterParams": {
+          "lp": [5200, -420]
+        }
+      }
+    },
+    {
+      "id": "rewind",
+      "role": "Rebobinado: viaje al pasado, cronología que retrocede, comparación histórica.",
+      "useFor": ["scan", "reveal"],
+      "cooldownSeconds": 20,
+      "maxSharePercent": 8,
+      "defaultVolume": 0.3,
+      "recipe": {
+        "durationSeconds": [0.74, 0.06],
+        "expression": "sin(2*PI*({f0}+{sweep}*t)*t)*(1-exp(-t*9))*exp(-t*1.7)*0.55",
+        "params": {
+          "f0": [190, 34],
+          "sweep": [1050, 190]
+        },
+        "filters": "highpass=f=180"
+      }
+    },
+    {
+      "id": "reveal",
+      "role": "Revelado: shimmer de logo, entrada de imagen, aparición de entidad.",
+      "useFor": ["reveal", "connect"],
+      "cooldownSeconds": 11,
+      "maxSharePercent": 10,
+      "defaultVolume": 0.32,
+      "recipe": {
+        "durationSeconds": [0.46, 0.05],
+        "expression": "(sin(2*PI*{f}*t)+0.6*sin(2*PI*{f15}*t)+0.4*sin(2*PI*{f225}*t))*(1-exp(-t*11))*exp(-t*6)*0.34",
+        "params": {
+          "f": [1180, 190],
+          "f15": [1770, 285],
+          "f225": [2655, 428]
+        },
+        "filters": "highpass=f=600"
+      }
+    },
+    {
+      "id": "confirm",
+      "role": "Confirmación: dato verificado, cierre positivo, coincidencia locución-serie.",
+      "useFor": ["verify", "reveal"],
+      "cooldownSeconds": 22,
+      "maxSharePercent": 8,
+      "defaultVolume": 0.38,
+      "recipe": {
+        "durationSeconds": [0.72, 0.04],
+        "expression": "(sin(2*PI*{f}*t)*exp(-t*6)+0.7*sin(2*PI*{f3}*t)*exp(-t*5)+0.35*sin(2*PI*{f5}*t)*exp(-t*7))*0.46",
+        "params": {
+          "f": [652, 58],
+          "f3": [822, 73],
+          "f5": [978, 87]
+        },
+        "filters": "highpass=f=300"
+      }
+    },
+    {
+      "id": "texture",
+      "role": "Lecho: capa continua por acto. Se estira en bucle bajo la locución.",
+      "useFor": ["bed"],
+      "cooldownSeconds": 0,
+      "maxSharePercent": 100,
+      "defaultVolume": 0.16,
+      "loopable": true,
+      "recipe": {
+        "durationSeconds": [6, 0.5],
+        "expression": "(sin(2*PI*{f}*t)*0.5+sin(2*PI*{f15}*t)*0.24+0.07*(2*random(0)-1))*(0.62+0.38*sin(2*PI*{lfo}*t))*0.4",
+        "params": {
+          "f": [48, 5.5],
+          "f15": [72, 8.25],
+          "lfo": [0.085, 0.017]
+        },
+        "filters": "lowpass=f=980"
+      }
+    }
+  ],
+  "legacyAliases": {
+    "note": "Alias históricos del episodio 1. Se mantienen para compatibilidad, pero ningún alias nuevo puede compartir fichero con otro.",
+    "map": {
+      "data-tick": {"family": "data", "variant": "data-01"},
+      "digital-count": {"family": "data", "variant": "data-03"},
+      "ui-pulse": {"family": "interface", "variant": "interface-01"},
+      "pop": {"family": "interface", "variant": "interface-03"},
+      "keyboard": {"family": "interface", "variant": "interface-05"},
+      "data-loading": {"family": "texture", "variant": "texture-02"},
+      "processing": {"family": "texture", "variant": "texture-03"},
+      "quick-whip": {"family": "camera", "variant": "camera-01"},
+      "smooth-whoosh": {"family": "camera", "variant": "camera-04"},
+      "rise-whoosh": {"family": "camera", "variant": "camera-06"},
+      "soft-impact": {"family": "impact", "variant": "impact-01"},
+      "alert-sting": {"family": "impact", "variant": "impact-05"},
+      "needle-strike": {"family": "impact", "variant": "impact-03"},
+      "bubble-burst": {"family": "break", "variant": "break-01"},
+      "tension-swell": {"family": "tension", "variant": "tension-01"},
+      "rewind-sweep": {"family": "rewind", "variant": "rewind-01"},
+      "logo-shimmer": {"family": "reveal", "variant": "reveal-01"},
+      "success-chime": {"family": "confirm", "variant": "confirm-01"}
+    }
+  }
+}

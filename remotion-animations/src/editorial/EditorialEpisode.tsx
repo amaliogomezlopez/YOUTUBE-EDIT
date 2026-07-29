@@ -1,6 +1,6 @@
 import {CalculateMetadataFunction} from "remotion";
 import {AbsoluteFill, Sequence, useVideoConfig} from "remotion";
-import {EpisodeAudio} from "./EpisodeAudio";
+import {EpisodeAudio, EpisodeBedTrack} from "./EpisodeAudio";
 import {SceneBoundary} from "./SceneBoundary";
 import {FinanceEditorialScene} from "./SceneRegistry";
 import {
@@ -30,6 +30,11 @@ export const EditorialEpisode: React.FC<EditorialEpisodeProps> = (props) => {
         audioPath={props.audioPath}
         volume={props.narrationVolume}
       />
+      <EpisodeBedTrack
+        enabled={props.soundEnabled}
+        masterVolume={props.soundMix}
+        segments={props.bedTrack}
+      />
       {orderedScenes.map((scene, index) => {
         const from = Math.max(0, Math.round(scene.startSeconds * fps));
         const nextScene = orderedScenes[index + 1];
@@ -47,6 +52,7 @@ export const EditorialEpisode: React.FC<EditorialEpisodeProps> = (props) => {
             <SceneBoundary>
               <FinanceEditorialScene
                 accentColor={props.accentColor}
+                duckWindows={props.duckWindows}
                 logoPath={props.logoPath}
                 previewMode={props.previewMode}
                 scene={scene}

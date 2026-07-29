@@ -1,0 +1,42 @@
+{
+  "ruleId": "FC-R-055",
+  "expect": "fail",
+  "check": "sound-bed-present",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": [],
+    "sound": {
+      "bedTrack": [],
+      "ducking": [],
+      "scenes": []
+    }
+  }
+}

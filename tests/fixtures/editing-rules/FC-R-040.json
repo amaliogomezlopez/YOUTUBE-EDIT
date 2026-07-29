@@ -1,0 +1,42 @@
+{
+  "ruleId": "FC-R-040",
+  "expect": "fail",
+  "check": "tone-semantics",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [
+          {
+            "id": "fecha-dorada",
+            "anchorWordIndex": 0,
+            "absoluteSeconds": 0.1,
+            "action": "highlight",
+            "target": "axis",
+            "kind": "date",
+            "tone": "gold"
+          }
+        ],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "ruleId": "FC-R-002",
+  "expect": "fail",
+  "check": "cue-word-anchoring",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [
+          {
+            "id": "tarde",
+            "anchorWordIndex": 0,
+            "absoluteSeconds": 1.9,
+            "target": "phrase"
+          }
+        ],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

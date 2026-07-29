@@ -1,0 +1,40 @@
+{
+  "ruleId": "FC-R-030",
+  "expect": "fail",
+  "check": "camera-zoom-range",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {},
+        "camera": {
+          "zoom": 1.62
+        }
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

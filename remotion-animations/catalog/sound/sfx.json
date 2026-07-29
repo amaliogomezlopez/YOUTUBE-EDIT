@@ -1,0 +1,782 @@
+{
+  "version": 1,
+  "catalogFamily": "sound",
+  "generatedBy": "scripts/synthesize-sfx-library.js",
+  "designPrinciple": "Una familia por función narrativa. Nunca dos familias comparten fichero.",
+  "format": {
+    "codec": "pcm_s16le",
+    "sampleRate": 48000,
+    "channels": 2
+  },
+  "selectionPolicy": {
+    "rule": "El cue pide una familia, nunca un fichero. El selector elige la variante.",
+    "steps": [
+      "Descartar variantes en cooldown para el episodio en curso.",
+      "Elegir la menos usada; empatar por rotación round-robin sembrada.",
+      "Aplicar jitter determinista de tono (±3 %) y ganancia (±1,5 dB).",
+      "Registrar el uso para que el validador sound-variety pueda auditarlo."
+    ]
+  },
+  "families": [
+    {
+      "id": "interface",
+      "role": "Interfaz: aparición de tarjetas, etiquetas, rótulos y cambios de estado de UI.",
+      "useFor": [
+        "reveal",
+        "highlight"
+      ],
+      "cooldownSeconds": 9,
+      "maxSharePercent": 12,
+      "loopable": false,
+      "defaultVolume": 0.42,
+      "variants": [
+        {
+          "id": "interface-01",
+          "file": "sfx/amaliometria-interface-01.wav",
+          "durationSeconds": 0.14,
+          "volume": 0.395,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "8448be0b2bc5c24bd68fa1d9a0a04f4788321dc7e69ea22e244f875883e06d18"
+        },
+        {
+          "id": "interface-02",
+          "file": "sfx/amaliometria-interface-02.wav",
+          "durationSeconds": 0.16,
+          "volume": 0.42,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "4e25ae017f2413eedd6a469c501862b5395441b5aa1cb18e3f6726f9ae7376b0"
+        },
+        {
+          "id": "interface-03",
+          "file": "sfx/amaliometria-interface-03.wav",
+          "durationSeconds": 0.18,
+          "volume": 0.445,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "72329eb2e844549dac6713dba18fe9d06e7a9a581fc1097bd05d89e54897e296"
+        },
+        {
+          "id": "interface-04",
+          "file": "sfx/amaliometria-interface-04.wav",
+          "durationSeconds": 0.2,
+          "volume": 0.395,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "2ec65e729cf9c75db740dbef46803bf33c392589eccd5c9104981b797671eb7e"
+        },
+        {
+          "id": "interface-05",
+          "file": "sfx/amaliometria-interface-05.wav",
+          "durationSeconds": 0.22,
+          "volume": 0.42,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "0040a2d2b4921adcd12e66e6616665178cfed68ea72e8effc6a6ea13bc97b8c0"
+        },
+        {
+          "id": "interface-06",
+          "file": "sfx/amaliometria-interface-06.wav",
+          "durationSeconds": 0.24,
+          "volume": 0.445,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "35ee89bc805ec700a3c7b9ca96466967ad328300c3b8da8d20611255d209ce18"
+        }
+      ]
+    },
+    {
+      "id": "data",
+      "role": "Datos: cifras, porcentajes, ticks de serie, avance de cursor sobre una curva.",
+      "useFor": [
+        "highlight",
+        "reveal",
+        "verify"
+      ],
+      "cooldownSeconds": 6,
+      "maxSharePercent": 12,
+      "loopable": false,
+      "defaultVolume": 0.4,
+      "variants": [
+        {
+          "id": "data-01",
+          "file": "sfx/amaliometria-data-01.wav",
+          "durationSeconds": 0.11,
+          "volume": 0.376,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "358811d40d1f0f3589c6d953bf09ee02cdffbc0f12f87a589d0d8fe91269207d"
+        },
+        {
+          "id": "data-02",
+          "file": "sfx/amaliometria-data-02.wav",
+          "durationSeconds": 0.125,
+          "volume": 0.4,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "0a7bce5f9743f006d0d81bb3d787337a2275235b4f37c7cfbdbba066638ec5e7"
+        },
+        {
+          "id": "data-03",
+          "file": "sfx/amaliometria-data-03.wav",
+          "durationSeconds": 0.14,
+          "volume": 0.424,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "9f6244773013be07d5c3c32746312a85ef96e674807cd33d2987f9a95d8e74c5"
+        },
+        {
+          "id": "data-04",
+          "file": "sfx/amaliometria-data-04.wav",
+          "durationSeconds": 0.155,
+          "volume": 0.376,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "f7b7a926b9984e77b00bf48f0c9e0323f3ff9acfcf9983361202d41d3d089c41"
+        },
+        {
+          "id": "data-05",
+          "file": "sfx/amaliometria-data-05.wav",
+          "durationSeconds": 0.17,
+          "volume": 0.4,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "d654b7a7c5e6a70673b601ddec58ee9ebfff4bb69e3c30abfcbcce2cbd545104"
+        },
+        {
+          "id": "data-06",
+          "file": "sfx/amaliometria-data-06.wav",
+          "durationSeconds": 0.185,
+          "volume": 0.424,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "1ce91e3fb2deac1249bbc375611c1de7661c218297e5e2ecff7cc35654979775"
+        }
+      ]
+    },
+    {
+      "id": "camera",
+      "role": "Cámara: zoom, barrido, recorrido y desplazamiento de encuadre.",
+      "useFor": [
+        "zoom",
+        "scan",
+        "focus"
+      ],
+      "cooldownSeconds": 12,
+      "maxSharePercent": 10,
+      "loopable": false,
+      "defaultVolume": 0.22,
+      "variants": [
+        {
+          "id": "camera-01",
+          "file": "sfx/amaliometria-camera-01.wav",
+          "durationSeconds": 0.52,
+          "volume": 0.207,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "f61f7df908be6ad449388ce75b1da1ff4dd2fcebfcc0d0d3584787ca9948c57d"
+        },
+        {
+          "id": "camera-02",
+          "file": "sfx/amaliometria-camera-02.wav",
+          "durationSeconds": 0.59,
+          "volume": 0.22,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "1ec595efc319c71237eafd2449e9882fed3aac7b99872bee3dc6585d17c5b485"
+        },
+        {
+          "id": "camera-03",
+          "file": "sfx/amaliometria-camera-03.wav",
+          "durationSeconds": 0.66,
+          "volume": 0.233,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "3f0de21ab1b2e4ffdc338e012e450a92c4101cc07811602f17b118523125107a"
+        },
+        {
+          "id": "camera-04",
+          "file": "sfx/amaliometria-camera-04.wav",
+          "durationSeconds": 0.73,
+          "volume": 0.207,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "67c878e9bc9e3fcb88c7c76f5fdc6b2bf2ffe3530389a90c3481f34a18c53cf7"
+        },
+        {
+          "id": "camera-05",
+          "file": "sfx/amaliometria-camera-05.wav",
+          "durationSeconds": 0.8,
+          "volume": 0.22,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "3f8458ed5d47ebc591036248f74d1a1211cf951d1e3bb15eefdd0c6f429e693b"
+        },
+        {
+          "id": "camera-06",
+          "file": "sfx/amaliometria-camera-06.wav",
+          "durationSeconds": 0.87,
+          "volume": 0.233,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "1db32b054d7464343c5d742e7634d630235ca92c766788e4e0ab25a4029a6466"
+        }
+      ]
+    },
+    {
+      "id": "tension",
+      "role": "Tensión: lecho ascendente antes de un giro, sostenido bajo la locución.",
+      "useFor": [
+        "shade",
+        "focus"
+      ],
+      "cooldownSeconds": 18,
+      "maxSharePercent": 10,
+      "loopable": false,
+      "defaultVolume": 0.26,
+      "variants": [
+        {
+          "id": "tension-01",
+          "file": "sfx/amaliometria-tension-01.wav",
+          "durationSeconds": 1.7,
+          "volume": 0.244,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "71bb50c1a5b74383949810f38eb89fa6203c1bf93ed799b5c14f29d73524f81d"
+        },
+        {
+          "id": "tension-02",
+          "file": "sfx/amaliometria-tension-02.wav",
+          "durationSeconds": 1.92,
+          "volume": 0.26,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "f3739c365b8279f3d6a36bcdf8af4ab9de6bf97938ca9c380ec5e0161376710b"
+        },
+        {
+          "id": "tension-03",
+          "file": "sfx/amaliometria-tension-03.wav",
+          "durationSeconds": 2.14,
+          "volume": 0.276,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "9c611d624b6d0ff0c57ee031f619c69ce3e564f1453ea3936905fe613d1abd0b"
+        },
+        {
+          "id": "tension-04",
+          "file": "sfx/amaliometria-tension-04.wav",
+          "durationSeconds": 2.36,
+          "volume": 0.244,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "8cb230fa9fe7982820eedb5f31810ebe42da54bd2491eaec89d083a8ef915503"
+        },
+        {
+          "id": "tension-05",
+          "file": "sfx/amaliometria-tension-05.wav",
+          "durationSeconds": 2.58,
+          "volume": 0.26,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "5b853bf9846a0d30b5e81fd24e4475d14d019839946312958344ff3010be6e2b"
+        },
+        {
+          "id": "tension-06",
+          "file": "sfx/amaliometria-tension-06.wav",
+          "durationSeconds": 2.8,
+          "volume": 0.276,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "83343d621e6b38daa896efe5f342183850756ecf1a477f9c69cf7f5dc30b945e"
+        }
+      ]
+    },
+    {
+      "id": "impact",
+      "role": "Impacto: giro narrativo, contradicción, dato de cierre, llegada de una aguja.",
+      "useFor": [
+        "highlight",
+        "verify",
+        "connect"
+      ],
+      "cooldownSeconds": 10,
+      "maxSharePercent": 12,
+      "loopable": false,
+      "defaultVolume": 0.5,
+      "variants": [
+        {
+          "id": "impact-01",
+          "file": "sfx/amaliometria-impact-01.wav",
+          "durationSeconds": 0.56,
+          "volume": 0.47,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "ef50b3f3262e47b677f3d99e5efc068ecd50325310b77f20a6e7426a54f4649c"
+        },
+        {
+          "id": "impact-02",
+          "file": "sfx/amaliometria-impact-02.wav",
+          "durationSeconds": 0.61,
+          "volume": 0.5,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "aaab7a8b64c69631daf1eb7a2253cf3334cb3e99a0fbe30e296ff29388e120a6"
+        },
+        {
+          "id": "impact-03",
+          "file": "sfx/amaliometria-impact-03.wav",
+          "durationSeconds": 0.66,
+          "volume": 0.53,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "52dfa2ff85601fe61f9ef921fefaf210d2377f189cc73a84ebd43ae198531dbb"
+        },
+        {
+          "id": "impact-04",
+          "file": "sfx/amaliometria-impact-04.wav",
+          "durationSeconds": 0.71,
+          "volume": 0.47,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "439519675548c51dbf676f3c9b406eb08731469804d67919305465aa0f6a862d"
+        },
+        {
+          "id": "impact-05",
+          "file": "sfx/amaliometria-impact-05.wav",
+          "durationSeconds": 0.76,
+          "volume": 0.5,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "1c2492a3ff5f08e035aa40ff8db3c8b488a00ef9adba59488f185de47ce19873"
+        },
+        {
+          "id": "impact-06",
+          "file": "sfx/amaliometria-impact-06.wav",
+          "durationSeconds": 0.81,
+          "volume": 0.53,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "77d8e75955bc7b7ef32dcf5f750c910fc5f2f672491c2bddb0bd710690390f76"
+        }
+      ]
+    },
+    {
+      "id": "break",
+      "role": "Rotura: estallido, grieta, colapso, burbuja que pincha.",
+      "useFor": [
+        "highlight",
+        "shade"
+      ],
+      "cooldownSeconds": 16,
+      "maxSharePercent": 8,
+      "loopable": false,
+      "defaultVolume": 0.46,
+      "variants": [
+        {
+          "id": "break-01",
+          "file": "sfx/amaliometria-break-01.wav",
+          "durationSeconds": 0.62,
+          "volume": 0.432,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "f3b7499500c44e007a0903b770f8e49966843807e447b2f5300cee4619623f8e"
+        },
+        {
+          "id": "break-02",
+          "file": "sfx/amaliometria-break-02.wav",
+          "durationSeconds": 0.68,
+          "volume": 0.46,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "a9e1c65a6ce4e1fbfb4d9ac83f10f3660312645acd1f930f19c01096f599c9e6"
+        },
+        {
+          "id": "break-03",
+          "file": "sfx/amaliometria-break-03.wav",
+          "durationSeconds": 0.74,
+          "volume": 0.488,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "b646cbd70dfa6e5494f483e8a681c25ab9de5805f65ddb1a4e3d3307f0866b64"
+        },
+        {
+          "id": "break-04",
+          "file": "sfx/amaliometria-break-04.wav",
+          "durationSeconds": 0.8,
+          "volume": 0.432,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "95eee4810196167807d1277f1e889cfc128ef8a0cf07f3e94cc29375313cabe9"
+        },
+        {
+          "id": "break-05",
+          "file": "sfx/amaliometria-break-05.wav",
+          "durationSeconds": 0.86,
+          "volume": 0.46,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "884c1cfa40f378a792f78fc87631e5ffa44d53eba4a6312261ad2739f381848b"
+        },
+        {
+          "id": "break-06",
+          "file": "sfx/amaliometria-break-06.wav",
+          "durationSeconds": 0.92,
+          "volume": 0.488,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "fd21012da288aed7e3940f8a2ef0cb5a070dfc8c9a9ab5a8d654641ef6618198"
+        }
+      ]
+    },
+    {
+      "id": "rewind",
+      "role": "Rebobinado: viaje al pasado, cronología que retrocede, comparación histórica.",
+      "useFor": [
+        "scan",
+        "reveal"
+      ],
+      "cooldownSeconds": 20,
+      "maxSharePercent": 8,
+      "loopable": false,
+      "defaultVolume": 0.3,
+      "variants": [
+        {
+          "id": "rewind-01",
+          "file": "sfx/amaliometria-rewind-01.wav",
+          "durationSeconds": 0.74,
+          "volume": 0.282,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "046f21897224925ecb73398013a3dbb014933c7cf0b356ad76ba8e0acd9517fb"
+        },
+        {
+          "id": "rewind-02",
+          "file": "sfx/amaliometria-rewind-02.wav",
+          "durationSeconds": 0.8,
+          "volume": 0.3,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "788aab9825ebd2ebaebdda64552ac8339c4902f943972bbdee6e8080e2f3bd97"
+        },
+        {
+          "id": "rewind-03",
+          "file": "sfx/amaliometria-rewind-03.wav",
+          "durationSeconds": 0.86,
+          "volume": 0.318,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "a91adb39b66f2238c86488049331a6d83ea6675b835e079765759cccbaf6ad4e"
+        },
+        {
+          "id": "rewind-04",
+          "file": "sfx/amaliometria-rewind-04.wav",
+          "durationSeconds": 0.92,
+          "volume": 0.282,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "f6cad1573d11e83cd8bb74c38f8816bb68d5b652d32dd88d24f314974a4eda0a"
+        },
+        {
+          "id": "rewind-05",
+          "file": "sfx/amaliometria-rewind-05.wav",
+          "durationSeconds": 0.98,
+          "volume": 0.3,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "8c930a65ebcd0a38ee3753e51643923495ec397f082935de688eecae57a30376"
+        },
+        {
+          "id": "rewind-06",
+          "file": "sfx/amaliometria-rewind-06.wav",
+          "durationSeconds": 1.04,
+          "volume": 0.318,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "ee8a40997337e5cc50d91e6840774dc9bbb9795f25308f53aa4a0a78fa91b13a"
+        }
+      ]
+    },
+    {
+      "id": "reveal",
+      "role": "Revelado: shimmer de logo, entrada de imagen, aparición de entidad.",
+      "useFor": [
+        "reveal",
+        "connect"
+      ],
+      "cooldownSeconds": 11,
+      "maxSharePercent": 10,
+      "loopable": false,
+      "defaultVolume": 0.32,
+      "variants": [
+        {
+          "id": "reveal-01",
+          "file": "sfx/amaliometria-reveal-01.wav",
+          "durationSeconds": 0.46,
+          "volume": 0.301,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "dc4ecb3db0a1fe40880d5a2f398ad091d761aa75d8d460b978d145d111bd6ce2"
+        },
+        {
+          "id": "reveal-02",
+          "file": "sfx/amaliometria-reveal-02.wav",
+          "durationSeconds": 0.51,
+          "volume": 0.32,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "85f6b434447ade398b9f11784da2e2c6392e11ba988a10681504d7118bbf5eb3"
+        },
+        {
+          "id": "reveal-03",
+          "file": "sfx/amaliometria-reveal-03.wav",
+          "durationSeconds": 0.56,
+          "volume": 0.339,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "66ae010bcb9c66454e46dd72aca7313660c54dbc10773e60558f2a30b0c6095d"
+        },
+        {
+          "id": "reveal-04",
+          "file": "sfx/amaliometria-reveal-04.wav",
+          "durationSeconds": 0.61,
+          "volume": 0.301,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "5d1f83cd85e8ce1c94996da92f7d2cad25fadc4375d5f7c4a8ced0c24ed40439"
+        },
+        {
+          "id": "reveal-05",
+          "file": "sfx/amaliometria-reveal-05.wav",
+          "durationSeconds": 0.66,
+          "volume": 0.32,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "8ae7377b3741f0fddd16e3903eb7acb738d1f470a4248b1732af763e06cfdbbe"
+        },
+        {
+          "id": "reveal-06",
+          "file": "sfx/amaliometria-reveal-06.wav",
+          "durationSeconds": 0.71,
+          "volume": 0.339,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "d375a5fe5135533834bc22d7c97775d8dce7c738122586cb014ff4ecab6c6160"
+        }
+      ]
+    },
+    {
+      "id": "confirm",
+      "role": "Confirmación: dato verificado, cierre positivo, coincidencia locución-serie.",
+      "useFor": [
+        "verify",
+        "reveal"
+      ],
+      "cooldownSeconds": 22,
+      "maxSharePercent": 8,
+      "loopable": false,
+      "defaultVolume": 0.38,
+      "variants": [
+        {
+          "id": "confirm-01",
+          "file": "sfx/amaliometria-confirm-01.wav",
+          "durationSeconds": 0.72,
+          "volume": 0.357,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "5171baa764ad76d28b90d735db3052195612bfa3b31fa1c57a6aca8862a01f3a"
+        },
+        {
+          "id": "confirm-02",
+          "file": "sfx/amaliometria-confirm-02.wav",
+          "durationSeconds": 0.76,
+          "volume": 0.38,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "c65792a1c33995cc2697543ea6d1e6be434e1b453a94aae7fae37db19c3963c7"
+        },
+        {
+          "id": "confirm-03",
+          "file": "sfx/amaliometria-confirm-03.wav",
+          "durationSeconds": 0.8,
+          "volume": 0.403,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "b1e89c7d1c1be114adf257d5e5ef320b4eb4b9f081844caef6ad8d38ae9ec2f9"
+        },
+        {
+          "id": "confirm-04",
+          "file": "sfx/amaliometria-confirm-04.wav",
+          "durationSeconds": 0.84,
+          "volume": 0.357,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "e9f92a06894d2c9b58af74e27a1c8e3e6c6516f62e85ae00615e864dfce56558"
+        },
+        {
+          "id": "confirm-05",
+          "file": "sfx/amaliometria-confirm-05.wav",
+          "durationSeconds": 0.88,
+          "volume": 0.38,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "58fb71551c144ead9df9089aefa8098c394a8990cf6838194de259e4f9c549a8"
+        },
+        {
+          "id": "confirm-06",
+          "file": "sfx/amaliometria-confirm-06.wav",
+          "durationSeconds": 0.92,
+          "volume": 0.403,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "7e2ef550f511f7981cf8195e077dc2a60b20232795e3d2e23a4ccb4d9eb871fd"
+        }
+      ]
+    },
+    {
+      "id": "texture",
+      "role": "Lecho: capa continua por acto. Se estira en bucle bajo la locución.",
+      "useFor": [
+        "bed"
+      ],
+      "cooldownSeconds": 0,
+      "maxSharePercent": 100,
+      "loopable": true,
+      "defaultVolume": 0.16,
+      "variants": [
+        {
+          "id": "texture-01",
+          "file": "sfx/amaliometria-texture-01.wav",
+          "durationSeconds": 6,
+          "volume": 0.15,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "e9f29b591e1fb30bc3143908f994c17c8f69bf3cebf5cd9e03d5637d8d86a4f6"
+        },
+        {
+          "id": "texture-02",
+          "file": "sfx/amaliometria-texture-02.wav",
+          "durationSeconds": 6.5,
+          "volume": 0.16,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "8131d78bfa926adea66556f3b6223720dab88e451e059d75a68df21fabff8150"
+        },
+        {
+          "id": "texture-03",
+          "file": "sfx/amaliometria-texture-03.wav",
+          "durationSeconds": 7,
+          "volume": 0.17,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "7bcf47b192d8a6ca7f3f8550adfbab698914fc7d1670ef85dcdf0967cbbecc24"
+        },
+        {
+          "id": "texture-04",
+          "file": "sfx/amaliometria-texture-04.wav",
+          "durationSeconds": 7.5,
+          "volume": 0.15,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "1c1371b9d4f282ceb3a220c3c00dc4085af45432957e480313aea22ae70a7cf6"
+        },
+        {
+          "id": "texture-05",
+          "file": "sfx/amaliometria-texture-05.wav",
+          "durationSeconds": 8,
+          "volume": 0.16,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "0051393cb40df2d805be3919495374c10c96d3ff027600a0c649a9b34dbd5be9"
+        },
+        {
+          "id": "texture-06",
+          "file": "sfx/amaliometria-texture-06.wav",
+          "durationSeconds": 8.5,
+          "volume": 0.17,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "dd8f64b8d44f0c0f7b9bf6044f962a0dea1e70e98527ba661ccdf60ac58cc654"
+        }
+      ]
+    }
+  ],
+  "legacyAliases": {
+    "data-tick": {
+      "family": "data",
+      "variant": "data-01"
+    },
+    "digital-count": {
+      "family": "data",
+      "variant": "data-03"
+    },
+    "ui-pulse": {
+      "family": "interface",
+      "variant": "interface-01"
+    },
+    "pop": {
+      "family": "interface",
+      "variant": "interface-03"
+    },
+    "keyboard": {
+      "family": "interface",
+      "variant": "interface-05"
+    },
+    "data-loading": {
+      "family": "texture",
+      "variant": "texture-02"
+    },
+    "processing": {
+      "family": "texture",
+      "variant": "texture-03"
+    },
+    "quick-whip": {
+      "family": "camera",
+      "variant": "camera-01"
+    },
+    "smooth-whoosh": {
+      "family": "camera",
+      "variant": "camera-04"
+    },
+    "rise-whoosh": {
+      "family": "camera",
+      "variant": "camera-06"
+    },
+    "soft-impact": {
+      "family": "impact",
+      "variant": "impact-01"
+    },
+    "alert-sting": {
+      "family": "impact",
+      "variant": "impact-05"
+    },
+    "needle-strike": {
+      "family": "impact",
+      "variant": "impact-03"
+    },
+    "bubble-burst": {
+      "family": "break",
+      "variant": "break-01"
+    },
+    "tension-swell": {
+      "family": "tension",
+      "variant": "tension-01"
+    },
+    "rewind-sweep": {
+      "family": "rewind",
+      "variant": "rewind-01"
+    },
+    "logo-shimmer": {
+      "family": "reveal",
+      "variant": "reveal-01"
+    },
+    "success-chime": {
+      "family": "confirm",
+      "variant": "confirm-01"
+    }
+  },
+  "totals": {
+    "families": 10,
+    "variants": 60
+  }
+}

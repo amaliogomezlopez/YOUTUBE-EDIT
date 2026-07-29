@@ -1,0 +1,38 @@
+{
+  "ruleId": "FC-R-151",
+  "expect": "fail",
+  "check": "source-label-data-only",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "line",
+        "emphasis": "scale",
+        "visualIntent": "chart",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {},
+        "sourceLabel": "Pexels"
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

@@ -1588,6 +1588,21 @@ const cuesForEditorialScene = (
   scene: EditorialScene,
   durationSeconds: number,
 ): SoundCue[] => {
+  // ANM-D04 — Si el director ya decidió la mezcla, el render la reproduce tal
+  // cual. La capa de render dejó de elegir sonidos por tipo de acción.
+  if (scene.soundPlan?.length) {
+    return scene.soundPlan
+      .filter((instance) => instance.startSeconds < durationSeconds - 0.05)
+      .map((instance) => ({
+        file: instance.file,
+        startSeconds: instance.startSeconds,
+        durationSeconds: instance.durationSeconds,
+        volume: instance.volume,
+        playbackRate: instance.playbackRate,
+        attackSeconds: instance.role === "riser" ? 0.12 : 0.015,
+        releaseSeconds: instance.role === "riser" ? 0.35 : 0.12,
+      }));
+  }
   const semanticSoundFiles = {
     "data-tick": {file: SOUND_FILES.dataTick, duration: 0.42, volume: 0.48},
     "rise-whoosh": {file: SOUND_FILES.riseWhoosh, duration: 0.78, volume: 0.5},
@@ -1599,7 +1614,9 @@ const cuesForEditorialScene = (
     "digital-count": {file: SOUND_FILES.digitalCount, duration: 0.51, volume: 0.18},
     processing: {file: SOUND_FILES.processing, duration: 1.2, volume: 0.1},
     pop: {file: SOUND_FILES.pop, duration: 0.42, volume: 0.12},
-    "alert-sting": {file: SOUND_FILES.softImpact, duration: 0.58, volume: 0.66},
+    // ANM-D03 — Material propio: el giro narrativo ya no suena igual que el
+    // dato de cierre.
+    "alert-sting": {file: SOUND_FILES.alertSting, duration: 0.76, volume: 0.6},
     "logo-shimmer": {
       file: SOUND_FILES.logoShimmer,
       duration: 0.34,
@@ -1636,63 +1653,31 @@ const cuesForEditorialScene = (
       volume: 0.11,
     },
   } as const;
-  if (scene.semanticCues.some((semanticCue) => semanticCue.sound)) {
-    return scene.semanticCues
-      .filter((semanticCue) => semanticCue.sound)
+  const legacyCues = scene.semanticCues.filter(
+    (semanticCue) => typeof semanticCue.sound === "string",
+  );
+  if (legacyCues.length) {
+    return legacyCues
       .flatMap((semanticCue) => {
-        const config = semanticSoundFiles[semanticCue.sound!];
+        const alias = semanticCue.sound as keyof typeof semanticSoundFiles;
+        const config = semanticSoundFiles[alias];
+        if (!config) return [];
         const emphasis =
           semanticCue.tone === "negative" || semanticCue.action === "verify"
             ? 1.12
             : 1;
-        const specializedCameraSound = [
-          "bubble-burst",
-          "logo-shimmer",
-          "rewind-sweep",
-          "tension-swell",
-        ].includes(semanticCue.sound!);
-        const cameraDriven =
-          ["connect", "focus", "highlight", "zoom", "verify"].includes(
-            semanticCue.action,
-          ) && !specializedCameraSound;
         const primary = cue(
           config.file,
           semanticCue.atSeconds,
           config.duration,
           config.volume * emphasis,
         );
-        const cameraCues = cameraDriven
-          ? [
-              cue(
-                SOUND_FILES.quickWhip,
-                Math.max(0, semanticCue.atSeconds - 0.04),
-                0.12,
-                0.11,
-              ),
-              cue(
-                SOUND_FILES.smoothWhoosh,
-                Math.max(
-                  semanticCue.atSeconds + 0.18,
-                  semanticCue.atSeconds + semanticCue.durationSeconds - 0.48,
-                ),
-                0.48,
-                0.065,
-              ),
-            ]
-          : [];
-        const alertCues =
-          semanticCue.sound === "alert-sting"
-            ? [
-                cue(
-                  SOUND_FILES.uiPulse,
-                  semanticCue.atSeconds + 0.13,
-                  0.22,
-                  0.5,
-                ),
-              ]
-            : [];
+        // ANM-D04 — Se elimina el apilado automático de `quickWhip` +
+        // `smoothWhoosh` sobre todo cue connect|focus|highlight|zoom|verify.
+        // El sonido de cámara se decide por familia y presupuesto en el
+        // director (`sound-director.js`), no por el tipo de acción.
         const eventCues =
-          semanticCue.sound === "bubble-burst"
+          alias === "bubble-burst"
             ? [
                 cue(
                   SOUND_FILES.needleStrike,
@@ -1702,7 +1687,7 @@ const cuesForEditorialScene = (
                 ),
               ]
             : [];
-        return [...cameraCues, ...eventCues, primary, ...alertCues];
+        return [...eventCues, primary];
       })
       .filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
   }
@@ -1749,6 +1734,7 @@ export const FinanceEditorialScene: React.FC<{
   previewMode: "editorial" | "clean";
   soundEnabled: boolean;
   soundMix: number;
+  duckWindows?: {startSeconds: number; endSeconds: number; gainDb: number}[];
 }> = ({
   scene,
   accentColor,
@@ -1756,6 +1742,7 @@ export const FinanceEditorialScene: React.FC<{
   previewMode,
   soundEnabled,
   soundMix,
+  duckWindows,
 }) => {
   const {durationInFrames, fps} = useVideoConfig();
   let content: React.ReactNode;
@@ -1878,6 +1865,8 @@ export const FinanceEditorialScene: React.FC<{
       ) : null}
       <Soundtrack
         cues={cuesForEditorialScene(scene, durationInFrames / fps)}
+        duckOffsetSeconds={scene.startSeconds}
+        duckWindows={duckWindows}
         enabled={soundEnabled}
         masterVolume={soundMix}
       />

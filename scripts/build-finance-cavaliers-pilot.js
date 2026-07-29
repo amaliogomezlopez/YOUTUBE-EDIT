@@ -7,9 +7,21 @@ import {
   validateResearchDossier,
   validateVisualPlan
 } from '../src/modules/editorial-video/validator.js';
+import {resolveSceneCues} from '../src/modules/editorial-video/visuals/cue-anchoring.js';
+import {buildCueCoverage, mineSceneCues} from '../src/modules/editorial-video/visuals/cue-mining.js';
+import {applyCueBudget, mergeCueSets} from '../src/modules/editorial-video/visuals/cue-budget.js';
+import {loadPatternRegistry} from '../src/modules/editorial-video/visuals/pattern-registry.js';
+import {loadEntityRegistry} from '../src/modules/editorial-video/visuals/entity-resolver.js';
+import {planEpisodeSound} from '../src/modules/editorial-video/visuals/sound-director.js';
+import {assignActs, generateFillerEvents} from '../src/modules/editorial-video/visuals/event-timeline.js';
+import {
+  formatValidationReport,
+  loadSoundCatalog,
+  validateEpisodePlan
+} from '../src/modules/editorial-video/visuals/plan-validator.js';
+import {buildEpisodeQaReport} from '../src/modules/editorial-video/visuals/episode-qa.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const EPISODE_ID = 'episode-finance-cavaliers-001';
 const CHANNEL_ID = 'finance-cavaliers';
 const DEFAULT_EPISODE_DIRECTORY = path.join(
   ROOT,
@@ -19,6 +31,29 @@ const DEFAULT_EPISODE_DIRECTORY = path.join(
   'episodes',
   '1'
 );
+
+/**
+ * La identidad del episodio sale del directorio, no de una constante. Con un id
+ * fijo, construir el episodio 2 lo sellaba como `...-001` y las excepciones
+ * registradas para el episodio 1 —que el motor filtra por `episodeId`— se
+ * aplicaban en silencio al material nuevo. Un directorio sin número es un error
+ * explícito: caer a «001» reintroduciría exactamente ese fallo.
+ */
+function resolveEpisodeIdentity(episodeDirectory) {
+  const name = path.basename(episodeDirectory);
+  if (!/^\d+$/.test(name)) {
+    throw new Error(
+      `El directorio de episodio debe terminar en su número (…/episodes/2), y ` +
+      `recibí «${name}». De ese nombre sale el episodeId con el que el motor ` +
+      `filtra las excepciones registradas.`
+    );
+  }
+  const number = String(Number(name));
+  return {
+    number,
+    episodeId: `episode-${CHANNEL_ID}-${number.padStart(3, '0')}`
+  };
+}
 const REFERENCE_URL = 'https://www.youtube.com/watch?v=QNFLN6IvB88';
 const MARKET_SERIES_FILE = path.join(
   ROOT,
@@ -27,95 +62,9 @@ const MARKET_SERIES_FILE = path.join(
   'data',
   'mags-spy-relative-2025-2026.json'
 );
-const COMPANY_LOGO_ASSETS = [
-  {
-    id: 'finance-cavaliers-nvidia',
-    kind: 'logo',
-    label: 'NVIDIA',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-nvidia.png'
-  },
-  {
-    id: 'finance-cavaliers-apple',
-    kind: 'logo',
-    label: 'APPLE',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-apple.png'
-  },
-  {
-    id: 'finance-cavaliers-microsoft',
-    kind: 'logo',
-    label: 'MICROSOFT',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-microsoft.png'
-  },
-  {
-    id: 'finance-cavaliers-amazon',
-    kind: 'logo',
-    label: 'AMAZON',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-amazon.png'
-  },
-  {
-    id: 'finance-cavaliers-alphabet',
-    kind: 'logo',
-    label: 'ALPHABET',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-alphabet.png'
-  },
-  {
-    id: 'finance-cavaliers-meta',
-    kind: 'logo',
-    label: 'META',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-meta.png'
-  },
-  {
-    id: 'finance-cavaliers-tesla',
-    kind: 'logo',
-    label: 'TESLA',
-    path: 'assets/library/finance-cavaliers-company-logos/finance-cavaliers-tesla.png'
-  }
-];
-const DOTCOM_LOGO_ASSETS = [
-  {
-    id: 'finance-cavaliers-cisco',
-    kind: 'logo',
-    label: 'CISCO',
-    path: 'assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-cisco.png'
-  },
-  COMPANY_LOGO_ASSETS.find((asset) => asset.label === 'MICROSOFT'),
-  {
-    id: 'finance-cavaliers-intel',
-    kind: 'logo',
-    label: 'INTEL',
-    path: 'assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-intel.png'
-  },
-  {
-    id: 'finance-cavaliers-dell',
-    kind: 'logo',
-    label: 'DELL',
-    path: 'assets/library/finance-cavaliers-dotcom-logos/finance-cavaliers-dell.png'
-  }
-].filter(Boolean);
-const MARKET_IMAGE_ASSET = {
-  id: 'finance-cavaliers-market-screen',
-  kind: 'image',
-  label: 'Pantalla de mercados',
-  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-screen.jpg'
-};
-const AI_SERVERS_IMAGE_ASSET = {
-  id: 'finance-cavaliers-ai-servers',
-  kind: 'image',
-  label: 'Centro de datos',
-  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-ai-servers.jpg'
-};
-const MARKET_ANALYST_IMAGE_ASSET = {
-  id: 'finance-cavaliers-market-analyst',
-  kind: 'image',
-  label: 'Analista de mercados',
-  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-analyst.jpg'
-};
-const NYSE_IMAGE_ASSET = {
-  id: 'finance-cavaliers-nyse-facade',
-  kind: 'image',
-  label: 'Fachada de la Bolsa de Nueva York',
-  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-nyse-facade.jpg'
-};
+// ANM-G02 — COMPANY_LOGO_ASSETS, DOTCOM_LOGO_ASSETS y las imágenes de apoyo
+// vivían aquí como constantes literales. Ahora se resuelven desde
+// `channels/finance-cavaliers/brand/entities.json` (ver `main`).
 const FIRST_MINUTE_BLUEPRINTS = [
   {
     kind: 'market-seed',
@@ -354,35 +303,66 @@ function normalizeCueToken(value) {
     .replace(/[^a-z0-9%]/g, '');
 }
 
-function resolveSemanticCues(cues, words, sceneStartSeconds) {
-  const normalizedWords = words.map((word) => normalizeCueToken(word.text));
-  return cues.map((definition) => {
-    const {
-      anchorText,
-      anchorOffsetSeconds = 0,
-      ...cue
-    } = definition;
-    if (!anchorText) return cue;
-    const anchorTokens = String(anchorText)
-      .split(/\s+/)
-      .map(normalizeCueToken)
-      .filter(Boolean);
-    const anchorIndex = normalizedWords.findIndex((_, index) =>
-      anchorTokens.every(
-        (token, offset) => normalizedWords[index + offset] === token
-      )
-    );
-    if (anchorIndex < 0) return cue;
-    return {
-      ...cue,
-      atSeconds: round(Math.max(
-        0,
-        Number(words[anchorIndex].start) -
-          sceneStartSeconds +
-          anchorOffsetSeconds
-      ))
-    };
+/**
+ * ANM-A02 · ANM-A03 · ANM-B01 · ANM-B04 — Cues de una escena.
+ *
+ * Sustituye la resolución silenciosa antigua. El anclaje es estricto y
+ * restringido al rango de palabras de la escena; encima, la minería añade los
+ * cues que el autor no escribió (cifras, entidades, fechas, giros, verbos).
+ * `atSeconds` pasa a ser un derivado del índice de palabra.
+ */
+function buildSceneCues({
+  blueprintCues = [],
+  words,
+  wordRange,
+  startSeconds,
+  endSeconds,
+  sceneId,
+  componentKey,
+  registry,
+  entities,
+  cueIssues
+}) {
+  const {cues: authored, issues} = resolveSceneCues(blueprintCues, {
+    words,
+    wordRange,
+    startSeconds,
+    endSeconds,
+    sceneId,
+    strict: false
   });
+  cueIssues.push(...issues);
+
+  const mined = mineSceneCues(words, {
+    wordRange,
+    startSeconds,
+    sceneId,
+    entities: entities?.miningEntities() ?? []
+  });
+  const boundMined = registry.bindCueTargets(componentKey, mined);
+  cueIssues.push(...boundMined.issues.map((issue) => ({...issue, sceneId})));
+
+  const merged = mergeCueSets({
+    mined: boundMined.cues,
+    authored,
+    sceneId
+  });
+  const budgeted = applyCueBudget(merged, {
+    maxPerWindow: 3,
+    maxPerScene: 14
+  });
+  const coverage = buildCueCoverage(mined, budgeted.cues, {sceneId});
+  return {
+    cues: budgeted.cues.map((cue) => ({
+      ...cue,
+      atSeconds: round(cue.atSeconds),
+      durationSeconds: cue.durationSeconds ?? 1.2,
+      tone: cue.tone ?? 'neutral',
+      persist: cue.persist ?? false
+    })),
+    dropped: budgeted.dropped,
+    coverage
+  };
 }
 
 async function readLegacyTimeMap(narrationRun) {
@@ -445,7 +425,11 @@ function formatTime(seconds) {
 }
 
 function parseArgs(argv) {
-  const args = {episode: DEFAULT_EPISODE_DIRECTORY, narrationRun: ''};
+  const args = {
+    episode: DEFAULT_EPISODE_DIRECTORY,
+    narrationRun: '',
+    allowInvalidPlan: false
+  };
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (token === '--episode') args.episode = argv[++index] ?? '';
@@ -453,7 +437,8 @@ function parseArgs(argv) {
     else if (token === '--narration-run') args.narrationRun = argv[++index] ?? '';
     else if (token.startsWith('--narration-run=')) {
       args.narrationRun = token.slice('--narration-run='.length);
-    } else if (token === '--help' || token === '-h') args.help = true;
+    } else if (token === '--allow-invalid-plan') args.allowInvalidPlan = true;
+    else if (token === '--help' || token === '-h') args.help = true;
     else throw new Error(`Opción desconocida: ${token}`);
   }
   return args;
@@ -977,6 +962,7 @@ async function main() {
   }
   const generatedAt = new Date().toISOString();
   const episodeDirectory = path.resolve(args.episode);
+  const {number: episodeNumber, episodeId} = resolveEpisodeIdentity(episodeDirectory);
   const narrationRun = args.narrationRun
     ? path.resolve(args.narrationRun)
     : await findLatestNarrationRun(episodeDirectory);
@@ -1392,7 +1378,7 @@ async function main() {
 
   const dossier = {
     version: 1,
-    episodeId: EPISODE_ID,
+    episodeId: episodeId,
     topic: 'Concentración del S&P 500, liderazgo tecnológico y estándares de crédito',
     selectedCluster: {
       id: 'cluster-concentration-credit',
@@ -1446,6 +1432,41 @@ async function main() {
 
   const allWords = transcript.segments.flatMap((segment) => segment.words ?? []);
   const groups = buildSceneGroups(transcript.segments, durationSeconds);
+
+  // ANM-G02 — Las entidades y sus logos viven en el registro del canal, no en
+  // constantes de este script.
+  const [patternRegistry, entityRegistry, soundCatalog] = await Promise.all([
+    loadPatternRegistry(),
+    loadEntityRegistry(CHANNEL_ID, {root: ROOT}),
+    loadSoundCatalog({root: ROOT})
+  ]);
+  const COMPANY_LOGO_ASSETS = entityRegistry
+    .group('magnificent-seven')
+    .map((entity) => ({
+      id: entity.asset.id,
+      kind: entity.asset.kind,
+      label: entity.label,
+      path: entity.asset.path
+    }));
+  const DOTCOM_LOGO_ASSETS = entityRegistry
+    .group('dotcom-leaders')
+    .map((entity) => ({
+      id: entity.asset.id,
+      kind: entity.asset.kind,
+      label: entity.label,
+      path: entity.asset.path
+    }));
+  const supportImage = (id) => {
+    const image = entityRegistry.supportImageById(id);
+    if (!image) throw new Error(`La imagen de apoyo ${id} no está en entities.json.`);
+    return {id: image.id, kind: image.kind, label: image.label, path: image.path};
+  };
+  const MARKET_IMAGE_ASSET = supportImage('finance-cavaliers-market-screen');
+  const AI_SERVERS_IMAGE_ASSET = supportImage('finance-cavaliers-ai-servers');
+  const MARKET_ANALYST_IMAGE_ASSET = supportImage('finance-cavaliers-market-analyst');
+  const NYSE_IMAGE_ASSET = supportImage('finance-cavaliers-nyse-facade');
+  const cueIssues = [];
+  const coverageReports = [];
   const renderScenes = groups.map((group, index) => {
     const midpoint = (group.startSeconds + group.endSeconds) / 2;
     const beat = beatFor(midpoint, legacyTimeMap);
@@ -1509,18 +1530,34 @@ async function main() {
           : []
       )
     )];
+    const sceneId = `scene-${String(index + 1).padStart(3, '0')}`;
+    const wordRange = {
+      startIndex: words[0]?.wordIndex ?? Math.max(0, index),
+      endIndex: words.at(-1)?.wordIndex ?? Math.max(0, index)
+    };
+    const sceneCues = buildSceneCues({
+      blueprintCues: blueprint?.semanticCues ?? [],
+      words: allWords,
+      wordRange,
+      startSeconds: group.startSeconds,
+      endSeconds: group.endSeconds,
+      sceneId,
+      componentKey: kind,
+      registry: patternRegistry,
+      entities: entityRegistry,
+      cueIssues
+    });
+    coverageReports.push(sceneCues.coverage);
     return {
-      id: `scene-${String(index + 1).padStart(3, '0')}`,
+      id: sceneId,
       order: index,
       startSeconds: round(group.startSeconds),
       endSeconds: round(group.endSeconds),
       narrationText: group.segments
         .map((segment) => String(segment.text).trim())
         .join(' '),
-      wordRange: {
-        startIndex: words[0]?.wordIndex ?? Math.max(0, index),
-        endIndex: words.at(-1)?.wordIndex ?? Math.max(0, index)
-      },
+      wordRange,
+      focusTargets: patternRegistry.focusTargets(kind),
       claimRefs: sceneClaims.map((claim) => claim.id),
       sourceRefs,
       dataRefs,
@@ -1577,11 +1614,7 @@ async function main() {
         factualStatus: status,
         assets: sceneAssets,
         focusTarget: kind === 'split-lines' ? 'both' : undefined,
-        semanticCues: resolveSemanticCues(
-          blueprint?.semanticCues ?? [],
-          words,
-          group.startSeconds
-        ),
+        semanticCues: sceneCues.cues,
         ...kindData(kind, sloos, marketSeries)
       },
       fallback: {
@@ -1597,14 +1630,57 @@ async function main() {
     };
   });
 
+  // ---------------------------------------------------------------------
+  // Director: actos, relleno con función y mezcla sonora (ANM-C/ANM-D).
+  // ---------------------------------------------------------------------
+  const actScenes = assignActs(
+    renderScenes.map((scene) => ({
+      id: scene.id,
+      startSeconds: scene.startSeconds,
+      endSeconds: scene.endSeconds,
+      cues: scene.props.semanticCues ?? [],
+      geometry: patternRegistry.get(scene.props.kind)?.geometry,
+      focusTargets: scene.focusTargets ?? []
+    })),
+    {durationSeconds}
+  );
+  const actById = new Map(actScenes.map((scene) => [scene.id, scene.act]));
+  const fillerById = new Map(
+    actScenes.map((scene) => [scene.id, generateFillerEvents(scene)])
+  );
+  const soundPlan = planEpisodeSound({
+    episodeId: episodeId,
+    scenes: actScenes,
+    catalog: soundCatalog,
+    narrationWords: allWords
+  });
+  const soundPlanById = new Map(
+    soundPlan.scenes.map((scene) => [scene.sceneId, scene.cues])
+  );
+  for (const scene of renderScenes) {
+    scene.act = actById.get(scene.id) ?? 'desarrollo';
+    scene.fillerEvents = fillerById.get(scene.id) ?? [];
+    scene.soundPlan = soundPlanById.get(scene.id) ?? [];
+    scene.soundDecision = scene.soundPlan.length ? 'cue' : 'silence';
+  }
+
   const visualPlan = {
     version: 1,
-    episodeId: EPISODE_ID,
+    episodeId: episodeId,
     audioDurationSeconds: round(durationSeconds),
     fps: 30,
     scenes: renderScenes.map((scene) => {
-      const {props, ...base} = scene;
-      return {...base, props};
+      const {props, focusTargets, act, fillerEvents, soundPlan: scenePlan, ...base} = scene;
+      return {
+        ...base,
+        props: {
+          ...props,
+          focusTargets,
+          act,
+          fillerEvents,
+          soundPlan: scenePlan
+        }
+      };
     }),
     coverage: {
       startSeconds: 0,
@@ -1624,7 +1700,7 @@ async function main() {
     'library',
     CHANNEL_ID,
     'episodes',
-    '1'
+    episodeNumber
   );
   await mkdir(publicEpisodeDirectory, {recursive: true});
   const stagedAudio = path.join(publicEpisodeDirectory, 'master-narration.m4a');
@@ -1635,12 +1711,12 @@ async function main() {
   ]);
 
   const renderProps = {
-    episodeId: EPISODE_ID,
+    episodeId: episodeId,
     channelName: 'Finance Cavaliers',
     title: 'La concentración del mercado y la señal del crédito',
     durationSeconds: round(durationSeconds),
-    audioPath: 'assets/library/finance-cavaliers/episodes/1/master-narration.m4a',
-    logoPath: 'assets/library/finance-cavaliers/episodes/1/logo-primary.png',
+    audioPath: `assets/library/${CHANNEL_ID}/episodes/${episodeNumber}/master-narration.m4a`,
+    logoPath: `assets/library/${CHANNEL_ID}/episodes/${episodeNumber}/logo-primary.png`,
     accentColor: '#FFC83D',
     previewMode: 'editorial',
     narrationVolume: 1,
@@ -1664,7 +1740,25 @@ async function main() {
       secondaryChartData: scene.props.secondaryChartData ?? [],
       focusTarget: scene.props.focusTarget ?? 'both',
       assets: scene.props.assets ?? [],
-      semanticCues: scene.props.semanticCues ?? []
+      semanticCues: scene.props.semanticCues ?? [],
+      patternId: scene.patternId,
+      focusTargets: scene.focusTargets ?? [],
+      act: scene.act ?? 'desarrollo',
+      intent: 'inform',
+      soundPlan: scene.soundPlan ?? []
+    })),
+    bedTrack: soundPlan.bedTrack.map((segment) => ({
+      act: segment.act,
+      startSeconds: segment.startSeconds,
+      endSeconds: segment.endSeconds,
+      file: segment.file,
+      volume: segment.volume,
+      fadeSeconds: segment.fadeSeconds
+    })),
+    duckWindows: soundPlan.ducking.map((window) => ({
+      startSeconds: window.startSeconds,
+      endSeconds: window.endSeconds,
+      gainDb: window.gainDb
     }))
   };
   const silentRenderProps = {
@@ -1709,7 +1803,7 @@ async function main() {
   const guideFile = path.join(visualsDirectory, 'GUIA_DE_MONTAJE.md');
   const auditJson = {
     version: 1,
-    episodeId: EPISODE_ID,
+    episodeId: episodeId,
     generatedAt,
     publishable: !claims.some((claim) =>
       claim.status === 'unsupported' || claim.status === 'disputed'
@@ -1788,7 +1882,69 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
       `${JSON.stringify(firstMinuteSilentRenderProps, null, 2)}\n`,
       'utf8'
     ),
-    writeFile(guideFile, guide, 'utf8')
+    writeFile(guideFile, guide, 'utf8'),
+    writeFile(
+      path.join(visualsDirectory, 'cue-coverage.json'),
+      `${JSON.stringify({
+        version: 1,
+        episodeId: episodeId,
+        generatedAt,
+        anchorIssues: cueIssues,
+        scenes: coverageReports
+      }, null, 2)}
+`,
+      'utf8'
+    )
+  ]);
+
+  // ANM-A07 · ANM-C05 · ANM-D10 · ANM-H04 — El plan se valida antes de bundlear
+  // y deja informes auditables por episodio.
+  const validation = await validateEpisodePlan({
+    plan: visualPlan,
+    words: allWords,
+    channelId: CHANNEL_ID,
+    root: ROOT,
+    coverage: coverageReports,
+    registry: patternRegistry,
+    soundCatalog,
+    entityRegistry,
+    artifacts: {silentPropsFile: silentRenderPropsFile}
+  });
+  await Promise.all([
+    writeFile(
+      path.join(visualsDirectory, 'rhythm-report.json'),
+      `${JSON.stringify(validation.reports.density, null, 2)}
+`,
+      'utf8'
+    ),
+    writeFile(
+      path.join(visualsDirectory, 'sound-report.json'),
+      `${JSON.stringify(validation.reports.sound, null, 2)}
+`,
+      'utf8'
+    ),
+    writeFile(
+      path.join(visualsDirectory, 'variety-report.json'),
+      `${JSON.stringify(validation.reports.variety, null, 2)}
+`,
+      'utf8'
+    ),
+    writeFile(
+      path.join(visualsDirectory, 'episode-qa.json'),
+      `${JSON.stringify(buildEpisodeQaReport(validation), null, 2)}
+`,
+      'utf8'
+    ),
+    writeFile(
+      path.join(visualsDirectory, 'plan-validation.json'),
+      `${JSON.stringify({
+        ok: validation.ok,
+        summary: validation.summary,
+        issues: validation.issues
+      }, null, 2)}
+`,
+      'utf8'
+    )
   ]);
   console.log(`Dossier: ${dossierFile}`);
   console.log(`Auditoría: ${auditMarkdownFile}`);
@@ -1800,6 +1956,14 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
   console.log(`Props primer minuto sin efectos: ${firstMinuteSilentRenderPropsFile}`);
   console.log(`Escenas: ${renderScenes.length}`);
   console.log(`Publicable: ${auditJson.publishable ? 'sí' : 'no'}`);
+  console.log('');
+  console.log(formatValidationReport(validation));
+  if (!validation.ok && !process.argv.includes('--allow-invalid-plan')) {
+    throw new Error(
+      'El plan no cumple las reglas del canal. Corrige los errores o repite ' +
+      'con --allow-invalid-plan para inspeccionar la salida.'
+    );
+  }
 }
 
 main().catch((error) => {

@@ -1,0 +1,40 @@
+{
+  "ruleId": "FC-R-180",
+  "expect": "fail",
+  "check": "contagion-no-global-box",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "contagion-spread",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "radial",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {
+          "globalOverlay": true
+        },
+        "effectIds": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

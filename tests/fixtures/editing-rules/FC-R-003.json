@@ -1,0 +1,53 @@
+{
+  "ruleId": "FC-R-003",
+  "expect": "fail",
+  "check": "number-cue-obligation",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "dos",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [
+      {
+        "sceneId": "scene-fixture-001",
+        "mentions": [
+          {
+            "kind": "number",
+            "anchorText": "20",
+            "covered": false
+          },
+          {
+            "kind": "number",
+            "anchorText": "30",
+            "covered": true
+          }
+        ]
+      }
+    ],
+    "issues": []
+  }
+}

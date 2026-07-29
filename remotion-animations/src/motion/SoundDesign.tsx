@@ -16,6 +16,15 @@ export type SoundCue = {
   volume: number;
   attackSeconds?: number;
   releaseSeconds?: number;
+  /** ANM-D06 — Jitter tímbrico determinista decidido por el director. */
+  playbackRate?: number;
+};
+
+/** ANM-D09 — Ventana en la que la locución domina y los efectos ceden. */
+export type DuckWindow = {
+  startSeconds: number;
+  endSeconds: number;
+  gainDb?: number;
 };
 
 export const SOUND_FILES = {
@@ -36,6 +45,8 @@ export const SOUND_FILES = {
   needleStrike: "sfx/amaliometria-needle-strike.wav",
   bubbleBurst: "sfx/amaliometria-bubble-burst.wav",
   rewindSweep: "sfx/amaliometria-rewind-sweep.wav",
+  // ANM-D03 — `alert-sting` deja de compartir fichero con `soft-impact`.
+  alertSting: "sfx/amaliometria-impact-05.wav",
 } as const;
 
 const soundCuesByScene: Record<
@@ -127,10 +138,40 @@ function cue(
   };
 }
 
+/**
+ * ANM-D09 — Atenuación de la capa de efectos mientras hay locución.
+ * `offsetSeconds` traslada la ventana absoluta del episodio al tiempo local de
+ * la escena, para que una `Sequence` anidada siga midiendo bien.
+ */
+const duckGainAt = (
+  seconds: number,
+  windows: DuckWindow[],
+  attackSeconds: number,
+  releaseSeconds: number,
+): number => {
+  for (const window of windows) {
+    if (seconds < window.startSeconds - attackSeconds) continue;
+    if (seconds > window.endSeconds + releaseSeconds) continue;
+    const depth = 10 ** ((window.gainDb ?? -5) / 20);
+    if (seconds < window.startSeconds) {
+      const progress = (seconds - (window.startSeconds - attackSeconds)) / attackSeconds;
+      return 1 - (1 - depth) * Math.min(1, Math.max(0, progress));
+    }
+    if (seconds > window.endSeconds) {
+      const progress = (seconds - window.endSeconds) / releaseSeconds;
+      return depth + (1 - depth) * Math.min(1, Math.max(0, progress));
+    }
+    return depth;
+  }
+  return 1;
+};
+
 const CueAudio: React.FC<{
   cue: SoundCue;
   masterVolume: number;
-}> = ({cue: soundCue, masterVolume}) => {
+  duckWindows?: DuckWindow[];
+  duckOffsetSeconds?: number;
+}> = ({cue: soundCue, masterVolume, duckWindows = [], duckOffsetSeconds = 0}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const from = Math.max(0, Math.round(soundCue.startSeconds * fps));
   const availableFrames = Math.max(1, durationInFrames - from);
@@ -158,6 +199,7 @@ const CueAudio: React.FC<{
       layout="none"
     >
       <Audio
+        playbackRate={soundCue.playbackRate ?? 1}
         src={staticFile(soundCue.file)}
         volume={(audioFrame) => {
           const attack = interpolate(
@@ -178,9 +220,15 @@ const CueAudio: React.FC<{
               easing: Easing.in(Easing.cubic),
             },
           );
+          const absoluteSeconds =
+            duckOffsetSeconds + soundCue.startSeconds + audioFrame / fps;
+          const duck = duckWindows.length
+            ? duckGainAt(absoluteSeconds, duckWindows, 0.06, 0.18)
+            : 1;
           return (
             Math.min(1, Math.max(0, masterVolume)) *
             soundCue.volume *
+            duck *
             Math.min(attack, release)
           );
         }}
@@ -193,7 +241,15 @@ export const Soundtrack: React.FC<{
   cues: SoundCue[];
   masterVolume?: number;
   enabled?: boolean;
-}> = ({cues, masterVolume = 0.65, enabled = true}) => {
+  duckWindows?: DuckWindow[];
+  duckOffsetSeconds?: number;
+}> = ({
+  cues,
+  masterVolume = 0.65,
+  enabled = true,
+  duckWindows,
+  duckOffsetSeconds,
+}) => {
   if (!enabled) {
     return null;
   }
@@ -203,6 +259,8 @@ export const Soundtrack: React.FC<{
       {cues.map((soundCue, index) => (
         <CueAudio
           cue={soundCue}
+          duckOffsetSeconds={duckOffsetSeconds}
+          duckWindows={duckWindows}
           key={`${soundCue.file}-${soundCue.startSeconds}-${index}`}
           masterVolume={masterVolume}
         />
