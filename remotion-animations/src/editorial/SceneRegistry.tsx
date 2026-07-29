@@ -18,6 +18,16 @@ import {
   Soundtrack,
 } from "../motion/SoundDesign";
 import {MarketNarrativeScene} from "./MarketNarrativeScene";
+import {
+  PATTERN_SCENES,
+  PatternSceneProps,
+  ROUTED_COMPOSITION_IDS,
+} from "./PatternScenes";
+import {
+  assertRoutesInSync,
+  recordKindFallback,
+  resolvePattern,
+} from "./patternRouting";
 import {SecondMinuteNarrativeScene} from "./SecondMinuteNarrativeScene";
 import {ThirdMinuteNarrativeScene} from "./ThirdMinuteNarrativeScene";
 import {EditorialScene} from "./schemas";
@@ -902,115 +912,6 @@ const Orbit: React.FC<{
   );
 };
 
-const BarPanel: React.FC<{
-  scene: EditorialScene;
-  accentColor: string;
-  compact?: boolean;
-}> = ({scene, accentColor, compact}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const values = scene.values.length ? scene.values : [38, 22, 17, 12];
-  const labels = scene.labels.length ? scene.labels : values.map((_, index) => `GRUPO ${index + 1}`);
-  const max = Math.max(...values, 1);
-  return (
-    <div
-      style={{
-        alignItems: "flex-end",
-        display: "flex",
-        gap: compact ? 20 : 34,
-        height: "100%",
-        justifyContent: "center",
-        padding: "230px 110px 86px",
-      }}
-    >
-      {values.map((value, index) => {
-        const reveal = progress(frame, fps, 0.25 + index * 0.13, 1.1 + index * 0.13);
-        const height = 410 * (value / max) * reveal;
-        const valueLabel = scene.valueLabels[index] ?? `${value.toLocaleString("es-ES")}%`;
-        return (
-          <div
-            key={`${labels[index]}-${index}`}
-            style={{
-              alignItems: "center",
-              display: "flex",
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-end",
-              maxWidth: compact ? 185 : 280,
-            }}
-          >
-            {logoForLabel(scene, labels[index]) ? (
-              <div
-                style={{
-                  alignItems: "center",
-                  background: alpha(COLORS.surfaceRaised, 0.94),
-                  border: `1px solid ${alpha(COLORS.white, 0.14)}`,
-                  borderRadius: 14,
-                  display: "flex",
-                  height: compact ? 68 : 78,
-                  justifyContent: "center",
-                  marginBottom: 14,
-                  opacity: reveal,
-                  width: compact ? 78 : 88,
-                }}
-              >
-                <CompanyMark
-                  label={labels[index]}
-                  scene={scene}
-                  size={compact ? 46 : 54}
-                />
-              </div>
-            ) : null}
-            <div
-              style={{
-                color: index === 0 ? accentColor : COLORS.white,
-                fontFamily: MOTION_FONT_FAMILY,
-                fontSize: compact ? 24 : 30,
-                fontWeight: 800,
-                marginBottom: 12,
-                opacity: reveal,
-              }}
-            >
-              {valueLabel}
-            </div>
-            <div
-              style={{
-                background:
-                  index === 0
-                    ? `linear-gradient(180deg, ${accentColor}, ${alpha(accentColor, 0.42)})`
-                    : `linear-gradient(180deg, ${alpha(COLORS.cyan, 0.78)}, ${alpha(COLORS.cyan, 0.18)})`,
-                borderRadius: "10px 10px 2px 2px",
-                boxShadow: index === 0 ? `0 0 36px ${alpha(accentColor, 0.15)}` : "none",
-                height,
-                minHeight: 4,
-                width: "100%",
-              }}
-            />
-            <div
-              style={{
-                alignItems: "center",
-                color: COLORS.muted,
-                display: "flex",
-                flexDirection: "column",
-                fontFamily: MOTION_FONT_FAMILY,
-                fontSize: compact ? 14 : 17,
-                fontWeight: 700,
-                gap: 8,
-                lineHeight: 1.2,
-                marginTop: 16,
-                minHeight: 42,
-                textAlign: "center",
-              }}
-            >
-              {labels[index]}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
 const MetricCards: React.FC<{scene: EditorialScene; accentColor: string}> = ({
   scene,
   accentColor,
@@ -1077,85 +978,6 @@ const MetricCards: React.FC<{scene: EditorialScene; accentColor: string}> = ({
         );
       })}
     </div>
-  );
-};
-
-const Flow: React.FC<{scene: EditorialScene; accentColor: string}> = ({
-  scene,
-  accentColor,
-}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const labels = scene.labels.length
-    ? scene.labels.slice(0, 6)
-    : ["ORIGEN", "SEÑAL", "TRANSMISIÓN", "RESULTADO"];
-  const count = labels.length;
-  const width = 1480;
-  const startX = 220;
-  const step = width / Math.max(1, count - 1);
-  const y = 560;
-  return (
-    <svg
-      height="100%"
-      style={{inset: 0, position: "absolute"}}
-      viewBox="0 0 1920 1080"
-      width="100%"
-    >
-      {labels.slice(0, -1).map((_, index) => {
-        const draw = progress(frame, fps, 0.5 + index * 0.32, 1.25 + index * 0.32);
-        const x1 = startX + index * step + 72;
-        const x2 = startX + (index + 1) * step - 72;
-        return (
-          <g key={`path-${index}`}>
-            <line
-              pathLength={1}
-              stroke={alpha(accentColor, 0.8)}
-              strokeDasharray={`${draw} ${1 - draw}`}
-              strokeWidth={5}
-              x1={x1}
-              x2={x2}
-              y1={y}
-              y2={y}
-            />
-            <circle
-              cx={x1 + (x2 - x1) * ((frame / fps / 1.7 + index * 0.2) % 1)}
-              cy={y}
-              fill={accentColor}
-              opacity={draw}
-              r={7}
-            />
-          </g>
-        );
-      })}
-      {labels.map((label, index) => {
-        const reveal = progress(frame, fps, 0.25 + index * 0.3, 0.9 + index * 0.3);
-        const x = startX + index * step;
-        const active = Math.floor(frame / (fps * 1.8)) % count === index;
-        return (
-          <g key={label} opacity={reveal}>
-            <circle
-              cx={x}
-              cy={y}
-              fill={active ? alpha(accentColor, 0.22) : alpha(COLORS.surfaceRaised, 0.94)}
-              r={86 + (active ? 6 : 0)}
-              stroke={active ? accentColor : alpha(COLORS.muted, 0.4)}
-              strokeWidth={3}
-            />
-            <text
-              fill={active ? accentColor : COLORS.white}
-              fontFamily={MOTION_FONT_FAMILY}
-              fontSize={count > 4 ? 16 : 20}
-              fontWeight={800}
-              textAnchor="middle"
-              x={x}
-              y={y + 6}
-            >
-              {label}
-            </text>
-          </g>
-        );
-      })}
-    </svg>
   );
 };
 
@@ -1727,6 +1549,128 @@ const cuesForEditorialScene = (
   return raw.filter((soundCue) => soundCue.startSeconds < durationSeconds - 0.05);
 };
 
+/**
+ * Camino heredado: `kind → componente`.
+ *
+ * ANM-E03 — Esta tabla **es la deuda**. Cada entrada es un `kind` cuyo píxel
+ * todavía no lo decide el patrón que el plan eligió, y cada una declara por qué
+ * sigue aquí. El router prefiere siempre el patrón; solo cae aquí si el `kind`
+ * aparece en esta tabla, y deja traza al hacerlo. Migrar un `kind` es borrar su
+ * fila: no hay `default` silencioso que lo tape.
+ */
+type KindFallback = {
+  reason: string;
+  ownsFrame?: boolean;
+  render: (props: PatternSceneProps) => React.ReactNode;
+};
+
+const KIND_FALLBACK: Partial<
+  Record<EditorialScene["kind"], KindFallback>
+> = {
+  "claim-audit": {
+    reason:
+      "`comparison.before-after-wipe` exige dos capturas del mismo encuadre; la escena aporta cifras auditadas, no imágenes.",
+    render: ({scene}) => <MarketNarrativeScene scene={scene} />,
+  },
+  "bubble-trigger": {
+    reason:
+      "`concept.scale-proportion` necesita una proporción declarada; la escena no aporta ni cifras ni etiquetas comparables.",
+    render: ({scene}) => <SecondMinuteNarrativeScene scene={scene} />,
+  },
+  "market-gravity": {
+    reason:
+      "Misma carencia que bubble-trigger: la escena es una metáfora sin magnitudes que el patrón cuantitativo pueda representar.",
+    render: ({scene}) => <SecondMinuteNarrativeScene scene={scene} />,
+  },
+  "history-rewind": {
+    reason:
+      "`time.timeline-milestones` exige hitos con etiqueta; la escena no declara ninguno.",
+    render: ({scene}) => <SecondMinuteNarrativeScene scene={scene} />,
+  },
+  "dominance-facade": {
+    reason:
+      "`data.part-to-whole` exige parte y total verificables; la escena solo aporta cuatro logos.",
+    render: ({scene}) => <ThirdMinuteNarrativeScene scene={scene} />,
+  },
+  "leadership-lag": {
+    reason:
+      "`data.line-trend-zoom` exige una serie ordenada; la escena no lleva `chartData`.",
+    render: ({scene}) => <ThirdMinuteNarrativeScene scene={scene} />,
+  },
+  "claim-evidence-gap": {
+    reason:
+      "Misma carencia que claim-audit: `comparison.before-after-wipe` sin las dos imágenes comparables.",
+    render: ({scene}) => <ThirdMinuteNarrativeScene scene={scene} />,
+  },
+  "concentration-grid": {
+    reason:
+      "scene-022 recibe `data.part-to-whole` sin parte ni total; migrar solo las otras tres partiría el kind en dos caminos.",
+    render: ({scene, accentColor}) => (
+      <ConcentrationGrid accentColor={accentColor} scene={scene} />
+    ),
+  },
+  "historical-timeline": {
+    reason:
+      "scene-024 recibe `data.line-trend-zoom` sin serie; el resto del kind sí podría migrar.",
+    render: ({scene, accentColor}) => (
+      <HistoricalTimeline accentColor={accentColor} scene={scene} />
+    ),
+  },
+  "sloos-chart": {
+    reason:
+      "Recibe `data.part-to-whole` y `data.bar-focus`; la escena lleva 145 puntos de serie, ni proporción ni categorías.",
+    render: ({scene, accentColor}) => (
+      <SloosChart accentColor={accentColor} scene={scene} />
+    ),
+  },
+  "before-after": {
+    reason:
+      "`comparison.before-after-wipe` exige dos imágenes; la escena aporta dos cifras sobre la misma serie.",
+    render: ({accentColor}) => <BeforeAfter accentColor={accentColor} />,
+  },
+  "company-orbit": {
+    reason:
+      "Recibe `data.part-to-whole` y `concept.scale-proportion` sin cifra de proporción alguna.",
+    render: ({scene, accentColor, logoPath}) => (
+      <Orbit accentColor={accentColor} logoPath={logoPath} scene={scene} />
+    ),
+  },
+  "brand-cta": {
+    reason:
+      "`asset.logo-ecosystem` ya está implementado, pero el cierre de marca no declara participantes ni logos: no es un ecosistema, es una firma. Su binding pide un patrón que la escena no puede alimentar.",
+    ownsFrame: true,
+    render: ({accentColor, logoPath}) => (
+      <BrandCta accentColor={accentColor} logoPath={logoPath} />
+    ),
+  },
+  "split-lines": {
+    reason:
+      "Ninguna escena del episodio 1 lo usa: migrarlo sería hacerlo a ciegas, sin still que compare el antes y el después.",
+    render: ({scene, accentColor}) => (
+      <SplitLines accentColor={accentColor} scene={scene} />
+    ),
+  },
+  "market-ticker": {
+    reason:
+      "Ninguna escena del episodio 1 lo usa: migrarlo sería hacerlo a ciegas, sin still que compare el antes y el después.",
+    render: ({scene, accentColor}) => (
+      <MetricCards accentColor={accentColor} scene={scene} />
+    ),
+  },
+};
+
+assertRoutesInSync(ROUTED_COMPOSITION_IDS, Object.keys(KIND_FALLBACK));
+
+/** Kinds cuyo cuadro lo dibuja el componente heredado, cabecera incluida. */
+const LEGACY_FRAME_KINDS = new Set<string>([
+  "claim-audit",
+  "dominance-facade",
+  "leadership-lag",
+  "claim-evidence-gap",
+  "brand-cta",
+  "split-lines",
+]);
+
 export const FinanceEditorialScene: React.FC<{
   scene: EditorialScene;
   accentColor: string;
@@ -1745,87 +1689,37 @@ export const FinanceEditorialScene: React.FC<{
   duckWindows,
 }) => {
   const {durationInFrames, fps} = useVideoConfig();
+  // ANM-E01 — La resolución es patternId → composición → componente. El camino
+  // por `kind` sobrevive solo para lo que aún no ha migrado y deja traza.
+  const sceneProps: PatternSceneProps = {scene, accentColor, logoPath};
+  const fallback = KIND_FALLBACK[scene.kind];
+  const route = resolvePattern(scene.patternId);
   let content: React.ReactNode;
-  switch (scene.kind) {
-    case "market-seed":
-    case "market-xray":
-    case "market-health":
-    case "market-recovery":
-    case "market-contrast":
-    case "mag7-relationship":
-    case "claim-audit":
-      content = <MarketNarrativeScene scene={scene} />;
-      break;
-    case "market-engine":
-    case "ai-core":
-    case "correction-alert":
-    case "bubble-trigger":
-    case "market-gravity":
-    case "history-rewind":
-      content = <SecondMinuteNarrativeScene scene={scene} />;
-      break;
-    case "historical-leaders":
-    case "dominance-facade":
-    case "leadership-lag":
-    case "contagion-spread":
-    case "claim-evidence-gap":
-      content = <ThirdMinuteNarrativeScene scene={scene} />;
-      break;
-    case "split-lines":
-      content = <SplitLines scene={scene} accentColor={accentColor} />;
-      break;
-    case "company-orbit":
-      content = <Orbit scene={scene} accentColor={accentColor} logoPath={logoPath} />;
-      break;
-    case "mag7-weights":
-    case "sector-bars":
-      content = <BarPanel scene={scene} accentColor={accentColor} compact={scene.values.length > 5} />;
-      break;
-    case "earnings-cards":
-    case "market-ticker":
-      content = <MetricCards scene={scene} accentColor={accentColor} />;
-      break;
-    case "credit-flow":
-    case "earnings-flow":
-      content = <Flow scene={scene} accentColor={accentColor} />;
-      break;
-    case "historical-timeline":
-    case "threshold-lanes":
-      content = <HistoricalTimeline scene={scene} accentColor={accentColor} />;
-      break;
-    case "sloos-chart":
-      content = <SloosChart scene={scene} accentColor={accentColor} />;
-      break;
-    case "before-after":
-      content = <BeforeAfter accentColor={accentColor} />;
-      break;
-    case "concentration-grid":
-    case "portfolio-grid":
-      content = <ConcentrationGrid scene={scene} accentColor={accentColor} />;
-      break;
-    case "brand-cta":
-      content = <BrandCta accentColor={accentColor} logoPath={logoPath} />;
-      break;
-    default:
-      content = <KineticText scene={scene} accentColor={accentColor} />;
+  let ownsFrame: boolean;
+  if (fallback) {
+    recordKindFallback(
+      scene.kind,
+      scene.id,
+      scene.patternId ?? null,
+      fallback.reason,
+    );
+    content = fallback.render(sceneProps);
+    ownsFrame = fallback.ownsFrame ?? LEGACY_FRAME_KINDS.has(scene.kind);
+  } else if (route.mode === "pattern") {
+    const patternRoute = PATTERN_SCENES[route.compositionId];
+    content = <patternRoute.Component {...sceneProps} />;
+    ownsFrame = patternRoute.ownsFrame;
+  } else {
+    // Sin fila en la tabla heredada y sin patrón que pintar, no hay nada
+    // honesto que dibujar: un panel vacío pasaría la validación y llegaría al
+    // vídeo montado sin que nadie lo viera.
+    throw new Error(
+      `La escena ${scene.id} (${scene.kind}) no tiene componente: ` +
+        `${route.reason}. Corrige el binding del patrón o devuelve el kind a ` +
+        "la tabla heredada con su motivo.",
+    );
   }
-  const headerVisible = ![
-    "brand-cta",
-    "split-lines",
-    "kinetic-text",
-    "market-seed",
-    "market-xray",
-    "market-health",
-    "market-recovery",
-    "market-contrast",
-    "mag7-relationship",
-    "claim-audit",
-    "historical-leaders",
-    "dominance-facade",
-    "leadership-lag",
-    "contagion-spread",
-    "claim-evidence-gap",
-  ].includes(scene.kind);
+  const headerVisible = !ownsFrame;
   const footerVisible =
     Boolean(scene.sourceLabel) && DATA_SOURCE_KINDS.has(scene.kind);
   return (
@@ -1843,7 +1737,11 @@ export const FinanceEditorialScene: React.FC<{
       {footerVisible ? (
         <SourceFooter label={scene.sourceLabel} />
       ) : null}
-      {headerVisible &&
+      {/* El ribete de logos es del camino heredado. Un patrón del catálogo
+          decide él mismo qué hace con los assets de la escena; superponerle una
+          fila de logos duplicaría lo que ya está pintando. */}
+      {Boolean(fallback) &&
+      headerVisible &&
       scene.assets.length > 0 &&
       ![
         "company-orbit",

@@ -30,6 +30,8 @@
     "smoke:captions": "node scripts/smoke-progressive-captions.js",
     "remotion:studio": "npm --prefix remotion-animations run dev",
     "remotion:check": "npm --prefix remotion-animations run check",
+    "episode:stills": "npm --prefix remotion-animations run stills:episode --",
+    "episode:stills:check": "npm --prefix remotion-animations run stills:episode -- --check",
     "remotion:capabilities": "npm --prefix remotion-animations run build:capabilities",
     "remotion:still": "npm --prefix remotion-animations run still:chart",
     "remotion:render": "npm --prefix remotion-animations run render:chart",

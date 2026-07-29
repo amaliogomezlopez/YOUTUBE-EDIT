@@ -124,6 +124,14 @@
           "patternId": {
             "$ref": "#/$defs/catalogId"
           },
+          "varietyReasons": {
+            "description": "Por qué esta escena lleva este patrón y esta dirección de arte. Lo escribe el selector de patrón (ANM-H05); no es opcional en la práctica: sin él la decisión no es auditable.",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
           "compositionId": {
             "type": "string",
             "minLength": 1,

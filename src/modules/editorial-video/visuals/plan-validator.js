@@ -37,6 +37,7 @@ export function normalizePlanScenes(plan) {
       intent: scene.intent ?? props.intent,
       geometry: scene.geometry,
       emphasis: scene.emphasis,
+      varietyReasons: scene.varietyReasons ?? [],
       headline: scene.header?.text ?? props.headline,
       sourceLabel: scene.sourceLabel ?? props.sourceLabel,
       effectIds: scene.effectIds ?? [],

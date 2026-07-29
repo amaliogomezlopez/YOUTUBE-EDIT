@@ -25,6 +25,11 @@ import {
   validateSoundVariety
 } from '../src/modules/editorial-video/visuals/sound-director.js';
 import {planSceneVariety, validateVariety} from '../src/modules/editorial-video/visuals/variety-planner.js';
+import {
+  MAX_PATTERN_REPEATS_IN_WINDOW,
+  PatternSelector,
+  selectScenePatterns
+} from '../src/modules/editorial-video/visuals/pattern-selector.js';
 import {runRuleEngine} from '../src/modules/editorial-video/visuals/rules-engine.js';
 
 const WORDS = [
@@ -573,4 +578,243 @@ test('la rotación de énfasis no repite mecanismo en escenas seguidas', () => {
     {registry}
   );
   assert.notEqual(scenes[0].emphasis, scenes[1].emphasis);
+});
+
+// ---------------------------------------------------------------------------
+// ANM-H05 — Selección de patrón con ventana deslizante.
+// ---------------------------------------------------------------------------
+
+const SELECTOR_BINDINGS = {
+  bindings: [
+    {
+      componentKey: 'flow',
+      patternId: 'process.signal-flow',
+      patternCandidates: ['process.funnel-filter', 'process.branch-merge'],
+      geometry: 'node-graph',
+      emphasis: 'connector',
+      focusTargets: ['flow-output'],
+      defaultTargets: {number: 'flow-output'}
+    },
+    {
+      componentKey: 'chart',
+      patternId: 'data.line-trend-zoom',
+      patternCandidates: ['data.part-to-whole', 'text.kinetic-phrase'],
+      geometry: 'line',
+      emphasis: 'zoom',
+      focusTargets: ['spy-line'],
+      defaultTargets: {number: 'spy-line'}
+    }
+  ]
+};
+const SELECTOR_PATTERNS = {
+  patterns: [
+    {id: 'process.signal-flow', status: 'ready'},
+    {id: 'process.funnel-filter', status: 'ready'},
+    {id: 'process.branch-merge', status: 'ready'},
+    {id: 'data.line-trend-zoom', status: 'ready'},
+    {id: 'data.part-to-whole', status: 'ready'},
+    {id: 'text.kinetic-phrase', status: 'planned'}
+  ]
+};
+
+function selectorRegistry() {
+  return createPatternRegistry(SELECTOR_BINDINGS, SELECTOR_PATTERNS);
+}
+
+test('el mismo componentKey deja de producir siempre el mismo patrón', () => {
+  const scenes = Array.from({length: 9}, () => ({componentKey: 'flow'}));
+  const {selections, report} = selectScenePatterns(scenes, {
+    registry: selectorRegistry(),
+    episodeId: 'episode-finance-cavaliers-001'
+  });
+  assert.equal(report.distinctPatterns, 3);
+  // Nueve escenas repartidas entre tres candidatos: reparto plano, no una tabla
+  // fija con el 100 % en el preferente.
+  for (const count of Object.values(report.usage)) assert.equal(count, 3);
+  assert.equal(selections.length, 9);
+});
+
+test('ningún patrón supera dos apariciones en la ventana de seis escenas', () => {
+  const scenes = Array.from({length: 24}, (_, index) => ({
+    componentKey: index % 3 === 0 ? 'chart' : 'flow'
+  }));
+  const {selections} = selectScenePatterns(scenes, {
+    registry: selectorRegistry(),
+    episodeId: 'episode-finance-cavaliers-001'
+  });
+  const chosen = selections.map((selection) => selection.patternId);
+  for (let position = 0; position < chosen.length; position += 1) {
+    const window = chosen.slice(Math.max(0, position - 5), position + 1);
+    const repeats = window.filter((id) => id === chosen[position]).length;
+    assert.ok(
+      repeats <= MAX_PATTERN_REPEATS_IN_WINDOW,
+      `«${chosen[position]}» aparece ${repeats} veces en la ventana que termina ` +
+        `en la escena ${position}`
+    );
+  }
+});
+
+test('el preferente del binding gana mientras no se despegue del reparto', () => {
+  const selector = new PatternSelector({
+    registry: selectorRegistry(),
+    episodeId: 'episode-finance-cavaliers-001'
+  });
+  const first = selector.select('flow');
+  assert.equal(first.patternId, 'process.signal-flow');
+  assert.equal(first.rule, 'preferred');
+  // Ya usado una vez: el siguiente turno del mismo grupo va a un candidato con
+  // menos uso acumulado, igual que hace VariantSelector con los ficheros de SFX.
+  assert.notEqual(selector.select('flow').patternId, 'process.signal-flow');
+});
+
+test('no se rota hacia un patrón sin implementación en el catálogo', () => {
+  const selector = new PatternSelector({
+    registry: selectorRegistry(),
+    episodeId: 'episode-finance-cavaliers-001'
+  });
+  assert.deepEqual(
+    selector.candidatesFor('chart'),
+    ['data.line-trend-zoom', 'data.part-to-whole']
+  );
+});
+
+test('la selección de patrón deja escrito su motivo', () => {
+  const selector = new PatternSelector({
+    registry: selectorRegistry(),
+    episodeId: 'episode-finance-cavaliers-001'
+  });
+  const selection = selector.select('flow');
+  assert.match(selection.reason, /process\.signal-flow/);
+  assert.match(selection.reason, /ventana de 6/);
+});
+
+test('un patrón fuera de los candidatos del binding es error de contrato', () => {
+  const registry = selectorRegistry();
+  const issues = registry.validateSceneTargets({
+    id: 'scene-001',
+    componentKey: 'chart',
+    patternId: 'process.signal-flow',
+    cues: []
+  });
+  assert.equal(issues[0].code, 'pattern-not-a-candidate');
+  assert.equal(issues[0].severity, 'error');
+});
+
+test('el patrón elegido por variedad no se marca como fuera de contrato', () => {
+  const registry = selectorRegistry();
+  const issues = registry.validateSceneTargets({
+    id: 'scene-001',
+    componentKey: 'chart',
+    patternId: 'data.part-to-whole',
+    cues: []
+  });
+  assert.deepEqual(issues, []);
+});
+
+test('planSceneVariety conserva el motivo de la elección de patrón', () => {
+  const [scene] = planSceneVariety(
+    [{
+      id: 'scene-001',
+      componentKey: 'demo',
+      patternId: 'data.line-trend-zoom',
+      startSeconds: 0,
+      endSeconds: 4,
+      cues: [],
+      varietyReasons: ['Patrón data.line-trend-zoom: preferente de «demo».']
+    }],
+    {registry: createPatternRegistry(BINDINGS)}
+  );
+  assert.equal(
+    scene.varietyReasons[0],
+    'Patrón data.line-trend-zoom: preferente de «demo».'
+  );
+  assert.ok(scene.varietyReasons.length > 1);
+});
+
+// ---------------------------------------------------------------------------
+// ANM-E03 — El render dejó de ignorar `patternId`. Mientras dure la migración
+// conviven dos caminos, y la geometría medida tiene que ser la que se pinta.
+// ---------------------------------------------------------------------------
+
+const ROUTED_CATALOG = {
+  patterns: [
+    {
+      id: 'data.line-trend-zoom',
+      status: 'ready',
+      implementation: {compositionId: 'Toolkit-LineChartZoom'}
+    },
+    {
+      id: 'comparison.before-after-wipe',
+      status: 'ready',
+      implementation: {compositionId: 'Pattern-Before-After-Wipe'}
+    }
+  ]
+};
+const ROUTES = {
+  routed: ['Toolkit-LineChartZoom'],
+  geometryByComposition: {'Toolkit-LineChartZoom': 'line'},
+  kindFallback: [{kind: 'before-after', reason: 'sin las dos imágenes comparables'}]
+};
+const GEOMETRY_BINDINGS = {
+  bindings: [
+    {
+      componentKey: 'sloos-chart',
+      patternId: 'data.line-trend-zoom',
+      geometry: 'line',
+      focusTargets: ['sloos-line'],
+      defaultTargets: {}
+    },
+    {
+      componentKey: 'before-after',
+      patternId: 'comparison.before-after-wipe',
+      geometry: 'split',
+      focusTargets: ['before'],
+      defaultTargets: {}
+    }
+  ]
+};
+
+test('una escena enrutada por patrón mide la geometría del patrón', () => {
+  const registry = createPatternRegistry(GEOMETRY_BINDINGS, ROUTED_CATALOG, ROUTES);
+  assert.equal(registry.rendersByPattern('sloos-chart', 'data.line-trend-zoom'), true);
+  assert.equal(registry.geometryFor('sloos-chart', 'data.line-trend-zoom'), 'line');
+});
+
+test('un kind del camino heredado sigue midiendo la geometría de su binding', () => {
+  const registry = createPatternRegistry(GEOMETRY_BINDINGS, ROUTED_CATALOG, ROUTES);
+  // Aunque su patrón tuviera composición, el píxel lo sigue decidiendo el
+  // componente antiguo: medir la del patrón sería contar lo que no se ve.
+  assert.equal(
+    registry.rendersByPattern('before-after', 'comparison.before-after-wipe'),
+    false
+  );
+  assert.equal(
+    registry.geometryFor('before-after', 'comparison.before-after-wipe'),
+    'split'
+  );
+});
+
+test('un patrón sin adaptador no cuenta como enrutado aunque el catálogo lo declare ready', () => {
+  const registry = createPatternRegistry(
+    GEOMETRY_BINDINGS,
+    ROUTED_CATALOG,
+    {...ROUTES, kindFallback: []}
+  );
+  assert.equal(
+    registry.rendersByPattern('before-after', 'comparison.before-after-wipe'),
+    false
+  );
+});
+
+test('planSceneVariety toma la geometría del registro, no solo del binding', () => {
+  const registry = createPatternRegistry(GEOMETRY_BINDINGS, ROUTED_CATALOG, ROUTES);
+  const [routed, legacy] = planSceneVariety(
+    [
+      {id: 'scene-001', componentKey: 'sloos-chart', patternId: 'data.line-trend-zoom', cues: []},
+      {id: 'scene-002', componentKey: 'before-after', patternId: 'comparison.before-after-wipe', cues: []}
+    ],
+    {registry}
+  );
+  assert.equal(routed.geometry, 'line');
+  assert.equal(legacy.geometry, 'split');
 });

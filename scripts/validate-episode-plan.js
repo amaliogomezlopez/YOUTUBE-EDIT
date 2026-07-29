@@ -16,6 +16,7 @@ import {
   validateEpisodePlan
 } from '../src/modules/editorial-video/visuals/plan-validator.js';
 import {buildEpisodeQaReport} from '../src/modules/editorial-video/visuals/episode-qa.js';
+import {collectReviewBlockArtifacts} from '../src/modules/editorial-video/visuals/review-artifacts.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -90,7 +91,14 @@ async function main() {
     root: ROOT,
     // Sin `--silent-props` el validador no puede saber si el build generó la
     // variante silenciosa: se declara ausencia de contexto, no incumplimiento.
-    artifacts: args.silentProps ? {silentPropsFile: args.silentProps} : null
+    // Los bloques de revisión sí se pueden mirar: cuelgan del mismo directorio
+    // que el plan (FC-R-101).
+    artifacts: {
+      ...(args.silentProps ? {silentPropsFile: args.silentProps} : {}),
+      reviewBlocks: await collectReviewBlockArtifacts({
+        visualsDirectory: path.dirname(path.resolve(ROOT, args.plan))
+      })
+    }
   });
 
   console.log(formatValidationReport(result));

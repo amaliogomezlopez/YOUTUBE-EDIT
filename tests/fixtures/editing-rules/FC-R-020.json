@@ -1,0 +1,40 @@
+{
+  "ruleId": "FC-R-020",
+  "expect": "fail",
+  "check": "pattern-repetition-window",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "kinetic-text",
+        "patternId": "text.kinetic-phrase",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "visualIntent": "text",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": [
+      {
+        "code": "variety-window",
+        "severity": "error",
+        "sceneId": "scene-fixture",
+        "message": "«process.signal-flow» aparece 3 veces en las últimas 6 escenas sobre el eje patternId (máximo 2). Cambia de encuadre o de mecanismo de énfasis, o declara `varietyException` con motivo."
+      }
+    ]
+  }
+}

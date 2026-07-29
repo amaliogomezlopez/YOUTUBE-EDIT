@@ -37,7 +37,7 @@ function round(value, decimals = 4) {
   return Math.round(value * factor) / factor;
 }
 
-function hashSeed(value) {
+export function hashSeed(value) {
   let hash = 2166136261;
   for (let position = 0; position < value.length; position += 1) {
     hash ^= value.charCodeAt(position);
@@ -47,7 +47,7 @@ function hashSeed(value) {
 }
 
 /** PRNG determinista: mismo episodio y mismo cue ⇒ mismo timbre siempre. */
-function mulberry32(seed) {
+export function mulberry32(seed) {
   let state = seed >>> 0;
   return () => {
     state = (state + 0x6d2b79f5) >>> 0;

@@ -11,6 +11,7 @@ import {resolveSceneCues} from '../src/modules/editorial-video/visuals/cue-ancho
 import {buildCueCoverage, mineSceneCues} from '../src/modules/editorial-video/visuals/cue-mining.js';
 import {applyCueBudget, mergeCueSets} from '../src/modules/editorial-video/visuals/cue-budget.js';
 import {loadPatternRegistry} from '../src/modules/editorial-video/visuals/pattern-registry.js';
+import {PatternSelector} from '../src/modules/editorial-video/visuals/pattern-selector.js';
 import {loadEntityRegistry} from '../src/modules/editorial-video/visuals/entity-resolver.js';
 import {planEpisodeSound} from '../src/modules/editorial-video/visuals/sound-director.js';
 import {assignActs, generateFillerEvents} from '../src/modules/editorial-video/visuals/event-timeline.js';
@@ -20,6 +21,7 @@ import {
   validateEpisodePlan
 } from '../src/modules/editorial-video/visuals/plan-validator.js';
 import {buildEpisodeQaReport} from '../src/modules/editorial-video/visuals/episode-qa.js';
+import {collectReviewBlockArtifacts} from '../src/modules/editorial-video/visuals/review-artifacts.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CHANNEL_ID = 'finance-cavaliers';
@@ -636,45 +638,12 @@ function beatFor(seconds, legacyTimeMap = []) {
   ) ?? BEATS.at(-1);
 }
 
-function patternForKind(kind) {
-  const patterns = {
-    'split-lines': 'data.line-trend-zoom',
-    'market-seed': 'data.line-trend-zoom',
-    'market-xray': 'comparison.common-baseline',
-    'market-health': 'data.line-trend-zoom',
-    'market-recovery': 'data.hero-metric',
-    'market-contrast': 'comparison.common-baseline',
-    'mag7-relationship': 'process.signal-flow',
-    'claim-audit': 'comparison.before-after-wipe',
-    'market-engine': 'process.signal-flow',
-    'ai-core': 'concept.accumulation',
-    'correction-alert': 'process.signal-flow',
-    'bubble-trigger': 'concept.accumulation',
-    'market-gravity': 'comparison.common-baseline',
-    'history-rewind': 'time.timeline-milestones',
-    'historical-leaders': 'asset.logo-ecosystem',
-    'dominance-facade': 'data.part-to-whole',
-    'leadership-lag': 'data.line-trend-zoom',
-    'contagion-spread': 'process.signal-flow',
-    'claim-evidence-gap': 'comparison.before-after-wipe',
-    'market-ticker': 'data.hero-metric',
-    'kinetic-text': 'text.kinetic-phrase',
-    'company-orbit': 'concept.scale-proportion',
-    'mag7-weights': 'data.part-to-whole',
-    'concentration-grid': 'concept.accumulation',
-    'historical-timeline': 'time.timeline-milestones',
-    'earnings-flow': 'process.signal-flow',
-    'sector-bars': 'data.bar-focus',
-    'earnings-cards': 'data.hero-metric',
-    'credit-flow': 'process.signal-flow',
-    'sloos-chart': 'data.line-trend-zoom',
-    'threshold-lanes': 'comparison.common-baseline',
-    'before-after': 'comparison.before-after-wipe',
-    'portfolio-grid': 'concept.scale-proportion',
-    'brand-cta': 'asset.logo-ecosystem'
-  };
-  return patterns[kind] ?? 'text.kinetic-phrase';
-}
+// ANM-H05 — La tabla fija `kind → patrón` que vivía aquí se ha retirado: era la
+// causa raíz de que 58 escenas usaran 12 patrones y `process.signal-flow` se
+// llevara el 24 % del episodio. Los patrones admisibles los declara ahora
+// `pattern-bindings.json` (`patternId` + `patternCandidates`) y el reparto lo
+// hace `PatternSelector` con la misma ventana de seis escenas que mide
+// FC-R-020.
 
 function kindData(kind, sloos, marketSeries) {
   const mag7 = [
@@ -1467,6 +1436,9 @@ async function main() {
   const NYSE_IMAGE_ASSET = supportImage('finance-cavaliers-nyse-facade');
   const cueIssues = [];
   const coverageReports = [];
+  // ANM-H05 — Un solo selector para todo el episodio: la ventana deslizante y
+  // el reparto acumulado solo existen si hay memoria entre escenas.
+  const patternSelector = new PatternSelector({registry: patternRegistry, episodeId});
   const renderScenes = groups.map((group, index) => {
     const midpoint = (group.startSeconds + group.endSeconds) / 2;
     const beat = beatFor(midpoint, legacyTimeMap);
@@ -1531,6 +1503,9 @@ async function main() {
       )
     )];
     const sceneId = `scene-${String(index + 1).padStart(3, '0')}`;
+    // ANM-H05 — Una llamada por escena y en orden narrativo: el selector mide la
+    // ventana contra lo ya elegido.
+    const patternChoice = patternSelector.select(kind);
     const wordRange = {
       startIndex: words[0]?.wordIndex ?? Math.max(0, index),
       endIndex: words.at(-1)?.wordIndex ?? Math.max(0, index)
@@ -1570,7 +1545,10 @@ async function main() {
               ['market-recovery', 'claim-audit'].includes(kind) ? 'number'
               : kind.includes('text') || kind === 'brand-cta' ? 'text'
                 : 'diagram',
-      patternId: patternForKind(kind),
+      patternId: patternChoice.patternId ?? 'text.kinetic-phrase',
+      // ANM-H05 — Por qué esta escena lleva este patrón, en el mismo campo que
+      // ya audita el resto de ejes de variedad.
+      varietyReasons: [patternChoice.reason],
       compositionId: 'Finance-Cavaliers-Episode',
       effectIds: [
         ['split-lines', 'market-seed', 'market-health', 'market-contrast'].includes(kind)
@@ -1908,7 +1886,12 @@ node scripts/render-safe.mjs still finance-cavaliers-episode-1 Finance-Cavaliers
     registry: patternRegistry,
     soundCatalog,
     entityRegistry,
-    artifacts: {silentPropsFile: silentRenderPropsFile}
+    // FC-R-101 — Los bloques se leen del disco, no del manifiesto: un bloque que
+    // promete un MP4 que no existe no es una entrega completa.
+    artifacts: {
+      silentPropsFile: silentRenderPropsFile,
+      reviewBlocks: await collectReviewBlockArtifacts({visualsDirectory})
+    }
   });
   await Promise.all([
     writeFile(

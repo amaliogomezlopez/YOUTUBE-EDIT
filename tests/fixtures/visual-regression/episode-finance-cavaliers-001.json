@@ -1,0 +1,1752 @@
+{
+  "version": 1,
+  "compositionId": "Finance-Cavaliers-Episode",
+  "episodeId": "episode-finance-cavaliers-001",
+  "fps": 30,
+  "durationInFrames": 18488,
+  "hashAlgorithm": "dhash-64",
+  "toleranceBits": 6,
+  "generatedAt": "2026-07-29T19:03:45.366Z",
+  "frames": [
+    {
+      "sceneId": "scene-001",
+      "kind": "market-seed",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "entrada",
+      "frame": 11,
+      "hash": "860763034707035e",
+      "luminanceMean": 17.907,
+      "luminanceVariance": 333.892
+    },
+    {
+      "sceneId": "scene-001",
+      "kind": "market-seed",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "medio",
+      "frame": 149,
+      "hash": "860721871727035e",
+      "luminanceMean": 19.568,
+      "luminanceVariance": 435.317
+    },
+    {
+      "sceneId": "scene-001",
+      "kind": "market-seed",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "salida",
+      "frame": 287,
+      "hash": "8687632327671b1f",
+      "luminanceMean": 20.676,
+      "luminanceVariance": 554.275
+    },
+    {
+      "sceneId": "scene-002",
+      "kind": "market-xray",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "entrada",
+      "frame": 308,
+      "hash": "96864e0e0e0e232b",
+      "luminanceMean": 23.167,
+      "luminanceVariance": 286.439
+    },
+    {
+      "sceneId": "scene-002",
+      "kind": "market-xray",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "medio",
+      "frame": 428,
+      "hash": "968733333333330d",
+      "luminanceMean": 63.991,
+      "luminanceVariance": 4364.656
+    },
+    {
+      "sceneId": "scene-002",
+      "kind": "market-xray",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "salida",
+      "frame": 547,
+      "hash": "968733333333334d",
+      "luminanceMean": 49.496,
+      "luminanceVariance": 2340.836
+    },
+    {
+      "sceneId": "scene-003",
+      "kind": "market-health",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "entrada",
+      "frame": 568,
+      "hash": "860723034707035e",
+      "luminanceMean": 17.487,
+      "luminanceVariance": 309.639
+    },
+    {
+      "sceneId": "scene-003",
+      "kind": "market-health",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "medio",
+      "frame": 704,
+      "hash": "860723871727035e",
+      "luminanceMean": 19.161,
+      "luminanceVariance": 411.984
+    },
+    {
+      "sceneId": "scene-003",
+      "kind": "market-health",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "salida",
+      "frame": 841,
+      "hash": "8686632326671b1f",
+      "luminanceMean": 20.234,
+      "luminanceVariance": 532.348
+    },
+    {
+      "sceneId": "scene-004",
+      "kind": "market-recovery",
+      "patternId": "data.hero-metric",
+      "checkpoint": "entrada",
+      "frame": 862,
+      "hash": "8f0723474707331f",
+      "luminanceMean": 18.249,
+      "luminanceVariance": 468.074
+    },
+    {
+      "sceneId": "scene-004",
+      "kind": "market-recovery",
+      "patternId": "data.hero-metric",
+      "checkpoint": "medio",
+      "frame": 974,
+      "hash": "8f072307070f371f",
+      "luminanceMean": 18.654,
+      "luminanceVariance": 523.614
+    },
+    {
+      "sceneId": "scene-004",
+      "kind": "market-recovery",
+      "patternId": "data.hero-metric",
+      "checkpoint": "salida",
+      "frame": 1085,
+      "hash": "8f0723074707371f",
+      "luminanceMean": 18.583,
+      "luminanceVariance": 525.763
+    },
+    {
+      "sceneId": "scene-005",
+      "kind": "market-contrast",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "entrada",
+      "frame": 1106,
+      "hash": "4d4c060e0e0e232b",
+      "luminanceMean": 21.991,
+      "luminanceVariance": 174.35
+    },
+    {
+      "sceneId": "scene-005",
+      "kind": "market-contrast",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "medio",
+      "frame": 1179,
+      "hash": "4cc733333333332b",
+      "luminanceMean": 61.575,
+      "luminanceVariance": 4304.944
+    },
+    {
+      "sceneId": "scene-005",
+      "kind": "market-contrast",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "salida",
+      "frame": 1253,
+      "hash": "4c4733333333334d",
+      "luminanceMean": 48.64,
+      "luminanceVariance": 2329.835
+    },
+    {
+      "sceneId": "scene-006",
+      "kind": "mag7-relationship",
+      "patternId": "process.signal-flow",
+      "checkpoint": "entrada",
+      "frame": 1274,
+      "hash": "0f07a3436767173f",
+      "luminanceMean": 15.299,
+      "luminanceVariance": 167.534
+    },
+    {
+      "sceneId": "scene-006",
+      "kind": "mag7-relationship",
+      "patternId": "process.signal-flow",
+      "checkpoint": "medio",
+      "frame": 1354,
+      "hash": "0f07a3475747073f",
+      "luminanceMean": 16.37,
+      "luminanceVariance": 219.33
+    },
+    {
+      "sceneId": "scene-006",
+      "kind": "mag7-relationship",
+      "patternId": "process.signal-flow",
+      "checkpoint": "salida",
+      "frame": 1434,
+      "hash": "0f07a3455545073f",
+      "luminanceMean": 17.18,
+      "luminanceVariance": 246.915
+    },
+    {
+      "sceneId": "scene-007",
+      "kind": "claim-audit",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "entrada",
+      "frame": 1455,
+      "hash": "0f07230307031619",
+      "luminanceMean": 15.622,
+      "luminanceVariance": 180.974
+    },
+    {
+      "sceneId": "scene-007",
+      "kind": "claim-audit",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "medio",
+      "frame": 1644,
+      "hash": "0f475b3b3b030619",
+      "luminanceMean": 19.121,
+      "luminanceVariance": 225.291
+    },
+    {
+      "sceneId": "scene-007",
+      "kind": "claim-audit",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "salida",
+      "frame": 1833,
+      "hash": "8e4f472323c1071b",
+      "luminanceMean": 32.702,
+      "luminanceVariance": 1001.522
+    },
+    {
+      "sceneId": "scene-008",
+      "kind": "market-engine",
+      "patternId": "process.branch-merge",
+      "checkpoint": "entrada",
+      "frame": 1854,
+      "hash": "968e4e4e4e4e4e8c",
+      "luminanceMean": 22.226,
+      "luminanceVariance": 239.906
+    },
+    {
+      "sceneId": "scene-008",
+      "kind": "market-engine",
+      "patternId": "process.branch-merge",
+      "checkpoint": "medio",
+      "frame": 2023,
+      "hash": "968e7e4f414f468c",
+      "luminanceMean": 23.822,
+      "luminanceVariance": 345.48
+    },
+    {
+      "sceneId": "scene-008",
+      "kind": "market-engine",
+      "patternId": "process.branch-merge",
+      "checkpoint": "salida",
+      "frame": 2192,
+      "hash": "9687634f434f4e0c",
+      "luminanceMean": 20.326,
+      "luminanceVariance": 188.136
+    },
+    {
+      "sceneId": "scene-009",
+      "kind": "ai-core",
+      "patternId": "concept.accumulation",
+      "checkpoint": "entrada",
+      "frame": 2213,
+      "hash": "96860e0e0e0e0e0e",
+      "luminanceMean": 23.19,
+      "luminanceVariance": 312.311
+    },
+    {
+      "sceneId": "scene-009",
+      "kind": "ai-core",
+      "patternId": "concept.accumulation",
+      "checkpoint": "medio",
+      "frame": 2375,
+      "hash": "96860e0e0e4c9686",
+      "luminanceMean": 26.595,
+      "luminanceVariance": 744.532
+    },
+    {
+      "sceneId": "scene-009",
+      "kind": "ai-core",
+      "patternId": "concept.accumulation",
+      "checkpoint": "salida",
+      "frame": 2538,
+      "hash": "868606860e4c9686",
+      "luminanceMean": 23.878,
+      "luminanceVariance": 492.549
+    },
+    {
+      "sceneId": "scene-010",
+      "kind": "correction-alert",
+      "patternId": "process.contagion-spread",
+      "checkpoint": "entrada",
+      "frame": 2559,
+      "hash": "17172f0f8f591620",
+      "luminanceMean": 25.61,
+      "luminanceVariance": 394.344
+    },
+    {
+      "sceneId": "scene-010",
+      "kind": "correction-alert",
+      "patternId": "process.contagion-spread",
+      "checkpoint": "medio",
+      "frame": 2642,
+      "hash": "170f2f0f8f591624",
+      "luminanceMean": 25.553,
+      "luminanceVariance": 434.663
+    },
+    {
+      "sceneId": "scene-010",
+      "kind": "correction-alert",
+      "patternId": "process.contagion-spread",
+      "checkpoint": "salida",
+      "frame": 2724,
+      "hash": "170f2f0f0f599664",
+      "luminanceMean": 25.589,
+      "luminanceVariance": 433.893
+    },
+    {
+      "sceneId": "scene-011",
+      "kind": "bubble-trigger",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "entrada",
+      "frame": 2745,
+      "hash": "96074f4f4f0f131f",
+      "luminanceMean": 18.619,
+      "luminanceVariance": 418.262
+    },
+    {
+      "sceneId": "scene-011",
+      "kind": "bubble-trigger",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "medio",
+      "frame": 2906,
+      "hash": "964f4f376707173f",
+      "luminanceMean": 17.814,
+      "luminanceVariance": 450.298
+    },
+    {
+      "sceneId": "scene-011",
+      "kind": "bubble-trigger",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "salida",
+      "frame": 3066,
+      "hash": "9607633707619696",
+      "luminanceMean": 22.467,
+      "luminanceVariance": 1215.548
+    },
+    {
+      "sceneId": "scene-012",
+      "kind": "market-gravity",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "entrada",
+      "frame": 3087,
+      "hash": "070707174f0f171f",
+      "luminanceMean": 24.945,
+      "luminanceVariance": 548.962
+    },
+    {
+      "sceneId": "scene-012",
+      "kind": "market-gravity",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "medio",
+      "frame": 3177,
+      "hash": "0707070f07071717",
+      "luminanceMean": 25.119,
+      "luminanceVariance": 583.587
+    },
+    {
+      "sceneId": "scene-012",
+      "kind": "market-gravity",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "salida",
+      "frame": 3266,
+      "hash": "0707070707030f0f",
+      "luminanceMean": 26.05,
+      "luminanceVariance": 517.04
+    },
+    {
+      "sceneId": "scene-013",
+      "kind": "history-rewind",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "entrada",
+      "frame": 3287,
+      "hash": "0f0723070303173f",
+      "luminanceMean": 15.024,
+      "luminanceVariance": 165.415
+    },
+    {
+      "sceneId": "scene-013",
+      "kind": "history-rewind",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "medio",
+      "frame": 3367,
+      "hash": "174f07070707173f",
+      "luminanceMean": 15.712,
+      "luminanceVariance": 216.861
+    },
+    {
+      "sceneId": "scene-013",
+      "kind": "history-rewind",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "salida",
+      "frame": 3446,
+      "hash": "0f07230f2b979679",
+      "luminanceMean": 19.264,
+      "luminanceVariance": 749.832
+    },
+    {
+      "sceneId": "scene-014",
+      "kind": "historical-leaders",
+      "patternId": "asset.logo-ecosystem",
+      "checkpoint": "entrada",
+      "frame": 3467,
+      "hash": "960763070f0f173f",
+      "luminanceMean": 15.975,
+      "luminanceVariance": 232.205
+    },
+    {
+      "sceneId": "scene-014",
+      "kind": "historical-leaders",
+      "patternId": "asset.logo-ecosystem",
+      "checkpoint": "medio",
+      "frame": 3661,
+      "hash": "960763034b2b2727",
+      "luminanceMean": 16.735,
+      "luminanceVariance": 293.402
+    },
+    {
+      "sceneId": "scene-014",
+      "kind": "historical-leaders",
+      "patternId": "asset.logo-ecosystem",
+      "checkpoint": "salida",
+      "frame": 3854,
+      "hash": "96076303a30f13b3",
+      "luminanceMean": 16.716,
+      "luminanceVariance": 290.964
+    },
+    {
+      "sceneId": "scene-015",
+      "kind": "dominance-facade",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "entrada",
+      "frame": 3875,
+      "hash": "8dc9618dcc4c5d10",
+      "luminanceMean": 21.932,
+      "luminanceVariance": 241.92
+    },
+    {
+      "sceneId": "scene-015",
+      "kind": "dominance-facade",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "medio",
+      "frame": 4037,
+      "hash": "8dc545a1cccc5950",
+      "luminanceMean": 21.766,
+      "luminanceVariance": 310.607
+    },
+    {
+      "sceneId": "scene-015",
+      "kind": "dominance-facade",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "salida",
+      "frame": 4199,
+      "hash": "8d8745a1cccc5950",
+      "luminanceMean": 21.852,
+      "luminanceVariance": 312.332
+    },
+    {
+      "sceneId": "scene-016",
+      "kind": "leadership-lag",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "entrada",
+      "frame": 4220,
+      "hash": "0f07278727670f1f",
+      "luminanceMean": 18.526,
+      "luminanceVariance": 302.307
+    },
+    {
+      "sceneId": "scene-016",
+      "kind": "leadership-lag",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "medio",
+      "frame": 4375,
+      "hash": "0d07678623e7079d",
+      "luminanceMean": 22.586,
+      "luminanceVariance": 674.397
+    },
+    {
+      "sceneId": "scene-016",
+      "kind": "leadership-lag",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "salida",
+      "frame": 4530,
+      "hash": "0d03460763c70e8d",
+      "luminanceMean": 22.681,
+      "luminanceVariance": 588.661
+    },
+    {
+      "sceneId": "scene-017",
+      "kind": "contagion-spread",
+      "patternId": "process.contagion-spread",
+      "checkpoint": "entrada",
+      "frame": 4551,
+      "hash": "9e072b0f0f63961f",
+      "luminanceMean": 16.888,
+      "luminanceVariance": 255.002
+    },
+    {
+      "sceneId": "scene-017",
+      "kind": "contagion-spread",
+      "patternId": "process.contagion-spread",
+      "checkpoint": "medio",
+      "frame": 4682,
+      "hash": "9e07070f0f63961f",
+      "luminanceMean": 17.853,
+      "luminanceVariance": 359.228
+    },
+    {
+      "sceneId": "scene-017",
+      "kind": "contagion-spread",
+      "patternId": "process.contagion-spread",
+      "checkpoint": "salida",
+      "frame": 4812,
+      "hash": "9e87078f0761963f",
+      "luminanceMean": 20.537,
+      "luminanceVariance": 508.801
+    },
+    {
+      "sceneId": "scene-018",
+      "kind": "claim-evidence-gap",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "entrada",
+      "frame": 4833,
+      "hash": "0f0723070f0f1609",
+      "luminanceMean": 18.347,
+      "luminanceVariance": 378.198
+    },
+    {
+      "sceneId": "scene-018",
+      "kind": "claim-evidence-gap",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "medio",
+      "frame": 5024,
+      "hash": "070623070f0f1609",
+      "luminanceMean": 20.641,
+      "luminanceVariance": 556.197
+    },
+    {
+      "sceneId": "scene-018",
+      "kind": "claim-evidence-gap",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "salida",
+      "frame": 5216,
+      "hash": "070723070f0f1609",
+      "luminanceMean": 20.633,
+      "luminanceVariance": 557.723
+    },
+    {
+      "sceneId": "scene-019",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "entrada",
+      "frame": 5236,
+      "hash": "860723c367231619",
+      "luminanceMean": 17.488,
+      "luminanceVariance": 354.631
+    },
+    {
+      "sceneId": "scene-019",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "medio",
+      "frame": 5380,
+      "hash": "8607c32d35d32e19",
+      "luminanceMean": 22.083,
+      "luminanceVariance": 748.519
+    },
+    {
+      "sceneId": "scene-019",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "salida",
+      "frame": 5523,
+      "hash": "860723975b699619",
+      "luminanceMean": 22.2,
+      "luminanceVariance": 745.983
+    },
+    {
+      "sceneId": "scene-020",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "entrada",
+      "frame": 5544,
+      "hash": "8607230313031619",
+      "luminanceMean": 16.92,
+      "luminanceVariance": 324.247
+    },
+    {
+      "sceneId": "scene-020",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "medio",
+      "frame": 5724,
+      "hash": "8607234327271719",
+      "luminanceMean": 17.926,
+      "luminanceVariance": 382.308
+    },
+    {
+      "sceneId": "scene-020",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "salida",
+      "frame": 5905,
+      "hash": "8607234327071629",
+      "luminanceMean": 17.856,
+      "luminanceVariance": 382.535
+    },
+    {
+      "sceneId": "scene-021",
+      "kind": "mag7-weights",
+      "patternId": "data.ranking",
+      "checkpoint": "entrada",
+      "frame": 5926,
+      "hash": "86864c0e0e0e0e6c",
+      "luminanceMean": 22.54,
+      "luminanceVariance": 288.815
+    },
+    {
+      "sceneId": "scene-021",
+      "kind": "mag7-weights",
+      "patternId": "data.ranking",
+      "checkpoint": "medio",
+      "frame": 6093,
+      "hash": "86864c071f1dc56c",
+      "luminanceMean": 29.565,
+      "luminanceVariance": 583.471
+    },
+    {
+      "sceneId": "scene-021",
+      "kind": "mag7-weights",
+      "patternId": "data.ranking",
+      "checkpoint": "salida",
+      "frame": 6260,
+      "hash": "86864f071f1f076c",
+      "luminanceMean": 24.543,
+      "luminanceVariance": 319.805
+    },
+    {
+      "sceneId": "scene-022",
+      "kind": "concentration-grid",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "entrada",
+      "frame": 6281,
+      "hash": "860723c367231629",
+      "luminanceMean": 17.789,
+      "luminanceVariance": 378.418
+    },
+    {
+      "sceneId": "scene-022",
+      "kind": "concentration-grid",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "medio",
+      "frame": 6467,
+      "hash": "8607c325175ba619",
+      "luminanceMean": 22.189,
+      "luminanceVariance": 749.475
+    },
+    {
+      "sceneId": "scene-022",
+      "kind": "concentration-grid",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "salida",
+      "frame": 6654,
+      "hash": "8607a74b2d255e19",
+      "luminanceMean": 22.374,
+      "luminanceVariance": 773.551
+    },
+    {
+      "sceneId": "scene-023",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "entrada",
+      "frame": 6675,
+      "hash": "8607230313031619",
+      "luminanceMean": 16.92,
+      "luminanceVariance": 324.247
+    },
+    {
+      "sceneId": "scene-023",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "medio",
+      "frame": 6820,
+      "hash": "8607234307271619",
+      "luminanceMean": 17.863,
+      "luminanceVariance": 382.428
+    },
+    {
+      "sceneId": "scene-023",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "salida",
+      "frame": 6965,
+      "hash": "8607234327071619",
+      "luminanceMean": 18.024,
+      "luminanceVariance": 381.808
+    },
+    {
+      "sceneId": "scene-024",
+      "kind": "historical-timeline",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "entrada",
+      "frame": 6986,
+      "hash": "960723032707173f",
+      "luminanceMean": 15.571,
+      "luminanceVariance": 210.279
+    },
+    {
+      "sceneId": "scene-024",
+      "kind": "historical-timeline",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "medio",
+      "frame": 7175,
+      "hash": "960723432727173f",
+      "luminanceMean": 16.713,
+      "luminanceVariance": 275.394
+    },
+    {
+      "sceneId": "scene-024",
+      "kind": "historical-timeline",
+      "patternId": "data.line-trend-zoom",
+      "checkpoint": "salida",
+      "frame": 7364,
+      "hash": "960723432707173f",
+      "luminanceMean": 16.691,
+      "luminanceVariance": 275.666
+    },
+    {
+      "sceneId": "scene-025",
+      "kind": "earnings-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "entrada",
+      "frame": 7385,
+      "hash": "16864c4e4e0e060c",
+      "luminanceMean": 25.947,
+      "luminanceVariance": 368.4
+    },
+    {
+      "sceneId": "scene-025",
+      "kind": "earnings-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "medio",
+      "frame": 7565,
+      "hash": "16864c46460e060c",
+      "luminanceMean": 26.089,
+      "luminanceVariance": 374.712
+    },
+    {
+      "sceneId": "scene-025",
+      "kind": "earnings-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "salida",
+      "frame": 7746,
+      "hash": "16864f47470e060c",
+      "luminanceMean": 21.936,
+      "luminanceVariance": 202.508
+    },
+    {
+      "sceneId": "scene-026",
+      "kind": "sector-bars",
+      "patternId": "data.bar-focus",
+      "checkpoint": "entrada",
+      "frame": 7767,
+      "hash": "9607230387233769",
+      "luminanceMean": 18.956,
+      "luminanceVariance": 506.69
+    },
+    {
+      "sceneId": "scene-026",
+      "kind": "sector-bars",
+      "patternId": "data.bar-focus",
+      "checkpoint": "medio",
+      "frame": 7919,
+      "hash": "9687232737271769",
+      "luminanceMean": 31.86,
+      "luminanceVariance": 2208.367
+    },
+    {
+      "sceneId": "scene-026",
+      "kind": "sector-bars",
+      "patternId": "data.bar-focus",
+      "checkpoint": "salida",
+      "frame": 8071,
+      "hash": "9687232337331769",
+      "luminanceMean": 32.06,
+      "luminanceVariance": 2202.446
+    },
+    {
+      "sceneId": "scene-027",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "entrada",
+      "frame": 8093,
+      "hash": "9607230313031619",
+      "luminanceMean": 17.032,
+      "luminanceVariance": 338.961
+    },
+    {
+      "sceneId": "scene-027",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "medio",
+      "frame": 8193,
+      "hash": "9607234307271719",
+      "luminanceMean": 18.14,
+      "luminanceVariance": 395.851
+    },
+    {
+      "sceneId": "scene-027",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "salida",
+      "frame": 8294,
+      "hash": "9607234323271719",
+      "luminanceMean": 18.144,
+      "luminanceVariance": 396.697
+    },
+    {
+      "sceneId": "scene-028",
+      "kind": "earnings-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "entrada",
+      "frame": 8315,
+      "hash": "9607a36367231619",
+      "luminanceMean": 17.465,
+      "luminanceVariance": 357.9
+    },
+    {
+      "sceneId": "scene-028",
+      "kind": "earnings-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "medio",
+      "frame": 8441,
+      "hash": "9607a34d4d031619",
+      "luminanceMean": 19.839,
+      "luminanceVariance": 502.019
+    },
+    {
+      "sceneId": "scene-028",
+      "kind": "earnings-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "salida",
+      "frame": 8568,
+      "hash": "9607a74949231619",
+      "luminanceMean": 19.719,
+      "luminanceVariance": 502.144
+    },
+    {
+      "sceneId": "scene-029",
+      "kind": "sector-bars",
+      "patternId": "data.bar-focus",
+      "checkpoint": "entrada",
+      "frame": 8589,
+      "hash": "960723038727337e",
+      "luminanceMean": 17.576,
+      "luminanceVariance": 388.17
+    },
+    {
+      "sceneId": "scene-029",
+      "kind": "sector-bars",
+      "patternId": "data.bar-focus",
+      "checkpoint": "medio",
+      "frame": 8749,
+      "hash": "968723273727177e",
+      "luminanceMean": 30.477,
+      "luminanceVariance": 2125.667
+    },
+    {
+      "sceneId": "scene-029",
+      "kind": "sector-bars",
+      "patternId": "data.bar-focus",
+      "checkpoint": "salida",
+      "frame": 8909,
+      "hash": "968723273737177e",
+      "luminanceMean": 30.608,
+      "luminanceVariance": 2122.226
+    },
+    {
+      "sceneId": "scene-030",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "entrada",
+      "frame": 8930,
+      "hash": "960723031307173f",
+      "luminanceMean": 15.653,
+      "luminanceVariance": 215.134
+    },
+    {
+      "sceneId": "scene-030",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "medio",
+      "frame": 9107,
+      "hash": "960723432727173f",
+      "luminanceMean": 16.637,
+      "luminanceVariance": 275.899
+    },
+    {
+      "sceneId": "scene-030",
+      "kind": "historical-timeline",
+      "patternId": "time.timeline-milestones",
+      "checkpoint": "salida",
+      "frame": 9284,
+      "hash": "968727432707173f",
+      "luminanceMean": 16.574,
+      "luminanceVariance": 275.955
+    },
+    {
+      "sceneId": "scene-031",
+      "kind": "earnings-cards",
+      "patternId": "data.hero-metric",
+      "checkpoint": "entrada",
+      "frame": 9305,
+      "hash": "0f072387870f177f",
+      "luminanceMean": 18.342,
+      "luminanceVariance": 496.217
+    },
+    {
+      "sceneId": "scene-031",
+      "kind": "earnings-cards",
+      "patternId": "data.hero-metric",
+      "checkpoint": "medio",
+      "frame": 9443,
+      "hash": "0f076397974f177f",
+      "luminanceMean": 19.131,
+      "luminanceVariance": 563.014
+    },
+    {
+      "sceneId": "scene-031",
+      "kind": "earnings-cards",
+      "patternId": "data.hero-metric",
+      "checkpoint": "salida",
+      "frame": 9580,
+      "hash": "0f076397974f177f",
+      "luminanceMean": 19.139,
+      "luminanceVariance": 563.028
+    },
+    {
+      "sceneId": "scene-032",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "entrada",
+      "frame": 9602,
+      "hash": "9e864c4e4e0e060c",
+      "luminanceMean": 25.212,
+      "luminanceVariance": 286.983
+    },
+    {
+      "sceneId": "scene-032",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "medio",
+      "frame": 9740,
+      "hash": "9e8e4c46460e060c",
+      "luminanceMean": 25.279,
+      "luminanceVariance": 284.909
+    },
+    {
+      "sceneId": "scene-032",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "salida",
+      "frame": 9879,
+      "hash": "96864f47470e060c",
+      "luminanceMean": 22.456,
+      "luminanceVariance": 188.248
+    },
+    {
+      "sceneId": "scene-033",
+      "kind": "earnings-flow",
+      "patternId": "process.branch-merge",
+      "checkpoint": "entrada",
+      "frame": 9900,
+      "hash": "9e8e4e4ece4e4e8c",
+      "luminanceMean": 22.265,
+      "luminanceVariance": 234.471
+    },
+    {
+      "sceneId": "scene-033",
+      "kind": "earnings-flow",
+      "patternId": "process.branch-merge",
+      "checkpoint": "medio",
+      "frame": 10088,
+      "hash": "9e8e7e4fc14f468c",
+      "luminanceMean": 23.611,
+      "luminanceVariance": 335.638
+    },
+    {
+      "sceneId": "scene-033",
+      "kind": "earnings-flow",
+      "patternId": "process.branch-merge",
+      "checkpoint": "salida",
+      "frame": 10275,
+      "hash": "9687630fc14f460c",
+      "luminanceMean": 20.206,
+      "luminanceVariance": 182.816
+    },
+    {
+      "sceneId": "scene-034",
+      "kind": "earnings-cards",
+      "patternId": "data.ranking",
+      "checkpoint": "entrada",
+      "frame": 10296,
+      "hash": "9e8e0e0e0e0e8e6c",
+      "luminanceMean": 21.941,
+      "luminanceVariance": 219.211
+    },
+    {
+      "sceneId": "scene-034",
+      "kind": "earnings-cards",
+      "patternId": "data.ranking",
+      "checkpoint": "medio",
+      "frame": 10476,
+      "hash": "9e8e8e0f4f8e0d6c",
+      "luminanceMean": 25.04,
+      "luminanceVariance": 389.177
+    },
+    {
+      "sceneId": "scene-034",
+      "kind": "earnings-cards",
+      "patternId": "data.ranking",
+      "checkpoint": "salida",
+      "frame": 10657,
+      "hash": "968786074786066c",
+      "luminanceMean": 21.247,
+      "luminanceVariance": 213.928
+    },
+    {
+      "sceneId": "scene-035",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "entrada",
+      "frame": 10678,
+      "hash": "0f07a3436767173f",
+      "luminanceMean": 15.29,
+      "luminanceVariance": 160.223
+    },
+    {
+      "sceneId": "scene-035",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "medio",
+      "frame": 10855,
+      "hash": "0f07a3475547073f",
+      "luminanceMean": 17.156,
+      "luminanceVariance": 241.872
+    },
+    {
+      "sceneId": "scene-035",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "salida",
+      "frame": 11032,
+      "hash": "0f07a3455545073f",
+      "luminanceMean": 17.145,
+      "luminanceVariance": 243.464
+    },
+    {
+      "sceneId": "scene-036",
+      "kind": "earnings-flow",
+      "patternId": "process.branch-merge",
+      "checkpoint": "entrada",
+      "frame": 11053,
+      "hash": "9e8e4e4ece4e4e8c",
+      "luminanceMean": 22.284,
+      "luminanceVariance": 236.755
+    },
+    {
+      "sceneId": "scene-036",
+      "kind": "earnings-flow",
+      "patternId": "process.branch-merge",
+      "checkpoint": "medio",
+      "frame": 11215,
+      "hash": "9e8e7e4fc14f468c",
+      "luminanceMean": 23.611,
+      "luminanceVariance": 335.638
+    },
+    {
+      "sceneId": "scene-036",
+      "kind": "earnings-flow",
+      "patternId": "process.branch-merge",
+      "checkpoint": "salida",
+      "frame": 11376,
+      "hash": "968e670f414f4e0c",
+      "luminanceMean": 21.105,
+      "luminanceVariance": 221.023
+    },
+    {
+      "sceneId": "scene-037",
+      "kind": "earnings-cards",
+      "patternId": "data.hero-metric",
+      "checkpoint": "entrada",
+      "frame": 11397,
+      "hash": "0f072387870f177f",
+      "luminanceMean": 18.342,
+      "luminanceVariance": 496.217
+    },
+    {
+      "sceneId": "scene-037",
+      "kind": "earnings-cards",
+      "patternId": "data.hero-metric",
+      "checkpoint": "medio",
+      "frame": 11533,
+      "hash": "0f076397974f137f",
+      "luminanceMean": 19.145,
+      "luminanceVariance": 562.688
+    },
+    {
+      "sceneId": "scene-037",
+      "kind": "earnings-cards",
+      "patternId": "data.hero-metric",
+      "checkpoint": "salida",
+      "frame": 11668,
+      "hash": "0f076397974f177f",
+      "luminanceMean": 19.109,
+      "luminanceVariance": 563.575
+    },
+    {
+      "sceneId": "scene-038",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "entrada",
+      "frame": 11689,
+      "hash": "96864c4e4e0e060c",
+      "luminanceMean": 25.867,
+      "luminanceVariance": 353.462
+    },
+    {
+      "sceneId": "scene-038",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "medio",
+      "frame": 11880,
+      "hash": "96864c46460e060c",
+      "luminanceMean": 25.933,
+      "luminanceVariance": 351.931
+    },
+    {
+      "sceneId": "scene-038",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "salida",
+      "frame": 12072,
+      "hash": "96874f47470f060c",
+      "luminanceMean": 21.852,
+      "luminanceVariance": 189.125
+    },
+    {
+      "sceneId": "scene-039",
+      "kind": "kinetic-text",
+      "patternId": "text.kinetic-phrase",
+      "checkpoint": "entrada",
+      "frame": 12093,
+      "hash": "030303232707173f",
+      "luminanceMean": 13.312,
+      "luminanceVariance": 31.378
+    },
+    {
+      "sceneId": "scene-039",
+      "kind": "kinetic-text",
+      "patternId": "text.kinetic-phrase",
+      "checkpoint": "medio",
+      "frame": 12174,
+      "hash": "0303071f0f07331f",
+      "luminanceMean": 20.643,
+      "luminanceVariance": 710.929
+    },
+    {
+      "sceneId": "scene-039",
+      "kind": "kinetic-text",
+      "patternId": "text.kinetic-phrase",
+      "checkpoint": "salida",
+      "frame": 12255,
+      "hash": "070707070707073d",
+      "luminanceMean": 16.272,
+      "luminanceVariance": 187.027
+    },
+    {
+      "sceneId": "scene-040",
+      "kind": "sloos-chart",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "entrada",
+      "frame": 12276,
+      "hash": "960763830307177f",
+      "luminanceMean": 15.834,
+      "luminanceVariance": 201.549
+    },
+    {
+      "sceneId": "scene-040",
+      "kind": "sloos-chart",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "medio",
+      "frame": 12481,
+      "hash": "9607a1a163479b7f",
+      "luminanceMean": 19.213,
+      "luminanceVariance": 335.966
+    },
+    {
+      "sceneId": "scene-040",
+      "kind": "sloos-chart",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "salida",
+      "frame": 12686,
+      "hash": "9607a9a163479b7f",
+      "luminanceMean": 19.225,
+      "luminanceVariance": 337.37
+    },
+    {
+      "sceneId": "scene-041",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "entrada",
+      "frame": 12707,
+      "hash": "960723436747173f",
+      "luminanceMean": 15.717,
+      "luminanceVariance": 204.899
+    },
+    {
+      "sceneId": "scene-041",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "medio",
+      "frame": 12858,
+      "hash": "9607a3455547073f",
+      "luminanceMean": 17.616,
+      "luminanceVariance": 292.123
+    },
+    {
+      "sceneId": "scene-041",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "salida",
+      "frame": 13010,
+      "hash": "9607a3555541133f",
+      "luminanceMean": 17.79,
+      "luminanceVariance": 291.641
+    },
+    {
+      "sceneId": "scene-042",
+      "kind": "threshold-lanes",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "entrada",
+      "frame": 13031,
+      "hash": "9e8e4c0e0e0e0d6d",
+      "luminanceMean": 22.813,
+      "luminanceVariance": 266.576
+    },
+    {
+      "sceneId": "scene-042",
+      "kind": "threshold-lanes",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "medio",
+      "frame": 13182,
+      "hash": "8e864d15810d2d4e",
+      "luminanceMean": 40.559,
+      "luminanceVariance": 2130.676
+    },
+    {
+      "sceneId": "scene-042",
+      "kind": "threshold-lanes",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "salida",
+      "frame": 13333,
+      "hash": "96874d15810d2d6e",
+      "luminanceMean": 32.555,
+      "luminanceVariance": 1133.902
+    },
+    {
+      "sceneId": "scene-043",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "entrada",
+      "frame": 13354,
+      "hash": "8e864c4e4e0e0609",
+      "luminanceMean": 26.779,
+      "luminanceVariance": 423.431
+    },
+    {
+      "sceneId": "scene-043",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "medio",
+      "frame": 13522,
+      "hash": "8e864c46460e0609",
+      "luminanceMean": 26.841,
+      "luminanceVariance": 421.189
+    },
+    {
+      "sceneId": "scene-043",
+      "kind": "credit-flow",
+      "patternId": "process.funnel-filter",
+      "checkpoint": "salida",
+      "frame": 13690,
+      "hash": "8e864f47470f0609",
+      "luminanceMean": 22.871,
+      "luminanceVariance": 283.762
+    },
+    {
+      "sceneId": "scene-044",
+      "kind": "sloos-chart",
+      "patternId": "data.bar-focus",
+      "checkpoint": "entrada",
+      "frame": 13711,
+      "hash": "8e07e38303031679",
+      "luminanceMean": 16.946,
+      "luminanceVariance": 300.307
+    },
+    {
+      "sceneId": "scene-044",
+      "kind": "sloos-chart",
+      "patternId": "data.bar-focus",
+      "checkpoint": "medio",
+      "frame": 13864,
+      "hash": "8e07a58d6347a679",
+      "luminanceMean": 20.15,
+      "luminanceVariance": 426.108
+    },
+    {
+      "sceneId": "scene-044",
+      "kind": "sloos-chart",
+      "patternId": "data.bar-focus",
+      "checkpoint": "salida",
+      "frame": 14016,
+      "hash": "8f07a1a963438e79",
+      "luminanceMean": 20.336,
+      "luminanceVariance": 427.304
+    },
+    {
+      "sceneId": "scene-045",
+      "kind": "threshold-lanes",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "entrada",
+      "frame": 14037,
+      "hash": "8e8e4c0e0e0e0f69",
+      "luminanceMean": 24.056,
+      "luminanceVariance": 376.517
+    },
+    {
+      "sceneId": "scene-045",
+      "kind": "threshold-lanes",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "medio",
+      "frame": 14228,
+      "hash": "8e864d15810d2d49",
+      "luminanceMean": 41.818,
+      "luminanceVariance": 2198.053
+    },
+    {
+      "sceneId": "scene-045",
+      "kind": "threshold-lanes",
+      "patternId": "comparison.common-baseline",
+      "checkpoint": "salida",
+      "frame": 14418,
+      "hash": "96864d05810d2d69",
+      "luminanceMean": 33.836,
+      "luminanceVariance": 1215.382
+    },
+    {
+      "sceneId": "scene-046",
+      "kind": "sloos-chart",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "entrada",
+      "frame": 14439,
+      "hash": "4d07438303031679",
+      "luminanceMean": 16.567,
+      "luminanceVariance": 262.464
+    },
+    {
+      "sceneId": "scene-046",
+      "kind": "sloos-chart",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "medio",
+      "frame": 14651,
+      "hash": "4f07a1a963439e79",
+      "luminanceMean": 19.927,
+      "luminanceVariance": 390.728
+    },
+    {
+      "sceneId": "scene-046",
+      "kind": "sloos-chart",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "salida",
+      "frame": 14864,
+      "hash": "4d07a18d6347a679",
+      "luminanceMean": 19.872,
+      "luminanceVariance": 392.024
+    },
+    {
+      "sceneId": "scene-047",
+      "kind": "before-after",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "entrada",
+      "frame": 14885,
+      "hash": "4d0723033b1b477f",
+      "luminanceMean": 16.588,
+      "luminanceVariance": 183.445
+    },
+    {
+      "sceneId": "scene-047",
+      "kind": "before-after",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "medio",
+      "frame": 15047,
+      "hash": "4d07032737374f7f",
+      "luminanceMean": 17.797,
+      "luminanceVariance": 260.245
+    },
+    {
+      "sceneId": "scene-047",
+      "kind": "before-after",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "salida",
+      "frame": 15209,
+      "hash": "4d07032737374f7f",
+      "luminanceMean": 17.901,
+      "luminanceVariance": 259.092
+    },
+    {
+      "sceneId": "scene-048",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "entrada",
+      "frame": 15230,
+      "hash": "4d07834367631629",
+      "luminanceMean": 16.525,
+      "luminanceVariance": 260.81
+    },
+    {
+      "sceneId": "scene-048",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "medio",
+      "frame": 15374,
+      "hash": "4d07a34755471629",
+      "luminanceMean": 18.391,
+      "luminanceVariance": 340.476
+    },
+    {
+      "sceneId": "scene-048",
+      "kind": "credit-flow",
+      "patternId": "process.signal-flow",
+      "checkpoint": "salida",
+      "frame": 15518,
+      "hash": "4d07a35555411629",
+      "luminanceMean": 18.471,
+      "luminanceVariance": 336.734
+    },
+    {
+      "sceneId": "scene-049",
+      "kind": "sloos-chart",
+      "patternId": "data.bar-focus",
+      "checkpoint": "entrada",
+      "frame": 15539,
+      "hash": "4d07c38303071679",
+      "luminanceMean": 16.593,
+      "luminanceVariance": 252.353
+    },
+    {
+      "sceneId": "scene-049",
+      "kind": "sloos-chart",
+      "patternId": "data.bar-focus",
+      "checkpoint": "medio",
+      "frame": 15685,
+      "hash": "4d0fa58d63478679",
+      "luminanceMean": 19.809,
+      "luminanceVariance": 379.786
+    },
+    {
+      "sceneId": "scene-049",
+      "kind": "sloos-chart",
+      "patternId": "data.bar-focus",
+      "checkpoint": "salida",
+      "frame": 15831,
+      "hash": "4f07a1a963439e79",
+      "luminanceMean": 19.972,
+      "luminanceVariance": 381.16
+    },
+    {
+      "sceneId": "scene-050",
+      "kind": "before-after",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "entrada",
+      "frame": 15852,
+      "hash": "4d0723033b1b4669",
+      "luminanceMean": 17.994,
+      "luminanceVariance": 295.84
+    },
+    {
+      "sceneId": "scene-050",
+      "kind": "before-after",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "medio",
+      "frame": 16005,
+      "hash": "4d07032737374e69",
+      "luminanceMean": 19.19,
+      "luminanceVariance": 367.461
+    },
+    {
+      "sceneId": "scene-050",
+      "kind": "before-after",
+      "patternId": "comparison.before-after-wipe",
+      "checkpoint": "salida",
+      "frame": 16158,
+      "hash": "4f07232337374e69",
+      "luminanceMean": 19.377,
+      "luminanceVariance": 364.551
+    },
+    {
+      "sceneId": "scene-051",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "entrada",
+      "frame": 16179,
+      "hash": "960723c367231629",
+      "luminanceMean": 17.628,
+      "luminanceVariance": 357.879
+    },
+    {
+      "sceneId": "scene-051",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "medio",
+      "frame": 16313,
+      "hash": "9607c32d35d32f19",
+      "luminanceMean": 22.291,
+      "luminanceVariance": 749.967
+    },
+    {
+      "sceneId": "scene-051",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "salida",
+      "frame": 16446,
+      "hash": "960763b6534bb609",
+      "luminanceMean": 22.226,
+      "luminanceVariance": 751.297
+    },
+    {
+      "sceneId": "scene-052",
+      "kind": "portfolio-grid",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "entrada",
+      "frame": 16467,
+      "hash": "960723070307173f",
+      "luminanceMean": 15.371,
+      "luminanceVariance": 203.471
+    },
+    {
+      "sceneId": "scene-052",
+      "kind": "portfolio-grid",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "medio",
+      "frame": 16625,
+      "hash": "960723270707173f",
+      "luminanceMean": 15.727,
+      "luminanceVariance": 216.06
+    },
+    {
+      "sceneId": "scene-052",
+      "kind": "portfolio-grid",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "salida",
+      "frame": 16783,
+      "hash": "960723270703173f",
+      "luminanceMean": 15.905,
+      "luminanceVariance": 215.509
+    },
+    {
+      "sceneId": "scene-053",
+      "kind": "mag7-weights",
+      "patternId": "data.ranking",
+      "checkpoint": "entrada",
+      "frame": 16805,
+      "hash": "96864c0e0e0e0e6c",
+      "luminanceMean": 22.665,
+      "luminanceVariance": 305.101
+    },
+    {
+      "sceneId": "scene-053",
+      "kind": "mag7-weights",
+      "patternId": "data.ranking",
+      "checkpoint": "medio",
+      "frame": 16962,
+      "hash": "96864c071f1dc56c",
+      "luminanceMean": 29.692,
+      "luminanceVariance": 598.481
+    },
+    {
+      "sceneId": "scene-053",
+      "kind": "mag7-weights",
+      "patternId": "data.ranking",
+      "checkpoint": "salida",
+      "frame": 17119,
+      "hash": "968747071f1d076c",
+      "luminanceMean": 24.673,
+      "luminanceVariance": 326.812
+    },
+    {
+      "sceneId": "scene-054",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "entrada",
+      "frame": 17140,
+      "hash": "960723c36727173f",
+      "luminanceMean": 16.54,
+      "luminanceVariance": 271.101
+    },
+    {
+      "sceneId": "scene-054",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "medio",
+      "frame": 17319,
+      "hash": "9607c32d35d32d1f",
+      "luminanceMean": 20.888,
+      "luminanceVariance": 651.769
+    },
+    {
+      "sceneId": "scene-054",
+      "kind": "concentration-grid",
+      "patternId": "concept.accumulation",
+      "checkpoint": "salida",
+      "frame": 17498,
+      "hash": "960727534b25d22d",
+      "luminanceMean": 21.044,
+      "luminanceVariance": 677.518
+    },
+    {
+      "sceneId": "scene-055",
+      "kind": "portfolio-grid",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "entrada",
+      "frame": 17519,
+      "hash": "960723070307173f",
+      "luminanceMean": 15.402,
+      "luminanceVariance": 206.534
+    },
+    {
+      "sceneId": "scene-055",
+      "kind": "portfolio-grid",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "medio",
+      "frame": 17646,
+      "hash": "960723070707173f",
+      "luminanceMean": 15.777,
+      "luminanceVariance": 213.173
+    },
+    {
+      "sceneId": "scene-055",
+      "kind": "portfolio-grid",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "salida",
+      "frame": 17773,
+      "hash": "960723270707173f",
+      "luminanceMean": 15.733,
+      "luminanceVariance": 216.062
+    },
+    {
+      "sceneId": "scene-056",
+      "kind": "company-orbit",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "entrada",
+      "frame": 17795,
+      "hash": "860703070f07131f",
+      "luminanceMean": 15.555,
+      "luminanceVariance": 221.569
+    },
+    {
+      "sceneId": "scene-056",
+      "kind": "company-orbit",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "medio",
+      "frame": 17958,
+      "hash": "86072327432f2f1f",
+      "luminanceMean": 16.154,
+      "luminanceVariance": 260.621
+    },
+    {
+      "sceneId": "scene-056",
+      "kind": "company-orbit",
+      "patternId": "data.part-to-whole",
+      "checkpoint": "salida",
+      "frame": 18122,
+      "hash": "86072327472f2f1f",
+      "luminanceMean": 16.259,
+      "luminanceVariance": 260.822
+    },
+    {
+      "sceneId": "scene-057",
+      "kind": "brand-cta",
+      "patternId": "asset.logo-ecosystem",
+      "checkpoint": "entrada",
+      "frame": 18143,
+      "hash": "030303430f070f3b",
+      "luminanceMean": 15.051,
+      "luminanceVariance": 163.077
+    },
+    {
+      "sceneId": "scene-057",
+      "kind": "brand-cta",
+      "patternId": "asset.logo-ecosystem",
+      "checkpoint": "medio",
+      "frame": 18297,
+      "hash": "0703074f0f870f33",
+      "luminanceMean": 15.355,
+      "luminanceVariance": 241.779
+    },
+    {
+      "sceneId": "scene-057",
+      "kind": "brand-cta",
+      "patternId": "asset.logo-ecosystem",
+      "checkpoint": "salida",
+      "frame": 18451,
+      "hash": "0303034b0f870f33",
+      "luminanceMean": 15.611,
+      "luminanceVariance": 240.046
+    },
+    {
+      "sceneId": "scene-058",
+      "kind": "company-orbit",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "entrada",
+      "frame": 18468,
+      "hash": "860703030f0f131f",
+      "luminanceMean": 15.3,
+      "luminanceVariance": 191.403
+    },
+    {
+      "sceneId": "scene-058",
+      "kind": "company-orbit",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "medio",
+      "frame": 18474,
+      "hash": "86074b030f0f131f",
+      "luminanceMean": 15.649,
+      "luminanceVariance": 229.112
+    },
+    {
+      "sceneId": "scene-058",
+      "kind": "company-orbit",
+      "patternId": "concept.scale-proportion",
+      "checkpoint": "salida",
+      "frame": 18481,
+      "hash": "860743030303171b",
+      "luminanceMean": 14.973,
+      "luminanceVariance": 242.971
+    }
+  ]
+}

@@ -73,6 +73,21 @@ import {
   extendedPatternSchema,
 } from "./motion/ExtendedPatterns";
 import {
+  ContagionSpreadDemo,
+  contagionSpreadDemoProps,
+  contagionSpreadSchema,
+} from "./motion/ContagionSpread";
+import {
+  KineticPhrase,
+  kineticPhraseDemoProps,
+  kineticPhraseSchema,
+} from "./motion/KineticPhrase";
+import {
+  LogoEcosystem,
+  logoEcosystemDemoProps,
+  logoEcosystemSchema,
+} from "./motion/LogoEcosystem";
+import {
   EditorialEpisode,
   editorialEpisodeMetadata,
   editorialEpisodeSchema,
@@ -338,6 +353,36 @@ export const RemotionRoot: React.FC = () => {
             calculateMetadata={extendedPatternMetadata}
           />
         ))}
+        <Composition
+          id="Pattern-Logo-Ecosystem"
+          component={LogoEcosystem}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={logoEcosystemSchema}
+          defaultProps={logoEcosystemDemoProps}
+        />
+        <Composition
+          id="Pattern-Kinetic-Phrase"
+          component={KineticPhrase}
+          durationInFrames={6 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={kineticPhraseSchema}
+          defaultProps={kineticPhraseDemoProps}
+        />
+        <Composition
+          id="Pattern-Contagion-Spread"
+          component={ContagionSpreadDemo}
+          durationInFrames={8 * 60}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={contagionSpreadSchema}
+          defaultProps={contagionSpreadDemoProps}
+        />
         <Composition
           id="Review-Contextual-Pattern"
           component={ContextualPatternPreview}

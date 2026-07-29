@@ -121,13 +121,55 @@ una: `focusTargets`, `defaultTargets` por tipo de mención, `geometry`,
 [`pattern-registry.js`](src/modules/editorial-video/visuals/pattern-registry.js)
 lo consume para dar destino a los cues minados y para validar los targets.
 
-**Lo que queda pendiente y por qué:** el desmantelamiento de
-`MarketNarrativeScene`, `SecondMinuteNarrativeScene` y
-`ThirdMinuteNarrativeScene` (ANM-E03) y la implementación de los 13 patrones
-`planned` (ANM-E04) **no** se han hecho en esta entrega. Son ~5.240 líneas de
-React cuyo reemplazo exige test de regresión visual frame a frame antes de
-borrar nada. El puente ya existe, así que ese refactor se puede abordar patrón a
-patrón sin bloquear episodios nuevos.
+**El render ya lee `patternId`.** Hasta ANM-E03, `patternId` aparecía una sola
+vez en todo `remotion-animations/src` —declarado opcional en `schemas.ts`— y
+quien decidía qué se pintaba era `switch (scene.kind)`. FC-R-020 aprobaba el eje
+de patrón por una promesa que los píxeles no cumplían.
+
+La resolución es ahora `patternId → composición → componente`:
+
+| Fichero | Papel |
+| --- | --- |
+| [`patterns.json`](remotion-animations/catalog/animations/patterns.json) | `implementation.compositionId` — el puente patrón → composición. **No se escribe a mano en ningún otro sitio.** |
+| [`pattern-routes.json`](remotion-animations/catalog/animations/pattern-routes.json) | Qué composiciones tienen adaptador, cuáles no y por qué, su geometría dominante, y los `kind` que siguen en el camino heredado |
+| [`PatternScenes.tsx`](remotion-animations/src/editorial/PatternScenes.tsx) | Adaptadores `escena → props del patrón`, **validados con zod**: una escena que no puede alimentar su patrón lanza, no pinta un panel vacío |
+| [`patternRouting.ts`](remotion-animations/src/editorial/patternRouting.ts) | Resolución, traza del fallback y `assertRoutesInSync` |
+
+`assertRoutesInSync` corre al cargar el bundle: si el registro de componentes,
+`pattern-routes.json` y `patterns.json` dejan de decir lo mismo,
+`npm run remotion:check` falla. Las tres fuentes no pueden derivar por separado.
+
+El camino por `kind` sobrevive solo para lo que aún no ha migrado, **deja traza
+en la consola del render** y está declarado con motivo en `kindFallback`. No hay
+`default` silencioso: un `kind` sin fila en esa tabla y sin patrón que pintar
+lanza.
+
+**Lo que queda pendiente y por qué:** quince `kind` siguen en el camino
+heredado. Casi ninguno por falta de componente: la escena **no lleva la
+evidencia que su patrón exige**. `before-after` y `claim-audit` reciben
+`comparison.before-after-wipe`, que necesita dos capturas del mismo encuadre, y
+aportan cifras; `bubble-trigger` y `market-gravity` reciben
+`concept.scale-proportion` sin ninguna proporción declarada; `sloos-chart`
+recibe `data.part-to-whole` con 145 puntos de serie. Eso es un problema de
+binding, no de router, y se arregla en `pattern-bindings.json` —no forzando el
+adaptador a inventar la evidencia que falta.
+
+### E bis. Regresión visual
+
+[`render-episode-stills.mjs`](remotion-animations/scripts/render-episode-stills.mjs)
+renderiza tres stills por escena (entrada, medio, salida) de las 58 escenas del
+episodio y los reduce a un dHash de 64 bits, versionado en
+`tests/fixtures/visual-regression/`. El hash perceptual, no el sha256: el render
+no es bit-exacto y comparar bytes daría un falso positivo en cada corrida.
+
+```bash
+npm run episode:stills -- --update    # escribe la baseline
+npm run episode:stills:check          # lista las escenas que cambian
+```
+
+Esta red es lo que faltaba para poder tocar el router: sin ella no se podía
+distinguir «cambia porque ahora usa el patrón que el plan pedía» de «cambia y no
+sé por qué».
 
 ### F. Cámara, foco y layout
 
@@ -161,6 +203,23 @@ conecta por fin `src/lib/animation-variety.js` al pipeline editorial y aplica un
 ventana deslizante de 6 escenas sobre cinco ejes: patrón, geometría, cámara,
 paleta y familia sonora. La repetición no se prohíbe: se marca y exige
 `varietyException` con motivo.
+
+**El planificador no elige el patrón**: lo recibe ya decidido
+(`scene.patternId ?? binding.patternId`) y rota énfasis, cámara y dirección de
+arte. Quien elige patrón es
+[`pattern-selector.js`](src/modules/editorial-video/visuals/pattern-selector.js).
+El binding declara `patternId` (preferente) y `patternCandidates`, y el selector
+reparte con el mismo mecanismo probado de `VariantSelector` en el sonido —
+rotación sembrada por episodio, reparto acumulado y preferencia que se honra
+solo mientras no se despegue del reparto de su grupo—, midiendo contra la misma
+ventana de seis escenas de `FC-R-020`. Solo rota hacia patrones `ready`: un
+patrón `planned` no tiene componente que lo pinte. Cada decisión queda escrita
+en `scene.varietyReasons`.
+
+**Medido en el episodio 1:** de 12 patrones distintos con
+`process.signal-flow` en el 24 % del episodio se pasa a **16 patrones**, máximo
+**5 usos** (8,6 %) y **0 incidencias de `FC-R-020` sobre el eje de patrón**. La
+excepción registrada para esa regla se ha retirado.
 
 ### I. Reglas ejecutables — el punto que más importa
 
@@ -298,6 +357,14 @@ crece**. Nunca con un componente de un solo uso.
    target en el cue.
 3. Si de verdad no hay patrón, se añade uno al catálogo con demo y still de QA.
 
+El `patternId` concreto de cada escena **no se escribe a mano**: lo reparte el
+selector entre `patternId` + `patternCandidates` del binding. Si una escena sale
+con un patrón que no cuenta lo que la escena cuenta, la corrección es el binding
+—quitar el candidato o añadir uno mejor—, nunca fijar el patrón en la escena:
+`FC-R-132` marca como error de contrato un `patternId` que el binding no declara.
+Si el informe dice *«todos los candidatos llegan al máximo en la ventana»*, ese
+binding necesita un candidato más.
+
 ### Paso 6 — Sonido: pedir familia, nunca fichero
 
 Un cue pide `{family, intensity}`. El director elige la variante respetando
@@ -321,6 +388,25 @@ registran como excepción con motivo, no se ignoran.
 Bloques de aproximadamente un minuto, cada uno con render-props, manifiesto,
 audio recortado, cinco stills de QA y MP4 independiente. No se empieza el
 siguiente bloque sin aprobación. Un bloque aprobado nunca se sobrescribe.
+
+```bash
+npm run episode:review-block -- \
+  --props data/.../visuals/render-props.json \
+  --from scene-008 --to scene-013 --id 02 --tail 0.6
+```
+
+Los cinco artefactos los produce ese comando: recorta el audio con ffmpeg, saca
+los cinco stills al 8 / 30 / 52 / 74 / 94 % del bloque y renderiza el MP4. El
+build lee del **disco** qué hay en cada `review-blocks/<id>/` y se lo pasa al
+motor como `artifacts.reviewBlocks`, así que `FC-R-101` se evalúa de verdad: un
+manifiesto que promete un MP4 inexistente no cuela. `--skip-render` deja el
+bloque sin vídeo y el informe lo dice.
+
+`FC-R-171` sigue **no evaluable**: no existe flujo de promoción a
+`exports/production-ready/`, así que nadie puede declarar
+`artifacts.productionReady`. El validador está escrito y espera
+`{id, approvedBy, sha256, rangeSeconds}`; fingir cobertura ahí sería peor que
+dejarlo declarado.
 
 ### Paso 9 — Cuando llega feedback: convertirlo en regla
 
@@ -368,12 +454,23 @@ Se generan solas. Estado real del episodio 1 tras esta entrega:
 | Impactos perceptibles por 8 s | ≤ 3 | **3** |
 | Reglas con validador o marca `manual` | 100 % | **100 %** (59/59) |
 | Errores de validación | 0 | **0** |
-| Componentes específicos de episodio | 0 | 3 ⚠ (ANM-E03 pendiente) |
+| Patrones distintos por episodio | ≥ 15 | **16** (antes 12) |
+| Uso máximo de un solo patrón | ≤ 15 % | **8,6 %** (antes 24,1 %) |
+| Escenas cuyo píxel decide su patrón | 58 | **33** ⚠ (antes 0) |
+| `kind` en el camino heredado | 0 | **15** ⚠ (antes 34) |
+| Incidencias FC-R-020 sobre `geometry` | 0 | **6** (antes 12) |
+| Líneas en los tres componentes monolíticos | 0 | **1.522** ⚠ (antes 3.353) |
+| Patrones `planned` que el plan elige | 0 | **0** (antes 2) |
 
-Las dos métricas con ⚠ son deuda conocida y están explicadas arriba: la
-cobertura de menciones la limita el presupuesto de 3 cues por ventana de 4 s
-—subirlo satura la pantalla—, y los tres componentes por minuto siguen ahí a la
-espera del test de regresión visual.
+Las métricas con ⚠ son deuda conocida y están explicadas arriba. La cobertura de
+menciones la limita el presupuesto de 3 cues por ventana de 4 s —subirlo satura
+la pantalla—. Los tres componentes por minuto han pasado de 3.353 a 1.522 líneas
+y ya no son «componentes de episodio» genéricos: lo que queda dentro son las
+siete escenas cuyo patrón no puede alimentarse con la evidencia que llevan.
+
+El eje `geometry` bajó solo, sin tocar ninguna escena: mide la forma que el
+render pinta, y desde que 33 escenas se resuelven por patrón esa forma la fija
+el patrón —que el selector ya reparte bien— y no el `componentKey`.
 
 ---
 

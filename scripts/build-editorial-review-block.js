@@ -1,10 +1,22 @@
 #!/usr/bin/env node
 import {spawn} from 'node:child_process';
-import {access, mkdir, readFile, writeFile} from 'node:fs/promises';
+import {access, copyFile, mkdir, readFile, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+/**
+ * FC-R-101 — Un bloque aprobable son cinco artefactos, no dos ficheros JSON:
+ * render-props, manifiesto, audio recortado, cinco stills de QA y un MP4
+ * independiente. Aprobar un bloque tiene que ser ver el bloque.
+ */
+const QA_STILL_CHECKPOINTS = [0.08, 0.3, 0.52, 0.74, 0.94];
+const REMOTION_DIRECTORY = path.join(ROOT, 'remotion-animations');
+const REMOTION_CLI = path.join(
+  REMOTION_DIRECTORY, 'node_modules', '@remotion', 'cli', 'remotion-cli.js'
+);
+const COMPOSITION_ID = 'Finance-Cavaliers-Episode';
 
 function parseArgs(argv) {
   const result = {};
@@ -23,10 +35,10 @@ function parseArgs(argv) {
   return result;
 }
 
-function run(command, args) {
+function run(command, args, {cwd = ROOT} = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
-      cwd: ROOT,
+      cwd,
       stdio: 'inherit',
       windowsHide: true
     });
@@ -52,9 +64,13 @@ const args = parseArgs(process.argv.slice(2));
 if (!args.props || !args.from || !args.to || !args.id) {
   throw new Error(
     'Uso: node scripts/build-editorial-review-block.js ' +
-      '--props <render-props.json> --from <scene-id> --to <scene-id> --id <02>'
+      '--props <render-props.json> --from <scene-id> --to <scene-id> --id <02> ' +
+      '[--skip-render]\n' +
+      '  --skip-render deja el bloque sin stills ni MP4: FC-R-101 lo marcará ' +
+      'incompleto, que es exactamente lo que es.'
   );
 }
+const skipRender = args['skip-render'] === true;
 
 const propsFile = path.resolve(ROOT, args.props);
 const props = JSON.parse(await readFile(propsFile, 'utf8'));
@@ -146,22 +162,101 @@ const blockProps = {
 };
 const outputProps = path.join(visualsDirectory, 'render-props.json');
 const outputManifest = path.join(visualsDirectory, 'manifest.json');
-await Promise.all([
-  writeFile(outputProps, `${JSON.stringify(blockProps, null, 2)}\n`, 'utf8'),
-  writeFile(outputManifest, `${JSON.stringify({
-    version: 1,
-    id: blockSlug,
-    sourceProps: path.relative(ROOT, propsFile).split(path.sep).join('/'),
-    sourceStartSeconds,
-    contentEndSeconds,
-    sourceEndSeconds,
-    tailSeconds,
-    durationSeconds,
-    sceneIds: selected.map((scene) => scene.id),
-    audioPath: blockProps.audioPath,
-    renderProps: path.relative(ROOT, outputProps).split(path.sep).join('/')
-  }, null, 2)}\n`, 'utf8')
-]);
+await writeFile(outputProps, `${JSON.stringify(blockProps, null, 2)}\n`, 'utf8');
+
+// El audio recortado vive en `public/` porque el render lo necesita ahí, pero el
+// bloque también lo lleva: se revisa —y se archiva— como una unidad.
+const blockAudio = path.join(visualsDirectory, 'audio.m4a');
+await copyFile(outputAudio, blockAudio);
+
+const fps = Number(props.fps) || 30;
+const totalFrames = Math.max(1, Math.round(durationSeconds * fps));
+const blockVideo = path.join(visualsDirectory, 'block.mp4');
+const stills = QA_STILL_CHECKPOINTS.map((checkpoint, position) => ({
+  checkpoint,
+  frame: Math.min(totalFrames - 1, Math.round((totalFrames - 1) * checkpoint)),
+  file: path.join(
+    visualsDirectory,
+    `still-${String(position + 1).padStart(2, '0')}.png`
+  )
+}));
+
+const rendered = [];
+if (skipRender) {
+  console.warn(
+    `[${blockSlug}] --skip-render: no se generan stills ni MP4. El bloque queda ` +
+      'incompleto para FC-R-101.'
+  );
+} else {
+  // Los cinco stills se reparten por el bloque, no se agolpan al principio: un
+  // contact sheet de los cinco primeros segundos no demuestra nada del minuto.
+  for (const still of stills) {
+    if (await exists(still.file)) continue;
+    await run(process.execPath, [
+      REMOTION_CLI,
+      'still',
+      'src/index.ts',
+      COMPOSITION_ID,
+      still.file,
+      `--props=${outputProps}`,
+      `--frame=${still.frame}`,
+      '--image-format=png'
+    ], {cwd: REMOTION_DIRECTORY});
+    rendered.push(path.basename(still.file));
+  }
+  if (!(await exists(blockVideo))) {
+    await run(process.execPath, [
+      REMOTION_CLI,
+      'render',
+      'src/index.ts',
+      COMPOSITION_ID,
+      blockVideo,
+      `--props=${outputProps}`
+    ], {cwd: REMOTION_DIRECTORY});
+    rendered.push(path.basename(blockVideo));
+  }
+}
+
+const relative = (file) => path.relative(ROOT, file).split(path.sep).join('/');
+const artifacts = [
+  'render-props.json',
+  'manifest.json',
+  'audio.m4a',
+  ...stills.map((still) => path.basename(still.file)),
+  'block.mp4'
+];
+const missing = [];
+for (const name of artifacts) {
+  if (name === 'manifest.json') continue;
+  if (!(await exists(path.join(visualsDirectory, name)))) missing.push(name);
+}
+
+await writeFile(outputManifest, `${JSON.stringify({
+  version: 2,
+  id: blockSlug,
+  sourceProps: relative(propsFile),
+  sourceStartSeconds,
+  contentEndSeconds,
+  sourceEndSeconds,
+  tailSeconds,
+  durationSeconds,
+  fps,
+  frames: totalFrames,
+  sceneIds: selected.map((scene) => scene.id),
+  audioPath: blockProps.audioPath,
+  renderProps: relative(outputProps),
+  // La lista es la que lee `delivery-completeness` a través de
+  // `collectReviewBlockArtifacts`; se declara aquí para que un bloque
+  // incompleto se vea en el propio manifiesto y no solo en el informe.
+  artifacts,
+  missingArtifacts: missing,
+  qaStills: stills.map((still) => ({
+    file: path.basename(still.file),
+    frame: still.frame,
+    atSeconds: Number((still.frame / fps).toFixed(3)),
+    checkpoint: still.checkpoint
+  }))
+}, null, 2)}\n`, 'utf8');
 
 console.log(JSON.stringify({
   block: blockSlug,
@@ -172,5 +267,13 @@ console.log(JSON.stringify({
   durationSeconds,
   sceneIds: selected.map((scene) => scene.id),
   propsFile: outputProps,
-  audioFile: outputAudio
+  audioFile: outputAudio,
+  rendered,
+  missingArtifacts: missing
 }, null, 2));
+
+if (missing.length) {
+  console.warn(
+    `[${blockSlug}] faltan ${missing.join(', ')}: el bloque no cumple FC-R-101.`
+  );
+}

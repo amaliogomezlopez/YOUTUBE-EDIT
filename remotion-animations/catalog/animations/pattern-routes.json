@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "catalogFamily": "animations",
+  "purpose": "Qué composiciones del catálogo sabe pintar el render editorial. `patterns.json` dice qué composición implementa cada patrón; este fichero dice cuáles de ellas tienen adaptador `escena → props` en `src/editorial/PatternScenes.tsx`.",
+  "contract": {
+    "routed": "compositionId con adaptador escrito y validado con zod. El router falla al cargar si esta lista y el registro de componentes no coinciden exactamente, así que ninguno de los dos puede derivar sin el otro.",
+    "unrouted": "compositionId declarado `ready` en el catálogo pero sin adaptador, con el motivo por el que todavía no lo tiene. Una entrada sin motivo no se acepta: sería una laguna silenciosa.",
+    "note": "El puente patternId → compositionId NO se escribe aquí. Sale de `implementation.compositionId` de patterns.json.",
+    "geometryByComposition": "Forma dominante en pantalla de cada composición enrutada (ANM-H02). Mientras el render decidía por `kind`, el eje `geometry` de FC-R-020 salía del binding del componentKey; para una escena que ya se resuelve por patrón, esa cifra mediría un componente que no se está pintando. Los `kind` de `kindFallback` siguen midiéndose por el binding, que es lo que de verdad se ve.",
+    "kindFallback": "Kinds cuyo píxel todavía no lo decide su patrón, con el motivo. `SceneRegistry.KIND_FALLBACK` tiene que coincidir exactamente con esta lista o el render falla al cargar: es la deuda de ANM-E03, y se cuenta desde aquí."
+  },
+  "geometryByComposition": {
+    "Toolkit-KineticNumber": "metric-card",
+    "Toolkit-RisingHistogram": "bars",
+    "Toolkit-LineChartZoom": "line",
+    "Scout-RadialOrbitSummary": "radial",
+    "Scout-ConnectedCardChain": "node-graph",
+    "Scout-CapacityMatrix": "grid",
+    "Pattern-Common-Baseline": "lanes",
+    "Pattern-Timeline-Milestones": "timeline",
+    "Pattern-Ranking": "bars",
+    "Pattern-Accumulation": "sphere",
+    "Pattern-Funnel-Filter": "funnel",
+    "Pattern-Branch-Merge": "node-graph",
+    "Pattern-Contagion-Spread": "radial",
+    "Pattern-Logo-Ecosystem": "logo-row",
+    "Pattern-Kinetic-Phrase": "typography"
+  },
+  "kindFallback": [
+    {"kind": "claim-audit", "reason": "`comparison.before-after-wipe` exige dos capturas del mismo encuadre; la escena aporta cifras auditadas, no imágenes."},
+    {"kind": "bubble-trigger", "reason": "`concept.scale-proportion` necesita una proporción declarada; la escena no aporta ni cifras ni etiquetas comparables."},
+    {"kind": "market-gravity", "reason": "Misma carencia que bubble-trigger: la escena es una metáfora sin magnitudes que el patrón cuantitativo pueda representar."},
+    {"kind": "history-rewind", "reason": "`time.timeline-milestones` exige hitos con etiqueta; la escena no declara ninguno."},
+    {"kind": "dominance-facade", "reason": "`data.part-to-whole` exige parte y total verificables; la escena solo aporta cuatro logos."},
+    {"kind": "leadership-lag", "reason": "`data.line-trend-zoom` exige una serie ordenada; la escena no lleva `chartData`."},
+    {"kind": "claim-evidence-gap", "reason": "Misma carencia que claim-audit: `comparison.before-after-wipe` sin las dos imágenes comparables."},
+    {"kind": "concentration-grid", "reason": "scene-022 recibe `data.part-to-whole` sin parte ni total; migrar solo las otras tres partiría el kind en dos caminos."},
+    {"kind": "historical-timeline", "reason": "scene-024 recibe `data.line-trend-zoom` sin serie; el resto del kind sí podría migrar."},
+    {"kind": "sloos-chart", "reason": "Recibe `data.part-to-whole` y `data.bar-focus`; la escena lleva 145 puntos de serie, ni proporción ni categorías."},
+    {"kind": "before-after", "reason": "`comparison.before-after-wipe` exige dos imágenes; la escena aporta dos cifras sobre la misma serie."},
+    {"kind": "company-orbit", "reason": "Recibe `data.part-to-whole` y `concept.scale-proportion` sin cifra de proporción alguna."},
+    {"kind": "brand-cta", "reason": "`asset.logo-ecosystem` ya está implementado, pero el cierre de marca no declara participantes ni logos: no es un ecosistema, es una firma."},
+    {"kind": "split-lines", "reason": "Ninguna escena del episodio 1 lo usa: migrarlo sería hacerlo a ciegas, sin still que compare el antes y el después."},
+    {"kind": "market-ticker", "reason": "Ninguna escena del episodio 1 lo usa: migrarlo sería hacerlo a ciegas, sin still que compare el antes y el después."}
+  ],
+  "routed": [
+    "Toolkit-KineticNumber",
+    "Toolkit-RisingHistogram",
+    "Toolkit-LineChartZoom",
+    "Scout-RadialOrbitSummary",
+    "Scout-ConnectedCardChain",
+    "Scout-CapacityMatrix",
+    "Pattern-Common-Baseline",
+    "Pattern-Timeline-Milestones",
+    "Pattern-Ranking",
+    "Pattern-Accumulation",
+    "Pattern-Funnel-Filter",
+    "Pattern-Branch-Merge",
+    "Pattern-Contagion-Spread",
+    "Pattern-Logo-Ecosystem",
+    "Pattern-Kinetic-Phrase"
+  ],
+  "unrouted": [
+    {
+      "compositionId": "Pattern-Before-After-Wipe",
+      "patternId": "comparison.before-after-wipe",
+      "reason": "El patrón revela un estado posterior sobre la MISMA imagen y exige `beforeImagePath`/`afterImagePath`. Las escenas editoriales que lo tienen asignado (before-after, claim-audit, claim-evidence-gap) aportan cifras, no capturas comparables: alimentarlo con la imagen por defecto del catálogo sería inventar evidencia."
+    },
+    {
+      "compositionId": "Pattern-Screenshot-Spotlight",
+      "patternId": "asset.screenshot-spotlight",
+      "reason": "Exige una captura legible y una región objetivo. Ninguna escena del episodio 1 declara captura ni región; ningún binding lo elige."
+    },
+    {
+      "compositionId": "Pattern-Photo-Parallax",
+      "patternId": "asset.photo-parallax",
+      "reason": "Exige una foto con sujeto identificable. Ningún binding lo elige y las escenas no declaran fotografía con relevancia editorial."
+    },
+    {
+      "compositionId": "Chart-Annotated-Range",
+      "patternId": "asset.annotated-chart",
+      "reason": "Exige una gráfica aportada como imagen con región de trazado y límites de ejes calibrados (`npm run remotion:ingest:chart`). Una escena editorial no puede sintetizar esa calibración; deducir los ejes sería fabricar la fuente."
+    }
+  ]
+}

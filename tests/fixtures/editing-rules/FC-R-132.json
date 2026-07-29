@@ -1,0 +1,41 @@
+{
+  "ruleId": "FC-R-132",
+  "expect": "fail",
+  "check": "cue-target-declared",
+  "note": "Un patternId escrito a mano que el binding no declara. Diversificar patrones es rotar entre los candidatos del catálogo, no inventarlos en la escena (ANM-H05).",
+  "context": {
+    "words": [
+      {
+        "text": "uno",
+        "start": 0,
+        "end": 0.4
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture",
+        "componentKey": "sloos-chart",
+        "patternId": "asset.photo-parallax",
+        "startSeconds": 0,
+        "endSeconds": 6,
+        "geometry": "line",
+        "emphasis": "zoom",
+        "visualIntent": "chart",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": [],
+        "props": {}
+      }
+    ],
+    "coverage": [],
+    "issues": [
+      {
+        "code": "pattern-not-a-candidate",
+        "severity": "error",
+        "sceneId": "scene-fixture",
+        "message": "El patrón asset.photo-parallax no está declarado para «sloos-chart»: el binding admite data.line-trend-zoom, data.part-to-whole, data.bar-focus. Amplía patternCandidates en pattern-bindings.json en vez de escribir el patrón en la escena."
+      }
+    ]
+  }
+}

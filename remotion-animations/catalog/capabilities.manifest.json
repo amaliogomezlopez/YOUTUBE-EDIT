@@ -122,7 +122,10 @@
     "Pattern-Before-After-Wipe",
     "Pattern-Branch-Merge",
     "Pattern-Common-Baseline",
+    "Pattern-Contagion-Spread",
     "Pattern-Funnel-Filter",
+    "Pattern-Kinetic-Phrase",
+    "Pattern-Logo-Ecosystem",
     "Pattern-Photo-Parallax",
     "Pattern-Ranking",
     "Pattern-Screenshot-Spotlight",
@@ -157,10 +160,10 @@
     },
     {
       "id": "asset.logo-ecosystem",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Logo-Ecosystem",
       "variants": [],
-      "component": null,
+      "component": "LogoEcosystem",
       "ingestion": null,
       "supportedFormats": [
         "landscape"
@@ -410,7 +413,7 @@
     {
       "id": "process.contagion-spread",
       "status": "ready",
-      "compositionId": "Finance-Cavaliers-Episode",
+      "compositionId": "Pattern-Contagion-Spread",
       "variants": [],
       "component": "ContagionSpread",
       "ingestion": null,
@@ -456,10 +459,10 @@
     },
     {
       "id": "text.kinetic-phrase",
-      "status": "planned",
-      "compositionId": null,
+      "status": "ready",
+      "compositionId": "Pattern-Kinetic-Phrase",
       "variants": [],
-      "component": null,
+      "component": "KineticPhrase",
       "ingestion": null,
       "supportedFormats": [
         "landscape"

@@ -9,13 +9,6 @@
   ],
   "exceptions": [
     {
-      "ruleId": "FC-R-020",
-      "episodeId": "episode-finance-cavaliers-001",
-      "reason": "El episodio 1 se montó con `patternForKind` antes de que existiera el selector con ventana deslizante. La monotonía de patrón está diagnosticada en variety-report.json y se corrige al rediseñar los bloques, no parcheando el plan actual.",
-      "recordedAt": "2026-07-29",
-      "owner": "Amalio"
-    },
-    {
       "ruleId": "FC-R-003",
       "episodeId": "episode-finance-cavaliers-001",
       "reason": "Cinco cifras del episodio 1 son claims marcados `blocked` en la auditoría factual: no se visualizan a propósito hasta regrabar la locución.",

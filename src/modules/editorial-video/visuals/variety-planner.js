@@ -52,9 +52,17 @@ export function planSceneVariety(scenes, {
 } = {}) {
   const history = [];
   return scenes.map((scene, position) => {
-    const binding = registry?.get(scene.componentKey ?? scene.kind) ?? null;
-    const geometry = scene.geometry ?? binding?.geometry ?? 'unknown';
+    const componentKey = scene.componentKey ?? scene.kind;
+    const binding = registry?.get(componentKey) ?? null;
     const patternId = scene.patternId ?? binding?.patternId ?? 'unknown';
+    // ANM-E03/H02 — La geometría es lo que domina la pantalla, y desde que el
+    // render resuelve por patrón, quien la fija es el patrón. Para los `kind`
+    // que siguen en el camino heredado la sigue fijando el binding: ahí el
+    // componente antiguo es lo que de verdad se pinta.
+    const geometry = scene.geometry
+      ?? registry?.geometryFor?.(componentKey, patternId)
+      ?? binding?.geometry
+      ?? 'unknown';
     const camera = scene.camera ?? (
       (scene.cues ?? []).some((cue) => cue.action === 'zoom') ? 'focus-zoom' : 'static'
     );
@@ -93,7 +101,10 @@ export function planSceneVariety(scenes, {
       emphasis,
       syntheticAxes: declaresPalette ? [] : ['palette'],
       artDirection: variety.selected.artDirection,
-      varietyReasons: variety.reasons
+      // La elección de patrón la razona el selector aguas arriba (ANM-H05) y se
+      // conserva: sobrescribirla aquí borraba la única traza de por qué esta
+      // escena se apartó del patrón preferente de su binding.
+      varietyReasons: [...(scene.varietyReasons ?? []), ...variety.reasons]
     };
   });
 }

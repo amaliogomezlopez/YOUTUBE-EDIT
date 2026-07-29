@@ -665,8 +665,12 @@
       "id": "asset.logo-ecosystem",
       "family": "asset",
       "label": "Ecosistema de logos",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "LogoEcosystem",
+        "compositionId": "Pattern-Logo-Ecosystem",
+        "source": "src/motion/LogoEcosystem.tsx"
+      },
       "communicates": "Integraciones, participantes o herramientas conectadas a un núcleo.",
       "selectWhen": "Los logos identifican actores reales y la relación está expresada.",
       "rejectWhen": "Los logos solo decoran una lista de nombres.",
@@ -701,8 +705,12 @@
       "id": "text.kinetic-phrase",
       "family": "text",
       "label": "Frase cinética transformativa",
-      "status": "planned",
-      "implementation": null,
+      "status": "ready",
+      "implementation": {
+        "component": "KineticPhrase",
+        "compositionId": "Pattern-Kinetic-Phrase",
+        "source": "src/motion/KineticPhrase.tsx"
+      },
       "communicates": "Una idea breve cuyo cambio de palabras o estructura es el mensaje.",
       "selectWhen": "La frase tiene menos de ocho palabras y admite reemplazo, tachado, compresión o reordenación.",
       "rejectWhen": "Solo duplicaría los subtítulos o haría aparecer palabras.",
@@ -722,8 +730,8 @@
       "status": "ready",
       "implementation": {
         "component": "ContagionSpread",
-        "compositionId": "Finance-Cavaliers-Episode",
-        "source": "src/editorial/ThirdMinuteNarrativeScene.tsx"
+        "compositionId": "Pattern-Contagion-Spread",
+        "source": "src/motion/ContagionSpread.tsx"
       },
       "communicates": "Un deterioro nace en un núcleo y cambia progresivamente el estado de varios destinos.",
       "selectWhen": "La locución describe contagio, propagación, infección o transmisión desde un origen identificable.",

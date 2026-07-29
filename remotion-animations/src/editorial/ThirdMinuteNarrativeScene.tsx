@@ -219,48 +219,6 @@ const DotcomCards: React.FC<{
   );
 };
 
-const HistoricalLeaders: React.FC<{scene: EditorialScene}> = ({scene}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const era = pulse(scene, "dotcom-era", frame, fps);
-  return (
-    <>
-      <div
-        style={{
-          color: era ? C.gold : C.muted,
-          fontFamily: DATA_FONT_FAMILY,
-          fontSize: 30 + era * 6,
-          fontWeight: 900,
-          left: 0,
-          letterSpacing: 2,
-          position: "absolute",
-          right: 0,
-          textAlign: "center",
-          top: 265,
-        }}
-      >
-        1995 ━━━━━ FINALES DE LOS 90 ━━━━━ 2000
-      </div>
-      <DotcomCards scene={scene} />
-      <div
-        style={{
-          color: C.cyan,
-          fontFamily: FINANCE_FONT_FAMILY,
-          fontSize: 22,
-          fontWeight: 800,
-          left: 0,
-          position: "absolute",
-          right: 0,
-          textAlign: "center",
-          top: 690,
-        }}
-      >
-        LOS CUATRO JINETES
-      </div>
-    </>
-  );
-};
-
 const DominanceFacade: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -485,166 +443,6 @@ const LeadershipLag: React.FC<{scene: EditorialScene}> = ({scene}) => {
   );
 };
 
-const ContagionSpread: React.FC<{scene: EditorialScene}> = ({scene}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const contagion = pulse(scene, "contagion", frame, fps);
-  const sectors = ["FINANZAS", "INDUSTRIA", "CONSUMO", "SALUD", "ENERGÍA", "MERCADO"];
-  const coreX = 960;
-  const coreY = 540;
-  const coreRadius = 104;
-  return (
-    <>
-      <DotcomCards scene={scene} top={225} compact />
-      <svg height="100%" viewBox="0 0 1920 1080" width="100%">
-        {sectors.map((label, index) => {
-          const angle = (Math.PI * 2 * index) / sectors.length;
-          const baseX = 960 + Math.cos(angle) * 560;
-          const baseY = 720 + Math.sin(angle) * 155;
-          const infected = Math.max(0, Math.min(1, contagion * 1.7 - index * 0.12));
-          const drift = infected * 22;
-          const x = baseX + Math.cos(angle) * drift;
-          const y = baseY + Math.sin(angle) * drift;
-          const dx = x - coreX;
-          const dy = y - coreY;
-          const length = Math.max(1, Math.hypot(dx, dy));
-          const unitX = dx / length;
-          const unitY = dy / length;
-          const startX = coreX + unitX * coreRadius;
-          const startY = coreY + unitY * coreRadius;
-          const rectangleFactor = Math.min(
-            105 / Math.max(0.001, Math.abs(dx)),
-            41 / Math.max(0.001, Math.abs(dy)),
-          );
-          const endX = x - dx * rectangleFactor;
-          const endY = y - dy * rectangleFactor;
-          const shake =
-            infected > 0.15
-              ? Math.sin(frame * 0.72 + index * 1.9) * infected * 4
-              : 0;
-          return (
-            <g key={label}>
-              <line
-                stroke={alpha(C.red, 0.22 + infected * 0.72)}
-                strokeDasharray={`${8 + infected * 8} 10`}
-                strokeDashoffset={-frame * infected * 0.8}
-                strokeWidth={3 + infected * 2.5}
-                x1={startX}
-                x2={endX}
-                y1={startY}
-                y2={endY}
-              />
-              <g transform={`translate(${shake} 0)`}>
-                <rect
-                  fill={
-                    infected > 0.2
-                      ? alpha(C.red, 0.16 + infected * 0.2)
-                      : alpha(C.panel, 0.95)
-                  }
-                  height="82"
-                  rx="12"
-                  stroke={
-                    infected > 0.2 ? C.red : alpha(C.white, 0.16)
-                  }
-                  strokeWidth={infected > 0.2 ? 3 : 2}
-                  width="210"
-                  x={x - 105}
-                  y={y - 41}
-                />
-                <text
-                  fill={infected > 0.2 ? C.white : C.muted}
-                  fontFamily={DATA_FONT_FAMILY}
-                  fontSize="17"
-                  fontWeight="800"
-                  textAnchor="middle"
-                  x={x}
-                  y={y + 6}
-                >
-                  {label}
-                </text>
-                {infected > 0.12 ? (
-                  <g transform={`translate(${x + 86} ${y - 31}) scale(${0.7 + infected * 0.3})`}>
-                    <circle fill={C.red} r="18" />
-                    <text
-                      fill={C.white}
-                      fontFamily={DATA_FONT_FAMILY}
-                      fontSize="23"
-                      fontWeight="900"
-                      textAnchor="middle"
-                      x="0"
-                      y="8"
-                    >
-                      !
-                    </text>
-                  </g>
-                ) : null}
-              </g>
-            </g>
-          );
-        })}
-        {[0, 1, 2].map((ring) => {
-          const phase = Math.max(0, Math.min(1, contagion * 1.45 - ring * 0.2));
-          return (
-            <circle
-              key={ring}
-              cx={coreX}
-              cy={coreY}
-              fill="none"
-              opacity={(1 - phase) * 0.7}
-              r={coreRadius + phase * (210 + ring * 105)}
-              stroke={C.red}
-              strokeWidth={4 - ring * 0.7}
-            />
-          );
-        })}
-        <circle
-          cx={coreX}
-          cy={coreY}
-          fill={alpha(C.red, 0.16 + contagion * 0.18)}
-          r={coreRadius}
-          stroke={C.red}
-          strokeWidth="4"
-        />
-        <circle
-          cx={coreX}
-          cy={coreY}
-          fill={C.red}
-          opacity={contagion}
-          r={9 + contagion * 5}
-        />
-      </svg>
-    </>
-  );
-};
-
-const ContagionLabel: React.FC<{scene: EditorialScene}> = ({scene}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const whole = pulse(scene, "whole-market", frame, fps);
-  return (
-    <div
-      style={{
-        background: alpha(C.bg, 0.96),
-        border: `2px solid ${alpha(C.red, 0.78)}`,
-        borderRadius: 12,
-        boxShadow: `0 0 24px ${alpha(C.red, 0.22)}`,
-        color: C.white,
-        fontFamily: FINANCE_FONT_FAMILY,
-        fontSize: 28,
-        fontWeight: 900,
-        left: "50%",
-        padding: "8px 20px 7px",
-        position: "absolute",
-        top: 372,
-        transform: "translateX(-50%)",
-        zIndex: 7,
-      }}
-    >
-      {whole > 0.05 ? "TODO EL MERCADO" : "CONTAGIO"}
-    </div>
-  );
-};
-
 const ClaimEvidenceGap: React.FC<{scene: EditorialScene}> = ({scene}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
@@ -698,17 +496,11 @@ export const ThirdMinuteNarrativeScene: React.FC<{scene: EditorialScene}> = ({
 }) => {
   let content: React.ReactNode;
   switch (scene.kind) {
-    case "historical-leaders":
-      content = <HistoricalLeaders scene={scene} />;
-      break;
     case "dominance-facade":
       content = <DominanceFacade scene={scene} />;
       break;
     case "leadership-lag":
       content = <LeadershipLag scene={scene} />;
-      break;
-    case "contagion-spread":
-      content = <ContagionSpread scene={scene} />;
       break;
     default:
       content = <ClaimEvidenceGap scene={scene} />;
@@ -718,7 +510,6 @@ export const ThirdMinuteNarrativeScene: React.FC<{scene: EditorialScene}> = ({
       <Camera scene={scene}>
         {content}
       </Camera>
-      {scene.kind === "contagion-spread" ? <ContagionLabel scene={scene} /> : null}
       <Header scene={scene} />
     </>
   );

@@ -53,7 +53,8 @@
     "prepare:sfx": "node scripts/prepare-sfx.mjs",
     "prepare:fonts": "node scripts/prepare-fonts.mjs",
     "build:review-studio": "node scripts/build-review-studio.mjs",
-    "review:package": "node scripts/render-review-package.mjs"
+    "review:package": "node scripts/render-review-package.mjs",
+    "stills:episode": "node scripts/render-episode-stills.mjs"
   },
   "sideEffects": [
     "*.css"

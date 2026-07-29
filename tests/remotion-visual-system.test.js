@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
 import test from 'node:test';
 import {
   contrastRatio,
@@ -52,4 +53,79 @@ test('el registro de asset conserva procedencia, tratamiento y punto focal', () 
   assert.equal(record.assetType, 'screenshot');
   assert.deepEqual(record.focalPoint, {x: 61, y: 44});
   assert.equal(record.sourceSha256, 'b'.repeat(64));
+});
+
+// ---------------------------------------------------------------------------
+// ANM-E01 — El puente catálogo → render no puede desincronizarse. `remotion:check`
+// lo comprueba al cargar el bundle; esto lo comprueba sin navegador, para que
+// `npm test` cace la deriva antes.
+// ---------------------------------------------------------------------------
+
+const readCatalog = async (name) =>
+  JSON.parse(
+    await readFile(
+      new URL(`../remotion-animations/catalog/animations/${name}`, import.meta.url),
+      'utf8'
+    )
+  );
+
+test('cada composición enrutada implementa un patrón `ready` del catálogo', async () => {
+  const [patterns, routes] = await Promise.all([
+    readCatalog('patterns.json'),
+    readCatalog('pattern-routes.json')
+  ]);
+  const readyCompositions = new Set(
+    patterns.patterns
+      .filter((pattern) => pattern.status === 'ready' && pattern.implementation?.compositionId)
+      .map((pattern) => pattern.implementation.compositionId)
+  );
+  for (const compositionId of routes.routed) {
+    assert.ok(
+      readyCompositions.has(compositionId),
+      `${compositionId} está enrutado y ningún patrón ready lo implementa`
+    );
+  }
+});
+
+test('un patrón `ready` sin adaptador tiene que declarar el motivo', async () => {
+  const [patterns, routes] = await Promise.all([
+    readCatalog('patterns.json'),
+    readCatalog('pattern-routes.json')
+  ]);
+  const routed = new Set(routes.routed);
+  const excused = new Map(
+    routes.unrouted.map((entry) => [entry.compositionId, entry.reason])
+  );
+  for (const pattern of patterns.patterns) {
+    const compositionId = pattern.implementation?.compositionId;
+    if (pattern.status !== 'ready' || !compositionId) continue;
+    if (routed.has(compositionId)) continue;
+    // Una laguna silenciosa es peor que una declarada: sin motivo escrito nadie
+    // sabe si falta trabajo o si el patrón no puede alimentarse.
+    assert.ok(
+      excused.get(compositionId),
+      `${compositionId} no está enrutado ni tiene motivo en unrouted`
+    );
+  }
+});
+
+test('cada composición enrutada declara su geometría dominante', async () => {
+  const routes = await readCatalog('pattern-routes.json');
+  for (const compositionId of routes.routed) {
+    assert.ok(
+      routes.geometryByComposition[compositionId],
+      `${compositionId} no declara geometría: FC-R-020 mediría «unknown»`
+    );
+  }
+});
+
+test('ningún kind del camino heredado se queda sin motivo', async () => {
+  const routes = await readCatalog('pattern-routes.json');
+  for (const entry of routes.kindFallback) {
+    assert.ok(entry.kind, 'una entrada de kindFallback sin kind');
+    assert.ok(
+      entry.reason && entry.reason.length > 20,
+      `${entry.kind} sigue en el camino heredado sin motivo escrito`
+    );
+  }
 });

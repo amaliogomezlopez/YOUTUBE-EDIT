@@ -33,7 +33,8 @@ const CODE_MAPPED_CHECKS = {
     'cue-target-missing',
     'cue-target-unresolved',
     'pattern-binding-missing',
-    'pattern-unknown'
+    'pattern-unknown',
+    'pattern-not-a-candidate'
   ],
   'divergence-range-for-interval': ['range-target-without-divergence-effect'],
   'sound-file-share': ['sound-file-share'],
