@@ -18,6 +18,7 @@ import {
   Soundtrack,
 } from "../motion/SoundDesign";
 import {MarketNarrativeScene} from "./MarketNarrativeScene";
+import {SecondMinuteNarrativeScene} from "./SecondMinuteNarrativeScene";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -1686,6 +1687,14 @@ export const FinanceEditorialScene: React.FC<{
     case "claim-audit":
       content = <MarketNarrativeScene scene={scene} />;
       break;
+    case "market-engine":
+    case "ai-core":
+    case "correction-alert":
+    case "bubble-trigger":
+    case "market-gravity":
+    case "history-rewind":
+      content = <SecondMinuteNarrativeScene scene={scene} />;
+      break;
     case "split-lines":
       content = <SplitLines scene={scene} accentColor={accentColor} />;
       break;
@@ -1754,7 +1763,17 @@ export const FinanceEditorialScene: React.FC<{
       ) : null}
       {headerVisible &&
       scene.assets.length > 0 &&
-      !["company-orbit", "mag7-weights", "sector-bars"].includes(scene.kind) ? (
+      ![
+        "company-orbit",
+        "mag7-weights",
+        "sector-bars",
+        "market-engine",
+        "ai-core",
+        "correction-alert",
+        "bubble-trigger",
+        "market-gravity",
+        "history-rewind",
+      ].includes(scene.kind) ? (
         <CompanyLogoRibbon scene={scene} />
       ) : null}
       <Soundtrack

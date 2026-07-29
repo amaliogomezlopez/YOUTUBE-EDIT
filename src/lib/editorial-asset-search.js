@@ -7,6 +7,8 @@ import {ROOT} from './utils.js';
 
 const PEXELS_PHOTO_SEARCH = 'https://api.pexels.com/v1/search';
 const PEXELS_VIDEO_SEARCH = 'https://api.pexels.com/v1/videos/search';
+const PIXABAY_PHOTO_SEARCH = 'https://pixabay.com/api/';
+const PIXABAY_VIDEO_SEARCH = 'https://pixabay.com/api/videos/';
 const BRANDFETCH_SEARCH = 'https://api.brandfetch.io/v2/search';
 const DEFAULT_CATALOG = path.join(
   ROOT,
@@ -46,6 +48,17 @@ function safeHttps(value) {
   } catch {
     return null;
   }
+}
+
+function interleave(lists) {
+  const result = [];
+  const longest = Math.max(0, ...lists.map((list) => list.length));
+  for (let index = 0; index < longest; index += 1) {
+    for (const list of lists) {
+      if (list[index]) result.push(list[index]);
+    }
+  }
+  return result;
 }
 
 function normalizeBrand(value) {
@@ -266,6 +279,98 @@ export async function searchPexels(query, {
   }).filter((item) => item.previewUrl && item.downloadUrl && item.sourceUrl);
 }
 
+export async function searchPixabay(query, {
+  kind = 'image',
+  limit = 18,
+  apiKey = process.env.PIXABAY_API_KEY,
+  fetchImpl = globalThis.fetch,
+  signal,
+  timeoutMs = 20_000
+} = {}) {
+  const wantedKind = cleanKind(kind);
+  if (!['image', 'video'].includes(wantedKind) || !apiKey) return [];
+  const url = new URL(
+    wantedKind === 'video' ? PIXABAY_VIDEO_SEARCH : PIXABAY_PHOTO_SEARCH
+  );
+  url.searchParams.set('key', apiKey);
+  url.searchParams.set('q', cleanQuery(query).slice(0, 100));
+  url.searchParams.set('per_page', String(Math.max(3, Math.min(30, limit))));
+  url.searchParams.set('safesearch', 'true');
+  url.searchParams.set('order', 'popular');
+  if (wantedKind === 'image') {
+    url.searchParams.set('image_type', 'photo');
+    url.searchParams.set('orientation', 'horizontal');
+    url.searchParams.set('min_width', '1280');
+    url.searchParams.set('min_height', '720');
+  } else {
+    url.searchParams.set('video_type', 'film');
+    url.searchParams.set('min_width', '1280');
+    url.searchParams.set('min_height', '720');
+  }
+  const response = await fetchWithTimeout(url, {}, {
+    fetchImpl,
+    signal,
+    timeoutMs
+  });
+  if (!response.ok) {
+    const error = new Error(`Pixabay respondió con HTTP ${response.status}.`);
+    error.code = 'PIXABAY_SEARCH_FAILED';
+    error.status = response.status === 429 ? 429 : 502;
+    throw error;
+  }
+  const payload = await response.json();
+  if (wantedKind === 'image') {
+    return (payload.hits || []).map((photo) => ({
+      id: `pixabay-photo-${photo.id}`,
+      provider: 'pixabay',
+      kind: 'image',
+      title: photo.tags || `Fotografía de ${photo.user || 'Pixabay'}`,
+      previewUrl: safeHttps(photo.webformatURL || photo.previewURL),
+      downloadUrl: safeHttps(photo.fullHDURL || photo.largeImageURL),
+      sourceUrl: safeHttps(photo.pageURL),
+      author: photo.user || null,
+      license: 'Pixabay Content License',
+      attribution: photo.user
+        ? `Imagen de ${photo.user} en Pixabay.`
+        : 'Imagen de Pixabay.',
+      width: Number(photo.imageWidth || photo.webformatWidth) || null,
+      height: Number(photo.imageHeight || photo.webformatHeight) || null,
+      durationSeconds: null,
+      imported: false
+    })).filter((item) =>
+      item.previewUrl && item.downloadUrl && item.sourceUrl
+    );
+  }
+  return (payload.hits || []).map((video) => {
+    const variants = Object.values(video.videos || {})
+      .filter((variant) => safeHttps(variant?.url))
+      .sort((left, right) => {
+        const leftDistance = Math.abs((left.width || 0) - 1920);
+        const rightDistance = Math.abs((right.width || 0) - 1920);
+        return leftDistance - rightDistance;
+      });
+    const selected = variants[0];
+    return {
+      id: `pixabay-video-${video.id}`,
+      provider: 'pixabay',
+      kind: 'video',
+      title: video.tags || `Vídeo de ${video.user || 'Pixabay'}`,
+      previewUrl: safeHttps(selected?.thumbnail),
+      downloadUrl: safeHttps(selected?.url),
+      sourceUrl: safeHttps(video.pageURL),
+      author: video.user || null,
+      license: 'Pixabay Content License',
+      attribution: video.user
+        ? `Vídeo de ${video.user} en Pixabay.`
+        : 'Vídeo de Pixabay.',
+      width: Number(selected?.width) || null,
+      height: Number(selected?.height) || null,
+      durationSeconds: Number(video.duration) || null,
+      imported: false
+    };
+  }).filter((item) => item.previewUrl && item.downloadUrl && item.sourceUrl);
+}
+
 export async function searchBrandfetch(query, {
   limit = 18,
   clientId = process.env.BRANDFETCH_CLIENT_ID,
@@ -319,6 +424,9 @@ export async function searchEditorialAssets({
     local: {configured: true},
     offlineLogos: {configured: true},
     pexels: {configured: Boolean(options.pexelsApiKey ?? env.PEXELS_API_KEY)},
+    pixabay: {
+      configured: Boolean(options.pixabayApiKey ?? env.PIXABAY_API_KEY)
+    },
     brandfetch: {
       configured: Boolean(options.brandfetchClientId ?? env.BRANDFETCH_CLIENT_ID)
     }
@@ -348,18 +456,58 @@ export async function searchEditorialAssets({
         });
       }
     } else {
-      remote = await searchPexels(clean, {
-        kind: wantedKind,
-        limit: safeLimit,
-        apiKey: options.pexelsApiKey ?? env.PEXELS_API_KEY,
-        fetchImpl: options.fetchImpl,
-        signal: options.signal,
-        timeoutMs: options.timeoutMs
+      const remoteSearches = [
+        {
+          provider: 'pexels',
+          configured: providers.pexels.configured,
+          run: () => searchPexels(clean, {
+            kind: wantedKind,
+            limit: safeLimit,
+            apiKey: options.pexelsApiKey ?? env.PEXELS_API_KEY,
+            fetchImpl: options.fetchImpl,
+            signal: options.signal,
+            timeoutMs: options.timeoutMs
+          })
+        },
+        {
+          provider: 'pixabay',
+          configured: providers.pixabay.configured,
+          run: () => searchPixabay(clean, {
+            kind: wantedKind,
+            limit: safeLimit,
+            apiKey: options.pixabayApiKey ?? env.PIXABAY_API_KEY,
+            fetchImpl: options.fetchImpl,
+            signal: options.signal,
+            timeoutMs: options.timeoutMs
+          })
+        }
+      ];
+      const configuredSearches = remoteSearches.filter(
+        (provider) => provider.configured
+      );
+      const settled = await Promise.allSettled(
+        configuredSearches.map((provider) => provider.run())
+      );
+      const providerResults = settled.map((result, index) => {
+        if (result.status === 'fulfilled') return result.value;
+        const provider = configuredSearches[index];
+        warnings.push({
+          code: result.reason?.code || `${provider.provider.toUpperCase()}_SEARCH_FAILED`,
+          message: `${provider.provider} no respondió; continúan disponibles los demás proveedores.`
+        });
+        return [];
       });
+      remote = interleave(providerResults);
       if (!providers.pexels.configured) {
         warnings.push({
           code: 'PEXELS_NOT_CONFIGURED',
           message: 'Configura PEXELS_API_KEY para buscar imágenes y vídeos remotos.'
+        });
+      }
+      if (!providers.pixabay.configured) {
+        warnings.push({
+          code: 'PIXABAY_NOT_CONFIGURED',
+          message: 'Configura PIXABAY_API_KEY para ampliar la búsqueda de imágenes y vídeos.'
         });
       }
     }

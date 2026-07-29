@@ -77,6 +77,18 @@ const MARKET_IMAGE_ASSET = {
   label: 'Pantalla de mercados',
   path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-screen.jpg'
 };
+const AI_SERVERS_IMAGE_ASSET = {
+  id: 'finance-cavaliers-ai-servers',
+  kind: 'image',
+  label: 'Centro de datos',
+  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-ai-servers.jpg'
+};
+const MARKET_ANALYST_IMAGE_ASSET = {
+  id: 'finance-cavaliers-market-analyst',
+  kind: 'image',
+  label: 'Analista de mercados',
+  path: 'assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-analyst.jpg'
+};
 const FIRST_MINUTE_BLUEPRINTS = [
   {
     kind: 'market-seed',
@@ -154,6 +166,76 @@ const FIRST_MINUTE_BLUEPRINTS = [
       {id: 'strange', anchorText: 'sumamente', atSeconds: 14.09, durationSeconds: 2.3, action: 'highlight', target: 'claim-mismatch', label: 'SUMAMENTE EXTRAÑO', tone: 'negative', sound: 'soft-impact'}
     ]
   }
+];
+const SECOND_MINUTE_BLUEPRINTS = [
+  {
+    kind: 'market-engine',
+    headline: 'El motor del mercado',
+    supportingText: 'Las mismas compañías que impulsaron el índice.',
+    semanticCues: [
+      {id: 'same-companies', anchorText: 'mismas', atSeconds: 0.4, durationSeconds: 1.6, action: 'reveal', target: 'company-logos', label: 'LAS MISMAS EMPRESAS', tone: 'gold', sound: 'rise-whoosh'},
+      {id: 'engine', anchorText: 'motor', atSeconds: 3.6, durationSeconds: 3, action: 'focus', target: 'market-engine', label: 'MOTOR ABSOLUTO', tone: 'gold', sound: 'digital-count'},
+      {id: 'whole-market', anchorText: 'mercado', atSeconds: 4.6, durationSeconds: 2.1, action: 'connect', target: 'market-output', label: 'TODO EL MERCADO', tone: 'cyan', sound: 'soft-impact'},
+      {id: 'named-companies', anchorText: 'Microsoft', atSeconds: 6.2, durationSeconds: 5.4, action: 'highlight', target: 'named-company-logos', label: 'MICROSOFT · NVIDIA · ALPHABET · AMAZON · META', tone: 'cyan', sound: 'data-tick'}
+    ]
+  },
+  {
+    kind: 'ai-core',
+    headline: 'El núcleo del boom de la IA',
+    supportingText: 'Tecnología, escala y una década de liderazgo bursátil.',
+    semanticCues: [
+      {id: 'ai-boom', anchorText: 'inteligencia', atSeconds: 0.7, durationSeconds: 3, action: 'focus', target: 'ai-core', label: 'BOOM DE LA IA', tone: 'cyan', sound: 'processing'},
+      {id: 'gains', anchorText: 'ganancias', atSeconds: 4.4, durationSeconds: 2.2, action: 'connect', target: 'market-gains', label: 'GANANCIAS DE LA BOLSA', tone: 'positive', sound: 'rise-whoosh'},
+      {id: 'decade', anchorText: 'década', atSeconds: 6.6, durationSeconds: 2, action: 'highlight', target: 'decade-track', label: 'UNA DÉCADA', tone: 'gold', sound: 'soft-impact'},
+      {id: 'however', anchorText: 'Sin', atSeconds: 8.2, durationSeconds: 3, action: 'shade', target: 'scene-turn', label: 'SIN EMBARGO', tone: 'negative', sound: 'alert-sting'}
+    ]
+  },
+  {
+    kind: 'correction-alert',
+    headline: 'La corrección activa las alarmas',
+    supportingText: 'La locución habla de una corrección significativa, sin fijar una cifra.',
+    semanticCues: [
+      {id: 'correction', anchorText: 'corrección', atSeconds: 0.3, durationSeconds: 2.2, action: 'highlight', target: 'correction-zone', label: 'CORRECCIÓN SIGNIFICATIVA', tone: 'negative', sound: 'quick-whip'},
+      {id: 'analysts', anchorText: 'analistas', atSeconds: 2.4, durationSeconds: 2, action: 'reveal', target: 'analyst-wave', label: 'OLEADA DE ANALISTAS', tone: 'cyan', sound: 'data-tick'},
+      {id: 'alarm', anchorText: 'alarma', atSeconds: 4.5, durationSeconds: 1.5, action: 'focus', target: 'warning-signal', label: 'VOZ DE ALARMA', tone: 'negative', sound: 'alert-sting'}
+    ]
+  },
+  {
+    kind: 'bubble-trigger',
+    headline: '¿El catalizador de la burbuja?',
+    supportingText: 'Una advertencia, no una predicción demostrada.',
+    semanticCues: [
+      {id: 'warning', anchorText: 'Advierte', atSeconds: 0.3, durationSeconds: 1.4, action: 'reveal', target: 'warning-label', label: 'ADVERTENCIA', tone: 'negative', sound: 'ui-pulse'},
+      {id: 'catalyst', anchorText: 'catavizador', atSeconds: 2.1, durationSeconds: 2.2, action: 'connect', target: 'catalyst-pin', label: 'CATALIZADOR', tone: 'gold', sound: 'quick-whip'},
+      {id: 'bubble', anchorText: 'burbuja', atSeconds: 5.4, durationSeconds: 2.4, action: 'highlight', target: 'tech-bubble', label: 'BURBUJA TECNOLÓGICA', tone: 'negative', sound: 'soft-impact'},
+      {id: 'wall-street', anchorText: 'Wall', atSeconds: 8.6, durationSeconds: 2.3, action: 'focus', target: 'wall-street-rule', label: 'REGLA NO ESCRITA', tone: 'neutral', sound: 'smooth-whoosh'}
+    ]
+  },
+  {
+    kind: 'market-gravity',
+    headline: 'La misma fuerza, en dos direcciones',
+    supportingText: 'Impulso arriba. Riesgo de arrastre abajo.',
+    semanticCues: [
+      {id: 'rise', anchorText: 'subir', atSeconds: 0.3, durationSeconds: 2.2, action: 'zoom', target: 'upward-force', label: 'IMPULSO', tone: 'positive', sound: 'rise-whoosh'},
+      {id: 'also', anchorText: 'también', atSeconds: 2.6, durationSeconds: 1.4, action: 'shade', target: 'direction-switch', label: 'TAMBIÉN', tone: 'negative', sound: 'quick-whip'},
+      {id: 'drag', anchorText: 'arrastrarlo', atSeconds: 4.1, durationSeconds: 2, action: 'focus', target: 'downward-force', label: 'ARRASTRE', tone: 'negative', sound: 'soft-impact'},
+      {id: 'abyss', anchorText: 'abismo', atSeconds: 5.7, durationSeconds: 1.2, action: 'highlight', target: 'abyss', label: 'ABISMO', tone: 'negative', sound: 'alert-sting'}
+    ]
+  },
+  {
+    kind: 'history-rewind',
+    headline: 'Este libreto ya ocurrió',
+    supportingText: 'La comparación histórica empieza en la burbuja puntocom.',
+    semanticCues: [
+      {id: 'not-first', anchorText: 'primera', atSeconds: 0.5, durationSeconds: 1.8, action: 'highlight', target: 'not-first-time', label: 'NO ES LA PRIMERA VEZ', tone: 'gold', sound: 'ui-pulse'},
+      {id: 'same-script', anchorText: 'visto', atSeconds: 2.5, durationSeconds: 2.6, action: 'reveal', target: 'history-track', label: 'EL MISMO LIBRETO', tone: 'cyan', sound: 'processing'},
+      {id: 'past', anchorText: 'pasado', atSeconds: 4.5, durationSeconds: 1.2, action: 'zoom', target: 'dotcom-destination', label: 'REBOBINAR', tone: 'negative', sound: 'quick-whip'}
+    ]
+  }
+];
+const EDITORIAL_BLUEPRINTS = [
+  ...FIRST_MINUTE_BLUEPRINTS,
+  ...SECOND_MINUTE_BLUEPRINTS
 ];
 const SLOOS_DDP_URL =
   'https://www.federalreserve.gov/datadownload/Choose.aspx?rel=sloos';
@@ -488,6 +570,12 @@ function patternForKind(kind) {
     'market-contrast': 'comparison.common-baseline',
     'mag7-relationship': 'process.signal-flow',
     'claim-audit': 'comparison.before-after-wipe',
+    'market-engine': 'process.signal-flow',
+    'ai-core': 'concept.accumulation',
+    'correction-alert': 'process.signal-flow',
+    'bubble-trigger': 'concept.accumulation',
+    'market-gravity': 'comparison.common-baseline',
+    'history-rewind': 'time.timeline-milestones',
     'market-ticker': 'data.hero-metric',
     'kinetic-text': 'text.kinetic-phrase',
     'company-orbit': 'concept.scale-proportion',
@@ -555,6 +643,29 @@ function kindData(kind, sloos, marketSeries) {
       valueLabels: mag7.map((item) => `${item.value.toFixed(2)} %`),
       sourceLabel:
         'State Street · composición SPY · 17 Jul 2026; relación MAGS/SPY calculada con cierres diarios'
+    };
+  }
+  if (kind === 'market-engine') {
+    return {
+      labels: ['NVIDIA', 'APPLE', 'MICROSOFT', 'AMAZON', 'ALPHABET', 'META', 'TESLA'],
+      sourceLabel: 'State Street · SPY holdings · 17 Jul 2026'
+    };
+  }
+  if (kind === 'ai-core') {
+    return {
+      labels: ['MICROSOFT', 'NVIDIA', 'ALPHABET', 'AMAZON', 'META'],
+      sourceLabel: 'Foto: panumas nikhomkhai · Pexels · recurso editorial'
+    };
+  }
+  if (kind === 'correction-alert') {
+    return {
+      labels: ['MICROSOFT', 'NVIDIA', 'ALPHABET', 'AMAZON', 'META'],
+      sourceLabel: 'Foto: AlphaTradeZone · Pexels · recurso editorial'
+    };
+  }
+  if (['bubble-trigger', 'market-gravity', 'history-rewind'].includes(kind)) {
+    return {
+      sourceLabel: 'Ilustración conceptual · sin cifras ni escala'
     };
   }
   if (kind === 'mag7-weights' || kind === 'portfolio-grid') {
@@ -1231,7 +1342,7 @@ async function main() {
   const renderScenes = groups.map((group, index) => {
     const midpoint = (group.startSeconds + group.endSeconds) / 2;
     const beat = beatFor(midpoint, legacyTimeMap);
-    const blueprint = FIRST_MINUTE_BLUEPRINTS[index];
+    const blueprint = EDITORIAL_BLUEPRINTS[index];
     const kind =
       blueprint?.kind ??
       beat.kinds[index % beat.kinds.length];
@@ -1248,6 +1359,9 @@ async function main() {
       'company-orbit',
       'mag7-weights',
       'mag7-relationship',
+      'market-engine',
+      'ai-core',
+      'correction-alert',
       'portfolio-grid',
       'market-ticker'
     ].includes(kind)
@@ -1255,7 +1369,9 @@ async function main() {
       : [];
     const sceneAssets = [
       ...companyAssets,
-      ...(kind === 'market-ticker' && index % 4 === 1 ? [MARKET_IMAGE_ASSET] : [])
+      ...(kind === 'market-ticker' && index % 4 === 1 ? [MARKET_IMAGE_ASSET] : []),
+      ...(kind === 'ai-core' ? [AI_SERVERS_IMAGE_ASSET] : []),
+      ...(kind === 'correction-alert' ? [MARKET_ANALYST_IMAGE_ASSET] : [])
     ];
     const words = allWords
       .map((word, wordIndex) => ({...word, wordIndex}))

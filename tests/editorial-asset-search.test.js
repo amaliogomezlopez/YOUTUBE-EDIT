@@ -7,7 +7,8 @@ import {
   searchBrandfetch,
   searchEditorialAssets,
   searchOfflineBrandLogos,
-  searchPexels
+  searchPexels,
+  searchPixabay
 } from '../src/lib/editorial-asset-search.js';
 
 async function catalogFixture(t) {
@@ -101,6 +102,79 @@ test('Brandfetch search preserves domain and claimed status', async () => {
   assert.equal(result[0].domain, 'nvidia.com');
   assert.equal(result[0].claimed, true);
   assert.equal('clientId' in result[0], false);
+});
+
+test('Pixabay video search selects an HTTPS landscape rendition with provenance', async () => {
+  const result = await searchPixabay('inteligencia artificial', {
+    kind: 'video',
+    apiKey: 'test-key',
+    fetchImpl: async () => new Response(JSON.stringify({
+      hits: [{
+        id: 73,
+        pageURL: 'https://pixabay.com/videos/id-73/',
+        tags: 'servidores, tecnología',
+        duration: 11,
+        user: 'Autora',
+        videos: {
+          medium: {
+            url: 'https://cdn.pixabay.com/video/73_medium.mp4',
+            width: 1920,
+            height: 1080,
+            thumbnail: 'https://cdn.pixabay.com/video/73_medium.jpg'
+          },
+          tiny: {
+            url: 'http://cdn.pixabay.com/video/73_tiny.mp4',
+            width: 640,
+            height: 360,
+            thumbnail: 'http://cdn.pixabay.com/video/73_tiny.jpg'
+          }
+        }
+      }]
+    }), {status: 200})
+  });
+  assert.equal(result[0].provider, 'pixabay');
+  assert.equal(result[0].license, 'Pixabay Content License');
+  assert.equal(result[0].width, 1920);
+  assert.match(result[0].downloadUrl, /^https:/);
+  assert.match(result[0].sourceUrl, /^https:/);
+});
+
+test('asset search combines healthy providers when another remote provider fails', async (t) => {
+  const requests = [];
+  const result = await searchEditorialAssets({
+    query: 'mercados',
+    kind: 'image',
+    limit: 6
+  }, {
+    catalogFile: await catalogFixture(t),
+    env: {
+      PEXELS_API_KEY: 'pexels-test',
+      PIXABAY_API_KEY: 'pixabay-test'
+    },
+    fetchImpl: async (url) => {
+      requests.push(String(url));
+      if (String(url).includes('pexels.com')) {
+        return new Response('fallo', {status: 503});
+      }
+      return new Response(JSON.stringify({
+        hits: [{
+          id: 9,
+          pageURL: 'https://pixabay.com/photos/id-9/',
+          tags: 'mercados',
+          user: 'Autor',
+          webformatURL: 'https://cdn.pixabay.com/photo-9_640.jpg',
+          largeImageURL: 'https://cdn.pixabay.com/photo-9_1280.jpg',
+          imageWidth: 1920,
+          imageHeight: 1080
+        }]
+      }), {status: 200});
+    }
+  });
+  assert.equal(requests.length, 2);
+  assert.ok(result.items.some((item) => item.provider === 'pixabay'));
+  assert.ok(result.warnings.some((warning) =>
+    warning.code === 'PEXELS_SEARCH_FAILED'
+  ));
 });
 
 test('asset search rejects unsupported kinds before fetching', async (t) => {

@@ -127,6 +127,42 @@ Antes de aprobar una escena:
 - Después de modificar el audio se recalculan transcripción, escenas y
   `semanticCue`; nunca se desplaza sólo la pista de audio.
 
+## 11. Entregas por bloques de aprobación
+
+- El montaje largo se revisa en bloques independientes de aproximadamente un
+  minuto. Cada bloque empieza y termina en una frontera semántica completa, no
+  en un segundo redondo si eso corta una frase.
+- El bloque conserva en su manifiesto los tiempos absolutos del master y
+  desplaza sus escenas a una línea temporal local que empieza en cero.
+- El audio se recorta desde el master ya compactado; no se vuelve a procesar la
+  voz ni se encadenan copias con pérdidas.
+- Puede añadirse un `tail` máximo de dos segundos únicamente cuando existe
+  silencio real tras la última palabra. Sirve para sostener la conclusión y no
+  puede invadir la siguiente frase.
+- Cada entrega incluye `render-props.json`, manifiesto, audio recortado, cinco
+  stills de QA y un MP4 H.264 independiente. No se inicia el siguiente bloque
+  hasta recibir aprobación o cambios.
+
+Comando base:
+
+```powershell
+npm run episode:review-block -- --props "<render-props-master>" `
+  --from scene-008 --to scene-013 --id 02 --tail 0.6
+```
+
+## 12. Assets remotos
+
+- `Brand Search API` resuelve un nombre de empresa a dominio e icono.
+- `Logo API` obtiene después la variante de logo apropiada para fondo, tamaño y
+  formato. Brand API y Brand Context API no se usan para esta necesidad.
+- Pexels y Pixabay se consultan en paralelo y sus resultados se intercalan para
+  evitar que un proveedor oculte al otro.
+- Los resultados remotos son candidatos, no URLs de render. El asset elegido se
+  descarga, se importa al catálogo gestionado y conserva autor, licencia, URL
+  de origen, dimensiones y hash.
+- Una fotografía aporta contexto o atmósfera. Nunca se usa como fuente de una
+  cifra, una curva o una afirmación económica.
+
 ## Ejemplo de cue
 
 ```json

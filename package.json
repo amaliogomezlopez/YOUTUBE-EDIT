@@ -13,6 +13,7 @@
     "episode:sloos:extract": "node scripts/extract-fed-sloos-series.js",
     "episode:finance-cavaliers:market-series": "node scripts/build-finance-cavaliers-market-series.js",
     "episode:finance-cavaliers:pilot": "node scripts/build-finance-cavaliers-pilot.js",
+    "episode:review-block": "node scripts/build-editorial-review-block.js",
     "carousel": "node src/modules/carousels/cli.js",
     "scout:animations": "node scripts/animation-scout.js",
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",

@@ -43,6 +43,11 @@ proceder del dataset original o de una fuente identificada; una fotografía de
 stock nunca sustituye la evidencia. Openverse y unDraw pueden complementar
 imágenes e ilustraciones con licencias abiertas.
 
+Para logos, usar Brandfetch en dos pasos: `Brand Search API` cuando sólo se
+conoce el nombre y `Logo API` cuando ya existe un dominio o ticker. Las
+alternativas locales de Simple Icons y Font Awesome siguen siendo el fallback
+sin red.
+
 ## Flujo
 
 1. Buscar candidatos en la vista `Assets`.

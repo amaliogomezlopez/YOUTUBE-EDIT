@@ -36,6 +36,33 @@
       "importedAt": "2026-07-27T11:19:29.581Z"
     },
     {
+      "id": "finance-cavaliers-ai-servers",
+      "publicPath": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-ai-servers.jpg",
+      "alt": "Racks de servidores en un centro de datos iluminado en azul",
+      "width": 4108,
+      "height": 2734,
+      "sha256": "ea884d88b167a3e856a75c40bf85d644b1c1f22cd41628e047e90557621da7ac",
+      "sourceSha256": "b9aa4685de3dd46c57bb19eb1876fea477fe8b8c5357e0ce880a17a51ba37a8c",
+      "source": "https://www.pexels.com/photo/data-center-server-racks-with-active-equipment-37730212/",
+      "author": "panumas nikhomkhai",
+      "license": "Pexels License",
+      "attribution": "Foto de panumas nikhomkhai en Pexels.",
+      "tags": [
+        "finance cavaliers",
+        "inteligencia artificial",
+        "servidores",
+        "centro de datos",
+        "tecnologia"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "photo",
+      "treatment": "natural",
+      "importedAt": "2026-07-29T06:45:47.394Z"
+    },
+    {
       "id": "finance-cavaliers-alphabet",
       "publicPath": "assets/library/finance-cavaliers-company-logos/finance-cavaliers-alphabet.png",
       "alt": "Símbolo de Google usado para identificar Alphabet",
@@ -112,6 +139,34 @@
       "assetType": "logo",
       "treatment": "natural",
       "importedAt": "2026-07-28T18:49:54.345Z"
+    },
+    {
+      "id": "finance-cavaliers-market-analyst",
+      "publicPath": "assets/library/finance-cavaliers-editorial-images/finance-cavaliers-market-analyst.jpg",
+      "alt": "Analista financiero observando datos en varias pantallas",
+      "width": 6016,
+      "height": 4016,
+      "sha256": "c45b9d0b879408be58d7a9130427c7cbd888a6a654c172d8b18db9a9f40a0b2a",
+      "sourceSha256": "0aaa5bbfaefecf5fdd98b66c4a8d819ec7c5833d25ff6169c55e81976f4df9ce",
+      "source": "https://www.pexels.com/photo/man-in-white-long-sleeves-shirt-sitting-in-front-of-a-computer-5831263/",
+      "author": "AlphaTradeZone",
+      "license": "Pexels License",
+      "attribution": "Foto de AlphaTradeZone en Pexels.",
+      "tags": [
+        "finance cavaliers",
+        "analista",
+        "mercados",
+        "wall street",
+        "alerta",
+        "pantallas"
+      ],
+      "focalPoint": {
+        "x": 50,
+        "y": 50
+      },
+      "assetType": "photo",
+      "treatment": "natural",
+      "importedAt": "2026-07-29T06:45:49.484Z"
     },
     {
       "id": "finance-cavaliers-market-screen",
