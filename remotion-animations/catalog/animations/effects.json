@@ -588,6 +588,26 @@
       ]
     },
     {
+      "id": "focus.divergence-range",
+      "category": "focus",
+      "phase": "focus",
+      "status": "ready",
+      "implementation": {
+        "component": "LeadershipLag",
+        "source": "src/editorial/ThirdMinuteNarrativeScene.tsx",
+        "demoCompositionId": "Finance-Cavaliers-Episode"
+      },
+      "purpose": "Aislar el intervalo verificable en el que dos series temporales comienzan a divergir.",
+      "selectWhen": "La locución describe que una serie se separó, cayó o se debilitó antes que otra.",
+      "constraints": [
+        "Construir primero la gráfica completa y aplicar el foco después.",
+        "Delimitar desde el inicio visible de la divergencia hasta el hito temporal mencionado.",
+        "Mantener visibles las dos series y atenuar solo el contexto exterior.",
+        "Repintar únicamente el tramo relevante y mantener el rótulo fuera de las curvas.",
+        "Combinar con camera.focus-zoom y conservar al menos 1.2 segundos de hold."
+      ]
+    },
+    {
       "id": "sound.semantic-cue",
       "category": "sound",
       "phase": "focus",

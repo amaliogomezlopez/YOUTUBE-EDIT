@@ -502,6 +502,11 @@
       "component": "Tratamiento por props de color y opacity"
     },
     {
+      "id": "focus.divergence-range",
+      "status": "ready",
+      "component": "LeadershipLag"
+    },
+    {
       "id": "focus.freeze-callout",
       "status": "ready",
       "component": "AnnotatedChartScene"

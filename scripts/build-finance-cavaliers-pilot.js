@@ -1547,9 +1547,14 @@ async function main() {
           'market-xray',
           'market-health',
           'market-recovery',
-          'market-contrast'
+          'market-contrast',
+          'leadership-lag'
         ].includes(kind)
           ? ['camera.focus-zoom', 'focus.desaturate-peers']
+          : []),
+        ...(kind === 'leadership-lag' ? ['focus.divergence-range'] : []),
+        ...(kind === 'contagion-spread'
+          ? ['focus.boundary-clipped-connectors']
           : []),
         'exit.clean-fade'
       ],

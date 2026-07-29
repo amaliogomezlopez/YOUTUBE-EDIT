@@ -260,8 +260,30 @@ npm run episode:review-block -- --props "<render-props-master>" `
   activan con un desfase visible para comunicar propagación.
 - La etiqueta del fenómeno queda fuera del núcleo y por encima de sus ondas.
   No se imprime dentro de círculos, líneas discontinuas o partículas.
+- Distinguir siempre el núcleo sólido de las ondas exteriores. Los conectores
+  nacen en el borde del núcleo sólido; una onda de propagación nunca redefine
+  visualmente ese borde ni puede hacer parecer que el conector nace del centro.
+- La etiqueta vive en una capa independiente de cámara, con fondo opaco, y se
+  coloca por encima de la envolvente máxima de ondas y conectores.
 - El patrón reutilizable es `process.contagion-spread` y sus conectores usan
   `focus.boundary-clipped-connectors`.
+
+## 20. Divergencia temporal en gráficas
+
+- Cuando la locución compara el momento en que dos líneas se separan, el foco
+  no es un punto aislado: es el tramo desde el inicio de la divergencia hasta
+  el hito temporal mencionado.
+- Primero se muestra la gráfica completa. Al pronunciar la relación se hace
+  zoom hacia ese intervalo, se atenúa el exterior y se repinta únicamente el
+  tramo relevante con mayor grosor, contraste o trazo guiado.
+- El intervalo termina exactamente en el hito verificable —por ejemplo, una
+  línea vertical de techo— y conserva visibles ambas series para que la
+  diferencia siga siendo comparable.
+- El rótulo se coloca fuera de las curvas. El zoom lleva un whoosh breve y el
+  anclaje del tramo puede recibir un tick o pulso; después queda al menos
+  1,2 segundos estable para lectura.
+- Usar `focus.divergence-range` junto a `camera.focus-zoom`. No hacer zoom a
+  una zona genérica de la gráfica cuando la voz describe un intervalo.
 
 ## Ejemplo de cue
 
