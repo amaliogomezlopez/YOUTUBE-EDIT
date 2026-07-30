@@ -50,6 +50,8 @@ export const shortSceneSchema = z.object({
   from: z.number(),
   durationInFrames: z.number(),
   trimStartSeconds: z.number(),
+  trimEndSeconds: z.number().optional(),
+  silenceTrimmedSeconds: z.number().optional(),
   layout: z.enum(["full", "split", "stage"]),
   camera: z.enum(["static", "punch-in", "push-out", "drift-left", "drift-right"]),
   cameraIntensity: z.number().default(1),
@@ -67,6 +69,8 @@ export const soundCueSchema = z.object({
   volume: z.number(),
   attackSeconds: z.number().optional(),
   releaseSeconds: z.number().optional(),
+  /** Jitter de tono con el que rotan las tomas de una misma familia. */
+  playbackRate: z.number().optional(),
 });
 
 export const shortVideoSchema = z.object({

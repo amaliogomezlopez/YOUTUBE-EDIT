@@ -65,13 +65,26 @@ y `--force` (borra la media ya preparada).
 
 Reglas del formato:
 
+- **`trim` es opcional y por defecto recorta el silencio.** Si falta `start` o
+  `end`, el build lo deduce de la primera y la última palabra de la transcripción
+  dejando `silencePaddingSeconds` de aire (0.5 s por defecto). Un extremo declarado
+  se respeta siempre: es como se parte un clip en dos escenas con distinto layout
+  sin cortar el audio. El build avisa de cuántos segundos ha recortado en cada
+  escena.
 - **`atWord` es el ancla canónica.** Es el índice de la palabra en
   `transcripts/NN.json`. `atSeconds` solo se acepta si el clip no tiene
   transcripción, y el build lo rechaza en caso contrario. Así, si se reajusta el
   recorte de la escena, los cues siguen cayendo sobre la palabra correcta.
 - **El sonido se pide por familia**, nunca por fichero: `impact`, `hit`, `whoosh`,
-  `whip`, `pop`, `tick`, `ui`, `chime`, `shimmer`, `tension`, `alert`, `burst`,
-  `rewind` (ver `src/modules/shorts-studio/sound.js`).
+  `whip`, `pop`, `reveal`, `tick`, `ui`, `chime`, `shimmer`, `tension`, `alert`,
+  `burst`, `rewind`, `camera`, `texture` (ver
+  `src/modules/shorts-studio/sound.js`).
+- **Todo suena, y suena distinto cada vez.** Cada cue tiene familia por defecto
+  según su tipo, cada transición de escena y cada movimiento de cámara añade la
+  suya, y cada familia declara varias tomas que rotan con un leve desplazamiento de
+  tono. Tres logos seguidos no repiten fichero. La rotación es determinista: dos
+  builds del mismo plan suenan igual. Para silenciar algo hay que decirlo:
+  `"sound": false`, `"transitionSound": false`, `"cameraSound": false`.
 - **Dos cues no pueden compartir slot a la vez.** El build falla con el par
   concreto y el slot; es el error más fácil de introducir al alargar un
   `holdSeconds`.

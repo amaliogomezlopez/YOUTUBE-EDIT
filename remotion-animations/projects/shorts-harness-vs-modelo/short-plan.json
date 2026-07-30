@@ -28,7 +28,6 @@
       "camera": "punch-in",
       "cameraIntensity": 1.15,
       "transitionIn": "cut",
-      "trim": {"start": 0.1, "end": 4.3},
       "cues": [
         {
           "type": "logo",
@@ -49,7 +48,9 @@
       "layout": "split",
       "camera": "static",
       "transitionIn": "whip",
-      "trim": {"start": 0, "end": 7.3},
+      "trim": {
+        "end": 7.3
+      },
       "cues": [
         {
           "type": "stat",
@@ -81,7 +82,9 @@
       "camera": "static",
       "transitionIn": "cut",
       "label": "Composio\n28 tareas identicas",
-      "trim": {"start": 7.3, "end": 14.2},
+      "trim": {
+        "start": 7.3
+      },
       "cues": [
         {
           "type": "screenshot",
@@ -118,7 +121,6 @@
       "camera": "static",
       "transitionIn": "slide-up",
       "label": "Mismo modelo\nOtro resultado",
-      "trim": {"start": 0, "end": 6.8},
       "cues": [
         {
           "type": "screenshot",
@@ -138,7 +140,6 @@
       "camera": "punch-in",
       "cameraIntensity": 0.8,
       "transitionIn": "fade",
-      "trim": {"start": 0, "end": 14.05},
       "cues": [
         {
           "type": "label",
@@ -200,5 +201,6 @@
         }
       ]
     }
-  ]
+  ],
+  "silencePaddingSeconds": 0.5
 }

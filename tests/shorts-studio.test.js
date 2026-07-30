@@ -1,7 +1,18 @@
 import assert from 'node:assert/strict';
+import {existsSync} from 'node:fs';
+import path from 'node:path';
 import test from 'node:test';
+import {REMOTION_ROOT} from '../src/modules/shorts-studio/constants.js';
 import {buildCaptionPages, resolveCaptionStyle} from '../src/modules/shorts-studio/captions.js';
-import {resolveSoundCue, soundFamilyIds} from '../src/modules/shorts-studio/sound.js';
+import {
+  DEFAULT_CUE_SOUND,
+  DEFAULT_TRANSITION_SOUND,
+  SOUND_FAMILIES,
+  createSoundRotation,
+  resolveSoundCue,
+  soundFamilyIds
+} from '../src/modules/shorts-studio/sound.js';
+import {resolveTrim} from '../src/modules/shorts-studio/build.js';
 import {naturalCompare, slugify, staticPath} from '../src/modules/shorts-studio/constants.js';
 import {flattenWords} from '../src/modules/shorts-studio/ingest.js';
 import {focusFromFace} from '../src/modules/shorts-studio/face-tracking.js';
@@ -108,6 +119,79 @@ test('flattenWords reparte tiempos cuando el segmento no trae palabras', () => {
   assert.equal(flat.length, 2);
   assert.equal(flat[0].timing, 'approximate');
   assert.equal(flat[1].end, 2);
+});
+
+test('sin trim declarado se recorta el silencio dejando el aire pedido', () => {
+  const clip = {durationSeconds: 4.5};
+  const words = [{start: 0.24, end: 0.6}, {start: 1.9, end: 2.3}];
+  const trim = resolveTrim(undefined, clip, words, 0.5);
+  assert.equal(trim.startSeconds, 0, 'la voz empieza antes del margen, no se puede recortar mas');
+  assert.equal(trim.endSeconds, 2.8, 'media decima de aire tras la ultima palabra');
+  assert.equal(trim.tailTrimmed, 1.7);
+});
+
+test('un extremo declarado en el plan gana sobre el recorte automatico', () => {
+  const clip = {durationSeconds: 14.3};
+  const words = [{start: 0, end: 0.4}, {start: 11.9, end: 12.22}];
+  const trim = resolveTrim({end: 7.3}, clip, words, 0.5);
+  assert.equal(trim.endSeconds, 7.3, 'el corte interno entre dos escenas se respeta');
+  assert.equal(trim.tailTrimmed, 0, 'un extremo declarado no cuenta como silencio recortado');
+});
+
+test('sin transcripcion el recorte automatico deja el clip entero', () => {
+  const trim = resolveTrim(undefined, {durationSeconds: 6}, [], 0.5);
+  assert.equal(trim.startSeconds, 0);
+  assert.equal(trim.endSeconds, 6);
+  assert.equal(trim.trimmedSeconds, 0);
+});
+
+test('el margen de silencio nunca invade la voz', () => {
+  const words = [{start: 3, end: 3.4}, {start: 4, end: 4.5}];
+  const trim = resolveTrim(undefined, {durationSeconds: 10}, words, 0.5);
+  assert.ok(trim.startSeconds <= words[0].start, 'la primera palabra queda dentro del recorte');
+  assert.ok(trim.endSeconds >= words.at(-1).end, 'la ultima palabra queda dentro del recorte');
+});
+
+test('repetir una familia rota de toma para no clonar el golpe', () => {
+  const rotate = createSoundRotation();
+  const cues = [0, 1, 2].map(() => resolveSoundCue('pop', 0, 1, rotate('pop')));
+  assert.equal(new Set(cues.map((cue) => cue.file)).size, 3, 'tres logos seguidos suenan distinto');
+});
+
+test('la rotacion es deterministica entre builds', () => {
+  const first = createSoundRotation();
+  const second = createSoundRotation();
+  assert.equal(
+    resolveSoundCue('reveal', 0, 1, first('reveal')).file,
+    resolveSoundCue('reveal', 0, 1, second('reveal')).file
+  );
+});
+
+test('la rotacion no se sale del rango de tomas', () => {
+  const cue = resolveSoundCue('pop', 0, 1, 999);
+  assert.ok(SOUND_FAMILIES.pop.files.includes(cue.file));
+});
+
+test('cada tipo de cue y cada transicion tiene familia por defecto valida', () => {
+  for (const [type, familyId] of Object.entries(DEFAULT_CUE_SOUND)) {
+    assert.ok(soundFamilyIds.includes(familyId), `${type} apunta a una familia inexistente: ${familyId}`);
+  }
+  for (const [transition, familyId] of Object.entries(DEFAULT_TRANSITION_SOUND)) {
+    if (familyId === null) continue;
+    assert.ok(soundFamilyIds.includes(familyId), `${transition} apunta a una familia inexistente: ${familyId}`);
+  }
+});
+
+test('todas las tomas declaradas existen en la libreria de sonido', () => {
+  const sfxRoot = path.join(REMOTION_ROOT, 'public');
+  const missing = [];
+  for (const [familyId, preset] of Object.entries(SOUND_FAMILIES)) {
+    assert.ok(preset.files.length > 0, `la familia ${familyId} no declara tomas`);
+    for (const file of preset.files) {
+      if (!existsSync(path.join(sfxRoot, file))) missing.push(`${familyId} -> ${file}`);
+    }
+  }
+  assert.deepEqual(missing, [], 'hay tomas declaradas que no existen en public/sfx');
 });
 
 test('el punto focal deja aire sobre la cabeza', () => {

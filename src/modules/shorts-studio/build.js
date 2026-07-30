@@ -2,7 +2,19 @@ import path from 'node:path';
 import {readJson, round, writeJson} from '../../lib/utils.js';
 import {SHORT_FORMAT, projectDir} from './constants.js';
 import {buildCaptionPages} from './captions.js';
-import {resolveSoundCue} from './sound.js';
+import {
+  DEFAULT_CAMERA_SOUND,
+  DEFAULT_CUE_SOUND,
+  DEFAULT_TRANSITION_SOUND,
+  createSoundRotation,
+  resolveSoundCue
+} from './sound.js';
+
+/**
+ * Aire que se deja antes de la primera palabra y despues de la ultima. Sin nada de
+ * margen la voz entra cortada; con mas de medio segundo el clip se siente muerto.
+ */
+export const DEFAULT_SILENCE_PADDING_SECONDS = 0.5;
 
 export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand']);
 export const LAYOUTS = new Set(['full', 'split', 'stage']);
@@ -37,6 +49,11 @@ export async function buildShort({slug, log = () => {}}) {
   const scenes = [];
   const soundCues = [];
   const duckWindows = [];
+  const rotate = createSoundRotation();
+  const padding = Number(plan.silencePaddingSeconds ?? DEFAULT_SILENCE_PADDING_SECONDS);
+  const addSound = (familyId, atSeconds, intensity = 1) => {
+    soundCues.push(resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId)));
+  };
   let cursor = 0;
 
   for (const [index, scene] of (plan.scenes ?? []).entries()) {
@@ -49,12 +66,19 @@ export async function buildShort({slug, log = () => {}}) {
     const transitionIn = scene.transitionIn ?? 'cut';
     if (!TRANSITIONS.has(transitionIn)) throw new Error(`${where}: transitionIn "${transitionIn}" no valida (${[...TRANSITIONS].join(', ')})`);
 
-    const startSeconds = Math.max(0, Number(scene.trim?.start ?? 0));
-    const endSeconds = Math.min(clip.durationSeconds, Number(scene.trim?.end ?? clip.durationSeconds));
-    if (endSeconds - startSeconds < 0.2) throw new Error(`${where}: recorte demasiado corto (${startSeconds}-${endSeconds})`);
-    const durationInFrames = Math.max(1, Math.round((endSeconds - startSeconds) * fps));
     const words = transcripts.get(clip.id)?.words ?? [];
     if (!words.length) warnings.push(`${where}: el clip ${clip.id} no tiene transcripcion; sin subtitulos ni anclaje por palabra`);
+
+    const trim = resolveTrim(scene.trim, clip, words, padding);
+    const {startSeconds, endSeconds} = trim;
+    if (endSeconds - startSeconds < 0.2) throw new Error(`${where}: recorte demasiado corto (${startSeconds}-${endSeconds})`);
+    if (trim.trimmedSeconds > 0.05) {
+      warnings.push(
+        `${where}: recortados ${trim.trimmedSeconds}s de silencio ` +
+        `(entrada ${trim.leadTrimmed}s, salida ${trim.tailTrimmed}s)`
+      );
+    }
+    const durationInFrames = Math.max(1, Math.round((endSeconds - startSeconds) * fps));
 
     const cues = (scene.cues ?? []).map((cue, cueIndex) => {
       const cueWhere = `${where} cue ${cueIndex + 1}`;
@@ -67,9 +91,11 @@ export async function buildShort({slug, log = () => {}}) {
       if (cue.assetId && !asset) throw new Error(`${cueWhere}: assetId "${cue.assetId}" no existe en manifest.json`);
       const holdSeconds = Number(cue.holdSeconds ?? (endSeconds - startSeconds) - atSeconds);
       const cueFrames = Math.max(1, Math.round(Math.min(holdSeconds, endSeconds - startSeconds - atSeconds) * fps));
-      if (cue.sound) {
-        soundCues.push(resolveSoundCue(cue.sound, cursor / fps + atSeconds, Number(cue.soundIntensity ?? 1)));
-      }
+      // Todo cue suena. Si el plan no pide familia se usa la del tipo: un logo o
+      // una captura que entra en silencio se percibe como un fallo de montaje.
+      // `sound: false` es la forma explicita de dejarlo mudo.
+      const soundFamily = cue.sound === false ? null : cue.sound ?? DEFAULT_CUE_SOUND[cue.type];
+      if (soundFamily) addSound(soundFamily, cursor / fps + atSeconds, Number(cue.soundIntensity ?? 1));
       return {
         id: cue.id ?? `${scene.id}-cue-${cueIndex + 1}`,
         type: cue.type,
@@ -106,6 +132,20 @@ export async function buildShort({slug, log = () => {}}) {
       warnings.push(`${where}: transitionIn "${transitionIn}" en la primera escena; el hook gana con corte seco`);
     }
 
+    // Cada cambio de escena y cada movimiento de camara tiene su propio sonido, no
+    // solo los cues: es lo que hace que el montaje suene continuo en vez de tener
+    // golpes aislados sobre un fondo mudo.
+    if (index > 0) {
+      const transitionFamily = scene.transitionSound === false
+        ? null
+        : scene.transitionSound ?? DEFAULT_TRANSITION_SOUND[transitionIn];
+      if (transitionFamily) addSound(transitionFamily, cursor / fps, Number(scene.transitionSoundIntensity ?? 0.9));
+    }
+    const cameraFamily = scene.cameraSound === false
+      ? null
+      : scene.cameraSound ?? DEFAULT_CAMERA_SOUND[camera];
+    if (cameraFamily) addSound(cameraFamily, cursor / fps + 0.05, Number(scene.cameraSoundIntensity ?? 0.7));
+
     scenes.push({
       id: scene.id ?? `scene-${index + 1}`,
       clipId: clip.id,
@@ -113,6 +153,8 @@ export async function buildShort({slug, log = () => {}}) {
       from: cursor,
       durationInFrames,
       trimStartSeconds: round(startSeconds, 3),
+      trimEndSeconds: round(endSeconds, 3),
+      silenceTrimmedSeconds: trim.trimmedSeconds,
       layout: scene.layout,
       camera,
       cameraIntensity: Number(scene.cameraIntensity ?? 1),
@@ -128,7 +170,7 @@ export async function buildShort({slug, log = () => {}}) {
   if (!scenes.length) throw new Error('El plan no tiene escenas.');
 
   for (const ambience of plan.sound?.ambience ?? []) {
-    soundCues.push(resolveSoundCue(ambience.family, Number(ambience.atSeconds ?? 0), Number(ambience.intensity ?? 1)));
+    addSound(ambience.family, Number(ambience.atSeconds ?? 0), Number(ambience.intensity ?? 1));
   }
 
   const build = {
@@ -155,6 +197,40 @@ export async function buildShort({slug, log = () => {}}) {
   log(`build: ${scenes.length} escenas, ${build.durationSeconds}s, ${soundCues.length} cues de sonido`);
   for (const warning of warnings) log(`  aviso: ${warning}`);
   return build;
+}
+
+/**
+ * Recorte de la escena.
+ *
+ * Lo habitual en una grabacion por clips es que sobre silencio en los extremos: se
+ * pulsa grabar, se respira, se habla y se tarda en parar. Ese silencio no se ve en
+ * el JSON pero se nota mucho al ver el short, asi que cuando el plan no fija un
+ * extremo se deduce de la primera y la ultima palabra de la transcripcion, dejando
+ * `padding` de aire.
+ *
+ * Un extremo declarado en el plan se respeta siempre: es como se parte un clip en
+ * dos escenas con distinto layout sin cortar el audio.
+ */
+export function resolveTrim(trim, clip, words, padding = DEFAULT_SILENCE_PADDING_SECONDS) {
+  const duration = clip.durationSeconds;
+  const declaredStart = Number.isFinite(trim?.start) ? Math.max(0, Number(trim.start)) : null;
+  const declaredEnd = Number.isFinite(trim?.end) ? Math.min(duration, Number(trim.end)) : null;
+
+  const speechStart = words.length ? Math.max(0, words[0].start - padding) : 0;
+  const speechEnd = words.length ? Math.min(duration, words.at(-1).end + padding) : duration;
+
+  const startSeconds = round(declaredStart ?? speechStart, 3);
+  const endSeconds = round(declaredEnd ?? speechEnd, 3);
+  const leadTrimmed = declaredStart === null ? round(startSeconds, 3) : 0;
+  const tailTrimmed = declaredEnd === null ? round(duration - endSeconds, 3) : 0;
+
+  return {
+    startSeconds,
+    endSeconds,
+    leadTrimmed,
+    tailTrimmed,
+    trimmedSeconds: round(leadTrimmed + tailTrimmed, 3)
+  };
 }
 
 /**
