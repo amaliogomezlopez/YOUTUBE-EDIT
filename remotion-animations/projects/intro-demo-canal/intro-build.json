@@ -1,6 +1,6 @@
 {
   "slug": "demo-canal",
-  "generatedAt": "2026-07-30T12:36:19.109Z",
+  "generatedAt": "2026-07-30T14:24:37.834Z",
   "format": {
     "width": 1920,
     "height": 1080,
@@ -623,8 +623,8 @@
   "warnings": [],
   "rules": {
     "summary": {
-      "total": 11,
-      "passed": 10,
+      "total": 12,
+      "passed": 11,
       "failed": 0,
       "warned": 0,
       "waived": 0,

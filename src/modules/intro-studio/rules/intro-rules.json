@@ -175,6 +175,20 @@
       "severity": "warning",
       "check": "intro-duration-budget",
       "fixture": "tests/fixtures/intro-rules/IN-R-061.json"
+    },
+    {
+      "id": "IN-R-022",
+      "section": "legibility",
+      "statement": "Un cue con presentation \"blend\" necesita video o fondo detras de su rectangulo: sobre el fondo del tema, screen lo hace invisible.",
+      "rationale": "blend existe para que el rectangulo negro de un logo sin alfa desaparezca sobre el video. Si el cue cae donde no hay video ni backdrop, screen suma sobre el fondo del tema y lo que desaparece es el logo entero. Paso con el logo de Kimi en la escena de cierre, en layout frame.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "intro-blend-needs-something-behind",
+      "origin": {
+        "feedback": "el logo de Kimi desaparecio detras de mi: es arte con fondo negro solido y blend lo suma con screen, pero ahi detras solo estaba el fondo del tema",
+        "recordedAt": "2026-07-30T14:19:42Z"
+      },
+      "fixture": "tests/fixtures/intro-rules/IN-R-022.json"
     }
   ]
 }

@@ -80,7 +80,9 @@ export const TitleCard: React.FC<{
               style={{
                 fontFamily: MOTION_FONT_FAMILY,
                 fontWeight: 900,
-                fontSize: 108,
+                // 92 px es lo que deja la banda del tercio inferior con sitio para
+                // el antetitulo y la regla sin desbordar la zona segura.
+                fontSize: 92,
                 lineHeight: 1.04,
                 letterSpacing: -1.5,
                 color: theme.ink,

@@ -1,0 +1,883 @@
+{
+  "clipId": "05",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 8.22,
+      "text": "Porque esa destilación la consideran como un robo de su propiedad intelectual y están pidiendo regulación ahí a saco porque tienen miedo de la competencia",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.46,
+          "text": "Porque",
+          "confidence": 0.73389
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.46,
+          "end": 0.72,
+          "text": "esa",
+          "confidence": 0.9541
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.72,
+          "end": 1.38,
+          "text": "destilación",
+          "confidence": 0.99544
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.38,
+          "end": 1.54,
+          "text": "la",
+          "confidence": 0.98438
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.54,
+          "end": 2.12,
+          "text": "consideran",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 2.12,
+          "end": 2.34,
+          "text": "como",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.34,
+          "end": 2.52,
+          "text": "un",
+          "confidence": 0.98145
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 2.52,
+          "end": 2.86,
+          "text": "robo",
+          "confidence": 0.99731
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.86,
+          "end": 3,
+          "text": "de",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 3,
+          "end": 3.18,
+          "text": "su",
+          "confidence": 0.99365
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 3.18,
+          "end": 3.56,
+          "text": "propiedad",
+          "confidence": 0.99251
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 3.56,
+          "end": 4.08,
+          "text": "intelectual",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 4.08,
+          "end": 4.42,
+          "text": "y",
+          "confidence": 0.56934
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 4.42,
+          "end": 4.62,
+          "text": "están",
+          "confidence": 0.98682
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 4.62,
+          "end": 5,
+          "text": "pidiendo",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 5,
+          "end": 5.78,
+          "text": "regulación",
+          "confidence": 0.99048
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 5.78,
+          "end": 5.96,
+          "text": "ahí",
+          "confidence": 0.21912
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 5.96,
+          "end": 6.08,
+          "text": "a",
+          "confidence": 0.99609
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 6.08,
+          "end": 6.4,
+          "text": "saco",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 6.4,
+          "end": 6.74,
+          "text": "porque",
+          "confidence": 0.96484
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 6.74,
+          "end": 7.04,
+          "text": "tienen",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 7.04,
+          "end": 7.38,
+          "text": "miedo",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 7.38,
+          "end": 7.52,
+          "text": "de",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 7.52,
+          "end": 7.62,
+          "text": "la",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 7.62,
+          "end": 8.22,
+          "text": "competencia",
+          "confidence": 0.99951
+        }
+      ]
+    },
+    {
+      "id": "seg-2",
+      "start": 8.22,
+      "end": 18.84,
+      "text": "Si al final es que es así, ellos no temen los modelos pequeñitos, ellos temen el típico Kimi K3 potente que ponga en jaque a sus modelos de Opus, de Sonnet, etc.",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-2-word-1",
+          "start": 8.22,
+          "end": 8.64,
+          "text": "Si",
+          "confidence": 0.01316
+        },
+        {
+          "id": "seg-2-word-2",
+          "start": 8.64,
+          "end": 8.74,
+          "text": "al",
+          "confidence": 0.96484
+        },
+        {
+          "id": "seg-2-word-3",
+          "start": 8.74,
+          "end": 8.98,
+          "text": "final",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-2-word-4",
+          "start": 8.98,
+          "end": 9.16,
+          "text": "es",
+          "confidence": 0.97949
+        },
+        {
+          "id": "seg-2-word-5",
+          "start": 9.16,
+          "end": 9.22,
+          "text": "que",
+          "confidence": 0.90723
+        },
+        {
+          "id": "seg-2-word-6",
+          "start": 9.22,
+          "end": 9.34,
+          "text": "es",
+          "confidence": 0.98145
+        },
+        {
+          "id": "seg-2-word-7",
+          "start": 9.34,
+          "end": 9.54,
+          "text": "así,",
+          "confidence": 0.98682
+        },
+        {
+          "id": "seg-2-word-8",
+          "start": 9.8,
+          "end": 9.92,
+          "text": "ellos",
+          "confidence": 0.97852
+        },
+        {
+          "id": "seg-2-word-9",
+          "start": 9.92,
+          "end": 10.18,
+          "text": "no",
+          "confidence": 0.99268
+        },
+        {
+          "id": "seg-2-word-10",
+          "start": 10.18,
+          "end": 10.5,
+          "text": "temen",
+          "confidence": 0.99731
+        },
+        {
+          "id": "seg-2-word-11",
+          "start": 10.5,
+          "end": 10.68,
+          "text": "los",
+          "confidence": 0.99023
+        },
+        {
+          "id": "seg-2-word-12",
+          "start": 10.68,
+          "end": 11.02,
+          "text": "modelos",
+          "confidence": 0.99219
+        },
+        {
+          "id": "seg-2-word-13",
+          "start": 11.02,
+          "end": 11.54,
+          "text": "pequeñitos,",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-2-word-14",
+          "start": 11.76,
+          "end": 11.84,
+          "text": "ellos",
+          "confidence": 0.95996
+        },
+        {
+          "id": "seg-2-word-15",
+          "start": 11.84,
+          "end": 12.26,
+          "text": "temen",
+          "confidence": 0.99585
+        },
+        {
+          "id": "seg-2-word-16",
+          "start": 12.26,
+          "end": 12.84,
+          "text": "el",
+          "confidence": 0.94824
+        },
+        {
+          "id": "seg-2-word-17",
+          "start": 12.84,
+          "end": 13.32,
+          "text": "típico",
+          "confidence": 0.98014
+        },
+        {
+          "id": "seg-2-word-18",
+          "start": 13.32,
+          "end": 13.7,
+          "text": "Kimi",
+          "confidence": 0.32291
+        },
+        {
+          "id": "seg-2-word-19",
+          "start": 13.7,
+          "end": 14.04,
+          "text": "K3",
+          "confidence": 0.25916
+        },
+        {
+          "id": "seg-2-word-20",
+          "start": 14.04,
+          "end": 14.74,
+          "text": "potente",
+          "confidence": 0.95068
+        },
+        {
+          "id": "seg-2-word-21",
+          "start": 14.74,
+          "end": 15.28,
+          "text": "que",
+          "confidence": 0.89355
+        },
+        {
+          "id": "seg-2-word-22",
+          "start": 15.28,
+          "end": 15.6,
+          "text": "ponga",
+          "confidence": 0.70691
+        },
+        {
+          "id": "seg-2-word-23",
+          "start": 15.6,
+          "end": 15.68,
+          "text": "en",
+          "confidence": 0.98535
+        },
+        {
+          "id": "seg-2-word-24",
+          "start": 15.68,
+          "end": 16.06,
+          "text": "jaque",
+          "confidence": 0.98828
+        },
+        {
+          "id": "seg-2-word-25",
+          "start": 16.06,
+          "end": 16.52,
+          "text": "a",
+          "confidence": 0.98096
+        },
+        {
+          "id": "seg-2-word-26",
+          "start": 16.52,
+          "end": 16.68,
+          "text": "sus",
+          "confidence": 0.97021
+        },
+        {
+          "id": "seg-2-word-27",
+          "start": 16.68,
+          "end": 17.08,
+          "text": "modelos",
+          "confidence": 0.99683
+        },
+        {
+          "id": "seg-2-word-28",
+          "start": 17.08,
+          "end": 17.18,
+          "text": "de",
+          "confidence": 0.95654
+        },
+        {
+          "id": "seg-2-word-29",
+          "start": 17.18,
+          "end": 17.78,
+          "text": "Opus,",
+          "confidence": 0.94727
+        },
+        {
+          "id": "seg-2-word-30",
+          "start": 17.88,
+          "end": 17.94,
+          "text": "de",
+          "confidence": 0.74561
+        },
+        {
+          "id": "seg-2-word-31",
+          "start": 17.94,
+          "end": 18.44,
+          "text": "Sonnet,",
+          "confidence": 0.8396
+        },
+        {
+          "id": "seg-2-word-32",
+          "start": 18.6,
+          "end": 18.84,
+          "text": "etc.",
+          "confidence": 0.99463
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Porque",
+      "start": 0,
+      "end": 0.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "esa",
+      "start": 0.46,
+      "end": 0.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "destilación",
+      "start": 0.72,
+      "end": 1.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "la",
+      "start": 1.38,
+      "end": 1.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "consideran",
+      "start": 1.54,
+      "end": 2.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "como",
+      "start": 2.12,
+      "end": 2.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "un",
+      "start": 2.34,
+      "end": 2.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "robo",
+      "start": 2.52,
+      "end": 2.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "de",
+      "start": 2.86,
+      "end": 3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "su",
+      "start": 3,
+      "end": 3.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "propiedad",
+      "start": 3.18,
+      "end": 3.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "intelectual",
+      "start": 3.56,
+      "end": 4.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "y",
+      "start": 4.08,
+      "end": 4.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "están",
+      "start": 4.42,
+      "end": 4.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "pidiendo",
+      "start": 4.62,
+      "end": 5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "regulación",
+      "start": 5,
+      "end": 5.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "ahí",
+      "start": 5.78,
+      "end": 5.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "a",
+      "start": 5.96,
+      "end": 6.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "saco",
+      "start": 6.08,
+      "end": 6.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "porque",
+      "start": 6.4,
+      "end": 6.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "tienen",
+      "start": 6.74,
+      "end": 7.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "miedo",
+      "start": 7.04,
+      "end": 7.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "de",
+      "start": 7.38,
+      "end": 7.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "la",
+      "start": 7.52,
+      "end": 7.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "competencia",
+      "start": 7.62,
+      "end": 8.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "Si",
+      "start": 8.22,
+      "end": 8.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "al",
+      "start": 8.64,
+      "end": 8.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "final",
+      "start": 8.74,
+      "end": 8.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "es",
+      "start": 8.98,
+      "end": 9.16,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "que",
+      "start": 9.16,
+      "end": 9.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "es",
+      "start": 9.22,
+      "end": 9.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "así,",
+      "start": 9.34,
+      "end": 9.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "ellos",
+      "start": 9.8,
+      "end": 9.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "no",
+      "start": 9.92,
+      "end": 10.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "temen",
+      "start": 10.18,
+      "end": 10.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": "los",
+      "start": 10.5,
+      "end": 10.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "modelos",
+      "start": 10.68,
+      "end": 11.02,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 37,
+      "text": "pequeñitos,",
+      "start": 11.02,
+      "end": 11.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 38,
+      "text": "ellos",
+      "start": 11.76,
+      "end": 11.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 39,
+      "text": "temen",
+      "start": 11.84,
+      "end": 12.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 40,
+      "text": "el",
+      "start": 12.26,
+      "end": 12.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 41,
+      "text": "típico",
+      "start": 12.84,
+      "end": 13.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 42,
+      "text": "Kimi",
+      "start": 13.32,
+      "end": 13.7,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 43,
+      "text": "K3",
+      "start": 13.7,
+      "end": 14.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 44,
+      "text": "potente",
+      "start": 14.04,
+      "end": 14.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 45,
+      "text": "que",
+      "start": 14.74,
+      "end": 15.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 46,
+      "text": "ponga",
+      "start": 15.28,
+      "end": 15.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 47,
+      "text": "en",
+      "start": 15.6,
+      "end": 15.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 48,
+      "text": "jaque",
+      "start": 15.68,
+      "end": 16.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 49,
+      "text": "a",
+      "start": 16.06,
+      "end": 16.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 50,
+      "text": "sus",
+      "start": 16.52,
+      "end": 16.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 51,
+      "text": "modelos",
+      "start": 16.68,
+      "end": 17.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 52,
+      "text": "de",
+      "start": 17.08,
+      "end": 17.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 53,
+      "text": "Opus,",
+      "start": 17.18,
+      "end": 17.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 54,
+      "text": "de",
+      "start": 17.88,
+      "end": 17.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 55,
+      "text": "Sonnet,",
+      "start": 17.94,
+      "end": 18.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 56,
+      "text": "etc.",
+      "start": 18.6,
+      "end": 18.84,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

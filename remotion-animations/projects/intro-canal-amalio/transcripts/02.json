@@ -1,0 +1,888 @@
+{
+  "clipId": "02",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0.02,
+      "end": 20,
+      "text": "Para los mortales como nosotros, va a ser prácticamente imposible alojarlo en tu casa, a no ser que te quieras gastar casi medio millón de euros, porque depende de la cuantización del modelo, pero estamos hablando de que necesitarás por lo menos 1TB de RAM o VRAM, o incluso si lo quieres con precisión máxima, 2TB, casi nada",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0.02,
+          "end": 0.54,
+          "text": "Para",
+          "confidence": 0.97754
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.54,
+          "end": 0.74,
+          "text": "los",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.74,
+          "end": 1.14,
+          "text": "mortales",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.14,
+          "end": 1.4,
+          "text": "como",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.4,
+          "end": 1.88,
+          "text": "nosotros,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 2.18,
+          "end": 2.5,
+          "text": "va",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.5,
+          "end": 2.62,
+          "text": "a",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 2.62,
+          "end": 2.78,
+          "text": "ser",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.78,
+          "end": 3.36,
+          "text": "prácticamente",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 3.36,
+          "end": 3.96,
+          "text": "imposible",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 3.96,
+          "end": 4.46,
+          "text": "alojarlo",
+          "confidence": 0.99866
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 4.46,
+          "end": 4.54,
+          "text": "en",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 4.54,
+          "end": 4.62,
+          "text": "tu",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 4.62,
+          "end": 4.88,
+          "text": "casa,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 5.06,
+          "end": 5.32,
+          "text": "a",
+          "confidence": 0.9917
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 5.32,
+          "end": 5.44,
+          "text": "no",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 5.44,
+          "end": 5.58,
+          "text": "ser",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 5.58,
+          "end": 5.7,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 5.7,
+          "end": 5.86,
+          "text": "te",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 5.86,
+          "end": 6.12,
+          "text": "quieras",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 6.12,
+          "end": 6.52,
+          "text": "gastar",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 6.52,
+          "end": 6.78,
+          "text": "casi",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 6.78,
+          "end": 7.02,
+          "text": "medio",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 7.02,
+          "end": 7.28,
+          "text": "millón",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 7.28,
+          "end": 7.38,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 7.38,
+          "end": 7.64,
+          "text": "euros,",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 7.88,
+          "end": 8.1,
+          "text": "porque",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 8.1,
+          "end": 8.5,
+          "text": "depende",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 8.5,
+          "end": 8.66,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 8.66,
+          "end": 8.78,
+          "text": "la",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 8.78,
+          "end": 9.26,
+          "text": "cuantización",
+          "confidence": 0.99886
+        },
+        {
+          "id": "seg-1-word-32",
+          "start": 9.26,
+          "end": 9.42,
+          "text": "del",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-33",
+          "start": 9.42,
+          "end": 9.72,
+          "text": "modelo,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-34",
+          "start": 10.1,
+          "end": 10.26,
+          "text": "pero",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-35",
+          "start": 10.26,
+          "end": 10.46,
+          "text": "estamos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-36",
+          "start": 10.46,
+          "end": 10.84,
+          "text": "hablando",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-37",
+          "start": 10.84,
+          "end": 11.04,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-38",
+          "start": 11.04,
+          "end": 11.18,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-39",
+          "start": 11.18,
+          "end": 11.82,
+          "text": "necesitarás",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-40",
+          "start": 11.82,
+          "end": 11.96,
+          "text": "por",
+          "confidence": 0.99219
+        },
+        {
+          "id": "seg-1-word-41",
+          "start": 11.96,
+          "end": 12.12,
+          "text": "lo",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-42",
+          "start": 12.12,
+          "end": 12.4,
+          "text": "menos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-43",
+          "start": 12.4,
+          "end": 13.58,
+          "text": "1TB",
+          "confidence": 0.57218
+        },
+        {
+          "id": "seg-1-word-44",
+          "start": 13.58,
+          "end": 13.9,
+          "text": "de",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-45",
+          "start": 13.9,
+          "end": 14.26,
+          "text": "RAM",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-46",
+          "start": 14.26,
+          "end": 14.6,
+          "text": "o",
+          "confidence": 0.99023
+        },
+        {
+          "id": "seg-1-word-47",
+          "start": 14.6,
+          "end": 15.18,
+          "text": "VRAM,",
+          "confidence": 0.99487
+        },
+        {
+          "id": "seg-1-word-48",
+          "start": 15.32,
+          "end": 15.46,
+          "text": "o",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-49",
+          "start": 15.46,
+          "end": 15.76,
+          "text": "incluso",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-50",
+          "start": 15.76,
+          "end": 15.94,
+          "text": "si",
+          "confidence": 0.96973
+        },
+        {
+          "id": "seg-1-word-51",
+          "start": 15.94,
+          "end": 16.06,
+          "text": "lo",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-52",
+          "start": 16.06,
+          "end": 16.34,
+          "text": "quieres",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-53",
+          "start": 16.34,
+          "end": 16.58,
+          "text": "con",
+          "confidence": 0.98877
+        },
+        {
+          "id": "seg-1-word-54",
+          "start": 16.58,
+          "end": 17.02,
+          "text": "precisión",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-55",
+          "start": 17.02,
+          "end": 17.74,
+          "text": "máxima,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-56",
+          "start": 17.78,
+          "end": 18.76,
+          "text": "2TB,",
+          "confidence": 0.99691
+        },
+        {
+          "id": "seg-1-word-57",
+          "start": 19.02,
+          "end": 19.64,
+          "text": "casi",
+          "confidence": 0.97998
+        },
+        {
+          "id": "seg-1-word-58",
+          "start": 19.64,
+          "end": 20,
+          "text": "nada",
+          "confidence": 1
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Para",
+      "start": 0.02,
+      "end": 0.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "los",
+      "start": 0.54,
+      "end": 0.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "mortales",
+      "start": 0.74,
+      "end": 1.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "como",
+      "start": 1.14,
+      "end": 1.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "nosotros,",
+      "start": 1.4,
+      "end": 1.88,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "va",
+      "start": 2.18,
+      "end": 2.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "a",
+      "start": 2.5,
+      "end": 2.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "ser",
+      "start": 2.62,
+      "end": 2.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "prácticamente",
+      "start": 2.78,
+      "end": 3.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "imposible",
+      "start": 3.36,
+      "end": 3.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "alojarlo",
+      "start": 3.96,
+      "end": 4.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "en",
+      "start": 4.46,
+      "end": 4.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "tu",
+      "start": 4.54,
+      "end": 4.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "casa,",
+      "start": 4.62,
+      "end": 4.88,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "a",
+      "start": 5.06,
+      "end": 5.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "no",
+      "start": 5.32,
+      "end": 5.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "ser",
+      "start": 5.44,
+      "end": 5.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "que",
+      "start": 5.58,
+      "end": 5.7,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "te",
+      "start": 5.7,
+      "end": 5.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "quieras",
+      "start": 5.86,
+      "end": 6.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "gastar",
+      "start": 6.12,
+      "end": 6.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "casi",
+      "start": 6.52,
+      "end": 6.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "medio",
+      "start": 6.78,
+      "end": 7.02,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "millón",
+      "start": 7.02,
+      "end": 7.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "de",
+      "start": 7.28,
+      "end": 7.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "euros,",
+      "start": 7.38,
+      "end": 7.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "porque",
+      "start": 7.88,
+      "end": 8.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "depende",
+      "start": 8.1,
+      "end": 8.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "de",
+      "start": 8.5,
+      "end": 8.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "la",
+      "start": 8.66,
+      "end": 8.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "cuantización",
+      "start": 8.78,
+      "end": 9.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "del",
+      "start": 9.26,
+      "end": 9.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "modelo,",
+      "start": 9.42,
+      "end": 9.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "pero",
+      "start": 10.1,
+      "end": 10.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "estamos",
+      "start": 10.26,
+      "end": 10.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": "hablando",
+      "start": 10.46,
+      "end": 10.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "de",
+      "start": 10.84,
+      "end": 11.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 37,
+      "text": "que",
+      "start": 11.04,
+      "end": 11.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 38,
+      "text": "necesitarás",
+      "start": 11.18,
+      "end": 11.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 39,
+      "text": "por",
+      "start": 11.82,
+      "end": 11.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 40,
+      "text": "lo",
+      "start": 11.96,
+      "end": 12.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 41,
+      "text": "menos",
+      "start": 12.12,
+      "end": 12.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 42,
+      "text": "1TB",
+      "start": 12.4,
+      "end": 13.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 43,
+      "text": "de",
+      "start": 13.58,
+      "end": 13.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 44,
+      "text": "RAM",
+      "start": 13.9,
+      "end": 14.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 45,
+      "text": "o",
+      "start": 14.26,
+      "end": 14.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 46,
+      "text": "VRAM,",
+      "start": 14.6,
+      "end": 15.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 47,
+      "text": "o",
+      "start": 15.32,
+      "end": 15.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 48,
+      "text": "incluso",
+      "start": 15.46,
+      "end": 15.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 49,
+      "text": "si",
+      "start": 15.76,
+      "end": 15.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 50,
+      "text": "lo",
+      "start": 15.94,
+      "end": 16.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 51,
+      "text": "quieres",
+      "start": 16.06,
+      "end": 16.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 52,
+      "text": "con",
+      "start": 16.34,
+      "end": 16.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 53,
+      "text": "precisión",
+      "start": 16.58,
+      "end": 17.02,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 54,
+      "text": "máxima,",
+      "start": 17.02,
+      "end": 17.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 55,
+      "text": "2TB,",
+      "start": 17.78,
+      "end": 18.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 56,
+      "text": "casi",
+      "start": 19.02,
+      "end": 19.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 57,
+      "text": "nada",
+      "start": 19.64,
+      "end": 20,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

@@ -1,0 +1,763 @@
+{
+  "clipId": "01",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0.14,
+      "end": 13.22,
+      "text": "Ha llegado el día más temido de Anthropic, Kimi K3 ya es oficialmente público y nos lo vamos a poder descargar de Hugging Face y alojar, eso sí, cualquiera que tenga un buen servidor en su casa",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0.14,
+          "end": 0.64,
+          "text": "Ha",
+          "confidence": 0.86035
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.64,
+          "end": 1.1,
+          "text": "llegado",
+          "confidence": 0.99927
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 1.1,
+          "end": 1.54,
+          "text": "el",
+          "confidence": 0.98877
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.54,
+          "end": 1.8,
+          "text": "día",
+          "confidence": 0.98682
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.8,
+          "end": 2.14,
+          "text": "más",
+          "confidence": 0.98779
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 2.14,
+          "end": 2.48,
+          "text": "temido",
+          "confidence": 0.99878
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.48,
+          "end": 2.62,
+          "text": "de",
+          "confidence": 0.98682
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 2.62,
+          "end": 3.06,
+          "text": "Anthropic,",
+          "confidence": 0.94385
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 3.56,
+          "end": 4,
+          "text": "Kimi",
+          "confidence": 0.32996
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 4,
+          "end": 4.5,
+          "text": "K3",
+          "confidence": 0.78662
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 4.5,
+          "end": 4.9,
+          "text": "ya",
+          "confidence": 0.9834
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 4.9,
+          "end": 5.06,
+          "text": "es",
+          "confidence": 0.9917
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 5.06,
+          "end": 5.6,
+          "text": "oficialmente",
+          "confidence": 0.99878
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 5.6,
+          "end": 6,
+          "text": "público",
+          "confidence": 0.98438
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 6,
+          "end": 6.54,
+          "text": "y",
+          "confidence": 0.91309
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 6.54,
+          "end": 6.72,
+          "text": "nos",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 6.72,
+          "end": 6.82,
+          "text": "lo",
+          "confidence": 0.99561
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 6.82,
+          "end": 7.02,
+          "text": "vamos",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 7.02,
+          "end": 7.18,
+          "text": "a",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 7.18,
+          "end": 7.42,
+          "text": "poder",
+          "confidence": 0.99463
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 7.42,
+          "end": 8.08,
+          "text": "descargar",
+          "confidence": 0.99886
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 8.08,
+          "end": 8.26,
+          "text": "de",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 8.26,
+          "end": 8.66,
+          "text": "Hugging",
+          "confidence": 0.88428
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 8.66,
+          "end": 8.94,
+          "text": "Face",
+          "confidence": 0.90332
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 8.94,
+          "end": 9.4,
+          "text": "y",
+          "confidence": 0.99463
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 9.4,
+          "end": 9.96,
+          "text": "alojar,",
+          "confidence": 0.99919
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 10.1,
+          "end": 10.28,
+          "text": "eso",
+          "confidence": 0.99365
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 10.28,
+          "end": 10.48,
+          "text": "sí,",
+          "confidence": 0.99023
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 10.8,
+          "end": 11.32,
+          "text": "cualquiera",
+          "confidence": 0.99927
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 11.32,
+          "end": 11.52,
+          "text": "que",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 11.52,
+          "end": 11.78,
+          "text": "tenga",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-32",
+          "start": 11.78,
+          "end": 11.92,
+          "text": "un",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-33",
+          "start": 11.92,
+          "end": 12.18,
+          "text": "buen",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-34",
+          "start": 12.18,
+          "end": 12.64,
+          "text": "servidor",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-35",
+          "start": 12.64,
+          "end": 12.76,
+          "text": "en",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-36",
+          "start": 12.76,
+          "end": 12.9,
+          "text": "su",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-37",
+          "start": 12.9,
+          "end": 13.22,
+          "text": "casa",
+          "confidence": 0.99951
+        }
+      ]
+    },
+    {
+      "id": "seg-2",
+      "start": 13.22,
+      "end": 20.54,
+      "text": "Porque este Kimi K3 pesa aproximadamente 1,5 TB de espacio, casi nada",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-2-word-1",
+          "start": 13.22,
+          "end": 14.34,
+          "text": "Porque",
+          "confidence": 0.00138
+        },
+        {
+          "id": "seg-2-word-2",
+          "start": 14.34,
+          "end": 14.68,
+          "text": "este",
+          "confidence": 0.98828
+        },
+        {
+          "id": "seg-2-word-3",
+          "start": 14.68,
+          "end": 15.38,
+          "text": "Kimi",
+          "confidence": 0.93262
+        },
+        {
+          "id": "seg-2-word-4",
+          "start": 15.38,
+          "end": 15.74,
+          "text": "K3",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-2-word-5",
+          "start": 15.74,
+          "end": 16.92,
+          "text": "pesa",
+          "confidence": 0.97852
+        },
+        {
+          "id": "seg-2-word-7",
+          "start": 16.92,
+          "end": 17.52,
+          "text": "1",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-2-word-8",
+          "start": 17.52,
+          "end": 18.24,
+          "text": ",5",
+          "confidence": 0.89209
+        },
+        {
+          "id": "seg-2-word-9",
+          "start": 18.24,
+          "end": 18.64,
+          "text": "TB",
+          "confidence": 0.5835
+        },
+        {
+          "id": "seg-2-word-10",
+          "start": 18.64,
+          "end": 19.08,
+          "text": "de",
+          "confidence": 0.99219
+        },
+        {
+          "id": "seg-2-word-11",
+          "start": 19.08,
+          "end": 19.46,
+          "text": "espacio,",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-2-word-12",
+          "start": 19.76,
+          "end": 20.14,
+          "text": "casi",
+          "confidence": 0.85303
+        },
+        {
+          "id": "seg-2-word-13",
+          "start": 20.14,
+          "end": 20.54,
+          "text": "nada",
+          "confidence": 0.99756
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Ha",
+      "start": 0.14,
+      "end": 0.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "llegado",
+      "start": 0.64,
+      "end": 1.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "el",
+      "start": 1.1,
+      "end": 1.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "día",
+      "start": 1.54,
+      "end": 1.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "más",
+      "start": 1.8,
+      "end": 2.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "temido",
+      "start": 2.14,
+      "end": 2.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "de",
+      "start": 2.48,
+      "end": 2.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "Anthropic,",
+      "start": 2.62,
+      "end": 3.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "Kimi",
+      "start": 3.56,
+      "end": 4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "K3",
+      "start": 4,
+      "end": 4.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "ya",
+      "start": 4.5,
+      "end": 4.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "es",
+      "start": 4.9,
+      "end": 5.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "oficialmente",
+      "start": 5.06,
+      "end": 5.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "público",
+      "start": 5.6,
+      "end": 6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "y",
+      "start": 6,
+      "end": 6.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "nos",
+      "start": 6.54,
+      "end": 6.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "lo",
+      "start": 6.72,
+      "end": 6.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "vamos",
+      "start": 6.82,
+      "end": 7.02,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "a",
+      "start": 7.02,
+      "end": 7.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "poder",
+      "start": 7.18,
+      "end": 7.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "descargar",
+      "start": 7.42,
+      "end": 8.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "de",
+      "start": 8.08,
+      "end": 8.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "Hugging",
+      "start": 8.26,
+      "end": 8.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "Face",
+      "start": 8.66,
+      "end": 8.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "y",
+      "start": 8.94,
+      "end": 9.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "alojar,",
+      "start": 9.4,
+      "end": 9.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "eso",
+      "start": 10.1,
+      "end": 10.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "sí,",
+      "start": 10.28,
+      "end": 10.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "cualquiera",
+      "start": 10.8,
+      "end": 11.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "que",
+      "start": 11.32,
+      "end": 11.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "tenga",
+      "start": 11.52,
+      "end": 11.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "un",
+      "start": 11.78,
+      "end": 11.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "buen",
+      "start": 11.92,
+      "end": 12.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "servidor",
+      "start": 12.18,
+      "end": 12.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "en",
+      "start": 12.64,
+      "end": 12.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": "su",
+      "start": 12.76,
+      "end": 12.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "casa",
+      "start": 12.9,
+      "end": 13.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 37,
+      "text": "Porque",
+      "start": 13.22,
+      "end": 14.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 38,
+      "text": "este",
+      "start": 14.34,
+      "end": 14.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 39,
+      "text": "Kimi",
+      "start": 14.68,
+      "end": 15.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 40,
+      "text": "K3",
+      "start": 15.38,
+      "end": 15.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 41,
+      "text": "pesa",
+      "start": 15.74,
+      "end": 16.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 42,
+      "text": "1",
+      "start": 16.92,
+      "end": 17.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 43,
+      "text": ",5",
+      "start": 17.52,
+      "end": 18.24,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 44,
+      "text": "TB",
+      "start": 18.24,
+      "end": 18.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 45,
+      "text": "de",
+      "start": 18.64,
+      "end": 19.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 46,
+      "text": "espacio,",
+      "start": 19.08,
+      "end": 19.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 47,
+      "text": "casi",
+      "start": 19.76,
+      "end": 20.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 48,
+      "text": "nada",
+      "start": 20.14,
+      "end": 20.54,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

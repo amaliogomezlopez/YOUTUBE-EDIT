@@ -1,0 +1,65 @@
+{
+  "ruleId": "IN-R-022",
+  "check": "intro-blend-needs-something-behind",
+  "expect": "fail",
+  "note": "Un logo con fondo negro solido puesto detras del sujeto en una escena sin backdrop: la parte que se ve es la que el sujeto no tapa, y ahi screen lo borra. Es el caso real del logo de Kimi en canal-amalio.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "frame",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "backdrop": null,
+        "cues": [
+          {
+            "id": "cue-1",
+            "type": "logo",
+            "assetId": "kimi",
+            "slot": "behind-left",
+            "depth": "back",
+            "presentation": "blend",
+            "tone": "neutral",
+            "scale": 0.72,
+            "blurPx": 6,
+            "rect": {
+              "left": 492.8,
+              "top": 292.8,
+              "width": 374.4,
+              "height": 374.4
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 180,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": {
+              "opaqueCoverage": 1,
+              "meanLuma": 0.148,
+              "darkRatio": 0.82,
+              "edgeDarkRatio": 1
+            }
+          }
+        ],
+        "effects": [],
+        "captionPages": []
+      }
+    ],
+    "soundCues": [],
+    "duckWindows": []
+  }
+}

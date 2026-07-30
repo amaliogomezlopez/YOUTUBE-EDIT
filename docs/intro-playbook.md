@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje de intro en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier intro y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal para el que se monta la intro. |
 
-Reglas: **11** · con validador automático: **11** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **12** · con validador automático: **12** · marcadas `manual`: **0** · sin implementar: **0**.
 
 Una regla que se cumple igual en dos superficies asciende a `catalog` y su validador se mueve a `src/modules/video-studio/checks/`. Ya han ascendido `art-dark-on-alpha-needs-plate`, `art-solid-background-needs-blend` y `cue-not-silent`, que nacieron montando shorts. Las reglas de este set se registran con `npm run intro:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -73,6 +73,14 @@ Un logo o un wordmark con fondo negro sólido necesita `presentation: "blend"`.
 **Por qué:** Un wordmark exportado sin alfa arrastra su rectángulo negro: dentro de la tarjeta se ve el escalón y sobre el vídeo, un parche. `blend` suma con `screen` y el negro desaparece.
 
 **Validador:** `art-solid-background-needs-blend`
+
+### IN-R-022 · `warning` · `catalog`
+
+Un cue con presentation "blend" necesita video o fondo detras de su rectangulo: sobre el fondo del tema, screen lo hace invisible.
+
+**Por qué:** blend existe para que el rectangulo negro de un logo sin alfa desaparezca sobre el video. Si el cue cae donde no hay video ni backdrop, screen suma sobre el fondo del tema y lo que desaparece es el logo entero. Paso con el logo de Kimi en la escena de cierre, en layout frame.
+
+**Validador:** `intro-blend-needs-something-behind`
 
 ## 3. Zona segura
 

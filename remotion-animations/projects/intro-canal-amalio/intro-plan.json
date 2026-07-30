@@ -1,0 +1,86 @@
+{
+  "profileId": "hype-tech",
+  "note": "Intro del video sobre Kimi K3 y la reaccion de Anthropic. Los extremos de cada escena caen en un beat (115 BPM, periodo 0.5217s) para que el corte suene con la musica; los cues de contenido se anclan a la palabra que los motiva y los golpes al beat.",
+  "music": {
+    "assetId": "music",
+    "gainDb": -11
+  },
+  "titleCard": {
+    "text": "AMALIOMETRIA",
+    "atBeat": 27,
+    "holdSeconds": 2.1
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "layout": "hero",
+      "camera": "punch-in",
+      "transitionIn": "cut",
+      "trim": {"start": 0, "end": 6.301},
+      "cues": [
+        {
+          "type": "chip",
+          "slot": "corner-tl",
+          "text": "YA ES PUBLICO",
+          "atWord": 8,
+          "holdSeconds": 2.5,
+          "tone": "accent"
+        },
+        {
+          "type": "logo",
+          "assetId": "kimi",
+          "slot": "fore-right",
+          "presentation": "blend",
+          "atWord": 9,
+          "holdSeconds": 2.3
+        }
+      ],
+      "effects": [
+        {"id": "flash", "atBeat": 0, "intensity": 0.6},
+        {"id": "light-leak", "atBeat": 4, "intensity": 0.7},
+        {"id": "zoom-punch", "atBeat": 8}
+      ]
+    },
+    {
+      "id": "peso",
+      "clipId": "01",
+      "layout": "hero-right",
+      "camera": "drift-left",
+      "transitionIn": "flash-cut",
+      "trim": {"start": 15.3, "end": 20.517},
+      "cues": [
+        {
+          "type": "stat",
+          "slot": "fore-left",
+          "text": "1,5 TB",
+          "note": "solo para alojarlo",
+          "atWord": 42,
+          "holdSeconds": 3,
+          "tone": "warning"
+        }
+      ],
+      "effects": [
+        {"id": "flash", "atBeat": 12, "intensity": 0.55},
+        {"id": "rgb-split", "atBeat": 15, "intensity": 0.7},
+        {"id": "zoom-punch", "atBeat": 19, "intensity": 0.8}
+      ]
+    },
+    {
+      "id": "miedo",
+      "clipId": "05",
+      "layout": "frame",
+      "camera": "snap-zoom",
+      "transitionIn": "whip",
+      "trim": {"start": 11.76, "end": 16.456},
+      "cues": [
+        {"type": "logo", "assetId": "claudelogo", "slot": "behind-left", "presentation": "plain", "atBeat": 25, "holdSeconds": 3},
+        {"type": "logo", "assetId": "claudelogo", "slot": "behind-right", "presentation": "plain", "atBeat": 27, "holdSeconds": 2.5}
+      ],
+      "effects": [
+        {"id": "shake", "atBeat": 22, "intensity": 0.6},
+        {"id": "flash", "atBeat": 29, "intensity": 0.5}
+      ]
+    }
+  ]
+}

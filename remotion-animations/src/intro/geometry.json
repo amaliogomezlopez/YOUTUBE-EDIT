@@ -28,6 +28,8 @@
     "orbit-2": {"left": 1452, "top": 96, "width": 300, "height": 300},
     "orbit-3": {"left": 168, "top": 620, "width": 300, "height": 300},
     "orbit-4": {"left": 1452, "top": 620, "width": 300, "height": 300},
+    "behind-left": {"left": 300, "top": 220, "width": 520, "height": 520},
+    "behind-right": {"left": 1100, "top": 220, "width": 520, "height": 520},
     "fore-left": {"left": 96, "top": 296, "width": 560, "height": 420},
     "fore-right": {"left": 1264, "top": 296, "width": 560, "height": 420},
     "corner-tl": {"left": 96, "top": 64, "width": 360, "height": 200},
@@ -37,7 +39,9 @@
     "center": {"left": 560, "top": 330, "width": 800, "height": 420},
     "strip": {"left": 96, "top": 800, "width": 1728, "height": 172}
   },
-  "backSlots": ["back-left", "back-right", "back-center", "orbit-1", "orbit-2", "orbit-3", "orbit-4"],
-  "titleBand": {"left": 96, "top": 620, "width": 1728, "height": 320},
+  "backSlotsComment": "`behind-left` y `behind-right` son los unicos slots que, ya reducidos por el perfil, cruzan el borde del sujeto en `frame`, `hero-left` y `hero-right`: parte del arte queda tapada por la persona y parte no, que es lo que se lee como «esta detras». Estan colocados para que asome un 60 % del ancho: con menos, lo unico que se ve es el borde del marco y no el arte. Los `back-*` y `orbit-*` caen enteros fuera del sujeto y dan profundidad solo por desenfoque y escala.",
+  "backSlots": ["back-left", "back-right", "back-center", "orbit-1", "orbit-2", "orbit-3", "orbit-4", "behind-left", "behind-right"],
+  "titleBandComment": "Tercio inferior, hasta el borde de la zona segura. No puede subir mas: un busto parlante encuadrado al centro tiene la barbilla cerca de y = 750, y una banda mas alta le cae sobre la cara. Lo mide IN-R-011.",
+  "titleBand": {"left": 96, "top": 760, "width": 1728, "height": 212},
   "captionBand": {"left": 240, "top": 792, "width": 1440, "height": 180}
 }

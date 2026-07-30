@@ -1,0 +1,1533 @@
+{
+  "clipId": "04",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 9.56,
+      "text": "Además, me parece sospechoso que ayer Anthropic también lanzara un comunicado sobre su postura acerca de los modelos de código abierto",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.62,
+          "text": "Además,",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.86,
+          "end": 0.92,
+          "text": "me",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.92,
+          "end": 1.22,
+          "text": "parece",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.22,
+          "end": 1.98,
+          "text": "sospechoso",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.98,
+          "end": 2.28,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 2.28,
+          "end": 2.72,
+          "text": "ayer",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.72,
+          "end": 3.5,
+          "text": "Anthropic",
+          "confidence": 0.93457
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 3.5,
+          "end": 3.94,
+          "text": "también",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 3.94,
+          "end": 4.4,
+          "text": "lanzara",
+          "confidence": 0.77222
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 4.4,
+          "end": 4.66,
+          "text": "un",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 4.66,
+          "end": 5.34,
+          "text": "comunicado",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 5.34,
+          "end": 6.04,
+          "text": "sobre",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 6.04,
+          "end": 6.54,
+          "text": "su",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 6.54,
+          "end": 7.04,
+          "text": "postura",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 7.04,
+          "end": 7.44,
+          "text": "acerca",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 7.44,
+          "end": 7.66,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 7.66,
+          "end": 8.04,
+          "text": "los",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 8.04,
+          "end": 8.72,
+          "text": "modelos",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 8.72,
+          "end": 8.86,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 8.86,
+          "end": 9.12,
+          "text": "código",
+          "confidence": 0.99268
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 9.12,
+          "end": 9.56,
+          "text": "abierto",
+          "confidence": 1
+        }
+      ]
+    },
+    {
+      "id": "seg-2",
+      "start": 9.56,
+      "end": 17.14,
+      "text": "En el que básicamente decían, no, si nosotros no nos oponemos a los modelos de código abierto, no creemos que se deban prohibir",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-2-word-1",
+          "start": 9.56,
+          "end": 9.96,
+          "text": "En",
+          "confidence": 0.00016
+        },
+        {
+          "id": "seg-2-word-2",
+          "start": 9.96,
+          "end": 10.06,
+          "text": "el",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-3",
+          "start": 10.06,
+          "end": 10.16,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-4",
+          "start": 10.16,
+          "end": 10.54,
+          "text": "básicamente",
+          "confidence": 0.99072
+        },
+        {
+          "id": "seg-2-word-5",
+          "start": 10.54,
+          "end": 11.2,
+          "text": "decían,",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-2-word-6",
+          "start": 11.44,
+          "end": 11.64,
+          "text": "no,",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-2-word-7",
+          "start": 11.72,
+          "end": 11.82,
+          "text": "no,",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-2-word-8",
+          "start": 11.92,
+          "end": 12.1,
+          "text": "si",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-2-word-9",
+          "start": 12.1,
+          "end": 12.48,
+          "text": "nosotros",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-10",
+          "start": 12.48,
+          "end": 12.86,
+          "text": "no",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-11",
+          "start": 12.86,
+          "end": 13.02,
+          "text": "nos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-12",
+          "start": 13.02,
+          "end": 13.46,
+          "text": "oponemos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-13",
+          "start": 13.46,
+          "end": 13.58,
+          "text": "a",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-14",
+          "start": 13.58,
+          "end": 13.72,
+          "text": "los",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-15",
+          "start": 13.72,
+          "end": 14.06,
+          "text": "modelos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-16",
+          "start": 14.06,
+          "end": 14.16,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-17",
+          "start": 14.16,
+          "end": 14.38,
+          "text": "código",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-18",
+          "start": 14.38,
+          "end": 14.74,
+          "text": "abierto,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-19",
+          "start": 14.88,
+          "end": 15.34,
+          "text": "no",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-20",
+          "start": 15.34,
+          "end": 15.84,
+          "text": "creemos",
+          "confidence": 0.95483
+        },
+        {
+          "id": "seg-2-word-21",
+          "start": 15.84,
+          "end": 16.14,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-22",
+          "start": 16.14,
+          "end": 16.3,
+          "text": "se",
+          "confidence": 1
+        },
+        {
+          "id": "seg-2-word-23",
+          "start": 16.3,
+          "end": 16.66,
+          "text": "deban",
+          "confidence": 0.99268
+        },
+        {
+          "id": "seg-2-word-24",
+          "start": 16.66,
+          "end": 17.14,
+          "text": "prohibir",
+          "confidence": 0.99951
+        }
+      ]
+    },
+    {
+      "id": "seg-3",
+      "start": 17.14,
+      "end": 25.94,
+      "text": "Pero sí que creemos que se debe regular fuertemente cuando estos son liberados al público y sobre todo también en contra de la destilación de los modelos",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-3-word-1",
+          "start": 17.14,
+          "end": 17.58,
+          "text": "Pero",
+          "confidence": 0.80762
+        },
+        {
+          "id": "seg-3-word-2",
+          "start": 17.58,
+          "end": 17.74,
+          "text": "sí",
+          "confidence": 0.98145
+        },
+        {
+          "id": "seg-3-word-3",
+          "start": 17.74,
+          "end": 17.86,
+          "text": "que",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-3-word-4",
+          "start": 17.86,
+          "end": 18.26,
+          "text": "creemos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-5",
+          "start": 18.26,
+          "end": 18.44,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-6",
+          "start": 18.44,
+          "end": 18.56,
+          "text": "se",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-7",
+          "start": 18.56,
+          "end": 18.78,
+          "text": "debe",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-3-word-8",
+          "start": 18.78,
+          "end": 19.3,
+          "text": "regular",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-3-word-9",
+          "start": 19.3,
+          "end": 19.94,
+          "text": "fuertemente",
+          "confidence": 0.99967
+        },
+        {
+          "id": "seg-3-word-10",
+          "start": 19.94,
+          "end": 20.6,
+          "text": "cuando",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-3-word-11",
+          "start": 20.6,
+          "end": 20.92,
+          "text": "estos",
+          "confidence": 0.97656
+        },
+        {
+          "id": "seg-3-word-12",
+          "start": 20.92,
+          "end": 21.44,
+          "text": "son",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-13",
+          "start": 21.44,
+          "end": 21.92,
+          "text": "liberados",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-14",
+          "start": 21.92,
+          "end": 22.1,
+          "text": "al",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-15",
+          "start": 22.1,
+          "end": 22.42,
+          "text": "público",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-16",
+          "start": 22.42,
+          "end": 22.64,
+          "text": "y",
+          "confidence": 0.88867
+        },
+        {
+          "id": "seg-3-word-17",
+          "start": 22.64,
+          "end": 22.8,
+          "text": "sobre",
+          "confidence": 0.97998
+        },
+        {
+          "id": "seg-3-word-18",
+          "start": 22.8,
+          "end": 22.96,
+          "text": "todo",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-19",
+          "start": 22.96,
+          "end": 23.3,
+          "text": "también",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-3-word-20",
+          "start": 23.3,
+          "end": 23.88,
+          "text": "en",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-3-word-21",
+          "start": 23.88,
+          "end": 24.34,
+          "text": "contra",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-22",
+          "start": 24.34,
+          "end": 24.54,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-23",
+          "start": 24.54,
+          "end": 24.68,
+          "text": "la",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-24",
+          "start": 24.68,
+          "end": 25.38,
+          "text": "destilación",
+          "confidence": 0.99984
+        },
+        {
+          "id": "seg-3-word-25",
+          "start": 25.38,
+          "end": 25.5,
+          "text": "de",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-26",
+          "start": 25.5,
+          "end": 25.64,
+          "text": "los",
+          "confidence": 1
+        },
+        {
+          "id": "seg-3-word-27",
+          "start": 25.64,
+          "end": 25.94,
+          "text": "modelos",
+          "confidence": 1
+        }
+      ]
+    },
+    {
+      "id": "seg-4",
+      "start": 25.94,
+      "end": 36,
+      "text": "Es decir, de usar las respuestas de modelos potentes americanos y coger esas respuestas y entrenar a modelos pequeñitos chinos. Contra eso sí que están en contra",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-4-word-1",
+          "start": 25.94,
+          "end": 26.1,
+          "text": "Es",
+          "confidence": 0.57617
+        },
+        {
+          "id": "seg-4-word-2",
+          "start": 26.1,
+          "end": 26.34,
+          "text": "decir,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-3",
+          "start": 26.82,
+          "end": 26.9,
+          "text": "de",
+          "confidence": 0.96875
+        },
+        {
+          "id": "seg-4-word-4",
+          "start": 26.9,
+          "end": 27.1,
+          "text": "usar",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-4-word-5",
+          "start": 27.1,
+          "end": 27.28,
+          "text": "las",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-4-word-6",
+          "start": 27.28,
+          "end": 27.78,
+          "text": "respuestas",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-4-word-7",
+          "start": 27.78,
+          "end": 28,
+          "text": "de",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-4-word-8",
+          "start": 28,
+          "end": 28.4,
+          "text": "modelos",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-4-word-9",
+          "start": 28.4,
+          "end": 29,
+          "text": "potentes",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-4-word-10",
+          "start": 29,
+          "end": 29.66,
+          "text": "americanos",
+          "confidence": 0.99878
+        },
+        {
+          "id": "seg-4-word-11",
+          "start": 29.66,
+          "end": 30.08,
+          "text": "y",
+          "confidence": 0.94482
+        },
+        {
+          "id": "seg-4-word-12",
+          "start": 30.08,
+          "end": 30.48,
+          "text": "coger",
+          "confidence": 0.98389
+        },
+        {
+          "id": "seg-4-word-13",
+          "start": 30.48,
+          "end": 30.8,
+          "text": "esas",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-4-word-14",
+          "start": 30.8,
+          "end": 31.42,
+          "text": "respuestas",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-15",
+          "start": 31.42,
+          "end": 31.94,
+          "text": "y",
+          "confidence": 0.99121
+        },
+        {
+          "id": "seg-4-word-16",
+          "start": 31.94,
+          "end": 32.5,
+          "text": "entrenar",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-17",
+          "start": 32.5,
+          "end": 32.68,
+          "text": "a",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-18",
+          "start": 32.68,
+          "end": 33.14,
+          "text": "modelos",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-4-word-19",
+          "start": 33.14,
+          "end": 33.68,
+          "text": "pequeñitos",
+          "confidence": 0.9987
+        },
+        {
+          "id": "seg-4-word-20",
+          "start": 33.68,
+          "end": 34.18,
+          "text": "chinos.",
+          "confidence": 0.99731
+        },
+        {
+          "id": "seg-4-word-21",
+          "start": 34.28,
+          "end": 34.66,
+          "text": "Contra",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-4-word-22",
+          "start": 34.66,
+          "end": 34.94,
+          "text": "eso",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-4-word-23",
+          "start": 34.94,
+          "end": 35.3,
+          "text": "sí",
+          "confidence": 0.94922
+        },
+        {
+          "id": "seg-4-word-24",
+          "start": 35.3,
+          "end": 35.42,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-25",
+          "start": 35.42,
+          "end": 35.58,
+          "text": "están",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-26",
+          "start": 35.58,
+          "end": 35.76,
+          "text": "en",
+          "confidence": 1
+        },
+        {
+          "id": "seg-4-word-27",
+          "start": 35.76,
+          "end": 36,
+          "text": "contra",
+          "confidence": 1
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Además,",
+      "start": 0,
+      "end": 0.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "me",
+      "start": 0.86,
+      "end": 0.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "parece",
+      "start": 0.92,
+      "end": 1.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "sospechoso",
+      "start": 1.22,
+      "end": 1.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "que",
+      "start": 1.98,
+      "end": 2.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "ayer",
+      "start": 2.28,
+      "end": 2.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "Anthropic",
+      "start": 2.72,
+      "end": 3.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "también",
+      "start": 3.5,
+      "end": 3.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "lanzara",
+      "start": 3.94,
+      "end": 4.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "un",
+      "start": 4.4,
+      "end": 4.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "comunicado",
+      "start": 4.66,
+      "end": 5.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "sobre",
+      "start": 5.34,
+      "end": 6.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "su",
+      "start": 6.04,
+      "end": 6.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "postura",
+      "start": 6.54,
+      "end": 7.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "acerca",
+      "start": 7.04,
+      "end": 7.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "de",
+      "start": 7.44,
+      "end": 7.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "los",
+      "start": 7.66,
+      "end": 8.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "modelos",
+      "start": 8.04,
+      "end": 8.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "de",
+      "start": 8.72,
+      "end": 8.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "código",
+      "start": 8.86,
+      "end": 9.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "abierto",
+      "start": 9.12,
+      "end": 9.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "En",
+      "start": 9.56,
+      "end": 9.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "el",
+      "start": 9.96,
+      "end": 10.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "que",
+      "start": 10.06,
+      "end": 10.16,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "básicamente",
+      "start": 10.16,
+      "end": 10.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "decían,",
+      "start": 10.54,
+      "end": 11.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "no,",
+      "start": 11.44,
+      "end": 11.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "no,",
+      "start": 11.72,
+      "end": 11.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "si",
+      "start": 11.92,
+      "end": 12.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "nosotros",
+      "start": 12.1,
+      "end": 12.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "no",
+      "start": 12.48,
+      "end": 12.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "nos",
+      "start": 12.86,
+      "end": 13.02,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "oponemos",
+      "start": 13.02,
+      "end": 13.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "a",
+      "start": 13.46,
+      "end": 13.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "los",
+      "start": 13.58,
+      "end": 13.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": "modelos",
+      "start": 13.72,
+      "end": 14.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "de",
+      "start": 14.06,
+      "end": 14.16,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 37,
+      "text": "código",
+      "start": 14.16,
+      "end": 14.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 38,
+      "text": "abierto,",
+      "start": 14.38,
+      "end": 14.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 39,
+      "text": "no",
+      "start": 14.88,
+      "end": 15.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 40,
+      "text": "creemos",
+      "start": 15.34,
+      "end": 15.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 41,
+      "text": "que",
+      "start": 15.84,
+      "end": 16.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 42,
+      "text": "se",
+      "start": 16.14,
+      "end": 16.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 43,
+      "text": "deban",
+      "start": 16.3,
+      "end": 16.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 44,
+      "text": "prohibir",
+      "start": 16.66,
+      "end": 17.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 45,
+      "text": "Pero",
+      "start": 17.14,
+      "end": 17.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 46,
+      "text": "sí",
+      "start": 17.58,
+      "end": 17.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 47,
+      "text": "que",
+      "start": 17.74,
+      "end": 17.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 48,
+      "text": "creemos",
+      "start": 17.86,
+      "end": 18.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 49,
+      "text": "que",
+      "start": 18.26,
+      "end": 18.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 50,
+      "text": "se",
+      "start": 18.44,
+      "end": 18.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 51,
+      "text": "debe",
+      "start": 18.56,
+      "end": 18.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 52,
+      "text": "regular",
+      "start": 18.78,
+      "end": 19.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 53,
+      "text": "fuertemente",
+      "start": 19.3,
+      "end": 19.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 54,
+      "text": "cuando",
+      "start": 19.94,
+      "end": 20.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 55,
+      "text": "estos",
+      "start": 20.6,
+      "end": 20.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 56,
+      "text": "son",
+      "start": 20.92,
+      "end": 21.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 57,
+      "text": "liberados",
+      "start": 21.44,
+      "end": 21.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 58,
+      "text": "al",
+      "start": 21.92,
+      "end": 22.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 59,
+      "text": "público",
+      "start": 22.1,
+      "end": 22.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 60,
+      "text": "y",
+      "start": 22.42,
+      "end": 22.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 61,
+      "text": "sobre",
+      "start": 22.64,
+      "end": 22.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 62,
+      "text": "todo",
+      "start": 22.8,
+      "end": 22.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 63,
+      "text": "también",
+      "start": 22.96,
+      "end": 23.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 64,
+      "text": "en",
+      "start": 23.3,
+      "end": 23.88,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 65,
+      "text": "contra",
+      "start": 23.88,
+      "end": 24.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 66,
+      "text": "de",
+      "start": 24.34,
+      "end": 24.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 67,
+      "text": "la",
+      "start": 24.54,
+      "end": 24.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 68,
+      "text": "destilación",
+      "start": 24.68,
+      "end": 25.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 69,
+      "text": "de",
+      "start": 25.38,
+      "end": 25.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 70,
+      "text": "los",
+      "start": 25.5,
+      "end": 25.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 71,
+      "text": "modelos",
+      "start": 25.64,
+      "end": 25.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 72,
+      "text": "Es",
+      "start": 25.94,
+      "end": 26.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 73,
+      "text": "decir,",
+      "start": 26.1,
+      "end": 26.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 74,
+      "text": "de",
+      "start": 26.82,
+      "end": 26.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 75,
+      "text": "usar",
+      "start": 26.9,
+      "end": 27.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 76,
+      "text": "las",
+      "start": 27.1,
+      "end": 27.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 77,
+      "text": "respuestas",
+      "start": 27.28,
+      "end": 27.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 78,
+      "text": "de",
+      "start": 27.78,
+      "end": 28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 79,
+      "text": "modelos",
+      "start": 28,
+      "end": 28.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 80,
+      "text": "potentes",
+      "start": 28.4,
+      "end": 29,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 81,
+      "text": "americanos",
+      "start": 29,
+      "end": 29.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 82,
+      "text": "y",
+      "start": 29.66,
+      "end": 30.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 83,
+      "text": "coger",
+      "start": 30.08,
+      "end": 30.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 84,
+      "text": "esas",
+      "start": 30.48,
+      "end": 30.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 85,
+      "text": "respuestas",
+      "start": 30.8,
+      "end": 31.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 86,
+      "text": "y",
+      "start": 31.42,
+      "end": 31.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 87,
+      "text": "entrenar",
+      "start": 31.94,
+      "end": 32.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 88,
+      "text": "a",
+      "start": 32.5,
+      "end": 32.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 89,
+      "text": "modelos",
+      "start": 32.68,
+      "end": 33.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 90,
+      "text": "pequeñitos",
+      "start": 33.14,
+      "end": 33.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 91,
+      "text": "chinos.",
+      "start": 33.68,
+      "end": 34.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 92,
+      "text": "Contra",
+      "start": 34.28,
+      "end": 34.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 93,
+      "text": "eso",
+      "start": 34.66,
+      "end": 34.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 94,
+      "text": "sí",
+      "start": 34.94,
+      "end": 35.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 95,
+      "text": "que",
+      "start": 35.3,
+      "end": 35.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 96,
+      "text": "están",
+      "start": 35.42,
+      "end": 35.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 97,
+      "text": "en",
+      "start": 35.58,
+      "end": 35.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 98,
+      "text": "contra",
+      "start": 35.76,
+      "end": 36,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

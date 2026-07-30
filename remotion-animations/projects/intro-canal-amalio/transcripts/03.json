@@ -1,0 +1,483 @@
+{
+  "clipId": "03",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 10.2,
+      "text": "Y lo bueno de este lanzamiento es que ya tenemos otros proveedores en OpenRouter con el mismo precio, eso sí, pero claro, muchísima más velocidad en cuanto a tokens por segundo",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.34,
+          "text": "Y",
+          "confidence": 0.71436
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.34,
+          "end": 0.44,
+          "text": "lo",
+          "confidence": 0.31641
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.44,
+          "end": 1.08,
+          "text": "bueno",
+          "confidence": 0.97217
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.08,
+          "end": 1.3,
+          "text": "de",
+          "confidence": 0.9165
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.3,
+          "end": 1.48,
+          "text": "este",
+          "confidence": 0.9668
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 1.48,
+          "end": 2.02,
+          "text": "lanzamiento",
+          "confidence": 0.98633
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.02,
+          "end": 2.22,
+          "text": "es",
+          "confidence": 0.91797
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 2.22,
+          "end": 2.4,
+          "text": "que",
+          "confidence": 0.98633
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.4,
+          "end": 2.64,
+          "text": "ya",
+          "confidence": 0.94141
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 2.64,
+          "end": 2.98,
+          "text": "tenemos",
+          "confidence": 0.97412
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 2.98,
+          "end": 3.32,
+          "text": "otros",
+          "confidence": 0.8667
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 3.32,
+          "end": 3.98,
+          "text": "proveedores",
+          "confidence": 0.99723
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 3.98,
+          "end": 4.12,
+          "text": "en",
+          "confidence": 0.95654
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 4.12,
+          "end": 4.72,
+          "text": "OpenRouter",
+          "confidence": 0.66382
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 4.72,
+          "end": 5.06,
+          "text": "con",
+          "confidence": 0.94629
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 5.06,
+          "end": 5.22,
+          "text": "el",
+          "confidence": 0.99463
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 5.22,
+          "end": 5.46,
+          "text": "mismo",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 5.46,
+          "end": 5.84,
+          "text": "precio,",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 6,
+          "end": 6.16,
+          "text": "eso",
+          "confidence": 0.30981
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 6.16,
+          "end": 6.36,
+          "text": "sí,",
+          "confidence": 0.98438
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 6.8,
+          "end": 6.94,
+          "text": "pero",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 6.94,
+          "end": 7.22,
+          "text": "claro,",
+          "confidence": 0.65967
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 7.46,
+          "end": 7.94,
+          "text": "muchísima",
+          "confidence": 0.98022
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 7.94,
+          "end": 8.12,
+          "text": "más",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 8.12,
+          "end": 8.54,
+          "text": "velocidad",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 8.54,
+          "end": 8.92,
+          "text": "en",
+          "confidence": 0.97559
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 8.92,
+          "end": 9.14,
+          "text": "cuanto",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 9.14,
+          "end": 9.22,
+          "text": "a",
+          "confidence": 0.99463
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 9.22,
+          "end": 9.56,
+          "text": "tokens",
+          "confidence": 0.95752
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 9.56,
+          "end": 9.82,
+          "text": "por",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 9.82,
+          "end": 10.2,
+          "text": "segundo",
+          "confidence": 0.99561
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Y",
+      "start": 0,
+      "end": 0.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "lo",
+      "start": 0.34,
+      "end": 0.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "bueno",
+      "start": 0.44,
+      "end": 1.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "de",
+      "start": 1.08,
+      "end": 1.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "este",
+      "start": 1.3,
+      "end": 1.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "lanzamiento",
+      "start": 1.48,
+      "end": 2.02,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "es",
+      "start": 2.02,
+      "end": 2.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "que",
+      "start": 2.22,
+      "end": 2.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "ya",
+      "start": 2.4,
+      "end": 2.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "tenemos",
+      "start": 2.64,
+      "end": 2.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "otros",
+      "start": 2.98,
+      "end": 3.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "proveedores",
+      "start": 3.32,
+      "end": 3.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "en",
+      "start": 3.98,
+      "end": 4.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "OpenRouter",
+      "start": 4.12,
+      "end": 4.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "con",
+      "start": 4.72,
+      "end": 5.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "el",
+      "start": 5.06,
+      "end": 5.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "mismo",
+      "start": 5.22,
+      "end": 5.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "precio,",
+      "start": 5.46,
+      "end": 5.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "eso",
+      "start": 6,
+      "end": 6.16,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "sí,",
+      "start": 6.16,
+      "end": 6.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "pero",
+      "start": 6.8,
+      "end": 6.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "claro,",
+      "start": 6.94,
+      "end": 7.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "muchísima",
+      "start": 7.46,
+      "end": 7.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "más",
+      "start": 7.94,
+      "end": 8.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "velocidad",
+      "start": 8.12,
+      "end": 8.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "en",
+      "start": 8.54,
+      "end": 8.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "cuanto",
+      "start": 8.92,
+      "end": 9.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "a",
+      "start": 9.14,
+      "end": 9.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "tokens",
+      "start": 9.22,
+      "end": 9.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "por",
+      "start": 9.56,
+      "end": 9.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "segundo",
+      "start": 9.82,
+      "end": 10.2,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}
