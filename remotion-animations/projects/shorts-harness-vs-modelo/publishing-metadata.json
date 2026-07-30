@@ -1,305 +1,305 @@
 {
   "slug": "harness-vs-modelo",
-  "generatedAt": "2026-07-30T10:04:43.182Z",
+  "generatedAt": "2026-07-30T10:37:42.656Z",
   "title": "Deja de usar Claude Code",
   "durationSeconds": 33.65,
-  "llmUsed": false,
+  "llmUsed": true,
   "summary": {
-    "short": "Deja de usar Claude Code Porque puedes gastar hasta 6 veces más de tokens y te puede salir 10 veces más caro Esto es lo que ha encontrado la gente de Composio al ejecutar Kimi K3 e",
-    "medium": "Deja de usar Claude Code Porque puedes gastar hasta 6 veces más de tokens y te puede salir 10 veces más caro Esto es lo que ha encontrado la gente de Composio al ejecutar Kimi K3 en 3 diferentes harnesses Mismas tareas pero diferentes resultados en cuanto a tiempo, tokens y preci",
-    "youtube_description": "Deja de usar Claude Code Porque puedes gastar hasta 6 veces más de tokens y te puede salir 10 veces más caro Esto es lo que ha encontrado la gente de Composio al ejecutar Kimi K3 en 3 diferentes harnesses Mismas tareas pero diferentes resultados en cuanto a tiempo, tokens y preci\n\nCapitulos:\n00:00 Introduccion\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #YouTube #Shorts #Tecnologia #Automatizacion #Python #MachineLearning"
+    "short": "Un estudio de Composio revela que Claude Code consume hasta 6 veces más tokens y puede ser 10 veces más caro que Kimi Code y Hermes al ejecutar Kimi K3 con las mismas tareas. La conclusión: antes de cambiar de modelo, conviene revisar el harness.",
+    "medium": "La gente de Composio ejecutó Kimi K3 en tres harnesses diferentes: Kimi Code, Hermes y Claude Code. Con tareas idénticas, los resultados variaron en tiempo, tokens consumidos y precio final. Claude Code quedó en último lugar, llegando a gastar hasta 6 veces más tokens y a resultar 10 veces más caro. El mensaje principal del video es directo: antes de cambiar de modelo, prueba a cambiar de harness, porque la diferencia de eficiencia puede ser enorme.",
+    "youtube_description": "Un estudio reciente de Composio comparó el rendimiento de Kimi K3 en tres harnesses distintos: Kimi Code, Hermes y Claude Code. El resultado sorprende: Claude Code consumió hasta 6 veces más tokens y resultó hasta 10 veces más caro que las alternativas al ejecutar las mismas tareas.\n\nEl dato clave es que antes de cambiar de modelo, conviene evaluar el harness que estás utilizando, porque la diferencia de eficiencia y coste puede ser muy significativa.\n\n00:00 Introducción\n00:02 El problema de Claude Code con los tokens\n00:07 La diferencia de precio entre harnesses\n00:10 El estudio de Composio con Kimi K3\n00:15 Resultados: mismas tareas, distinto consumo\n00:20 La lección: cambia de harness antes que de modelo\n00:25 Comparativa de los tres harnesses probados\n\n#inteligenciaartificial #claudecode #kimik3 #hermes #composio #harness #ia #desarrolladores #programación #amaliometría"
   },
   "titles": {
     "youtube": [
       {
-        "title": "Deja de usar Claude Code",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 70
+        "title": "Claude Code gasta 6 veces más tokens: el estudio de Composio",
+        "reason": "Resume el hallazgo central con dato concreto y fuente.",
+        "score": 9
       },
       {
-        "title": "El detalle que cambia Claude",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 68
+        "title": "Antes de cambiar de modelo, cambia de harness",
+        "reason": "Mensaje principal del video, claro y memorable.",
+        "score": 9
       },
       {
-        "title": "Claude: lo que si importa",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 66
+        "title": "Kimi K3 en 3 harnesses: el resultado es demoledor para Claude Code",
+        "reason": "Genera curiosidad con un adjetivo fuerte respaldado por datos.",
+        "score": 8
       },
       {
-        "title": "La prueba que separa hype y realidad",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 64
+        "title": "Claude Code es el más caro: 10x más que sus alternativas",
+        "reason": "Promesa concreta basada en el dato del estudio.",
+        "score": 8
       },
       {
-        "title": "Por que este clip cambia mi opinion",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 62
+        "title": "Por qué tu coding agent te cuesta el doble (o el triple)",
+        "reason": "Ángulo de dolor directo para developers.",
+        "score": 8
       },
       {
-        "title": "Pendiente 6: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Comparativa real: Kimi Code vs Hermes vs Claude Code",
+        "reason": "Formato comparativo que funciona en YouTube.",
+        "score": 7
       },
       {
-        "title": "Pendiente 7: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "El harness importa más que el modelo: lo demuestra Composio",
+        "reason": "Titular técnico y preciso para audiencia developer.",
+        "score": 8
       },
       {
-        "title": "Pendiente 8: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Mismo modelo, 10 veces más caro: el problema de Claude Code",
+        "reason": "Contraste claro que invita a ver el video.",
+        "score": 8
       },
       {
-        "title": "Pendiente 9: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "El estudio de Composio que cambia cómo elegir un coding agent",
+        "reason": "Ángulo editorial con autoridad.",
+        "score": 7
       },
       {
-        "title": "Pendiente 10: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Claude Code no es la mejor opción: los datos de Composio",
+        "reason": "Afirmación directa sin clickbait falso.",
+        "score": 7
       }
     ],
     "youtube_shorts": [
       {
-        "title": "Deja de usar Claude Code",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 70
+        "title": "Claude Code gasta 6x más tokens",
+        "reason": "Hook inmediato con dato numérico.",
+        "score": 9
       },
       {
-        "title": "El detalle que cambia Claude",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 68
+        "title": "Tu coding agent es 10 veces más caro",
+        "reason": "Provocación basada en dato real.",
+        "score": 9
       },
       {
-        "title": "Claude: lo que si importa",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 66
+        "title": "Antes de cambiar de modelo, cambia esto",
+        "reason": "Crea curiosidad sin prometer de más.",
+        "score": 9
       },
       {
-        "title": "La prueba que separa hype y realidad",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 64
+        "title": "El harness equivocado te cuesta una fortuna",
+        "reason": "Mensaje claro y directo.",
+        "score": 8
       },
       {
-        "title": "Por que este clip cambia mi opinion",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 62
+        "title": "Mismo modelo, resultados muy diferentes",
+        "reason": "Contraste que engancha.",
+        "score": 8
       },
       {
-        "title": "Pendiente 6: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Composio destapa el problema de Claude Code",
+        "reason": "Atribución de fuente que da credibilidad.",
+        "score": 7
       },
       {
-        "title": "Pendiente 7: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "No cambies el modelo, cambia el harness",
+        "reason": "Repetición del insight central en formato corto.",
+        "score": 8
       },
       {
-        "title": "Pendiente 8: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Kimi K3: el modelo no es lo que importa",
+        "reason": "Reframe del tema principal.",
+        "score": 7
       },
       {
-        "title": "Pendiente 9: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Claude Code pierde frente a Kimi Code y Hermes",
+        "reason": "Comparativa directa con ranking implícito.",
+        "score": 7
       },
       {
-        "title": "Pendiente 10: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
-      }
-    ],
-    "instagram": [
-      {
-        "title": "Deja de usar Claude Code",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 70
-      },
-      {
-        "title": "El detalle que cambia Claude",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 68
-      },
-      {
-        "title": "Claude: lo que si importa",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 66
-      },
-      {
-        "title": "La prueba que separa hype y realidad",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 64
-      },
-      {
-        "title": "Por que este clip cambia mi opinion",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 62
-      },
-      {
-        "title": "Pendiente 6: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
-      },
-      {
-        "title": "Pendiente 7: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
-      },
-      {
-        "title": "Pendiente 8: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
-      },
-      {
-        "title": "Pendiente 9: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
-      },
-      {
-        "title": "Pendiente 10: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "6x más tokens por la misma tarea",
+        "reason": "Dato crudo muy compartible.",
+        "score": 8
       }
     ],
     "tiktok": [
       {
-        "title": "Deja de usar Claude Code",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 70
+        "title": "Claude Code gasta 6 veces más tokens que sus rivales",
+        "reason": "Dato concreto que capta atención en los primeros segundos.",
+        "score": 9
       },
       {
-        "title": "El detalle que cambia Claude",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 68
+        "title": "Tu coding agent te puede salir 10 veces más caro",
+        "reason": "Provocación con base real.",
+        "score": 9
       },
       {
-        "title": "Claude: lo que si importa",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 66
+        "title": "Antes de cambiar el modelo, cambia el harness",
+        "reason": "Insight útil y compartible.",
+        "score": 9
       },
       {
-        "title": "La prueba que separa hype y realidad",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 64
+        "title": "Composio probó 3 harnesses y este fue el peor",
+        "reason": "Formato lista con cierre revelador.",
+        "score": 8
       },
       {
-        "title": "Por que este clip cambia mi opinion",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 62
+        "title": "Misma tarea, 6 veces más consumo",
+        "reason": "Contraste potente para loop.",
+        "score": 8
       },
       {
-        "title": "Pendiente 6: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "El detalle que nadie te cuenta sobre Claude Code",
+        "reason": "Hook estilo revelación sin clickbait falso.",
+        "score": 7
       },
       {
-        "title": "Pendiente 7: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Kimi K3, Kimi Code, Hermes y Claude Code comparados",
+        "reason": "Listado de actores clave.",
+        "score": 7
       },
       {
-        "title": "Pendiente 8: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "El harness puede costar más que el modelo",
+        "reason": "Reframe útil para developers.",
+        "score": 8
       },
       {
-        "title": "Pendiente 9: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Claude Code pierde la comparativa de Composio",
+        "reason": "Veredicto directo.",
+        "score": 7
       },
       {
-        "title": "Pendiente 10: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Deja de usar Claude Code si buscas eficiencia",
+        "reason": "Recomendación clara y directa.",
+        "score": 8
+      }
+    ],
+    "instagram": [
+      {
+        "title": "Claude Code consume 6 veces más tokens según Composio",
+        "reason": "Dato verificable que aporta valor.",
+        "score": 9
+      },
+      {
+        "title": "El harness importa más de lo que crees",
+        "reason": "Hook reflexivo para audiencia técnica.",
+        "score": 8
+      },
+      {
+        "title": "Antes de cambiar de modelo, cambia de harness",
+        "reason": "Insight accionable y memorable.",
+        "score": 9
+      },
+      {
+        "title": "Comparativa: Kimi Code, Hermes y Claude Code",
+        "reason": "Formato comparativo que funciona en Reels.",
+        "score": 7
+      },
+      {
+        "title": "Mismo modelo, precio 10 veces más alto",
+        "reason": "Contraste numérico potente.",
+        "score": 8
+      },
+      {
+        "title": "El estudio que pone en duda a Claude Code",
+        "reason": "Ángulo editorial con atribución.",
+        "score": 7
+      },
+      {
+        "title": "Tu coding agent puede estar costándote de más",
+        "reason": "Mensaje de optimización para developers.",
+        "score": 8
+      },
+      {
+        "title": "Lo que Composio descubrió al probar 3 harnesses",
+        "reason": "Formato descubrimiento.",
+        "score": 7
+      },
+      {
+        "title": "Kimi K3 ejecutado en Kimi Code, Hermes y Claude Code",
+        "reason": "Título informativo sin clickbait.",
+        "score": 7
+      },
+      {
+        "title": "Claude Code fue el peor en la prueba de Composio",
+        "reason": "Veredicto claro basado en dato.",
+        "score": 8
       }
     ],
     "x": [
       {
-        "title": "Deja de usar Claude Code",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 70
+        "title": "Claude Code gasta hasta 6x más tokens que Kimi Code y Hermes según el estudio de Composio con Kimi K3.",
+        "reason": "Tweet informativo con dato y fuente.",
+        "score": 9
       },
       {
-        "title": "El detalle que cambia Claude",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 68
+        "title": "Mismas tareas, hasta 10x más caro. Antes de cambiar de modelo, cambia de harness.",
+        "reason": "Insight accionable en formato tweet.",
+        "score": 9
       },
       {
-        "title": "Claude: lo que si importa",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 66
+        "title": "El estudio de Composio deja claro: el harness importa más que el modelo.",
+        "reason": "Afirmación rotunda con atribución.",
+        "score": 8
       },
       {
-        "title": "La prueba que separa hype y realidad",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 64
+        "title": "Claude Code, Kimi Code y Hermes comparados con Kimi K3: el resultado es claro.",
+        "reason": "Formato comparativa con cierre abierto.",
+        "score": 7
       },
       {
-        "title": "Por que este clip cambia mi opinion",
-        "reason": "Derivado del texto del short sin LLM; revisar antes de publicar.",
-        "score": 62
+        "title": "6x más tokens. 10x más caro. Claude Code no gana en eficiencia.",
+        "reason": "Dato crudo, alto impacto.",
+        "score": 8
       },
       {
-        "title": "Pendiente 6: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Elige bien el harness antes de elegir el modelo. Composio lo demuestra.",
+        "reason": "Recomendación técnica breve.",
+        "score": 8
       },
       {
-        "title": "Pendiente 7: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "El harness equivocado puede multiplicar por 10 el coste de tu coding agent.",
+        "reason": "Mensaje de coste con contexto.",
+        "score": 8
       },
       {
-        "title": "Pendiente 8: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Composio probó Kimi K3 en 3 harnesses y Claude Code fue el peor.",
+        "reason": "Veredicto directo con fuente.",
+        "score": 8
       },
       {
-        "title": "Pendiente 9: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "Si usas Claude Code, mira los datos de este estudio de Composio.",
+        "reason": "Llamada a la atención sin clickbait.",
+        "score": 7
       },
       {
-        "title": "Pendiente 10: configurar LLM para 10 propuestas",
-        "reason": "Sin LLM solo hay variantes locales; no se inventan titulos.",
-        "score": 0
+        "title": "El modelo no lo es todo. El harness define el coste real.",
+        "reason": "Reframe conceptual para el timeline.",
+        "score": 7
       }
     ]
   },
-  "hashtags": "#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #YouTube #Shorts #Tecnologia #Automatizacion #Python #MachineLearning",
+  "hashtags": "#inteligenciaartificial #claudecode #kimik3 #kimicode #hermes #composio #harness #codingagent #ia #desarrolladores #programacion #amaliometria #tokens #coste",
   "timestamps": [
     "00:00 Introduccion"
   ],
   "platform_posts": {
     "youtube": {
-      "title": "Deja de usar Claude Code",
-      "description": "Deja de usar Claude Code Porque puedes gastar hasta 6 veces más de tokens y te puede salir 10 veces más caro Esto es lo que ha encontrado la gente de Composio al ejecutar Kimi K3 en 3 diferentes harnesses Mismas tareas pero diferentes resultados en cuanto a tiempo, tokens y preci\n\nCapitulos:\n00:00 Introduccion\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #YouTube #Shorts #Tecnologia #Automatizacion #Python #MachineLearning",
+      "title_sugerido": "Claude Code gasta 6 veces más tokens: el estudio de Composio",
+      "description": "Un estudio reciente de Composio comparó el rendimiento de Kimi K3 en tres harnesses distintos: Kimi Code, Hermes y Claude Code. El resultado sorprende: Claude Code consumió hasta 6 veces más tokens y resultó hasta 10 veces más caro que las alternativas al ejecutar las mismas tareas.\n\nEl dato clave es que antes de cambiar de modelo, conviene evaluar el harness que estás utilizando, porque la diferencia de eficiencia y coste puede ser muy significativa.\n\n00:00 Introducción\n00:02 El problema de Claude Code con los tokens\n00:07 La diferencia de precio entre harnesses\n00:10 El estudio de Composio con Kimi K3\n00:15 Resultados: mismas tareas, distinto consumo\n00:20 La lección: cambia de harness antes que de modelo\n00:25 Comparativa de los tres harnesses probados\n\n#inteligenciaartificial #claudecode #kimik3 #hermes #composio #harness #ia #desarrolladores #programación #amaliometría",
       "tags": [
-        "Claude",
-        "Anthropic",
-        "IA",
-        "Ahorro",
-        "Productividad",
-        "Comparativa",
-        "Review",
-        "InteligenciaArtificial",
-        "YouTube",
-        "Shorts",
-        "Tecnologia",
-        "Automatizacion",
-        "Python",
-        "MachineLearning"
+        "inteligenciaartificial",
+        "claudecode",
+        "kimik3",
+        "kimicode",
+        "hermes",
+        "composio",
+        "harness",
+        "codingagent",
+        "ia",
+        "desarrolladores",
+        "programacion",
+        "amaliometria",
+        "tokens",
+        "coste"
       ],
-      "privacy": "private"
+      "title": "Claude Code gasta 6 veces más tokens: el estudio de Composio"
     },
     "youtube_shorts": {
       "title": "Deja de usar Claude Code",
-      "description": "#Claude #Anthropic #IA #Ahorro\n\nDeja de usar Claude Code\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #YouTube #Shorts #Tecnologia #Automatizacion #Python #MachineLearning",
+      "description": "#Claude #Anthropic #IA #Ahorro\n\nDeja de usar Claude Code\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #inteligenciaartificial #claudecode #kimik3 #kimicode #hermes #composio",
       "tags": [
         "Claude",
         "Anthropic",
@@ -309,19 +309,19 @@
         "Comparativa",
         "Review",
         "InteligenciaArtificial",
-        "YouTube",
-        "Shorts",
-        "Tecnologia",
-        "Automatizacion",
-        "Python",
-        "MachineLearning"
+        "inteligenciaartificial",
+        "claudecode",
+        "kimik3",
+        "kimicode",
+        "hermes",
+        "composio"
       ]
     },
     "instagram": {
-      "caption": "#Claude #Anthropic #IA #Ahorro\n\nDeja de usar Claude Code\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #YouTube #Shorts #Tecnologia #Automatizacion #Python #MachineLearning"
+      "caption": "#Claude #Anthropic #IA #Ahorro\n\nDeja de usar Claude Code\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #inteligenciaartificial #claudecode #kimik3 #kimicode #hermes #composio"
     },
     "tiktok": {
-      "caption": "Deja de usar Claude Code\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #YouTube #Shorts #Tecnologia #Automatizacion #Python #MachineLearning"
+      "caption": "Deja de usar Claude Code\n\n#Claude #Anthropic #IA #Ahorro #Productividad #Comparativa #Review #InteligenciaArtificial #inteligenciaartificial #claudecode #kimik3 #kimicode #hermes #composio"
     },
     "x": {
       "text": "Deja de usar Claude Code #Claude #Anthropic #IA #Ahorro Deja de usar Claude Code"

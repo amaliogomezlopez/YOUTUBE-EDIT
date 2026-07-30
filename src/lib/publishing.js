@@ -232,14 +232,30 @@ ${JSON.stringify(segments)}
 Transcripcion completa resumible:
 ${transcript}`;
 
-  try {
-    const raw = await chatJson([
-      {role: 'system', content: 'Eres un estratega senior de contenido para video. Devuelve solo JSON valido.'},
-      {role: 'user', content: prompt}
-    ], {...config, temperature: Number(options.temperature ?? 0.7), maxTokens: Number(options.maxTokens ?? 1800)});
-    return {...normalizeMetadata(raw, captions, chapters), llmUsed: true};
-  } catch (error) {
-    if (options.signal?.aborted || error?.name === 'AbortError') throw error;
-    return {...fallbackMetadata(captions, chapters), llmUsed: false, warning: `Publishing metadata LLM failed; using local fallback: ${error.message}`};
+  // 1800 tokens bastaban para un modelo sin razonamiento; MiniMax-M3 gasta
+  // tokens en reasoning_content antes de escribir el JSON y con ese techo la
+  // respuesta llegaba truncada (finish_reason=length) y caia al fallback.
+  const payloadOptions = {
+    ...config,
+    temperature: Number(options.temperature ?? 0.7),
+    maxTokens: Number(options.maxTokens ?? 8000)
+  };
+  // Con ~12 KB de JSON el modelo a veces devuelve un array malformado incluso
+  // con finish_reason=stop: es un fallo estocastico, no de peticion, asi que se
+  // reintenta un par de veces antes de caer al fallback local.
+  const jsonAttempts = Math.max(1, Number(options.jsonAttempts ?? 3));
+  let lastError = null;
+  for (let attempt = 0; attempt < jsonAttempts; attempt += 1) {
+    try {
+      const raw = await chatJson([
+        {role: 'system', content: 'Eres un estratega senior de contenido para video. Devuelve solo JSON valido.'},
+        {role: 'user', content: prompt}
+      ], payloadOptions);
+      return {...normalizeMetadata(raw, captions, chapters), llmUsed: true};
+    } catch (error) {
+      if (options.signal?.aborted || error?.name === 'AbortError') throw error;
+      lastError = error;
+    }
   }
+  return {...fallbackMetadata(captions, chapters), llmUsed: false, warning: `Publishing metadata LLM failed; using local fallback: ${lastError.message}`};
 }

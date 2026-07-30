@@ -174,6 +174,9 @@ async function main() {
     await mkdir(path.dirname(checkFile), {recursive: true});
     await writeFile(checkFile, checkTemplate(checkId, statement), 'utf8');
     created.push(path.relative(ROOT, checkFile));
+    // El playbook cuenta cuantas reglas tienen validador; sin releer el directorio
+    // el esqueleto recien creado saldria como «sin implementar».
+    await loadCustomChecks();
   }
   if (!isManual) {
     const fixtureFile = path.join(ROOT, 'tests', 'fixtures', 'editing-rules', `${ruleId}.json`);
