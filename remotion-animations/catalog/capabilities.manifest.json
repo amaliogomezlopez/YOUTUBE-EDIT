@@ -13,7 +13,8 @@
     "catalog/design/brand-profiles.json",
     "catalog/preferences/channel-profile.json",
     "src/Root.tsx",
-    "src/shorts/registry.generated.ts"
+    "src/shorts/registry.generated.ts",
+    "src/intro/registry.generated.ts"
   ],
   "commands": {
     "ingestAnnotatedChart": "npm run remotion:ingest:chart -- --input <chart-ingestion-input.json>",
@@ -119,6 +120,7 @@
     "ChartHighlight",
     "ChartHighlightOverlay",
     "Finance-Cavaliers-Episode",
+    "Intro-Demo-Canal",
     "Pattern-Accumulation",
     "Pattern-Before-After-Wipe",
     "Pattern-Branch-Merge",

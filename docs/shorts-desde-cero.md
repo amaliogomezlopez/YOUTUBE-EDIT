@@ -13,8 +13,15 @@ recortando un vídeo largo. Es un pipeline distinto del de `src/lib/pipeline.js`
 
 ## Dónde vive cada cosa
 
+La ingesta, la línea de tiempo, el catálogo de sonido, los subtítulos, el registro de
+composiciones y el intake de feedback **no son propios de shorts**: viven en
+`src/modules/video-studio/` y los comparte con la superficie de intros
+([intros-desde-cero.md](intros-desde-cero.md)). Lo propio de esta superficie es la
+geometría vertical, sus layouts y su set de reglas.
+
 ```text
-src/modules/shorts-studio/          lógica Node (ingesta, build, sonido, subtítulos)
+src/modules/video-studio/           capa común (ingesta, sonido, reglas, registro)
+src/modules/shorts-studio/          lógica propia del vertical (build, geometría, reglas)
 scripts/shorts-ingest.js            CLI de ingesta
 scripts/shorts-build.js             CLI de compilación del plan
 remotion-animations/src/shorts/     composición Remotion 9:16
@@ -235,6 +242,11 @@ Reutiliza el motor del canal editorial
 (`src/modules/editorial-video/visuals/rules-engine.js`), que ya es genérico. Lo
 único propio de shorts es el contexto —el `short-build.json`— y el directorio de
 validadores, `src/modules/shorts-studio/rules/checks/`.
+
+Los validadores que no dependen del formato viven en
+`src/modules/video-studio/checks/` con ámbito `catalog` y los cargan todas las
+superficies. Ya han ascendido tres, nacidas aquí: `art-dark-on-alpha-needs-plate`,
+`art-solid-background-needs-blend` y `cue-not-silent`.
 
 Una corrección se convierte en regla con una sola orden:
 

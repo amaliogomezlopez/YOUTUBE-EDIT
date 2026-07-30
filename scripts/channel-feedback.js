@@ -49,16 +49,9 @@ function slugify(value) {
     .slice(0, 48);
 }
 
-export function nextRuleId(ruleSet, sectionId) {
-  const prefix = ruleSet.rules[0]?.id?.split('-').slice(0, 2).join('-') ?? 'FC-R';
-  const sectionNumber = ruleSet.sections.find((section) => section.id === sectionId)?.number ?? 0;
-  const block = sectionNumber * 10;
-  const used = ruleSet.rules
-    .map((rule) => Number(rule.id.split('-').at(-1)))
-    .filter((value) => Number.isFinite(value) && value >= block && value < block + 10);
-  const next = used.length ? Math.max(...used) + 1 : block;
-  return `${prefix}-${String(next).padStart(3, '0')}`;
-}
+// La numeración por bloques de sección la comparten las tres superficies:
+// `src/modules/video-studio/rule-intake.js`. Se reexporta para no romper importadores.
+export {nextRuleId} from '../src/modules/video-studio/rule-intake.js';
 
 function checkTemplate(checkId, statement) {
   return `/**

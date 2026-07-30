@@ -1,7 +1,7 @@
 {
   "ruleId": "SH-R-050",
   "statement": "Ningun cue entra en silencio.",
-  "check": "shorts-cue-not-silent",
+  "check": "cue-not-silent",
   "expect": "fail",
   "note": "El plan silencio el logo con \"sound\": false y no dejo soundNote que lo justifique.",
   "context": {

@@ -1,0 +1,86 @@
+{
+  "profileId": "hype-tech",
+  "note": "Proyecto de referencia de la superficie de intro. Su media es sintetica y la regenera `node scripts/intro-demo-media.js`, asi que no hay cara que detectar ni voz que transcribir: todo se ancla por `atBeat`, que es el ancla canonica de esta superficie. Sirve de plantilla y de prueba de regresion del build.",
+  "music": {
+    "assetId": "music",
+    "gainDb": -9
+  },
+  "titleCard": {
+    "text": "AMALIOMETRIA",
+    "kicker": "cada semana",
+    "atBeat": 17,
+    "holdSeconds": 3.5
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "layout": "hero",
+      "camera": "punch-in",
+      "transitionIn": "cut",
+      "trim": {"start": 0, "end": 3},
+      "cues": [
+        {
+          "type": "chip",
+          "slot": "corner-tl",
+          "text": "EPISODIO 12",
+          "atBeat": 2,
+          "holdSeconds": 2,
+          "tone": "accent"
+        }
+      ],
+      "effects": [
+        {"id": "flash", "atBeat": 0, "intensity": 0.7},
+        {"id": "zoom-punch", "atBeat": 4}
+      ]
+    },
+    {
+      "id": "marca",
+      "clipId": "02",
+      "layout": "frame",
+      "camera": "static",
+      "transitionIn": "flash-cut",
+      "trim": {"start": 0, "end": 5},
+      "backdrop": {"assetId": "marca-acento", "motion": "parallax-right"},
+      "cues": [
+        {"type": "logo", "assetId": "marca-clara", "slot": "back-left", "atBeat": 6, "holdSeconds": 2.5},
+        {"type": "logo", "assetId": "marca-acento", "slot": "back-right", "atBeat": 8, "holdSeconds": 2.5},
+        {
+          "type": "label",
+          "slot": "banner-bottom",
+          "text": "HERRAMIENTAS QUE USO DE VERDAD",
+          "atBeat": 10,
+          "holdSeconds": 2,
+          "tone": "accent"
+        }
+      ],
+      "effects": [
+        {"id": "rgb-split", "atBeat": 6, "intensity": 0.8},
+        {"id": "zoom-punch", "atBeat": 10},
+        {"id": "light-leak", "atBeat": 13, "intensity": 0.8}
+      ]
+    },
+    {
+      "id": "remate",
+      "clipId": "03",
+      "layout": "hero-left",
+      "camera": "snap-zoom",
+      "transitionIn": "whip",
+      "trim": {"start": 0, "end": 4},
+      "cues": [
+        {
+          "type": "logo",
+          "assetId": "marca-clara",
+          "slot": "fore-right",
+          "text": "AMALIOMETRIA",
+          "atBeat": 16,
+          "holdSeconds": 3
+        }
+      ],
+      "effects": [
+        {"id": "shake", "atBeat": 16, "intensity": 0.6},
+        {"id": "flash", "atBeat": 20, "intensity": 0.5}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "ruleId": "IN-R-012",
+  "check": "intro-cue-rect-overlap",
+  "expect": "fail",
+  "note": "Dos cues de primer plano activos a la vez con rectangulos que se pisan.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [
+          {
+            "id": "cue-1",
+            "type": "logo",
+            "assetId": null,
+            "slot": "center",
+            "depth": "front",
+            "presentation": "card",
+            "tone": "neutral",
+            "scale": 1,
+            "blurPx": 0,
+            "rect": {
+              "left": 560,
+              "top": 330,
+              "width": 800,
+              "height": 420
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": null
+          },
+          {
+            "id": "cue-2",
+            "type": "logo",
+            "assetId": null,
+            "slot": "fore-left",
+            "depth": "front",
+            "presentation": "card",
+            "tone": "neutral",
+            "scale": 1,
+            "blurPx": 0,
+            "rect": {
+              "left": 96,
+              "top": 296,
+              "width": 560,
+              "height": 420
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": null
+          }
+        ],
+        "effects": [],
+        "captionPages": []
+      }
+    ]
+  }
+}

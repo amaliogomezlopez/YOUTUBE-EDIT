@@ -1,0 +1,640 @@
+{
+  "slug": "demo-canal",
+  "generatedAt": "2026-07-30T12:36:19.109Z",
+  "format": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 60
+  },
+  "durationInFrames": 720,
+  "durationSeconds": 12,
+  "profileId": "hype-tech",
+  "themeId": "oxide-documentary",
+  "accentColor": null,
+  "dangerColor": null,
+  "titleCard": {
+    "text": "AMALIOMETRIA",
+    "kicker": "cada semana",
+    "atSeconds": 8.5,
+    "fromFrame": 510,
+    "durationInFrames": 210
+  },
+  "music": {
+    "file": "projects/intro/demo-canal/assets/music.wav",
+    "bpm": 120,
+    "offsetSeconds": 0,
+    "beatSeconds": [
+      0,
+      0.5,
+      1,
+      1.5,
+      2,
+      2.5,
+      3,
+      3.5,
+      4,
+      4.5,
+      5,
+      5.5,
+      6,
+      6.5,
+      7,
+      7.5,
+      8,
+      8.5,
+      9,
+      9.5,
+      10,
+      10.5,
+      11,
+      11.5,
+      12,
+      12.5,
+      13,
+      13.5
+    ],
+    "gainDb": -9,
+    "confidence": 62.5
+  },
+  "captionStyle": {},
+  "silencePaddingSeconds": 0.5,
+  "soundEnabled": true,
+  "soundMix": 0.7,
+  "clipVolume": 1,
+  "budget": {
+    "profileId": "hype-tech",
+    "maxStrongEffectsPerSecond": 3,
+    "maxSecondsWithoutChange": 2.5,
+    "beatToleranceSeconds": 0.06,
+    "durationBudgetSeconds": {
+      "min": 5,
+      "max": 25
+    },
+    "effectAllowlist": [
+      "flash",
+      "rgb-split",
+      "shake",
+      "zoom-punch",
+      "glitch",
+      "light-leak",
+      "grain",
+      "scanlines",
+      "vignette-pulse",
+      "letterbox-snap",
+      "speed-blur"
+    ]
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "src": "projects/intro/demo-canal/clips/01.mp4",
+      "from": 0,
+      "durationInFrames": 180,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 3,
+      "silenceTrimmedSeconds": 0,
+      "layout": "hero",
+      "camera": "punch-in",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.5,
+        "y": 0.42,
+        "faceHeightRatio": 0.28
+      },
+      "faceRect": null,
+      "transitionIn": "cut",
+      "label": null,
+      "backdrop": null,
+      "cues": [
+        {
+          "id": "hook-cue-1",
+          "type": "chip",
+          "assetId": null,
+          "src": null,
+          "slot": "corner-tl",
+          "depth": "front",
+          "presentation": "card",
+          "text": "EPISODIO 12",
+          "note": null,
+          "tone": "accent",
+          "scale": 1,
+          "blurPx": 0,
+          "rect": {
+            "left": 96,
+            "top": 64,
+            "width": 360,
+            "height": 200
+          },
+          "atBeat": 2,
+          "atWord": null,
+          "atSeconds": 1,
+          "fromFrame": 60,
+          "durationInFrames": 120,
+          "dense": true,
+          "sound": {
+            "family": "ui",
+            "file": "sfx/amaliometria-interface-01.wav"
+          },
+          "soundNote": null,
+          "art": null
+        }
+      ],
+      "effects": [
+        {
+          "id": "hook-fx-1",
+          "effect": "flash",
+          "intensity": 0.7,
+          "strong": true,
+          "atBeat": 0,
+          "atSeconds": 0,
+          "absoluteSeconds": 0,
+          "fromFrame": 0,
+          "durationInFrames": 11,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "shutter",
+            "file": "sfx/amaliometria-shutter-01.wav"
+          },
+          "soundNote": null
+        },
+        {
+          "id": "hook-fx-2",
+          "effect": "zoom-punch",
+          "intensity": 1,
+          "strong": true,
+          "atBeat": 4,
+          "atSeconds": 2,
+          "absoluteSeconds": 2,
+          "fromFrame": 120,
+          "durationInFrames": 24,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "boom",
+            "file": "sfx/amaliometria-soft-impact.wav"
+          },
+          "soundNote": null
+        }
+      ],
+      "captionPages": []
+    },
+    {
+      "id": "marca",
+      "clipId": "02",
+      "src": "projects/intro/demo-canal/clips/02.mp4",
+      "from": 180,
+      "durationInFrames": 300,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 5,
+      "silenceTrimmedSeconds": 0,
+      "layout": "frame",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.5,
+        "y": 0.42,
+        "faceHeightRatio": 0.28
+      },
+      "faceRect": null,
+      "transitionIn": "flash-cut",
+      "label": null,
+      "backdrop": {
+        "src": "projects/intro/demo-canal/assets/marca-acento.png",
+        "kind": "image",
+        "motion": "parallax-right",
+        "opacity": 0.55
+      },
+      "cues": [
+        {
+          "id": "marca-cue-1",
+          "type": "logo",
+          "assetId": "marca-clara",
+          "src": "projects/intro/demo-canal/assets/marca-clara.png",
+          "slot": "back-left",
+          "depth": "back",
+          "presentation": "card",
+          "text": null,
+          "note": null,
+          "tone": "neutral",
+          "scale": 0.72,
+          "blurPx": 6,
+          "rect": {
+            "left": 168.8,
+            "top": 212.8,
+            "width": 374.4,
+            "height": 374.4
+          },
+          "atBeat": 6,
+          "atWord": null,
+          "atSeconds": 0,
+          "fromFrame": 0,
+          "durationInFrames": 150,
+          "dense": true,
+          "sound": {
+            "family": "boom",
+            "file": "sfx/amaliometria-impact-01.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 1,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
+        },
+        {
+          "id": "marca-cue-2",
+          "type": "logo",
+          "assetId": "marca-acento",
+          "src": "projects/intro/demo-canal/assets/marca-acento.png",
+          "slot": "back-right",
+          "depth": "back",
+          "presentation": "card",
+          "text": null,
+          "note": null,
+          "tone": "neutral",
+          "scale": 0.72,
+          "blurPx": 6,
+          "rect": {
+            "left": 1376.8,
+            "top": 212.8,
+            "width": 374.4,
+            "height": 374.4
+          },
+          "atBeat": 8,
+          "atWord": null,
+          "atSeconds": 1,
+          "fromFrame": 60,
+          "durationInFrames": 150,
+          "dense": true,
+          "sound": {
+            "family": "boom",
+            "file": "sfx/amaliometria-impact-02.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.711,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
+        },
+        {
+          "id": "marca-cue-3",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "banner-bottom",
+          "depth": "front",
+          "presentation": "card",
+          "text": "HERRAMIENTAS QUE USO DE VERDAD",
+          "note": null,
+          "tone": "accent",
+          "scale": 1,
+          "blurPx": 0,
+          "rect": {
+            "left": 96,
+            "top": 756,
+            "width": 1728,
+            "height": 184
+          },
+          "atBeat": 10,
+          "atWord": null,
+          "atSeconds": 2,
+          "fromFrame": 120,
+          "durationInFrames": 120,
+          "dense": true,
+          "sound": {
+            "family": "tick",
+            "file": "sfx/amaliometria-data-tick.wav"
+          },
+          "soundNote": null,
+          "art": null
+        }
+      ],
+      "effects": [
+        {
+          "id": "marca-fx-1",
+          "effect": "rgb-split",
+          "intensity": 0.8,
+          "strong": true,
+          "atBeat": 6,
+          "atSeconds": 0,
+          "absoluteSeconds": 3,
+          "fromFrame": 0,
+          "durationInFrames": 15,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "glitch",
+            "file": "sfx/amaliometria-break-01.wav"
+          },
+          "soundNote": null
+        },
+        {
+          "id": "marca-fx-2",
+          "effect": "zoom-punch",
+          "intensity": 1,
+          "strong": true,
+          "atBeat": 10,
+          "atSeconds": 2,
+          "absoluteSeconds": 5,
+          "fromFrame": 120,
+          "durationInFrames": 24,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "boom",
+            "file": "sfx/amaliometria-impact-03.wav"
+          },
+          "soundNote": null
+        },
+        {
+          "id": "marca-fx-3",
+          "effect": "light-leak",
+          "intensity": 0.8,
+          "strong": false,
+          "atBeat": 13,
+          "atSeconds": 3.5,
+          "absoluteSeconds": 6.5,
+          "fromFrame": 210,
+          "durationInFrames": 66,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "shimmer",
+            "file": "sfx/amaliometria-logo-shimmer.wav"
+          },
+          "soundNote": null
+        }
+      ],
+      "captionPages": []
+    },
+    {
+      "id": "remate",
+      "clipId": "03",
+      "src": "projects/intro/demo-canal/clips/03.mp4",
+      "from": 480,
+      "durationInFrames": 240,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 4,
+      "silenceTrimmedSeconds": 0,
+      "layout": "hero-left",
+      "camera": "snap-zoom",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.5,
+        "y": 0.42,
+        "faceHeightRatio": 0.28
+      },
+      "faceRect": null,
+      "transitionIn": "whip",
+      "label": null,
+      "backdrop": null,
+      "cues": [
+        {
+          "id": "remate-cue-1",
+          "type": "logo",
+          "assetId": "marca-clara",
+          "src": "projects/intro/demo-canal/assets/marca-clara.png",
+          "slot": "fore-right",
+          "depth": "front",
+          "presentation": "card",
+          "text": "AMALIOMETRIA",
+          "note": null,
+          "tone": "neutral",
+          "scale": 1,
+          "blurPx": 0,
+          "rect": {
+            "left": 1264,
+            "top": 296,
+            "width": 560,
+            "height": 420
+          },
+          "atBeat": 16,
+          "atWord": null,
+          "atSeconds": 0,
+          "fromFrame": 0,
+          "durationInFrames": 180,
+          "dense": true,
+          "sound": {
+            "family": "boom",
+            "file": "sfx/amaliometria-soft-impact.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 1,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
+        }
+      ],
+      "effects": [
+        {
+          "id": "remate-fx-1",
+          "effect": "shake",
+          "intensity": 0.6,
+          "strong": true,
+          "atBeat": 16,
+          "atSeconds": 0,
+          "absoluteSeconds": 8,
+          "fromFrame": 0,
+          "durationInFrames": 21,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "impact",
+            "file": "sfx/amaliometria-impact-01.wav"
+          },
+          "soundNote": null
+        },
+        {
+          "id": "remate-fx-2",
+          "effect": "flash",
+          "intensity": 0.5,
+          "strong": true,
+          "atBeat": 20,
+          "atSeconds": 2,
+          "absoluteSeconds": 10,
+          "fromFrame": 120,
+          "durationInFrames": 11,
+          "beatDeltaSeconds": 0,
+          "offBeatNote": null,
+          "sound": {
+            "family": "shutter",
+            "file": "sfx/amaliometria-shutter-03.wav"
+          },
+          "soundNote": null
+        }
+      ],
+      "captionPages": []
+    }
+  ],
+  "soundCues": [
+    {
+      "file": "sfx/amaliometria-shutter-01.wav",
+      "startSeconds": 0,
+      "durationSeconds": 0.3,
+      "volume": 0.322,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-camera-01.wav",
+      "startSeconds": 0.05,
+      "durationSeconds": 0.6,
+      "volume": 0.294,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-interface-01.wav",
+      "startSeconds": 1,
+      "durationSeconds": 0.24,
+      "volume": 0.54,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-soft-impact.wav",
+      "startSeconds": 2,
+      "durationSeconds": 0.9,
+      "volume": 0.9,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-impact-01.wav",
+      "startSeconds": 3,
+      "durationSeconds": 0.9,
+      "volume": 0.9,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-break-01.wav",
+      "startSeconds": 3,
+      "durationSeconds": 0.24,
+      "volume": 0.4,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-shutter-02.wav",
+      "startSeconds": 3,
+      "durationSeconds": 0.3,
+      "volume": 0.41400000000000003,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-impact-02.wav",
+      "startSeconds": 4,
+      "durationSeconds": 0.9,
+      "volume": 0.9,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 0.95
+    },
+    {
+      "file": "sfx/amaliometria-data-tick.wav",
+      "startSeconds": 5,
+      "durationSeconds": 0.26,
+      "volume": 0.48,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-impact-03.wav",
+      "startSeconds": 5,
+      "durationSeconds": 0.9,
+      "volume": 0.9,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.03
+    },
+    {
+      "file": "sfx/amaliometria-logo-shimmer.wav",
+      "startSeconds": 6.5,
+      "durationSeconds": 0.9,
+      "volume": 0.44000000000000006,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-soft-impact.wav",
+      "startSeconds": 8,
+      "durationSeconds": 0.9,
+      "volume": 0.9,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 0.98
+    },
+    {
+      "file": "sfx/amaliometria-impact-01.wav",
+      "startSeconds": 8,
+      "durationSeconds": 0.58,
+      "volume": 0.49199999999999994,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/library-quick-whip.wav",
+      "startSeconds": 8,
+      "durationSeconds": 0.2,
+      "volume": 0.30600000000000005,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-shutter-04.wav",
+      "startSeconds": 8.05,
+      "durationSeconds": 0.3,
+      "volume": 0.322,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.03
+    },
+    {
+      "file": "sfx/amaliometria-shutter-03.wav",
+      "startSeconds": 10,
+      "durationSeconds": 0.3,
+      "volume": 0.23,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 0.95
+    }
+  ],
+  "duckWindows": [],
+  "warnings": [],
+  "rules": {
+    "summary": {
+      "total": 11,
+      "passed": 10,
+      "failed": 0,
+      "warned": 0,
+      "waived": 0,
+      "manual": 0,
+      "skipped": 1,
+      "missingCheck": 0,
+      "errors": 0,
+      "warnings": 0,
+      "reviews": 0
+    },
+    "issues": []
+  }
+}

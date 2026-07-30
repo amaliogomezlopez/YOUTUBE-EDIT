@@ -1,45 +1,29 @@
 import path from 'node:path';
-import {ROOT} from '../../lib/utils.js';
+import {MEDIA_ROOT, PROJECTS_ROOT, surfacePaths} from '../video-studio/paths.js';
 
-export const REMOTION_ROOT = path.join(ROOT, 'remotion-animations');
+export {
+  IMAGE_EXTENSIONS,
+  REMOTION_ROOT,
+  VIDEO_EXTENSIONS,
+  naturalCompare,
+  slugify
+} from '../video-studio/paths.js';
+
+export const SHORT_SURFACE = 'shorts';
+
+const paths = surfacePaths(SHORT_SURFACE);
+
+export const SHORTS_MEDIA_ROOT = path.join(MEDIA_ROOT, SHORT_SURFACE);
+export const SHORTS_PROJECTS_ROOT = PROJECTS_ROOT;
 
 // Media pesada: vive en public/ porque Remotion la lee con staticFile(). Ya esta
 // ignorada por remotion-animations/.gitignore (public/projects/).
-export const SHORTS_MEDIA_ROOT = path.join(REMOTION_ROOT, 'public', 'projects', 'shorts');
+export const mediaDir = paths.mediaDir;
 
 // Plan editable + transcripciones: texto, versionable.
-export const SHORTS_PROJECTS_ROOT = path.join(REMOTION_ROOT, 'projects');
-
-export const SHORT_FORMAT = {width: 1080, height: 1920, fps: 60};
-
-export const VIDEO_EXTENSIONS = new Set(['.mkv', '.mp4', '.mov', '.webm', '.avi', '.m4v']);
-export const IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.webp', '.avif', '.gif', '.svg']);
-
-const DIACRITICS = new RegExp('[\\u0300-\\u036f]', 'g');
-
-export function mediaDir(slug) {
-  return path.join(SHORTS_MEDIA_ROOT, slug);
-}
-
-export function projectDir(slug) {
-  return path.join(SHORTS_PROJECTS_ROOT, `shorts-${slug}`);
-}
+export const projectDir = paths.projectDir;
 
 /** Ruta tal como la consume staticFile() dentro de Remotion. */
-export function staticPath(slug, ...parts) {
-  return ['projects', 'shorts', slug, ...parts].join('/');
-}
+export const staticPath = paths.staticPath;
 
-export function slugify(value) {
-  return String(value)
-    .normalize('NFD')
-    .replace(DIACRITICS, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-/** Orden natural: 2.mkv antes de 10.mkv. */
-export function naturalCompare(a, b) {
-  return String(a).localeCompare(String(b), 'en', {numeric: true, sensitivity: 'base'});
-}
+export const SHORT_FORMAT = {width: 1080, height: 1920, fps: 60};

@@ -1,5 +1,5 @@
-import {notEvaluable} from '../../../editorial-video/visuals/rules-engine.js';
-import {hasSolidDarkBackground} from '../../artwork.js';
+import {notEvaluable} from '../../editorial-video/visuals/rules-engine.js';
+import {hasSolidDarkBackground} from '../artwork.js';
 
 /**
  * Un wordmark exportado sin alfa arrastra su rectangulo negro. Dentro de una
@@ -8,9 +8,11 @@ import {hasSolidDarkBackground} from '../../artwork.js';
  *
  * Solo aplica a logos y marcas: una captura de pantalla tambien trae fondo propio,
  * pero ahi el fondo es parte de la evidencia y `card` es lo correcto.
+ *
+ * Validador de ambito `catalog`, comun a todas las superficies.
  */
 export default {
-  id: 'shorts-solid-background-needs-blend',
+  id: 'art-solid-background-needs-blend',
   run(context, rule) {
     const types = new Set(rule?.params?.types ?? ['logo', 'brand']);
     const withAsset = (context.scenes ?? [])

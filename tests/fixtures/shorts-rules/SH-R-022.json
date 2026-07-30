@@ -1,7 +1,7 @@
 {
   "ruleId": "SH-R-022",
   "statement": "Un logo o un wordmark con fondo negro solido necesita presentation blend.",
-  "check": "shorts-solid-background-needs-blend",
+  "check": "art-solid-background-needs-blend",
   "expect": "fail",
   "note": "Medidas reales del logo de Kimi: cuadrado negro opaco presentado en tarjeta oscura.",
   "context": {

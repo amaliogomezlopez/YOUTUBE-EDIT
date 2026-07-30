@@ -97,6 +97,10 @@ import {ShortVideo, shortVideoMetadata} from "./shorts/ShortVideo";
 import {shortVideoSchema} from "./shorts/schemas";
 // Registro generado por `npm run shorts:build`: un short nuevo se registra solo.
 import {shortBuilds} from "./shorts/registry.generated";
+import {IntroVideo, introVideoMetadata} from "./intro/IntroVideo";
+import {introVideoSchema} from "./intro/schemas";
+// Registro generado por `npm run intro:build`: una intro nueva se registra sola.
+import {introBuilds} from "./intro/registry.generated";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -113,6 +117,22 @@ export const RemotionRoot: React.FC = () => {
             id={id}
             key={id}
             schema={shortVideoSchema}
+            width={build.format.width}
+          />
+        ))}
+      </Folder>
+      <Folder name="Intros">
+        {introBuilds.map(({id, build}) => (
+          <Composition
+            calculateMetadata={introVideoMetadata}
+            component={IntroVideo}
+            defaultProps={build}
+            durationInFrames={build.durationInFrames}
+            fps={build.format.fps}
+            height={build.format.height}
+            id={id}
+            key={id}
+            schema={introVideoSchema}
             width={build.format.width}
           />
         ))}

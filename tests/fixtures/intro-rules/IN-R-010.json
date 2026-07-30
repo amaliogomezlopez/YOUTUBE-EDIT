@@ -1,0 +1,59 @@
+{
+  "ruleId": "IN-R-010",
+  "check": "intro-back-cue-reads-as-background",
+  "expect": "fail",
+  "note": "Un logo detras del sujeto a escala 1 y sin desenfoque: no se lee como fondo.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [
+          {
+            "id": "cue-1",
+            "type": "logo",
+            "assetId": null,
+            "slot": "back-left",
+            "depth": "back",
+            "presentation": "card",
+            "tone": "neutral",
+            "scale": 1,
+            "blurPx": 0,
+            "rect": {
+              "left": 96,
+              "top": 140,
+              "width": 520,
+              "height": 520
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": null
+          }
+        ],
+        "effects": [],
+        "captionPages": []
+      }
+    ]
+  }
+}

@@ -9,7 +9,7 @@
     "review": "Requiere mirada humana; no hay comprobación geométrica posible."
   },
   "scopes": {
-    "catalog": "Regla universal del formato vertical: aplica a cualquier short.",
+    "catalog": "Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje.",
     "channel": "Regla de marca del canal que publica los shorts."
   },
   "promotionPolicy": "Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.",
@@ -86,7 +86,7 @@
       "rationale": "Sobre la tarjeta oscura de `card` el trazo negro desaparece y queda un marco vacío. Pasó con el logo de Hermes en harness-vs-modelo.",
       "scope": "catalog",
       "severity": "error",
-      "check": "shorts-dark-art-needs-plate",
+      "check": "art-dark-on-alpha-needs-plate",
       "fixture": "tests/fixtures/shorts-rules/SH-R-021.json"
     },
     {
@@ -96,7 +96,7 @@
       "rationale": "Un wordmark exportado sin alfa arrastra su rectángulo negro: dentro de la tarjeta se ve el escalón y sobre el vídeo, un parche. `blend` suma con `screen` y el negro desaparece. Pasó con el wordmark de Claude Code y con el logo de Kimi.",
       "scope": "catalog",
       "severity": "error",
-      "check": "shorts-solid-background-needs-blend",
+      "check": "art-solid-background-needs-blend",
       "fixture": "tests/fixtures/shorts-rules/SH-R-022.json"
     },
     {
@@ -126,7 +126,7 @@
       "rationale": "Todo tipo de cue tiene familia por defecto, así que un cue mudo solo aparece si alguien lo pidió; sin explicación se lee como un fallo de montaje y no como una decisión.",
       "scope": "catalog",
       "severity": "warning",
-      "check": "shorts-cue-not-silent",
+      "check": "cue-not-silent",
       "fixture": "tests/fixtures/shorts-rules/SH-R-050.json"
     },
     {

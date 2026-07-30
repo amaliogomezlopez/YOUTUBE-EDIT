@@ -1,0 +1,88 @@
+{
+  "ruleId": "IN-R-040",
+  "check": "intro-hit-on-beat",
+  "expect": "fail",
+  "note": "Un flash a 200 ms del beat mas cercano y sin offBeatNote.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "durationInFrames": 480,
+    "durationSeconds": 8,
+    "music": {
+      "file": "projects/intro/demo/assets/music.mp3",
+      "bpm": 120,
+      "offsetSeconds": 0,
+      "beatSeconds": [
+        0,
+        0.5,
+        1,
+        1.5,
+        2,
+        2.5,
+        3,
+        3.5,
+        4,
+        4.5,
+        5,
+        5.5,
+        6,
+        6.5,
+        7,
+        7.5,
+        8
+      ],
+      "gainDb": -9,
+      "confidence": 2.4
+    },
+    "budget": {
+      "profileId": "hype-tech",
+      "maxStrongEffectsPerSecond": 3,
+      "maxSecondsWithoutChange": 10,
+      "beatToleranceSeconds": 0.06,
+      "durationBudgetSeconds": {
+        "min": 5,
+        "max": 25
+      }
+    },
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [],
+        "effects": [
+          {
+            "id": "fx-1",
+            "effect": "flash",
+            "intensity": 1,
+            "strong": true,
+            "atBeat": null,
+            "atSeconds": 1.2,
+            "absoluteSeconds": 1.2,
+            "fromFrame": 72,
+            "durationInFrames": 11,
+            "beatDeltaSeconds": 0.2,
+            "offBeatNote": null,
+            "sound": {
+              "family": "shutter",
+              "file": "sfx/amaliometria-shutter-01.wav"
+            },
+            "soundNote": null
+          }
+        ],
+        "captionPages": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "slug": "demo-canal",
+  "surface": "intro",
+  "format": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 60
+  },
+  "createdAt": "2026-07-30T12:26:54.120Z",
+  "source": {
+    "clipsDir": "D:\\2-YOUTUBE-EDIT\\data\\tmp\\intro-demo-canal",
+    "assetsDir": "D:\\2-YOUTUBE-EDIT\\data\\tmp\\intro-demo-canal\\ASSETS",
+    "musicFile": "D:\\2-YOUTUBE-EDIT\\data\\tmp\\intro-demo-canal\\music.wav"
+  },
+  "totalClipSeconds": 13.3,
+  "clips": [
+    {
+      "id": "01",
+      "sourceName": "01.mp4",
+      "file": "projects/intro/demo-canal/clips/01.mp4",
+      "durationSeconds": 4.1,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "focus": {
+        "x": 0.5,
+        "y": 0.42,
+        "faceHeightRatio": 0.28
+      },
+      "faceBox": null,
+      "faceConfidence": 0,
+      "transcript": null,
+      "wordCount": 0
+    },
+    {
+      "id": "02",
+      "sourceName": "02.mp4",
+      "file": "projects/intro/demo-canal/clips/02.mp4",
+      "durationSeconds": 5.1,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "focus": {
+        "x": 0.5,
+        "y": 0.42,
+        "faceHeightRatio": 0.28
+      },
+      "faceBox": null,
+      "faceConfidence": 0,
+      "transcript": null,
+      "wordCount": 0
+    },
+    {
+      "id": "03",
+      "sourceName": "03.mp4",
+      "file": "projects/intro/demo-canal/clips/03.mp4",
+      "durationSeconds": 4.1,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "focus": {
+        "x": 0.5,
+        "y": 0.42,
+        "faceHeightRatio": 0.28
+      },
+      "faceBox": null,
+      "faceConfidence": 0,
+      "transcript": null,
+      "wordCount": 0
+    }
+  ],
+  "assets": [
+    {
+      "id": "marca-acento",
+      "kind": "image",
+      "sourceName": "marca-acento.png",
+      "file": "projects/intro/demo-canal/assets/marca-acento.png",
+      "bytes": 2026
+    },
+    {
+      "id": "marca-clara",
+      "kind": "image",
+      "sourceName": "marca-clara.png",
+      "file": "projects/intro/demo-canal/assets/marca-clara.png",
+      "bytes": 1895
+    }
+  ],
+  "music": {
+    "sourceName": "music.wav",
+    "file": "projects/intro/demo-canal/assets/music.wav",
+    "bpm": 120,
+    "offsetSeconds": 0,
+    "beatSeconds": [
+      0,
+      0.5,
+      1,
+      1.5,
+      2,
+      2.5,
+      3,
+      3.5,
+      4,
+      4.5,
+      5,
+      5.5,
+      6,
+      6.5,
+      7,
+      7.5,
+      8,
+      8.5,
+      9,
+      9.5,
+      10,
+      10.5,
+      11,
+      11.5,
+      12,
+      12.5,
+      13,
+      13.5
+    ],
+    "durationSeconds": 14,
+    "confidence": 62.5,
+    "declared": {
+      "bpm": null,
+      "offsetSeconds": null
+    }
+  }
+}

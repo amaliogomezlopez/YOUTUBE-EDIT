@@ -1,7 +1,7 @@
 {
   "ruleId": "SH-R-021",
   "statement": "Un logo cuyo arte es oscuro sobre alfa necesita presentation plate.",
-  "check": "shorts-dark-art-needs-plate",
+  "check": "art-dark-on-alpha-needs-plate",
   "expect": "fail",
   "note": "Medidas reales del logo de Hermes: trazo negro sobre transparencia presentado en tarjeta oscura.",
   "context": {

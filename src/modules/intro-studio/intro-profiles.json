@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "defaultProfile": "hype-tech",
+  "intro": "Perfiles de estilo de la superficie de intro. La superficie fija el contrato (formato, geometria, layouts, reglas); el perfil fija la intensidad. Dos intros con el mismo plan y distinto `profileId` respetan las mismas reglas con umbrales distintos: eso es lo que evita ramificar el codigo por canal o por tema.",
+  "profiles": [
+    {
+      "id": "hype-tech",
+      "label": "Tecnologia con nervio",
+      "notes": "Para videos sobre modelos, agentes y herramientas. Fondo protagonista, golpes frecuentes y logos entrando con zoom.",
+      "themeId": "oxide-documentary",
+      "backdropOpacity": 0.55,
+      "backDepth": {"scale": 0.72, "blurPx": 6},
+      "soundMix": 0.7,
+      "musicGainDb": -9,
+      "clipVolume": 1,
+      "captionsByDefault": false,
+      "effectAllowlist": [
+        "flash", "rgb-split", "shake", "zoom-punch", "glitch", "light-leak",
+        "grain", "scanlines", "vignette-pulse", "letterbox-snap", "speed-blur"
+      ],
+      "maxStrongEffectsPerSecond": 3,
+      "maxSecondsWithoutChange": 2.5,
+      "beatToleranceSeconds": 0.06,
+      "durationBudgetSeconds": {"min": 5, "max": 25}
+    },
+    {
+      "id": "sobrio-finanzas",
+      "label": "Sobrio, tono financiero",
+      "notes": "Para las intros del canal de finanzas: la credibilidad se pierde con un glitch. Fondo discreto, sin roturas de senal y menos golpes por segundo.",
+      "themeId": "editorial-ivory",
+      "backdropOpacity": 0.28,
+      "backDepth": {"scale": 0.8, "blurPx": 4},
+      "soundMix": 0.5,
+      "musicGainDb": -14,
+      "clipVolume": 1,
+      "captionsByDefault": false,
+      "effectAllowlist": [
+        "flash", "zoom-punch", "light-leak", "grain", "vignette-pulse", "speed-blur"
+      ],
+      "maxStrongEffectsPerSecond": 1.5,
+      "maxSecondsWithoutChange": 3.5,
+      "beatToleranceSeconds": 0.08,
+      "durationBudgetSeconds": {"min": 6, "max": 22}
+    },
+    {
+      "id": "directo-personal",
+      "label": "Directo a camara, sin adornos",
+      "notes": "Para una intro que solo necesita presencia: camara en mano, un logo y un titular. Casi sin capas.",
+      "themeId": "signal-cobalt",
+      "backdropOpacity": 0.2,
+      "backDepth": {"scale": 0.85, "blurPx": 3},
+      "soundMix": 0.55,
+      "musicGainDb": -12,
+      "clipVolume": 1,
+      "captionsByDefault": true,
+      "effectAllowlist": ["flash", "zoom-punch", "grain", "vignette-pulse"],
+      "maxStrongEffectsPerSecond": 1,
+      "maxSecondsWithoutChange": 4,
+      "beatToleranceSeconds": 0.1,
+      "durationBudgetSeconds": {"min": 5, "max": 18}
+    }
+  ]
+}

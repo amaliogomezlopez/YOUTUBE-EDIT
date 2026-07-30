@@ -11,7 +11,10 @@ const readJson = (projectRoot, relativePath) =>
  * del manifiesto de capacidades.
  */
 export const readCompositionSources = (projectRoot) =>
-  ["src/Root.tsx", "src/shorts/registry.generated.ts"]
+  // Cada superficie de montaje registra sus composiciones en un fichero generado
+  // que el Root importa; el manifiesto tiene que leerlos todos o una intro nueva no
+  // aparece publicada como capacidad.
+  ["src/Root.tsx", "src/shorts/registry.generated.ts", "src/intro/registry.generated.ts"]
     .map((relativePath) => {
       try {
         return readFileSync(path.join(projectRoot, relativePath), "utf8");
@@ -71,6 +74,7 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       "catalog/preferences/channel-profile.json",
       "src/Root.tsx",
       "src/shorts/registry.generated.ts",
+      "src/intro/registry.generated.ts",
     ],
     commands: {
       ingestAnnotatedChart:

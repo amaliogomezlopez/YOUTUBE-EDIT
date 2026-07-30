@@ -1,0 +1,43 @@
+{
+  "comment": "Geometria de la intro 16:9. Unica fuente: la lee layout.ts para dibujar y src/modules/intro-studio/geometry.js para validar. A diferencia de la geometria del short, los slots son rectangulos absolutos declarados y no aritmetica: asi no hay reparto replicado en TypeScript y en Node que pueda divergir.",
+  "width": 1920,
+  "height": 1080,
+  "safeX": 96,
+  "safeTop": 64,
+  "safeBottom": 972,
+  "safeBottomReason": "El reproductor de YouTube dibuja la barra de progreso y los controles en la franja inferior, y la tarjeta de sugerencias aparece arriba a la derecha al final. Nada informativo baja de aqui.",
+  "subject": {
+    "hero": {"left": 0, "top": 0, "width": 1920, "height": 1080, "radius": 0},
+    "hero-left": {"left": 0, "top": 0, "width": 1180, "height": 1080, "radius": 0},
+    "hero-right": {"left": 740, "top": 0, "width": 1180, "height": 1080, "radius": 0},
+    "frame": {"left": 592, "top": 96, "width": 736, "height": 828, "radius": 36},
+    "insert": {"left": 1424, "top": 592, "width": 400, "height": 300, "radius": 24}
+  },
+  "stage": {
+    "hero": {"left": 96, "top": 64, "width": 1728, "height": 908},
+    "hero-left": {"left": 1216, "top": 64, "width": 608, "height": 908},
+    "hero-right": {"left": 96, "top": 64, "width": 608, "height": 908},
+    "frame": {"left": 96, "top": 64, "width": 1728, "height": 908},
+    "insert": {"left": 96, "top": 64, "width": 1264, "height": 908}
+  },
+  "slots": {
+    "back-left": {"left": 96, "top": 140, "width": 520, "height": 520},
+    "back-right": {"left": 1304, "top": 140, "width": 520, "height": 520},
+    "back-center": {"left": 700, "top": 130, "width": 520, "height": 520},
+    "orbit-1": {"left": 168, "top": 96, "width": 300, "height": 300},
+    "orbit-2": {"left": 1452, "top": 96, "width": 300, "height": 300},
+    "orbit-3": {"left": 168, "top": 620, "width": 300, "height": 300},
+    "orbit-4": {"left": 1452, "top": 620, "width": 300, "height": 300},
+    "fore-left": {"left": 96, "top": 296, "width": 560, "height": 420},
+    "fore-right": {"left": 1264, "top": 296, "width": 560, "height": 420},
+    "corner-tl": {"left": 96, "top": 64, "width": 360, "height": 200},
+    "corner-tr": {"left": 1464, "top": 64, "width": 360, "height": 200},
+    "banner-top": {"left": 96, "top": 64, "width": 1728, "height": 160},
+    "banner-bottom": {"left": 96, "top": 756, "width": 1728, "height": 184},
+    "center": {"left": 560, "top": 330, "width": 800, "height": 420},
+    "strip": {"left": 96, "top": 800, "width": 1728, "height": 172}
+  },
+  "backSlots": ["back-left", "back-right", "back-center", "orbit-1", "orbit-2", "orbit-3", "orbit-4"],
+  "titleBand": {"left": 96, "top": 620, "width": 1728, "height": 320},
+  "captionBand": {"left": 240, "top": 792, "width": 1440, "height": 180}
+}

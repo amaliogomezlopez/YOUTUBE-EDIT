@@ -1,0 +1,71 @@
+{
+  "ruleId": "IN-R-061",
+  "check": "intro-duration-budget",
+  "expect": "fail",
+  "note": "Dos segundos de intro con un perfil que pide cinco como minimo.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "durationInFrames": 120,
+    "durationSeconds": 2,
+    "budget": {
+      "profileId": "hype-tech",
+      "maxStrongEffectsPerSecond": 3,
+      "maxSecondsWithoutChange": 10,
+      "beatToleranceSeconds": 0.06,
+      "durationBudgetSeconds": {
+        "min": 5,
+        "max": 25
+      }
+    },
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 120,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 2,
+        "cues": [
+          {
+            "id": "cue-1",
+            "type": "logo",
+            "assetId": null,
+            "slot": "fore-left",
+            "depth": "front",
+            "presentation": "card",
+            "tone": "neutral",
+            "scale": 1,
+            "blurPx": 0,
+            "rect": {
+              "left": 96,
+              "top": 296,
+              "width": 560,
+              "height": 420
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": null
+          }
+        ],
+        "effects": [],
+        "captionPages": []
+      }
+    ]
+  }
+}

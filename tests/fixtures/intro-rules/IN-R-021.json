@@ -1,0 +1,64 @@
+{
+  "ruleId": "IN-R-021",
+  "check": "art-solid-background-needs-blend",
+  "expect": "fail",
+  "note": "Wordmark con fondo negro solido presentado en tarjeta: se ve el rectangulo.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [
+          {
+            "id": "cue-1",
+            "type": "logo",
+            "assetId": "claude-code",
+            "slot": "fore-left",
+            "depth": "front",
+            "presentation": "card",
+            "tone": "neutral",
+            "scale": 1,
+            "blurPx": 0,
+            "rect": {
+              "left": 96,
+              "top": 296,
+              "width": 560,
+              "height": 420
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": {
+              "opaqueCoverage": 1,
+              "meanLuma": 0.18,
+              "darkRatio": 0.72,
+              "edgeDarkRatio": 0.98
+            }
+          }
+        ],
+        "effects": [],
+        "captionPages": []
+      }
+    ]
+  }
+}

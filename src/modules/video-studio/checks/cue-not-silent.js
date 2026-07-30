@@ -5,7 +5,7 @@
  * intencionado, el plan lo explica con `soundNote` y la regla calla.
  */
 export default {
-  id: 'shorts-cue-not-silent',
+  id: 'cue-not-silent',
   run(context) {
     const issues = [];
     for (const scene of context.scenes ?? []) {

@@ -16,7 +16,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 
 | Ámbito | Significado |
 | --- | --- |
-| `catalog` | Regla universal del formato vertical: aplica a cualquier short. |
+| `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
 Reglas: **9** · con validador automático: **9** · marcadas `manual`: **0** · sin implementar: **0**.
@@ -62,7 +62,7 @@ Un logo cuyo arte es oscuro sobre alfa necesita `presentation: "plate"`.
 
 **Por qué:** Sobre la tarjeta oscura de `card` el trazo negro desaparece y queda un marco vacío. Pasó con el logo de Hermes en harness-vs-modelo.
 
-**Validador:** `shorts-dark-art-needs-plate`
+**Validador:** `art-dark-on-alpha-needs-plate`
 
 ### SH-R-022 · `error` · `catalog`
 
@@ -70,7 +70,7 @@ Un logo o un wordmark con fondo negro sólido necesita `presentation: "blend"`.
 
 **Por qué:** Un wordmark exportado sin alfa arrastra su rectángulo negro: dentro de la tarjeta se ve el escalón y sobre el vídeo, un parche. `blend` suma con `screen` y el negro desaparece. Pasó con el wordmark de Claude Code y con el logo de Kimi.
 
-**Validador:** `shorts-solid-background-needs-blend`
+**Validador:** `art-solid-background-needs-blend`
 
 ## 3. Información en pantalla
 
@@ -104,7 +104,7 @@ Ningún cue entra en silencio. Silenciarlo con `"sound": false` exige un `soundN
 
 **Por qué:** Todo tipo de cue tiene familia por defecto, así que un cue mudo solo aparece si alguien lo pidió; sin explicación se lee como un fallo de montaje y no como una decisión.
 
-**Validador:** `shorts-cue-not-silent`
+**Validador:** `cue-not-silent`
 
 ## 6. Ritmo y silencios
 

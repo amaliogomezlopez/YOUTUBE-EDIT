@@ -1,0 +1,71 @@
+{
+  "ruleId": "IN-R-060",
+  "check": "intro-visual-change-cadence",
+  "expect": "fail",
+  "note": "Ocho segundos con un unico cambio visible en el frame 0.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "durationInFrames": 480,
+    "durationSeconds": 8,
+    "budget": {
+      "profileId": "hype-tech",
+      "maxStrongEffectsPerSecond": 3,
+      "maxSecondsWithoutChange": 1.5,
+      "beatToleranceSeconds": 0.06,
+      "durationBudgetSeconds": {
+        "min": 5,
+        "max": 25
+      }
+    },
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [
+          {
+            "id": "cue-1",
+            "type": "logo",
+            "assetId": null,
+            "slot": "fore-left",
+            "depth": "front",
+            "presentation": "card",
+            "tone": "neutral",
+            "scale": 1,
+            "blurPx": 0,
+            "rect": {
+              "left": 96,
+              "top": 296,
+              "width": 560,
+              "height": 420
+            },
+            "atSeconds": 0,
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "dense": true,
+            "sound": {
+              "family": "boom",
+              "file": "sfx/amaliometria-soft-impact.wav"
+            },
+            "soundNote": null,
+            "art": null
+          }
+        ],
+        "effects": [],
+        "captionPages": []
+      }
+    ]
+  }
+}

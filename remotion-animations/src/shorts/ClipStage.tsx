@@ -1,7 +1,10 @@
 import {Video} from "@remotion/media";
 import {Easing, interpolate, staticFile, useCurrentFrame, useVideoConfig} from "remotion";
+import {coverGeometry} from "../motion/Framing";
 import {clamp} from "../motion/Toolkit";
 import {ShortScene} from "./schemas";
+
+export {coverGeometry};
 
 type ClipStageProps = {
   scene: ShortScene;
@@ -76,30 +79,6 @@ export const ClipStage: React.FC<ClipStageProps> = ({
       </div>
     </div>
   );
-};
-
-/** Geometria tipo `cover` con el punto focal dentro del recorte visible. */
-export const coverGeometry = ({
-  width,
-  height,
-  sourceWidth = 1920,
-  sourceHeight = 1080,
-  focusX,
-  focusY,
-}: {
-  width: number;
-  height: number;
-  sourceWidth?: number;
-  sourceHeight?: number;
-  focusX: number;
-  focusY: number;
-}) => {
-  const scale = Math.max(width / sourceWidth, height / sourceHeight);
-  const scaledWidth = sourceWidth * scale;
-  const scaledHeight = sourceHeight * scale;
-  const left = Math.min(0, Math.max(width - scaledWidth, width / 2 - focusX * scaledWidth));
-  const top = Math.min(0, Math.max(height - scaledHeight, height / 2 - focusY * scaledHeight));
-  return {left, top, width: scaledWidth, height: scaledHeight};
 };
 
 const cameraTransform = (scene: ShortScene, frame: number) => {

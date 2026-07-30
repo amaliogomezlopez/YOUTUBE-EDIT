@@ -68,6 +68,81 @@ y el ultimo MP4 renderizado usando los conectores de `src/lib/publishers/`, con 
 mismos estados que el pipeline de video largo (`requires_manual_action` cuando
 falta una credencial o el hosting HTTPS de Instagram).
 
+## Superficies de montaje y capa comun
+
+Hay tres superficies de montaje, y la diferencia entre ellas **no se resuelve
+ramificando codigo**:
+
+| Superficie | Formato | Ancla temporal | Contrato |
+|---|---|---|---|
+| `shorts-studio` | 1080x1920 @60 | palabra (`atWord`) | `rules/shorts-rules.json` |
+| `intro-studio` | 1920x1080 @60 | beat (`atBeat`) | `rules/intro-rules.json` |
+| `editorial-video` | 1920x1080 @30 | palabra | `channels/<canal>/brand/editing-rules.json` |
+
+`src/modules/video-studio/` es lo comun a las tres: ingesta (remux, loudness, cara,
+transcripcion, musica), rejilla de beats, recorte y ventanas de locucion, medidas del
+arte, paginacion de subtitulos, catalogo de familias de sonido, generacion del
+registro de composiciones, intake de feedback y carga de sets de reglas. Antes de
+escribir algo en una superficie, comprobar si ya existe ahi.
+
+Dos ejes ortogonales, y hay que elegir el correcto al colocar una decision:
+
+- **Superficie**: que se puede hacer. Formato, geometria, layouts, slots, allowlist
+  de efectos, reglas propias.
+- **Perfil de estilo**: cuanto. Umbrales de ritmo, densidad, duracion, opacidad de
+  fondo. En la intro viven en `src/modules/intro-studio/intro-profiles.json` y el
+  build los copia al JSON compilado como `budget`.
+
+**Una regla de ritmo no lleva su umbral dentro**: lo lee del `budget` del perfil y se
+declara *no evaluable* si no esta. Es lo que permite que el perfil sobrio y el
+nervioso compartan validador en vez de necesitar excepciones.
+
+Un validador que se cumple igual en dos superficies asciende a `catalog` y se mueve a
+`src/modules/video-studio/checks/`, desde donde lo cargan todas. Ya han ascendido
+`art-dark-on-alpha-needs-plate`, `art-solid-background-needs-blend` y
+`cue-not-silent`.
+
+## Introducciones a camara
+
+Si el encargo es "tengo clips grabados a camara y quiero la introduccion de mi
+video", es `src/modules/intro-studio` + `remotion-animations/src/intro`, documentado
+en `docs/intros-desde-cero.md`. No es el flujo de shorts (vertical, se publica solo)
+ni el motor editorial (explica datos): la intro es la cabecera de un video largo y su
+entregable es un MP4 1920x1080 que se coloca al principio en el editor. **No hay etapa
+de metadata ni de publicacion.**
+
+Reglas duras de este flujo, ejecutables en
+`src/modules/intro-studio/rules/intro-rules.json`:
+
+- **El beat es el ancla.** `atBeat` es un indice de la rejilla global de la pieza;
+  `atWord`, un indice dentro de la transcripcion de su clip. `atSeconds` solo se
+  acepta cuando no hay ni musica ni transcripcion. La rejilla la estima la ingesta y
+  el plan la puede fijar con `bpm` y `offsetSeconds`.
+- **Nada tapa la cara.** El build proyecta el `faceBox` de la ingesta al rectangulo
+  que la cara ocupa en la composicion; ningun cue de primer plano ni la banda del
+  titular la tapan mas del 12 % (IN-R-011).
+- **Los logos por detras no llevan mascara de persona.** La profundidad la dan el
+  layout (`frame`, `hero-left`, `hero-right`) y la profundidad de campo: un cue
+  `depth: "back"` va reducido y desenfocado (IN-R-010).
+- **El ritmo se mide en las dos direcciones**: techo de golpes por segundo en ventana
+  deslizante (IN-R-041) y suelo de cambio visible (IN-R-060). El segundo es el fallo
+  real de la mayoria de intros caseras.
+- **Todo golpe fuerte cae en un beat** o declara `offBeatNote` (IN-R-040).
+- Nada informativo baja de `y = 972`: ahi dibuja el reproductor de YouTube su barra y
+  sus controles (IN-R-030).
+
+El ciclo es `intro:ingest` -> editar `intro-plan.json` -> `intro:build` ->
+`intro:render`, y no exige tocar codigo: `intro:build` regenera
+`remotion-animations/src/intro/registry.generated.ts`. Tras anadir o quitar una
+composicion, `npm run remotion:capabilities`.
+
+Todo feedback del usuario sobre la intro se convierte en regla con `npm run
+intro:feedback`, que crea regla, validador y fixture de una vez. La regla no esta
+cerrada mientras su validador siga devolviendo `TODO`: `npm test` lo caza.
+
+El proyecto de referencia es `demo-canal`, con media sintetica que regenera `node
+scripts/intro-demo-media.js`.
+
 ## Motor de animacion editorial
 
 Si el encargo es "en esta carpeta estan los clips del episodio N, haz las
@@ -106,6 +181,9 @@ Reglas duras del motor:
 - `src/lib/llm.js`: MiniMax/OpenAI-compatible para scoring y JSON.
 - `src/lib/publishing.js`: resumen, titulos, hashtags, timestamps y posts por plataforma.
 - `src/lib/asset-host.js`: subida temporal de assets por SSH/SCP para obtener una URL HTTPS publica.
+- `src/modules/video-studio/`: capa comun de las superficies de montaje.
+- `src/modules/shorts-studio/`: superficie vertical 9:16.
+- `src/modules/intro-studio/`: superficie de introducciones 16:9 a camara.
 - `src/lib/stories/planner.js`: plan editorial de Stories mediante MiniMax M3 y fallback local.
 - `src/lib/stories/renderer.js`: renderer SVG 1080x1920, temas y layouts deterministas.
 - `public/`: UI local.

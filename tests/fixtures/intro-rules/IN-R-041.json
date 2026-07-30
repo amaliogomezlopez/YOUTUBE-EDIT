@@ -1,0 +1,142 @@
+{
+  "ruleId": "IN-R-041",
+  "check": "intro-effect-density-max",
+  "expect": "fail",
+  "note": "Cuatro golpes en 600 ms con un perfil que admite uno por segundo.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "soundCues": [],
+    "duckWindows": [],
+    "durationInFrames": 480,
+    "durationSeconds": 8,
+    "music": {
+      "file": "projects/intro/demo/assets/music.mp3",
+      "bpm": 120,
+      "offsetSeconds": 0,
+      "beatSeconds": [
+        0,
+        0.5,
+        1,
+        1.5,
+        2,
+        2.5,
+        3,
+        3.5,
+        4,
+        4.5,
+        5,
+        5.5,
+        6,
+        6.5,
+        7,
+        7.5,
+        8
+      ],
+      "gainDb": -9,
+      "confidence": 2.4
+    },
+    "budget": {
+      "profileId": "hype-tech",
+      "maxStrongEffectsPerSecond": 1,
+      "maxSecondsWithoutChange": 10,
+      "beatToleranceSeconds": 0.06,
+      "durationBudgetSeconds": {
+        "min": 5,
+        "max": 25
+      }
+    },
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [],
+        "effects": [
+          {
+            "id": "fx-1",
+            "effect": "flash",
+            "intensity": 1,
+            "strong": true,
+            "atBeat": null,
+            "atSeconds": 2,
+            "absoluteSeconds": 2,
+            "fromFrame": 120,
+            "durationInFrames": 11,
+            "beatDeltaSeconds": 0,
+            "offBeatNote": null,
+            "sound": {
+              "family": "shutter",
+              "file": "sfx/amaliometria-shutter-01.wav"
+            },
+            "soundNote": null
+          },
+          {
+            "id": "fx-2",
+            "effect": "shake",
+            "intensity": 1,
+            "strong": true,
+            "atBeat": null,
+            "atSeconds": 2.2,
+            "absoluteSeconds": 2.2,
+            "fromFrame": 132,
+            "durationInFrames": 11,
+            "beatDeltaSeconds": 0,
+            "offBeatNote": null,
+            "sound": {
+              "family": "shutter",
+              "file": "sfx/amaliometria-shutter-01.wav"
+            },
+            "soundNote": null
+          },
+          {
+            "id": "fx-3",
+            "effect": "zoom-punch",
+            "intensity": 1,
+            "strong": true,
+            "atBeat": null,
+            "atSeconds": 2.4,
+            "absoluteSeconds": 2.4,
+            "fromFrame": 144,
+            "durationInFrames": 11,
+            "beatDeltaSeconds": 0,
+            "offBeatNote": null,
+            "sound": {
+              "family": "shutter",
+              "file": "sfx/amaliometria-shutter-01.wav"
+            },
+            "soundNote": null
+          },
+          {
+            "id": "fx-4",
+            "effect": "glitch",
+            "intensity": 1,
+            "strong": true,
+            "atBeat": null,
+            "atSeconds": 2.6,
+            "absoluteSeconds": 2.6,
+            "fromFrame": 156,
+            "durationInFrames": 11,
+            "beatDeltaSeconds": 0,
+            "offBeatNote": null,
+            "sound": {
+              "family": "shutter",
+              "file": "sfx/amaliometria-shutter-01.wav"
+            },
+            "soundNote": null
+          }
+        ],
+        "captionPages": []
+      }
+    ]
+  }
+}
