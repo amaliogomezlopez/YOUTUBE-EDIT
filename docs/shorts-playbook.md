@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal del formato vertical: aplica a cualquier short. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **8** · con validador automático: **8** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **9** · con validador automático: **9** · marcadas `manual`: **0** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -34,6 +34,14 @@ Dos cues no pueden ocupar el mismo slot a la vez. Los chips son la excepción: `
 **Por qué:** Dos cues solapados se dibujan uno encima del otro y no se ve en el JSON: solo aparece al renderizar. Es el fallo más fácil de introducir al alargar un holdSeconds.
 
 **Validador:** `shorts-slot-overlap`
+
+### SH-R-011 · `error` · `catalog`
+
+Dos cues activos a la vez no pueden tener rectangulos que se solapen, aunque esten en slots distintos. Los chips son la excepcion: stage-footer los maqueta en fila a proposito.
+
+**Por qué:** SH-R-010 solo caza dos cues en el mismo slot; el solape del podio con su veredicto era geometrico y solo se veia al renderizar (frame 1780 de harness-vs-modelo).
+
+**Validador:** `shorts-cue-rect-overlap`
 
 ## 2. Legibilidad de imágenes
 

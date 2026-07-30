@@ -1,6 +1,6 @@
 {
   "slug": "harness-vs-modelo",
-  "generatedAt": "2026-07-30T09:53:23.338Z",
+  "generatedAt": "2026-07-30T10:40:37.744Z",
   "format": {
     "width": 1080,
     "height": 1920,
@@ -1269,8 +1269,8 @@
   ],
   "rules": {
     "summary": {
-      "total": 8,
-      "passed": 8,
+      "total": 9,
+      "passed": 9,
       "failed": 0,
       "warned": 0,
       "waived": 0,

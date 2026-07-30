@@ -1,0 +1,32 @@
+{
+  "ruleId": "SH-R-011",
+  "statement": "Dos cues activos a la vez no pueden tener rectangulos que se solapen, aunque esten en slots distintos. Los chips son la excepcion: stage-footer los maqueta en fila a proposito.",
+  "check": "shorts-cue-rect-overlap",
+  "expect": "fail",
+  "note": "El logo entra en podium-2 mientras la captura de stage-full sigue en pantalla: slots distintos, pero la columna 2 del podio cae dentro del rectangulo de stage-full y se dibujan uno encima del otro.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-011",
+        "layout": "stage",
+        "captionPages": [],
+        "cues": [
+          {
+            "id": "captura", "type": "screenshot", "assetId": "a", "slot": "stage-full",
+            "presentation": "plain", "fromFrame": 60,
+            "durationInFrames": 300, "dense": true,
+            "sound": {"family": "reveal", "file": "sfx/reveal-01.wav"}, "art": null
+          },
+          {
+            "id": "logo-b", "type": "logo", "assetId": "b", "slot": "podium-2",
+            "presentation": "card", "text": "DOS", "fromFrame": 180,
+            "durationInFrames": 240, "dense": true,
+            "sound": {"family": "pop", "file": "sfx/pop-02.wav"}, "art": null
+          }
+        ]
+      }
+    ]
+  }
+}

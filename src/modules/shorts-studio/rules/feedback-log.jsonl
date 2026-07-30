@@ -1,0 +1,1 @@
+{"ruleId":"SH-R-011","feedback":"el rotulo EL PEOR (podium-3-verdict) se dibujaba encima del logo CLAUDE CODE (podium-3): slots distintos pero rectangulos solapados","recordedAt":"2026-07-30T10:17:14Z","severity":"error","scope":"catalog","check":"shorts-cue-rect-overlap"}

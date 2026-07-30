@@ -138,6 +138,20 @@
       "severity": "warning",
       "check": "shorts-scene-edge-silence",
       "fixture": "tests/fixtures/shorts-rules/SH-R-060.json"
+    },
+    {
+      "id": "SH-R-011",
+      "section": "slots",
+      "statement": "Dos cues activos a la vez no pueden tener rectangulos que se solapen, aunque esten en slots distintos. Los chips son la excepcion: stage-footer los maqueta en fila a proposito.",
+      "rationale": "SH-R-010 solo caza dos cues en el mismo slot; el solape del podio con su veredicto era geometrico y solo se veia al renderizar (frame 1780 de harness-vs-modelo).",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-cue-rect-overlap",
+      "origin": {
+        "feedback": "el rotulo EL PEOR (podium-3-verdict) se dibujaba encima del logo CLAUDE CODE (podium-3): slots distintos pero rectangulos solapados",
+        "recordedAt": "2026-07-30T10:17:14Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-011.json"
     }
   ]
 }

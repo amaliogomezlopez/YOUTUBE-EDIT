@@ -57,6 +57,7 @@ export type SlotRect = {
 const HEADER_HEIGHT = geometry.headerHeight;
 const FOOTER_HEIGHT = geometry.footerHeight;
 const PODIUM_GAP = geometry.podiumGap;
+const PODIUM_VERDICT_HEIGHT = geometry.podiumVerdictHeight;
 
 /**
  * Rectangulo de cada slot dentro del escenario del layout activo. Header y footer
@@ -110,10 +111,13 @@ export const slotRect = (
       const columnWidth = (stage.width - PODIUM_GAP * 2) / 3;
       const index = slot === "podium-3-verdict" ? 2 : podiumIndex;
       const left = stage.left + (columnWidth + PODIUM_GAP) * index;
+      // El veredicto reserva el pie de su columna: el podio acaba donde empieza
+      // el veredicto, o el rotulo del logo cae debajo de "EL PEOR".
+      const podiumHeight = bodyHeight - PODIUM_VERDICT_HEIGHT;
       if (slot === "podium-3-verdict") {
-        return {left, top: bodyTop + bodyHeight - 70, width: columnWidth, height: 70};
+        return {left, top: bodyTop + podiumHeight, width: columnWidth, height: PODIUM_VERDICT_HEIGHT};
       }
-      return {left, top: bodyTop, width: columnWidth, height: bodyHeight};
+      return {left, top: bodyTop, width: columnWidth, height: podiumHeight};
     }
     default:
       return {left: stage.left, top: bodyTop, width: stage.width, height: bodyHeight};

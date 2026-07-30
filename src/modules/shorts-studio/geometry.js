@@ -58,10 +58,12 @@ export function slotRect(slot, layout = 'split', geometry = SHORT_GEOMETRY) {
   if (PODIUM_SLOTS.has(slot)) {
     const columnWidth = (stage.width - geometry.podiumGap * 2) / 3;
     const left = stage.left + (columnWidth + geometry.podiumGap) * podiumIndex(slot);
+    // El veredicto reserva el pie de su columna: mismo reparto que en layout.ts.
+    const podiumHeight = bodyHeight - geometry.podiumVerdictHeight;
     if (slot === 'podium-3-verdict') {
-      return {left, top: bodyTop + bodyHeight - 70, width: columnWidth, height: 70};
+      return {left, top: bodyTop + podiumHeight, width: columnWidth, height: geometry.podiumVerdictHeight};
     }
-    return {left, top: bodyTop, width: columnWidth, height: bodyHeight};
+    return {left, top: bodyTop, width: columnWidth, height: podiumHeight};
   }
   return {left: stage.left, top: bodyTop, width: stage.width, height: bodyHeight};
 }
