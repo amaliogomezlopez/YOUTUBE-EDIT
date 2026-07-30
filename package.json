@@ -21,6 +21,8 @@
     "channel:entities": "node scripts/channel-entities.js",
     "sfx:synthesize": "node scripts/synthesize-sfx-library.js",
     "carousel": "node src/modules/carousels/cli.js",
+    "shorts:ingest": "node scripts/shorts-ingest.js",
+    "shorts:build": "node scripts/shorts-build.js",
     "scout:animations": "node scripts/animation-scout.js",
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",
     "stt:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-faster-whisper.ps1",

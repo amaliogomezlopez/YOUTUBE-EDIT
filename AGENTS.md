@@ -22,6 +22,23 @@ Debe cubrir:
 - Usar MiniMax M3 para estructurar el relato y un renderer SVG determinista para componer textos, flechas, etiquetas, color y layouts sin deformaciones.
 - Permitir temas y layouts variables manteniendo una identidad editorial consistente.
 
+## Shorts desde cero
+
+Si el encargo es "en esta carpeta tengo unos clips y quiero montar un short", no es
+el pipeline de `src/lib/pipeline.js` (ese recorta un video largo). Es
+`src/modules/shorts-studio` + `remotion-animations/src/shorts`, documentado en
+`docs/shorts-desde-cero.md`.
+
+Reglas duras de ese flujo:
+
+- El indice de palabra de la transcripcion es el ancla de los cues (`atWord`).
+  `atSeconds` solo vale si el clip no tiene transcripcion.
+- El sonido se pide por familia, nunca por fichero.
+- Dos cues no comparten slot a la vez; el build lo valida y falla.
+- El texto en pantalla anade informacion; no repite la locucion.
+- Una captura de texto denso exige layout `stage`, no `split`.
+- Nada informativo por debajo de `y = 1748`: ahi dibuja la interfaz de Shorts.
+
 ## Motor de animacion editorial
 
 Si el encargo es "en esta carpeta estan los clips del episodio N, haz las

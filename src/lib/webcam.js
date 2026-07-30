@@ -3,7 +3,7 @@ import path from 'node:path';
 import {clamp, run, TMP_DIR} from './utils.js';
 import {detectFacesInFrame, selectTrackedFace} from './face-detector.js';
 
-function parsePpm(buffer) {
+export function parsePpm(buffer) {
   let offset = 0;
   function token() {
     while (offset < buffer.length && /\s/.test(String.fromCharCode(buffer[offset]))) offset += 1;

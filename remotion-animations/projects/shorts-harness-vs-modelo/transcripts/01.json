@@ -1,0 +1,93 @@
+{
+  "clipId": "01",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0.24,
+      "end": 2.3,
+      "text": "Deja de usar Claude Code",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0.24,
+          "end": 1.06,
+          "text": "Deja",
+          "confidence": 0.8457
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 1.06,
+          "end": 1.18,
+          "text": "de",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 1.18,
+          "end": 1.52,
+          "text": "usar",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.52,
+          "end": 1.94,
+          "text": "Claude",
+          "confidence": 0.50349
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.94,
+          "end": 2.3,
+          "text": "Code",
+          "confidence": 0.43848
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Deja",
+      "start": 0.24,
+      "end": 1.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "de",
+      "start": 1.06,
+      "end": 1.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "usar",
+      "start": 1.18,
+      "end": 1.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "Claude",
+      "start": 1.52,
+      "end": 1.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "Code",
+      "start": 1.94,
+      "end": 2.3,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

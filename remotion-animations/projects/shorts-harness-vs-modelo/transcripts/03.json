@@ -1,0 +1,198 @@
+{
+  "clipId": "03",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 4.86,
+      "text": "Mismas tareas pero diferentes resultados en cuanto a tiempo, tokens y precio",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.58,
+          "text": "Mismas",
+          "confidence": 0.98926
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.58,
+          "end": 0.96,
+          "text": "tareas",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.96,
+          "end": 1.18,
+          "text": "pero",
+          "confidence": 0.61084
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.18,
+          "end": 1.72,
+          "text": "diferentes",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.72,
+          "end": 2.3,
+          "text": "resultados",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 2.3,
+          "end": 2.6,
+          "text": "en",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.6,
+          "end": 2.84,
+          "text": "cuanto",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 2.84,
+          "end": 2.98,
+          "text": "a",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.98,
+          "end": 3.32,
+          "text": "tiempo,",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 3.54,
+          "end": 3.98,
+          "text": "tokens",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 3.98,
+          "end": 4.46,
+          "text": "y",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 4.46,
+          "end": 4.86,
+          "text": "precio",
+          "confidence": 0.99902
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Mismas",
+      "start": 0,
+      "end": 0.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "tareas",
+      "start": 0.58,
+      "end": 0.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "pero",
+      "start": 0.96,
+      "end": 1.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "diferentes",
+      "start": 1.18,
+      "end": 1.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "resultados",
+      "start": 1.72,
+      "end": 2.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "en",
+      "start": 2.3,
+      "end": 2.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "cuanto",
+      "start": 2.6,
+      "end": 2.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "a",
+      "start": 2.84,
+      "end": 2.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "tiempo,",
+      "start": 2.98,
+      "end": 3.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "tokens",
+      "start": 3.54,
+      "end": 3.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "y",
+      "start": 3.98,
+      "end": 4.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "precio",
+      "start": 4.46,
+      "end": 4.86,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

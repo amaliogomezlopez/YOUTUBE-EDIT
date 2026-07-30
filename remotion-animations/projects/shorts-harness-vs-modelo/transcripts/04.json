@@ -1,0 +1,543 @@
+{
+  "clipId": "04",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 12.26,
+      "text": "Antes de cambiar de modelo, cambia de harness. En esta prueba han probado Kimi Code, Hermes y Claude Code. Claude Code resultó ser el peor de ellos. Esto es Amaliometría, sígueme para no perderte nada.",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.48,
+          "text": "Antes",
+          "confidence": 0.94189
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.48,
+          "end": 0.6,
+          "text": "de",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.6,
+          "end": 0.92,
+          "text": "cambiar",
+          "confidence": 0.99609
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 0.92,
+          "end": 1.04,
+          "text": "de",
+          "confidence": 0.99561
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.04,
+          "end": 1.36,
+          "text": "modelo,",
+          "confidence": 0.99561
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 1.6,
+          "end": 1.88,
+          "text": "cambia",
+          "confidence": 0.979
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 1.88,
+          "end": 1.98,
+          "text": "de",
+          "confidence": 0.99463
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 1.98,
+          "end": 2.3,
+          "text": "harness.",
+          "confidence": 0.6582
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.68,
+          "end": 2.9,
+          "text": "En",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 2.9,
+          "end": 3.06,
+          "text": "esta",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 3.06,
+          "end": 3.38,
+          "text": "prueba",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 3.38,
+          "end": 3.62,
+          "text": "han",
+          "confidence": 0.92334
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 3.62,
+          "end": 3.98,
+          "text": "probado",
+          "confidence": 0.99878
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 3.98,
+          "end": 4.4,
+          "text": "Kimi",
+          "confidence": 0.72144
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 4.4,
+          "end": 4.64,
+          "text": "Code,",
+          "confidence": 0.25244
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 4.9,
+          "end": 5.46,
+          "text": "Hermes",
+          "confidence": 0.99219
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 5.46,
+          "end": 5.76,
+          "text": "y",
+          "confidence": 0.99121
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 5.76,
+          "end": 6.08,
+          "text": "Claude",
+          "confidence": 0.65833
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 6.08,
+          "end": 6.34,
+          "text": "Code.",
+          "confidence": 0.88184
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 6.54,
+          "end": 6.94,
+          "text": "Claude",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 6.94,
+          "end": 7.18,
+          "text": "Code",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 7.18,
+          "end": 7.82,
+          "text": "resultó",
+          "confidence": 0.99414
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 7.82,
+          "end": 8.08,
+          "text": "ser",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 8.08,
+          "end": 8.44,
+          "text": "el",
+          "confidence": 0.99561
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 8.44,
+          "end": 8.82,
+          "text": "peor",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 8.82,
+          "end": 8.96,
+          "text": "de",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 8.96,
+          "end": 9.26,
+          "text": "ellos.",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 9.54,
+          "end": 9.9,
+          "text": "Esto",
+          "confidence": 0.95703
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 9.9,
+          "end": 10,
+          "text": "es",
+          "confidence": 0.98926
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 10,
+          "end": 10.58,
+          "text": "Amaliometría,",
+          "confidence": 0.95239
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 10.82,
+          "end": 11.18,
+          "text": "sígueme",
+          "confidence": 0.99723
+        },
+        {
+          "id": "seg-1-word-32",
+          "start": 11.18,
+          "end": 11.52,
+          "text": "para",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-33",
+          "start": 11.52,
+          "end": 11.68,
+          "text": "no",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-34",
+          "start": 11.68,
+          "end": 12.06,
+          "text": "perderte",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-35",
+          "start": 12.06,
+          "end": 12.26,
+          "text": "nada.",
+          "confidence": 0.99951
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Antes",
+      "start": 0,
+      "end": 0.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "de",
+      "start": 0.48,
+      "end": 0.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "cambiar",
+      "start": 0.6,
+      "end": 0.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "de",
+      "start": 0.92,
+      "end": 1.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "modelo,",
+      "start": 1.04,
+      "end": 1.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "cambia",
+      "start": 1.6,
+      "end": 1.88,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "de",
+      "start": 1.88,
+      "end": 1.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "harness.",
+      "start": 1.98,
+      "end": 2.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "En",
+      "start": 2.68,
+      "end": 2.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "esta",
+      "start": 2.9,
+      "end": 3.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "prueba",
+      "start": 3.06,
+      "end": 3.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "han",
+      "start": 3.38,
+      "end": 3.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "probado",
+      "start": 3.62,
+      "end": 3.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "Kimi",
+      "start": 3.98,
+      "end": 4.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "Code,",
+      "start": 4.4,
+      "end": 4.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "Hermes",
+      "start": 4.9,
+      "end": 5.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "y",
+      "start": 5.46,
+      "end": 5.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "Claude",
+      "start": 5.76,
+      "end": 6.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "Code.",
+      "start": 6.08,
+      "end": 6.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "Claude",
+      "start": 6.54,
+      "end": 6.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "Code",
+      "start": 6.94,
+      "end": 7.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "resultó",
+      "start": 7.18,
+      "end": 7.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "ser",
+      "start": 7.82,
+      "end": 8.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "el",
+      "start": 8.08,
+      "end": 8.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "peor",
+      "start": 8.44,
+      "end": 8.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "de",
+      "start": 8.82,
+      "end": 8.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "ellos.",
+      "start": 8.96,
+      "end": 9.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "Esto",
+      "start": 9.54,
+      "end": 9.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "es",
+      "start": 9.9,
+      "end": 10,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "Amaliometría,",
+      "start": 10,
+      "end": 10.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "sígueme",
+      "start": 10.82,
+      "end": 11.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "para",
+      "start": 11.18,
+      "end": 11.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "no",
+      "start": 11.52,
+      "end": 11.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "perderte",
+      "start": 11.68,
+      "end": 12.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "nada.",
+      "start": 12.06,
+      "end": 12.26,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

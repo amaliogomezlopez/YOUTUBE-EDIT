@@ -1,0 +1,204 @@
+{
+  "slug": "harness-vs-modelo",
+  "title": "Deja de usar Claude Code",
+  "themeId": "oxide-documentary",
+  "accentColor": "#E57246",
+  "dangerColor": "#DF544F",
+  "backgroundImage": null,
+  "captions": {
+    "maxWords": 4,
+    "maxLineChars": 16,
+    "pauseBreakSeconds": 0.4,
+    "maxPageSeconds": 2.4
+  },
+  "captionStyle": {
+    "position": "lower",
+    "uppercase": true
+  },
+  "sound": {
+    "enabled": true,
+    "mix": 0.55,
+    "clipVolume": 1
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "layout": "full",
+      "camera": "punch-in",
+      "cameraIntensity": 1.15,
+      "transitionIn": "cut",
+      "trim": {"start": 0.1, "end": 4.3},
+      "cues": [
+        {
+          "type": "logo",
+          "assetId": "claude-code",
+          "atWord": 3,
+          "slot": "overlay-top",
+          "presentation": "blend",
+          "tone": "danger",
+          "note": "El wordmark entra sobre 'Claude Code' y se queda hasta el corte",
+          "sound": "hit",
+          "soundIntensity": 1.1
+        }
+      ]
+    },
+    {
+      "id": "coste",
+      "clipId": "02",
+      "layout": "split",
+      "camera": "static",
+      "transitionIn": "whip",
+      "trim": {"start": 0, "end": 7.3},
+      "cues": [
+        {
+          "type": "stat",
+          "atWord": 4,
+          "slot": "stage-left",
+          "text": "6x",
+          "note": "mas tokens",
+          "tone": "warning",
+          "holdSeconds": 5.7,
+          "sound": "impact"
+        },
+        {
+          "type": "stat",
+          "atWord": 13,
+          "slot": "stage-right",
+          "text": "10x",
+          "note": "mas caro",
+          "tone": "danger",
+          "holdSeconds": 3.5,
+          "sound": "impact",
+          "soundIntensity": 1.15
+        }
+      ]
+    },
+    {
+      "id": "evidencia",
+      "clipId": "02",
+      "layout": "stage",
+      "camera": "static",
+      "transitionIn": "cut",
+      "label": "Composio\n28 tareas identicas",
+      "trim": {"start": 7.3, "end": 14.2},
+      "cues": [
+        {
+          "type": "screenshot",
+          "assetId": "costs",
+          "atWord": 26,
+          "slot": "stage-full",
+          "note": "Tuit de Composio con el desglose de tokens y coste",
+          "holdSeconds": 6.7,
+          "sound": "whoosh"
+        },
+        {
+          "type": "label",
+          "atWord": 29,
+          "slot": "stage-header",
+          "text": "KIMI K3",
+          "tone": "accent",
+          "holdSeconds": 1.3,
+          "sound": "pop"
+        },
+        {
+          "type": "label",
+          "atWord": 32,
+          "slot": "stage-header",
+          "text": "3 HARNESSES",
+          "holdSeconds": 3.5,
+          "sound": "tick"
+        }
+      ]
+    },
+    {
+      "id": "resultados",
+      "clipId": "03",
+      "layout": "stage",
+      "camera": "static",
+      "transitionIn": "slide-up",
+      "label": "Mismo modelo\nOtro resultado",
+      "trim": {"start": 0, "end": 6.8},
+      "cues": [
+        {
+          "type": "screenshot",
+          "assetId": "speed",
+          "atWord": 4,
+          "slot": "stage-full",
+          "note": "Tuit con exito por tarea y tiempo mediano. Los chips que enumeraban tiempo/tokens/precio se retiraron: repetian palabra por palabra la locucion sin anadir dato",
+          "holdSeconds": 4.9,
+          "sound": "whoosh"
+        }
+      ]
+    },
+    {
+      "id": "veredicto",
+      "clipId": "04",
+      "layout": "split",
+      "camera": "punch-in",
+      "cameraIntensity": 0.8,
+      "transitionIn": "fade",
+      "trim": {"start": 0, "end": 14.05},
+      "cues": [
+        {
+          "type": "label",
+          "atWord": 7,
+          "slot": "stage-header",
+          "text": "CAMBIA DE HARNESS",
+          "tone": "accent",
+          "holdSeconds": 11.9,
+          "sound": "tension",
+          "soundIntensity": 0.9
+        },
+        {
+          "type": "logo",
+          "assetId": "kimi",
+          "atWord": 13,
+          "slot": "podium-1",
+          "text": "KIMI CODE",
+          "holdSeconds": 6,
+          "sound": "pop"
+        },
+        {
+          "type": "logo",
+          "assetId": "hermes",
+          "atWord": 15,
+          "slot": "podium-2",
+          "presentation": "plate",
+          "text": "HERMES",
+          "holdSeconds": 5.1,
+          "sound": "pop"
+        },
+        {
+          "type": "logo",
+          "assetId": "claudelogo",
+          "atWord": 17,
+          "slot": "podium-3",
+          "text": "CLAUDE CODE",
+          "tone": "danger",
+          "holdSeconds": 4.2,
+          "sound": "pop"
+        },
+        {
+          "type": "label",
+          "atWord": 24,
+          "slot": "podium-3-verdict",
+          "text": "EL PEOR",
+          "tone": "danger",
+          "holdSeconds": 1.5,
+          "sound": "alert",
+          "soundIntensity": 1.2
+        },
+        {
+          "type": "brand",
+          "atWord": 29,
+          "slot": "stage-full",
+          "text": "AMALIOMETRIA",
+          "note": "un dato cada dia",
+          "holdSeconds": 4,
+          "sound": "chime"
+        }
+      ]
+    }
+  ]
+}

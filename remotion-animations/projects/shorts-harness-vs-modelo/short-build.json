@@ -1,0 +1,1065 @@
+{
+  "slug": "harness-vs-modelo",
+  "generatedAt": "2026-07-30T07:39:14.839Z",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 60
+  },
+  "durationInFrames": 2355,
+  "durationSeconds": 39.25,
+  "themeId": "oxide-documentary",
+  "accentColor": "#E57246",
+  "dangerColor": "#DF544F",
+  "backgroundImage": null,
+  "captionStyle": {
+    "position": "lower",
+    "uppercase": true
+  },
+  "soundEnabled": true,
+  "soundMix": 0.55,
+  "clipVolume": 1,
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "src": "projects/shorts/harness-vs-modelo/clips/01.mp4",
+      "from": 0,
+      "durationInFrames": 252,
+      "trimStartSeconds": 0.1,
+      "layout": "full",
+      "camera": "punch-in",
+      "cameraIntensity": 1.15,
+      "focus": {
+        "x": 0.4544,
+        "y": 0.553,
+        "faceHeightRatio": 0.3419
+      },
+      "transitionIn": "cut",
+      "label": null,
+      "cues": [
+        {
+          "id": "hook-cue-1",
+          "type": "logo",
+          "assetId": "claude-code",
+          "src": "projects/shorts/harness-vs-modelo/assets/claude-code.jpg",
+          "slot": "overlay-top",
+          "presentation": "blend",
+          "text": null,
+          "note": "El wordmark entra sobre 'Claude Code' y se queda hasta el corte",
+          "tone": "danger",
+          "atWord": 3,
+          "atSeconds": 1.42,
+          "fromFrame": 85,
+          "durationInFrames": 167
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 8,
+          "durationInFrames": 137,
+          "words": [
+            {
+              "text": "Deja",
+              "fromFrame": 8,
+              "toFrame": 58
+            },
+            {
+              "text": "de",
+              "fromFrame": 58,
+              "toFrame": 65
+            },
+            {
+              "text": "usar",
+              "fromFrame": 65,
+              "toFrame": 85
+            },
+            {
+              "text": "Claude",
+              "fromFrame": 85,
+              "toFrame": 110
+            },
+            {
+              "text": "Code",
+              "fromFrame": 110,
+              "toFrame": 132
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coste",
+      "clipId": "02",
+      "src": "projects/shorts/harness-vs-modelo/clips/02.mp4",
+      "from": 252,
+      "durationInFrames": 438,
+      "trimStartSeconds": 0,
+      "layout": "split",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4461,
+        "y": 0.5173,
+        "faceHeightRatio": 0.3629
+      },
+      "transitionIn": "whip",
+      "label": null,
+      "cues": [
+        {
+          "id": "coste-cue-1",
+          "type": "stat",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-left",
+          "presentation": "card",
+          "text": "6x",
+          "note": "mas tokens",
+          "tone": "warning",
+          "atWord": 4,
+          "atSeconds": 1.52,
+          "fromFrame": 91,
+          "durationInFrames": 342
+        },
+        {
+          "id": "coste-cue-2",
+          "type": "stat",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-right",
+          "presentation": "card",
+          "text": "10x",
+          "note": "mas caro",
+          "tone": "danger",
+          "atWord": 13,
+          "atSeconds": 3.68,
+          "fromFrame": 221,
+          "durationInFrames": 210
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 74,
+          "words": [
+            {
+              "text": "Porque",
+              "fromFrame": 0,
+              "toFrame": 29
+            },
+            {
+              "text": "puedes",
+              "fromFrame": 29,
+              "toFrame": 48
+            },
+            {
+              "text": "gastar",
+              "fromFrame": 48,
+              "toFrame": 74
+            }
+          ]
+        },
+        {
+          "fromFrame": 74,
+          "durationInFrames": 66,
+          "words": [
+            {
+              "text": "hasta",
+              "fromFrame": 74,
+              "toFrame": 91
+            },
+            {
+              "text": "6",
+              "fromFrame": 91,
+              "toFrame": 107
+            },
+            {
+              "text": "veces",
+              "fromFrame": 107,
+              "toFrame": 122
+            },
+            {
+              "text": "más",
+              "fromFrame": 122,
+              "toFrame": 140
+            }
+          ]
+        },
+        {
+          "fromFrame": 140,
+          "durationInFrames": 52,
+          "words": [
+            {
+              "text": "de",
+              "fromFrame": 140,
+              "toFrame": 148
+            },
+            {
+              "text": "tokens",
+              "fromFrame": 148,
+              "toFrame": 170
+            },
+            {
+              "text": "y",
+              "fromFrame": 170,
+              "toFrame": 186
+            },
+            {
+              "text": "te",
+              "fromFrame": 186,
+              "toFrame": 192
+            }
+          ]
+        },
+        {
+          "fromFrame": 192,
+          "durationInFrames": 77,
+          "words": [
+            {
+              "text": "puede",
+              "fromFrame": 192,
+              "toFrame": 203
+            },
+            {
+              "text": "salir",
+              "fromFrame": 203,
+              "toFrame": 221
+            },
+            {
+              "text": "10",
+              "fromFrame": 221,
+              "toFrame": 250
+            },
+            {
+              "text": "veces",
+              "fromFrame": 250,
+              "toFrame": 269
+            }
+          ]
+        },
+        {
+          "fromFrame": 269,
+          "durationInFrames": 96,
+          "words": [
+            {
+              "text": "más",
+              "fromFrame": 269,
+              "toFrame": 283
+            },
+            {
+              "text": "caro",
+              "fromFrame": 283,
+              "toFrame": 304
+            },
+            {
+              "text": "Esto",
+              "fromFrame": 304,
+              "toFrame": 348
+            },
+            {
+              "text": "es",
+              "fromFrame": 348,
+              "toFrame": 365
+            }
+          ]
+        },
+        {
+          "fromFrame": 365,
+          "durationInFrames": 42,
+          "words": [
+            {
+              "text": "lo",
+              "fromFrame": 365,
+              "toFrame": 373
+            },
+            {
+              "text": "que",
+              "fromFrame": 373,
+              "toFrame": 379
+            },
+            {
+              "text": "ha",
+              "fromFrame": 379,
+              "toFrame": 383
+            },
+            {
+              "text": "encontrado",
+              "fromFrame": 383,
+              "toFrame": 407
+            }
+          ]
+        },
+        {
+          "fromFrame": 407,
+          "durationInFrames": 31,
+          "words": [
+            {
+              "text": "la",
+              "fromFrame": 407,
+              "toFrame": 418
+            },
+            {
+              "text": "gente",
+              "fromFrame": 418,
+              "toFrame": 434
+            },
+            {
+              "text": "de",
+              "fromFrame": 434,
+              "toFrame": 438
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "evidencia",
+      "clipId": "02",
+      "src": "projects/shorts/harness-vs-modelo/clips/02.mp4",
+      "from": 690,
+      "durationInFrames": 414,
+      "trimStartSeconds": 7.3,
+      "layout": "stage",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4461,
+        "y": 0.5173,
+        "faceHeightRatio": 0.3629
+      },
+      "transitionIn": "cut",
+      "label": "Composio\n28 tareas identicas",
+      "cues": [
+        {
+          "id": "evidencia-cue-1",
+          "type": "screenshot",
+          "assetId": "costs",
+          "src": "projects/shorts/harness-vs-modelo/assets/costs.png",
+          "slot": "stage-full",
+          "presentation": "card",
+          "text": null,
+          "note": "Tuit de Composio con el desglose de tokens y coste",
+          "tone": "neutral",
+          "atWord": 26,
+          "atSeconds": 0.1,
+          "fromFrame": 6,
+          "durationInFrames": 402
+        },
+        {
+          "id": "evidencia-cue-2",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-header",
+          "presentation": "card",
+          "text": "KIMI K3",
+          "note": null,
+          "tone": "accent",
+          "atWord": 29,
+          "atSeconds": 1.76,
+          "fromFrame": 106,
+          "durationInFrames": 78
+        },
+        {
+          "id": "evidencia-cue-3",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-header",
+          "presentation": "card",
+          "text": "3 HARNESSES",
+          "note": null,
+          "tone": "neutral",
+          "atWord": 32,
+          "atSeconds": 3.16,
+          "fromFrame": 190,
+          "durationInFrames": 210
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 68,
+          "words": [
+            {
+              "text": "de",
+              "fromFrame": 0,
+              "toFrame": 6
+            },
+            {
+              "text": "Composio",
+              "fromFrame": 6,
+              "toFrame": 42
+            },
+            {
+              "text": "al",
+              "fromFrame": 42,
+              "toFrame": 68
+            }
+          ]
+        },
+        {
+          "fromFrame": 68,
+          "durationInFrames": 121,
+          "words": [
+            {
+              "text": "ejecutar",
+              "fromFrame": 68,
+              "toFrame": 106
+            },
+            {
+              "text": "Kimi",
+              "fromFrame": 106,
+              "toFrame": 130
+            },
+            {
+              "text": "K3",
+              "fromFrame": 130,
+              "toFrame": 156
+            },
+            {
+              "text": "en",
+              "fromFrame": 156,
+              "toFrame": 190
+            }
+          ]
+        },
+        {
+          "fromFrame": 190,
+          "durationInFrames": 119,
+          "words": [
+            {
+              "text": "3",
+              "fromFrame": 190,
+              "toFrame": 203
+            },
+            {
+              "text": "diferentes",
+              "fromFrame": 203,
+              "toFrame": 241
+            },
+            {
+              "text": "harnesses",
+              "fromFrame": 241,
+              "toFrame": 295
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "resultados",
+      "clipId": "03",
+      "src": "projects/shorts/harness-vs-modelo/clips/03.mp4",
+      "from": 1104,
+      "durationInFrames": 408,
+      "trimStartSeconds": 0,
+      "layout": "stage",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4665,
+        "y": 0.536,
+        "faceHeightRatio": 0.3466
+      },
+      "transitionIn": "slide-up",
+      "label": "Mismo modelo\nOtro resultado",
+      "cues": [
+        {
+          "id": "resultados-cue-1",
+          "type": "screenshot",
+          "assetId": "speed",
+          "src": "projects/shorts/harness-vs-modelo/assets/speed.png",
+          "slot": "stage-full",
+          "presentation": "card",
+          "text": null,
+          "note": "Tuit con exito por tarea y tiempo mediano. Los chips que enumeraban tiempo/tokens/precio se retiraron: repetian palabra por palabra la locucion sin anadir dato",
+          "tone": "neutral",
+          "atWord": 4,
+          "atSeconds": 1.72,
+          "fromFrame": 103,
+          "durationInFrames": 294
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 71,
+          "words": [
+            {
+              "text": "Mismas",
+              "fromFrame": 0,
+              "toFrame": 35
+            },
+            {
+              "text": "tareas",
+              "fromFrame": 35,
+              "toFrame": 58
+            },
+            {
+              "text": "pero",
+              "fromFrame": 58,
+              "toFrame": 71
+            }
+          ]
+        },
+        {
+          "fromFrame": 71,
+          "durationInFrames": 67,
+          "words": [
+            {
+              "text": "diferentes",
+              "fromFrame": 71,
+              "toFrame": 103
+            },
+            {
+              "text": "resultados",
+              "fromFrame": 103,
+              "toFrame": 138
+            }
+          ]
+        },
+        {
+          "fromFrame": 138,
+          "durationInFrames": 74,
+          "words": [
+            {
+              "text": "en",
+              "fromFrame": 138,
+              "toFrame": 156
+            },
+            {
+              "text": "cuanto",
+              "fromFrame": 156,
+              "toFrame": 170
+            },
+            {
+              "text": "a",
+              "fromFrame": 170,
+              "toFrame": 179
+            },
+            {
+              "text": "tiempo,",
+              "fromFrame": 179,
+              "toFrame": 199
+            }
+          ]
+        },
+        {
+          "fromFrame": 212,
+          "durationInFrames": 92,
+          "words": [
+            {
+              "text": "tokens",
+              "fromFrame": 212,
+              "toFrame": 239
+            },
+            {
+              "text": "y",
+              "fromFrame": 239,
+              "toFrame": 268
+            },
+            {
+              "text": "precio",
+              "fromFrame": 268,
+              "toFrame": 292
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "veredicto",
+      "clipId": "04",
+      "src": "projects/shorts/harness-vs-modelo/clips/04.mp4",
+      "from": 1512,
+      "durationInFrames": 843,
+      "trimStartSeconds": 0,
+      "layout": "split",
+      "camera": "punch-in",
+      "cameraIntensity": 0.8,
+      "focus": {
+        "x": 0.4436,
+        "y": 0.5344,
+        "faceHeightRatio": 0.3641
+      },
+      "transitionIn": "fade",
+      "label": null,
+      "cues": [
+        {
+          "id": "veredicto-cue-1",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-header",
+          "presentation": "card",
+          "text": "CAMBIA DE HARNESS",
+          "note": null,
+          "tone": "accent",
+          "atWord": 7,
+          "atSeconds": 1.98,
+          "fromFrame": 119,
+          "durationInFrames": 714
+        },
+        {
+          "id": "veredicto-cue-2",
+          "type": "logo",
+          "assetId": "kimi",
+          "src": "projects/shorts/harness-vs-modelo/assets/kimi.png",
+          "slot": "podium-1",
+          "presentation": "card",
+          "text": "KIMI CODE",
+          "note": null,
+          "tone": "neutral",
+          "atWord": 13,
+          "atSeconds": 3.98,
+          "fromFrame": 239,
+          "durationInFrames": 360
+        },
+        {
+          "id": "veredicto-cue-3",
+          "type": "logo",
+          "assetId": "hermes",
+          "src": "projects/shorts/harness-vs-modelo/assets/hermes.png",
+          "slot": "podium-2",
+          "presentation": "plate",
+          "text": "HERMES",
+          "note": null,
+          "tone": "neutral",
+          "atWord": 15,
+          "atSeconds": 4.9,
+          "fromFrame": 294,
+          "durationInFrames": 306
+        },
+        {
+          "id": "veredicto-cue-4",
+          "type": "logo",
+          "assetId": "claudelogo",
+          "src": "projects/shorts/harness-vs-modelo/assets/claudelogo.png",
+          "slot": "podium-3",
+          "presentation": "card",
+          "text": "CLAUDE CODE",
+          "note": null,
+          "tone": "danger",
+          "atWord": 17,
+          "atSeconds": 5.76,
+          "fromFrame": 346,
+          "durationInFrames": 252
+        },
+        {
+          "id": "veredicto-cue-5",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "podium-3-verdict",
+          "presentation": "card",
+          "text": "EL PEOR",
+          "note": null,
+          "tone": "danger",
+          "atWord": 24,
+          "atSeconds": 8.44,
+          "fromFrame": 506,
+          "durationInFrames": 90
+        },
+        {
+          "id": "veredicto-cue-6",
+          "type": "brand",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-full",
+          "presentation": "card",
+          "text": "AMALIOMETRIA",
+          "note": "un dato cada dia",
+          "tone": "neutral",
+          "atWord": 29,
+          "atSeconds": 10,
+          "fromFrame": 600,
+          "durationInFrames": 240
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 62,
+          "words": [
+            {
+              "text": "Antes",
+              "fromFrame": 0,
+              "toFrame": 29
+            },
+            {
+              "text": "de",
+              "fromFrame": 29,
+              "toFrame": 36
+            },
+            {
+              "text": "cambiar",
+              "fromFrame": 36,
+              "toFrame": 55
+            },
+            {
+              "text": "de",
+              "fromFrame": 55,
+              "toFrame": 62
+            }
+          ]
+        },
+        {
+          "fromFrame": 62,
+          "durationInFrames": 56,
+          "words": [
+            {
+              "text": "modelo,",
+              "fromFrame": 62,
+              "toFrame": 82
+            },
+            {
+              "text": "cambia",
+              "fromFrame": 96,
+              "toFrame": 113
+            },
+            {
+              "text": "de",
+              "fromFrame": 113,
+              "toFrame": 119
+            }
+          ]
+        },
+        {
+          "fromFrame": 119,
+          "durationInFrames": 32,
+          "words": [
+            {
+              "text": "harness.",
+              "fromFrame": 119,
+              "toFrame": 138
+            }
+          ]
+        },
+        {
+          "fromFrame": 161,
+          "durationInFrames": 56,
+          "words": [
+            {
+              "text": "En",
+              "fromFrame": 161,
+              "toFrame": 174
+            },
+            {
+              "text": "esta",
+              "fromFrame": 174,
+              "toFrame": 184
+            },
+            {
+              "text": "prueba",
+              "fromFrame": 184,
+              "toFrame": 203
+            },
+            {
+              "text": "han",
+              "fromFrame": 203,
+              "toFrame": 217
+            }
+          ]
+        },
+        {
+          "fromFrame": 217,
+          "durationInFrames": 74,
+          "words": [
+            {
+              "text": "probado",
+              "fromFrame": 217,
+              "toFrame": 239
+            },
+            {
+              "text": "Kimi",
+              "fromFrame": 239,
+              "toFrame": 264
+            },
+            {
+              "text": "Code,",
+              "fromFrame": 264,
+              "toFrame": 278
+            }
+          ]
+        },
+        {
+          "fromFrame": 294,
+          "durationInFrames": 98,
+          "words": [
+            {
+              "text": "Hermes",
+              "fromFrame": 294,
+              "toFrame": 328
+            },
+            {
+              "text": "y",
+              "fromFrame": 328,
+              "toFrame": 346
+            },
+            {
+              "text": "Claude",
+              "fromFrame": 346,
+              "toFrame": 365
+            },
+            {
+              "text": "Code.",
+              "fromFrame": 365,
+              "toFrame": 380
+            }
+          ]
+        },
+        {
+          "fromFrame": 392,
+          "durationInFrames": 77,
+          "words": [
+            {
+              "text": "Claude",
+              "fromFrame": 392,
+              "toFrame": 416
+            },
+            {
+              "text": "Code",
+              "fromFrame": 416,
+              "toFrame": 431
+            },
+            {
+              "text": "resultó",
+              "fromFrame": 431,
+              "toFrame": 469
+            }
+          ]
+        },
+        {
+          "fromFrame": 469,
+          "durationInFrames": 68,
+          "words": [
+            {
+              "text": "ser",
+              "fromFrame": 469,
+              "toFrame": 485
+            },
+            {
+              "text": "el",
+              "fromFrame": 485,
+              "toFrame": 506
+            },
+            {
+              "text": "peor",
+              "fromFrame": 506,
+              "toFrame": 529
+            },
+            {
+              "text": "de",
+              "fromFrame": 529,
+              "toFrame": 538
+            }
+          ]
+        },
+        {
+          "fromFrame": 538,
+          "durationInFrames": 31,
+          "words": [
+            {
+              "text": "ellos.",
+              "fromFrame": 538,
+              "toFrame": 556
+            }
+          ]
+        },
+        {
+          "fromFrame": 572,
+          "durationInFrames": 76,
+          "words": [
+            {
+              "text": "Esto",
+              "fromFrame": 572,
+              "toFrame": 594
+            },
+            {
+              "text": "es",
+              "fromFrame": 594,
+              "toFrame": 600
+            },
+            {
+              "text": "Amaliometría,",
+              "fromFrame": 600,
+              "toFrame": 635
+            }
+          ]
+        },
+        {
+          "fromFrame": 649,
+          "durationInFrames": 52,
+          "words": [
+            {
+              "text": "sígueme",
+              "fromFrame": 649,
+              "toFrame": 671
+            },
+            {
+              "text": "para",
+              "fromFrame": 671,
+              "toFrame": 691
+            },
+            {
+              "text": "no",
+              "fromFrame": 691,
+              "toFrame": 701
+            }
+          ]
+        },
+        {
+          "fromFrame": 701,
+          "durationInFrames": 48,
+          "words": [
+            {
+              "text": "perderte",
+              "fromFrame": 701,
+              "toFrame": 724
+            },
+            {
+              "text": "nada.",
+              "fromFrame": 724,
+              "toFrame": 736
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "soundCues": [
+    {
+      "file": "sfx/amaliometria-impact-05.wav",
+      "startSeconds": 1.42,
+      "durationSeconds": 0.52,
+      "volume": 0.8800000000000001,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-soft-impact.wav",
+      "startSeconds": 5.720000000000001,
+      "durationSeconds": 0.58,
+      "volume": 0.85,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-soft-impact.wav",
+      "startSeconds": 7.880000000000001,
+      "durationSeconds": 0.58,
+      "volume": 0.9774999999999999,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-rise-whoosh.wav",
+      "startSeconds": 11.600000000000001,
+      "durationSeconds": 0.78,
+      "volume": 0.62,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/library-pop.wav",
+      "startSeconds": 13.260000000000002,
+      "durationSeconds": 0.42,
+      "volume": 0.32,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-data-tick.wav",
+      "startSeconds": 14.66,
+      "durationSeconds": 0.24,
+      "volume": 0.5,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-rise-whoosh.wav",
+      "startSeconds": 20.119999999999997,
+      "durationSeconds": 0.78,
+      "volume": 0.62,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-tension-swell.wav",
+      "startSeconds": 27.18,
+      "durationSeconds": 1.4,
+      "volume": 0.342,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/library-pop.wav",
+      "startSeconds": 29.18,
+      "durationSeconds": 0.42,
+      "volume": 0.32,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/library-pop.wav",
+      "startSeconds": 30.1,
+      "durationSeconds": 0.42,
+      "volume": 0.32,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/library-pop.wav",
+      "startSeconds": 30.96,
+      "durationSeconds": 0.42,
+      "volume": 0.32,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-needle-strike.wav",
+      "startSeconds": 33.64,
+      "durationSeconds": 0.4,
+      "volume": 0.744,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    },
+    {
+      "file": "sfx/amaliometria-success-chime.wav",
+      "startSeconds": 35.2,
+      "durationSeconds": 0.52,
+      "volume": 0.6,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14
+    }
+  ],
+  "duckWindows": [
+    {
+      "startSeconds": 0.14,
+      "endSeconds": 2.2,
+      "gainDb": -6
+    },
+    {
+      "startSeconds": 4.2,
+      "endSeconds": 11.5,
+      "gainDb": -6
+    },
+    {
+      "startSeconds": 11.5,
+      "endSeconds": 16.42,
+      "gainDb": -6
+    },
+    {
+      "startSeconds": 18.4,
+      "endSeconds": 23.26,
+      "gainDb": -6
+    },
+    {
+      "startSeconds": 25.2,
+      "endSeconds": 37.46,
+      "gainDb": -6
+    }
+  ],
+  "warnings": []
+}

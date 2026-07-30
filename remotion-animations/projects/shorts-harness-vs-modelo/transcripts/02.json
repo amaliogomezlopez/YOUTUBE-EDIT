@@ -1,0 +1,553 @@
+{
+  "clipId": "02",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 5.06,
+      "text": "Porque puedes gastar hasta 6 veces más de tokens y te puede salir 10 veces más caro",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.48,
+          "text": "Porque",
+          "confidence": 0.77686
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.48,
+          "end": 0.8,
+          "text": "puedes",
+          "confidence": 0.99316
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.8,
+          "end": 1.24,
+          "text": "gastar",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1.24,
+          "end": 1.52,
+          "text": "hasta",
+          "confidence": 0.99072
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.52,
+          "end": 1.78,
+          "text": "6",
+          "confidence": 0.79834
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 1.78,
+          "end": 2.04,
+          "text": "veces",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 2.04,
+          "end": 2.34,
+          "text": "más",
+          "confidence": 0.99023
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 2.34,
+          "end": 2.46,
+          "text": "de",
+          "confidence": 0.97656
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.46,
+          "end": 2.84,
+          "text": "tokens",
+          "confidence": 0.97363
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 2.84,
+          "end": 3.1,
+          "text": "y",
+          "confidence": 0.96777
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 3.1,
+          "end": 3.2,
+          "text": "te",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 3.2,
+          "end": 3.38,
+          "text": "puede",
+          "confidence": 0.98682
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 3.38,
+          "end": 3.68,
+          "text": "salir",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 3.68,
+          "end": 4.16,
+          "text": "10",
+          "confidence": 0.99609
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 4.16,
+          "end": 4.48,
+          "text": "veces",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 4.48,
+          "end": 4.72,
+          "text": "más",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 4.72,
+          "end": 5.06,
+          "text": "caro",
+          "confidence": 0.99854
+        }
+      ]
+    },
+    {
+      "id": "seg-2",
+      "start": 5.06,
+      "end": 12.22,
+      "text": "Esto es lo que ha encontrado la gente de Composio al ejecutar Kimi K3 en 3 diferentes harnesses",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-2-word-1",
+          "start": 5.06,
+          "end": 5.8,
+          "text": "Esto",
+          "confidence": 0.01404
+        },
+        {
+          "id": "seg-2-word-2",
+          "start": 5.8,
+          "end": 6.08,
+          "text": "es",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-2-word-3",
+          "start": 6.08,
+          "end": 6.22,
+          "text": "lo",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-2-word-4",
+          "start": 6.22,
+          "end": 6.32,
+          "text": "que",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-2-word-5",
+          "start": 6.32,
+          "end": 6.38,
+          "text": "ha",
+          "confidence": 0.99121
+        },
+        {
+          "id": "seg-2-word-6",
+          "start": 6.38,
+          "end": 6.78,
+          "text": "encontrado",
+          "confidence": 0.99731
+        },
+        {
+          "id": "seg-2-word-7",
+          "start": 6.78,
+          "end": 6.96,
+          "text": "la",
+          "confidence": 0.97998
+        },
+        {
+          "id": "seg-2-word-8",
+          "start": 6.96,
+          "end": 7.24,
+          "text": "gente",
+          "confidence": 0.96289
+        },
+        {
+          "id": "seg-2-word-9",
+          "start": 7.24,
+          "end": 7.4,
+          "text": "de",
+          "confidence": 0.99316
+        },
+        {
+          "id": "seg-2-word-10",
+          "start": 7.4,
+          "end": 8,
+          "text": "Composio",
+          "confidence": 0.91097
+        },
+        {
+          "id": "seg-2-word-11",
+          "start": 8,
+          "end": 8.44,
+          "text": "al",
+          "confidence": 0.90283
+        },
+        {
+          "id": "seg-2-word-12",
+          "start": 8.44,
+          "end": 9.06,
+          "text": "ejecutar",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-2-word-13",
+          "start": 9.06,
+          "end": 9.46,
+          "text": "Kimi",
+          "confidence": 0.11105
+        },
+        {
+          "id": "seg-2-word-14",
+          "start": 9.46,
+          "end": 9.9,
+          "text": "K3",
+          "confidence": 0.3826
+        },
+        {
+          "id": "seg-2-word-15",
+          "start": 9.9,
+          "end": 10.46,
+          "text": "en",
+          "confidence": 0.97119
+        },
+        {
+          "id": "seg-2-word-16",
+          "start": 10.46,
+          "end": 10.68,
+          "text": "3",
+          "confidence": 0.69824
+        },
+        {
+          "id": "seg-2-word-17",
+          "start": 10.68,
+          "end": 11.32,
+          "text": "diferentes",
+          "confidence": 0.97803
+        },
+        {
+          "id": "seg-2-word-18",
+          "start": 11.32,
+          "end": 12.22,
+          "text": "harnesses",
+          "confidence": 0.86768
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Porque",
+      "start": 0,
+      "end": 0.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "puedes",
+      "start": 0.48,
+      "end": 0.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "gastar",
+      "start": 0.8,
+      "end": 1.24,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "hasta",
+      "start": 1.24,
+      "end": 1.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "6",
+      "start": 1.52,
+      "end": 1.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "veces",
+      "start": 1.78,
+      "end": 2.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "más",
+      "start": 2.04,
+      "end": 2.34,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "de",
+      "start": 2.34,
+      "end": 2.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "tokens",
+      "start": 2.46,
+      "end": 2.84,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "y",
+      "start": 2.84,
+      "end": 3.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "te",
+      "start": 3.1,
+      "end": 3.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "puede",
+      "start": 3.2,
+      "end": 3.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "salir",
+      "start": 3.38,
+      "end": 3.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "10",
+      "start": 3.68,
+      "end": 4.16,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "veces",
+      "start": 4.16,
+      "end": 4.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "más",
+      "start": 4.48,
+      "end": 4.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "caro",
+      "start": 4.72,
+      "end": 5.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "Esto",
+      "start": 5.06,
+      "end": 5.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "es",
+      "start": 5.8,
+      "end": 6.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "lo",
+      "start": 6.08,
+      "end": 6.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "que",
+      "start": 6.22,
+      "end": 6.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "ha",
+      "start": 6.32,
+      "end": 6.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "encontrado",
+      "start": 6.38,
+      "end": 6.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "la",
+      "start": 6.78,
+      "end": 6.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "gente",
+      "start": 6.96,
+      "end": 7.24,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "de",
+      "start": 7.24,
+      "end": 7.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "Composio",
+      "start": 7.4,
+      "end": 8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "al",
+      "start": 8,
+      "end": 8.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "ejecutar",
+      "start": 8.44,
+      "end": 9.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "Kimi",
+      "start": 9.06,
+      "end": 9.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "K3",
+      "start": 9.46,
+      "end": 9.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "en",
+      "start": 9.9,
+      "end": 10.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "3",
+      "start": 10.46,
+      "end": 10.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "diferentes",
+      "start": 10.68,
+      "end": 11.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "harnesses",
+      "start": 11.32,
+      "end": 12.22,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

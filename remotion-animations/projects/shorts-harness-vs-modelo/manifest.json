@@ -1,0 +1,146 @@
+{
+  "slug": "harness-vs-modelo",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 60
+  },
+  "createdAt": "2026-07-30T07:28:28.173Z",
+  "source": {
+    "clipsDir": "C:/Users/amalio/Desktop/VIDEOS-YOUTUBE/VIDEOS YOUTUBE/VIDEOS_RECORDED/S",
+    "assetsDir": "C:\\Users\\amalio\\Desktop\\VIDEOS-YOUTUBE\\VIDEOS YOUTUBE\\VIDEOS_RECORDED\\S\\ASSETS"
+  },
+  "totalClipSeconds": 39.8,
+  "clips": [
+    {
+      "id": "01",
+      "sourceName": "1.mkv",
+      "file": "projects/shorts/harness-vs-modelo/clips/01.mp4",
+      "durationSeconds": 4.5,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.005,
+      "focus": {
+        "x": 0.4544,
+        "y": 0.553,
+        "faceHeightRatio": 0.3419
+      },
+      "faceBox": {
+        "x": 736,
+        "y": 368,
+        "w": 273,
+        "h": 369
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/01.json",
+      "wordCount": 5
+    },
+    {
+      "id": "02",
+      "sourceName": "2.mkv",
+      "file": "projects/shorts/harness-vs-modelo/clips/02.mp4",
+      "durationSeconds": 14.3,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60,
+      "focus": {
+        "x": 0.4461,
+        "y": 0.5173,
+        "faceHeightRatio": 0.3629
+      },
+      "faceBox": {
+        "x": 713,
+        "y": 316,
+        "w": 288,
+        "h": 392
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/02.json",
+      "wordCount": 35
+    },
+    {
+      "id": "03",
+      "sourceName": "3.mkv",
+      "file": "projects/shorts/harness-vs-modelo/clips/03.mp4",
+      "durationSeconds": 6.9,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.006,
+      "focus": {
+        "x": 0.4665,
+        "y": 0.536,
+        "faceHeightRatio": 0.3466
+      },
+      "faceBox": {
+        "x": 752,
+        "y": 347,
+        "w": 287,
+        "h": 374
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/03.json",
+      "wordCount": 12
+    },
+    {
+      "id": "04",
+      "sourceName": "4.mkv",
+      "file": "projects/shorts/harness-vs-modelo/clips/04.mp4",
+      "durationSeconds": 14.1,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.003,
+      "focus": {
+        "x": 0.4436,
+        "y": 0.5344,
+        "faceHeightRatio": 0.3641
+      },
+      "faceBox": {
+        "x": 707,
+        "y": 333,
+        "w": 290,
+        "h": 393
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/04.json",
+      "wordCount": 35
+    }
+  ],
+  "assets": [
+    {
+      "id": "claude-code",
+      "sourceName": "claude-code.jpg",
+      "file": "projects/shorts/harness-vs-modelo/assets/claude-code.jpg",
+      "bytes": 32955
+    },
+    {
+      "id": "claudelogo",
+      "sourceName": "claudelogo.png",
+      "file": "projects/shorts/harness-vs-modelo/assets/claudelogo.png",
+      "bytes": 9337
+    },
+    {
+      "id": "costs",
+      "sourceName": "costs.PNG",
+      "file": "projects/shorts/harness-vs-modelo/assets/costs.png",
+      "bytes": 60025
+    },
+    {
+      "id": "hermes",
+      "sourceName": "hermes.png",
+      "file": "projects/shorts/harness-vs-modelo/assets/hermes.png",
+      "bytes": 17597
+    },
+    {
+      "id": "kimi",
+      "sourceName": "kimi.PNG",
+      "file": "projects/shorts/harness-vs-modelo/assets/kimi.png",
+      "bytes": 2121
+    },
+    {
+      "id": "speed",
+      "sourceName": "speed.PNG",
+      "file": "projects/shorts/harness-vs-modelo/assets/speed.png",
+      "bytes": 54178
+    }
+  ]
+}

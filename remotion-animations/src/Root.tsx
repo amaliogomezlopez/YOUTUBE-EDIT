@@ -93,10 +93,36 @@ import {
   editorialEpisodeSchema,
 } from "./editorial/EditorialEpisode";
 import {defaultEditorialEpisodeProps} from "./editorial/schemas";
+import {ShortVideo, shortVideoMetadata} from "./shorts/ShortVideo";
+import {ShortVideoProps, shortVideoSchema} from "./shorts/schemas";
+import harnessVsModeloBuild from "../projects/shorts-harness-vs-modelo/short-build.json";
+
+const shortBuilds: {id: string; build: ShortVideoProps}[] = [
+  {
+    id: "Short-Harness-vs-Modelo",
+    build: harnessVsModeloBuild as ShortVideoProps,
+  },
+];
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Folder name="Shorts">
+        {shortBuilds.map(({id, build}) => (
+          <Composition
+            calculateMetadata={shortVideoMetadata}
+            component={ShortVideo}
+            defaultProps={build}
+            durationInFrames={build.durationInFrames}
+            fps={build.format.fps}
+            height={build.format.height}
+            id={id}
+            key={id}
+            schema={shortVideoSchema}
+            width={build.format.width}
+          />
+        ))}
+      </Folder>
       <Folder name="Editorial-Episodes">
         <Composition
           id="Finance-Cavaliers-Episode"
