@@ -30,6 +30,10 @@ import {
 } from "./patternRouting";
 import {SecondMinuteNarrativeScene} from "./SecondMinuteNarrativeScene";
 import {ThirdMinuteNarrativeScene} from "./ThirdMinuteNarrativeScene";
+import {ConcentrationCycleScene} from "./ConcentrationCycleScene";
+import {EarningsCapitalCycleScene} from "./EarningsCapitalCycleScene";
+import {CurrentEarningsContrastScene} from "./CurrentEarningsContrastScene";
+import {RecessionCreditScene} from "./RecessionCreditScene";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -1593,6 +1597,11 @@ const KIND_FALLBACK: Partial<
       "`time.timeline-milestones` exige hitos con etiqueta; la escena no declara ninguno.",
     render: ({scene}) => <SecondMinuteNarrativeScene scene={scene} />,
   },
+  "historical-leaders": {
+    reason:
+      "La escena usa expedientes editoriales secuenciales para evitar repetir la órbita de marca ya aprobada.",
+    render: ({scene}) => <ThirdMinuteNarrativeScene scene={scene} />,
+  },
   "dominance-facade": {
     reason:
       "`data.part-to-whole` exige parte y total verificables; la escena solo aporta cuatro logos.",
@@ -1601,6 +1610,11 @@ const KIND_FALLBACK: Partial<
   "leadership-lag": {
     reason:
       "`data.line-trend-zoom` exige una serie ordenada; la escena no lleva `chartData`.",
+    render: ({scene}) => <ThirdMinuteNarrativeScene scene={scene} />,
+  },
+  "contagion-spread": {
+    reason:
+      "La escena muestra contagio lineal por sectores, no una red radial reutilizada.",
     render: ({scene}) => <ThirdMinuteNarrativeScene scene={scene} />,
   },
   "claim-evidence-gap": {
@@ -1676,8 +1690,10 @@ const LEGACY_FRAME_KINDS = new Set<string>([
   "market-contrast",
   "mag7-relationship",
   "claim-audit",
+  "historical-leaders",
   "dominance-facade",
   "leadership-lag",
+  "contagion-spread",
   "claim-evidence-gap",
   "brand-cta",
   "split-lines",
@@ -1708,7 +1724,19 @@ export const FinanceEditorialScene: React.FC<{
   const route = resolvePattern(scene.patternId);
   let content: React.ReactNode;
   let ownsFrame: boolean;
-  if (fallback) {
+  if (["scene-035", "scene-036", "scene-037", "scene-038", "scene-039"].includes(scene.id)) {
+    content = <RecessionCreditScene scene={scene} />;
+    ownsFrame = true;
+  } else if (["scene-030", "scene-031", "scene-032", "scene-033", "scene-034"].includes(scene.id)) {
+    content = <CurrentEarningsContrastScene scene={scene} />;
+    ownsFrame = true;
+  } else if (["scene-024", "scene-025", "scene-026", "scene-027", "scene-028", "scene-029"].includes(scene.id)) {
+    content = <EarningsCapitalCycleScene scene={scene} />;
+    ownsFrame = true;
+  } else if (["scene-019", "scene-020", "scene-021", "scene-022", "scene-023"].includes(scene.id)) {
+    content = <ConcentrationCycleScene scene={scene} />;
+    ownsFrame = true;
+  } else if (fallback) {
     recordKindFallback(
       scene.kind,
       scene.id,

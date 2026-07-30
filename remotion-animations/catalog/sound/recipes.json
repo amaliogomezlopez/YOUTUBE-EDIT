@@ -70,6 +70,48 @@
       }
     },
     {
+      "id": "whoosh",
+      "role": "Whoosh: transiciones de plano, barridos amplios, entradas y salidas con recorrido visible.",
+      "useFor": ["zoom", "scan", "transition"],
+      "cooldownSeconds": 10,
+      "maxSharePercent": 10,
+      "defaultVolume": 0.5,
+      "recipe": {
+        "durationSeconds": [0.46, 0.055],
+        "expression": "((2*random(0)-1)*0.72+sin(2*PI*({f0}+{sweep}*t)*t)*0.28)*(1-exp(-t*{attack}))*exp(-t*{decay})*0.82",
+        "params": {
+          "f0": [180, 36],
+          "sweep": [1180, 170],
+          "attack": [34, 4],
+          "decay": [4.5, 0.42]
+        },
+        "filters": "highpass=f={hp},lowpass=f={lp}",
+        "filterParams": {
+          "hp": [220, 55],
+          "lp": [6200, -260]
+        }
+      }
+    },
+    {
+      "id": "shutter",
+      "role": "Cámara física: obturador, flash, captura de dato y congelación de un instante clave.",
+      "useFor": ["focus", "reveal", "snapshot"],
+      "cooldownSeconds": 14,
+      "maxSharePercent": 8,
+      "defaultVolume": 0.56,
+      "recipe": {
+        "durationSeconds": [0.28, 0.025],
+        "expression": "((2*random(0)-1)*(exp(-t*{decay})+0.84*exp(-abs(t-{delay})*{decay2}))+0.22*sin(2*PI*{f}*t)*exp(-t*75))*0.82",
+        "params": {
+          "decay": [105, 8],
+          "delay": [0.105, 0.012],
+          "decay2": [145, 9],
+          "f": [1850, 210]
+        },
+        "filters": "highpass=f=700,lowpass=f=9200"
+      }
+    },
+    {
       "id": "tension",
       "role": "Tensión: lecho ascendente antes de un giro, sostenido bajo la locución.",
       "useFor": ["shade", "focus"],

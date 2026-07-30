@@ -77,6 +77,8 @@ export const soundFamilySchema = z.enum([
   "reveal",
   "confirm",
   "texture",
+  "whoosh",
+  "shutter",
 ]);
 
 /** Alias históricos del episodio 1. El director los traduce a familia+variante. */

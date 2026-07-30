@@ -225,6 +225,144 @@
       ]
     },
     {
+      "id": "whoosh",
+      "role": "Whoosh: transiciones de plano, barridos amplios, entradas y salidas con recorrido visible.",
+      "useFor": [
+        "zoom",
+        "scan",
+        "transition"
+      ],
+      "cooldownSeconds": 10,
+      "maxSharePercent": 10,
+      "loopable": false,
+      "defaultVolume": 0.5,
+      "variants": [
+        {
+          "id": "whoosh-01",
+          "file": "sfx/amaliometria-whoosh-01.wav",
+          "durationSeconds": 0.46,
+          "volume": 0.47,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "e56b445e0f7dbe600b9c46a54437eb776553754170c5e46db7d4d705d9d014cd"
+        },
+        {
+          "id": "whoosh-02",
+          "file": "sfx/amaliometria-whoosh-02.wav",
+          "durationSeconds": 0.515,
+          "volume": 0.5,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "ae537f193fcead6e2e1f923b3a6c13df3428bc62ca9870d79cb114c7895deee5"
+        },
+        {
+          "id": "whoosh-03",
+          "file": "sfx/amaliometria-whoosh-03.wav",
+          "durationSeconds": 0.57,
+          "volume": 0.53,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "15abad8fcb2594fffb5ac970c5a8ed34d14b14dc215588f7bcb9d9d8680c7ef7"
+        },
+        {
+          "id": "whoosh-04",
+          "file": "sfx/amaliometria-whoosh-04.wav",
+          "durationSeconds": 0.625,
+          "volume": 0.47,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "3930beb4200266be3425c9c784f4645b6e511dd8ed2fc673d22fcb0ddb79dd9c"
+        },
+        {
+          "id": "whoosh-05",
+          "file": "sfx/amaliometria-whoosh-05.wav",
+          "durationSeconds": 0.68,
+          "volume": 0.5,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "72feb5af26e1fa9425435c3bba36032ab9ed2db57ef1eb578e75a0bec138b46f"
+        },
+        {
+          "id": "whoosh-06",
+          "file": "sfx/amaliometria-whoosh-06.wav",
+          "durationSeconds": 0.735,
+          "volume": 0.53,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "7bd6ec4e65048be8d1f908a6847645af09549d8ffbc741e0de54a3e2745c1dd4"
+        }
+      ]
+    },
+    {
+      "id": "shutter",
+      "role": "Cámara física: obturador, flash, captura de dato y congelación de un instante clave.",
+      "useFor": [
+        "focus",
+        "reveal",
+        "snapshot"
+      ],
+      "cooldownSeconds": 14,
+      "maxSharePercent": 8,
+      "loopable": false,
+      "defaultVolume": 0.56,
+      "variants": [
+        {
+          "id": "shutter-01",
+          "file": "sfx/amaliometria-shutter-01.wav",
+          "durationSeconds": 0.28,
+          "volume": 0.526,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "503aa516fc76aedee559fb08d0f291027a4a91c7dafe8d9c9a2aad8a1d98db52"
+        },
+        {
+          "id": "shutter-02",
+          "file": "sfx/amaliometria-shutter-02.wav",
+          "durationSeconds": 0.305,
+          "volume": 0.56,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "4182d2ffd99f4219adbc080bf0b01e003b18d9cc64cc629c5e5b99f6e9630f43"
+        },
+        {
+          "id": "shutter-03",
+          "file": "sfx/amaliometria-shutter-03.wav",
+          "durationSeconds": 0.33,
+          "volume": 0.594,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "72ecb787fb7d44b7353a04e18a167d5ebb80e5d2bae96a85e81559d0df787e02"
+        },
+        {
+          "id": "shutter-04",
+          "file": "sfx/amaliometria-shutter-04.wav",
+          "durationSeconds": 0.355,
+          "volume": 0.526,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "121ea5bd70628a8ecf558f9dbf26ce304767ae12bf1498b2012fe1e518006ae4"
+        },
+        {
+          "id": "shutter-05",
+          "file": "sfx/amaliometria-shutter-05.wav",
+          "durationSeconds": 0.38,
+          "volume": 0.56,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "006305298246d9e6849331512c7c93cefcb3a9c84a71777ad4a4f9093f82ec28"
+        },
+        {
+          "id": "shutter-06",
+          "file": "sfx/amaliometria-shutter-06.wav",
+          "durationSeconds": 0.405,
+          "volume": 0.594,
+          "provenance": "Síntesis local determinista con ffmpeg (aevalsrc).",
+          "license": "propio",
+          "sha256": "84dbff5d373b8810bda35ef6fa0e7856e2a67b05c82c8a73062f3ab02c990e8f"
+        }
+      ]
+    },
+    {
       "id": "tension",
       "role": "Tensión: lecho ascendente antes de un giro, sostenido bajo la locución.",
       "useFor": [
@@ -776,7 +914,7 @@
     }
   },
   "totals": {
-    "families": 10,
-    "variants": 60
+    "families": 12,
+    "variants": 72
   }
 }
