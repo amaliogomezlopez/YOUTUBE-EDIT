@@ -5,6 +5,7 @@ import {fileURLToPath} from "node:url";
 import {
   buildCapabilitiesManifest,
   extractCompositionIds,
+  readCompositionSources,
 } from "./lib/capabilities-manifest.mjs";
 
 const moduleDirectory = path.dirname(fileURLToPath(import.meta.url));
@@ -63,8 +64,9 @@ const soundProfileIds = new Set();
 const iconIds = new Set();
 const drawingIds = new Set();
 const imageIds = new Set();
-const rootSource = readFileSync(path.join(projectRoot, "src", "Root.tsx"), "utf8");
-const compositionIds = new Set(extractCompositionIds(rootSource));
+const compositionIds = new Set(
+  extractCompositionIds(readCompositionSources(projectRoot)),
+);
 
 if (capabilitiesManifest.version !== 2) {
   errors.push("catalog/capabilities.manifest.json debe usar el contrato v2");

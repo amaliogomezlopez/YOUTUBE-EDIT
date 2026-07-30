@@ -4,6 +4,23 @@ import path from "node:path";
 const readJson = (projectRoot, relativePath) =>
   JSON.parse(readFileSync(path.join(projectRoot, relativePath), "utf8"));
 
+/**
+ * Fuentes donde se declaran composiciones. `Root.tsx` ya no lista los shorts uno a
+ * uno: los importa de `src/shorts/registry.generated.ts`, que genera
+ * `npm run shorts:build`. Sin leer los dos, los ids de los shorts desaparecerian
+ * del manifiesto de capacidades.
+ */
+export const readCompositionSources = (projectRoot) =>
+  ["src/Root.tsx", "src/shorts/registry.generated.ts"]
+    .map((relativePath) => {
+      try {
+        return readFileSync(path.join(projectRoot, relativePath), "utf8");
+      } catch {
+        return "";
+      }
+    })
+    .join("\n");
+
 export const extractCompositionIds = (rootSource) => {
   const ids = new Set();
   for (const match of rootSource.matchAll(/\bid=["']([A-Za-z0-9-]+)["']/g)) {
@@ -37,8 +54,7 @@ export const buildCapabilitiesManifest = (projectRoot) => {
     projectRoot,
     "catalog/preferences/channel-profile.json",
   );
-  const rootSource = readFileSync(path.join(projectRoot, "src", "Root.tsx"), "utf8");
-  const compositionIds = extractCompositionIds(rootSource);
+  const compositionIds = extractCompositionIds(readCompositionSources(projectRoot));
   return {
     version: 2,
     product: "Shortsmith Remotion",
@@ -54,6 +70,7 @@ export const buildCapabilitiesManifest = (projectRoot) => {
       "catalog/design/brand-profiles.json",
       "catalog/preferences/channel-profile.json",
       "src/Root.tsx",
+      "src/shorts/registry.generated.ts",
     ],
     commands: {
       ingestAnnotatedChart:

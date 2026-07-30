@@ -39,6 +39,12 @@ Reglas duras de ese flujo:
 - Una captura de texto denso exige layout `stage`, no `split`.
 - Nada informativo por debajo de `y = 1748`: ahi dibuja la interfaz de Shorts.
 
+El ciclo es `shorts:ingest` -> editar `short-plan.json` -> `shorts:build` ->
+`shorts:render` -> `shorts:publishing`, y no exige tocar codigo: `shorts:build`
+regenera `remotion-animations/src/shorts/registry.generated.ts`, que es de donde
+`Root.tsx` saca las composiciones. Tras anadir o quitar una, `npm run
+remotion:capabilities`.
+
 La metadata de publicacion del short sale de `npm run shorts:publishing -- --slug
 <slug>`, que reutiliza `generatePublishingMetadata` y `buildClipPublishing` de
 `src/lib/publishing.js` y escribe `publishing-metadata.json` con el contrato de la

@@ -2,6 +2,7 @@ import path from 'node:path';
 import {readJson, round, writeJson} from '../../lib/utils.js';
 import {SHORT_FORMAT, projectDir} from './constants.js';
 import {buildCaptionPages} from './captions.js';
+import {writeShortsRegistry} from './registry.js';
 import {
   DEFAULT_CAMERA_SOUND,
   DEFAULT_CUE_SOUND,
@@ -194,7 +195,11 @@ export async function buildShort({slug, log = () => {}}) {
   };
 
   await writeJson(path.join(project, 'short-build.json'), build);
+  // El registro que importa Root.tsx se regenera aqui: un proyecto nuevo aparece
+  // como composicion sin editar codigo, y uno borrado desaparece.
+  const registered = await writeShortsRegistry();
   log(`build: ${scenes.length} escenas, ${build.durationSeconds}s, ${soundCues.length} cues de sonido`);
+  log(`registro: ${registered.length} composiciones (${registered.map((entry) => entry.id).join(', ')})`);
   for (const warning of warnings) log(`  aviso: ${warning}`);
   return build;
 }

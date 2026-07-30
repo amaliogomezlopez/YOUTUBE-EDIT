@@ -12,7 +12,8 @@
     "catalog/visuals/images.json",
     "catalog/design/brand-profiles.json",
     "catalog/preferences/channel-profile.json",
-    "src/Root.tsx"
+    "src/Root.tsx",
+    "src/shorts/registry.generated.ts"
   ],
   "commands": {
     "ingestAnnotatedChart": "npm run remotion:ingest:chart -- --input <chart-ingestion-input.json>",

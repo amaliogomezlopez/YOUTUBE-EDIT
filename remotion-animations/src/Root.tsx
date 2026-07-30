@@ -94,15 +94,9 @@ import {
 } from "./editorial/EditorialEpisode";
 import {defaultEditorialEpisodeProps} from "./editorial/schemas";
 import {ShortVideo, shortVideoMetadata} from "./shorts/ShortVideo";
-import {ShortVideoProps, shortVideoSchema} from "./shorts/schemas";
-import harnessVsModeloBuild from "../projects/shorts-harness-vs-modelo/short-build.json";
-
-const shortBuilds: {id: string; build: ShortVideoProps}[] = [
-  {
-    id: "Short-Harness-vs-Modelo",
-    build: harnessVsModeloBuild as ShortVideoProps,
-  },
-];
+import {shortVideoSchema} from "./shorts/schemas";
+// Registro generado por `npm run shorts:build`: un short nuevo se registra solo.
+import {shortBuilds} from "./shorts/registry.generated";
 
 export const RemotionRoot: React.FC = () => {
   return (

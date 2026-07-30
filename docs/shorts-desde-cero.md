@@ -23,9 +23,32 @@ remotion-animations/projects/shorts-<slug>/
   transcripts/NN.json               palabras con tiempos (fuente de verdad temporal)
   short-plan.json                   EL PLAN EDITORIAL: esto es lo que se edita a mano
   short-build.json                  derivado; lo consume Remotion
+  publishing-metadata.json          derivado; titulos, hashtags, capitulos y posts
+remotion-animations/src/shorts/registry.generated.ts
+                                    derivado; la lista de composiciones que ve Root.tsx
 remotion-animations/public/projects/shorts/<slug>/
   clips/NN.mp4                      clips remuxeados y normalizados (ignorado por git)
   assets/<id>.<ext>                 imágenes (ignorado por git)
+```
+
+## El ciclo completo
+
+```bash
+npm run shorts:ingest -- --source "C:\ruta\con\clips" --slug mi-short
+```
+
+Luego se edita `short-plan.json` a mano, y el resto no vuelve a tocar código:
+
+```bash
+npm run shorts:build -- --slug mi-short
+```
+
+```bash
+npm run shorts:render -- --slug mi-short
+```
+
+```bash
+npm run shorts:publishing -- --slug mi-short
 ```
 
 ## 1. Ingesta
@@ -129,18 +152,29 @@ de efectos y las ventanas de *ducking* de la locución, y escribe
 `short-build.json`. Valida solapes de slot, `atWord` fuera de rango, assets
 inexistentes y recortes imposibles.
 
-Después, registrar la composición en `remotion-animations/src/Root.tsx` (importando
-el `short-build.json`) y renderizar:
+También regenera `remotion-animations/src/shorts/registry.generated.ts`, que es de
+donde `Root.tsx` saca la lista de composiciones: **un proyecto nuevo no exige tocar
+código**. El registro se genera y no se importa por glob porque el Root lo empaqueta
+el bundler y los `short-build.json` tienen que estar importados estáticamente. El id
+de la composición sale del slug: `harness-vs-modelo` → `Short-Harness-vs-Modelo`.
+
+Renderizar:
+
+```bash
+npm run shorts:render -- --slug mi-short
+```
+
+Delega en `remotion-animations/scripts/render-safe.mjs`, así que cada render reserva
+su propio directorio de ejecución en `remotion-animations/out/shorts-<slug>/runs/` con
+su manifiesto. Cualquier opción extra (`--frames`, `--scale`, `--concurrency`) viaja
+tal cual a Remotion. Para revisar en el estudio antes de renderizar:
 
 ```bash
 npm run remotion:studio
 ```
 
-```bash
-npx remotion render src/index.ts Short-<Nombre> salida.mp4
-```
-
-Tras añadir una composición hay que regenerar el manifest o `npm test` falla:
+Tras añadir o quitar composiciones hay que regenerar el manifest de capacidades o
+`npm test` falla:
 
 ```bash
 npm run remotion:capabilities

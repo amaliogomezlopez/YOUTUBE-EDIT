@@ -23,6 +23,7 @@
     "carousel": "node src/modules/carousels/cli.js",
     "shorts:ingest": "node scripts/shorts-ingest.js",
     "shorts:build": "node scripts/shorts-build.js",
+    "shorts:render": "node scripts/shorts-render.js",
     "shorts:publishing": "node scripts/shorts-publishing.js",
     "scout:animations": "node scripts/animation-scout.js",
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",
