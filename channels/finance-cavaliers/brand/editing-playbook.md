@@ -19,7 +19,7 @@ Este contrato convierte la locución en decisiones visuales reutilizables. Cada 
 | `catalog` | Regla universal del catálogo: aplica a cualquier canal. |
 | `channel` | Regla de marca de Finance Cavaliers. |
 
-Reglas: **64** · con validador automático: **47** · marcadas `manual`: **17** · sin implementar: **0**.
+Reglas: **74** · con validador automático: **57** · marcadas `manual`: **17** · sin implementar: **0**.
 
 Una regla `channel` aplicada en dos canales asciende a `catalog` y se documenta en capabilities.manifest.json (ANM-I06).
 
@@ -103,6 +103,14 @@ Un adaptador de patrón no puede simplificar la evidencia narrativa de una escen
 
 **Validador:** `pattern-evidence-preserved`
 
+### FC-R-025 · `error` · `catalog`
+
+Cuando la locución dice observa, mira o fíjate en una gráfica, la gráfica real debe aparecer en esa escena o en la inmediatamente siguiente; un diagrama conceptual no sustituye a la serie señalada.
+
+**Por qué:** Se prometía al espectador una gráfica SLOOS, pero el montaje mostraba solamente una puerta conceptual del crédito.
+
+**Validador:** `deictic-chart-presence`
+
 ## 3. Ritmo y variedad
 
 - Catálogo de rotación por contenido: gráfica completa con ejes; zoom sobre un tramo verificable; capa de superficie / capa interna; métrica cinética; logos y relaciones; comparación lado a lado; mapa causal; documento o captura atribuida; tarjeta de auditoría factual; silencio visual intencional antes de un giro.
@@ -129,6 +137,22 @@ El hueco máximo sin evento visible es de 2,0 s (1,4 s en el hook, 1,5 s en un g
 **Por qué:** El silencio visual es legítimo cuando es una decisión; no cuando es un olvido.
 
 **Validador:** `event-gap-max`
+
+### FC-R-034 · `error` · `catalog`
+
+No repetir en un bloque nuevo una geometría o metáfora visual dominante ya usada en los dos bloques aprobados anteriores; en especial, no reutilizar el logo del canal en el centro con entidades orbitando alrededor salvo excepción explícita.
+
+**Por qué:** La repetición entre bloques hace que el vídeo parezca una plantilla y reduce la riqueza narrativa aunque cada escena pase la validación interna de variedad.
+
+**Validador:** `approved-block-visual-novelty`
+
+### FC-R-036 · `error` · `catalog`
+
+Cada bloque de cuatro a seis escenas debe incorporar al menos dos fondos contextuales distintos —fotografía, vídeo, textura documental o asset gestionado— ligados a lo narrado y tratados para preservar la legibilidad. Repetir el mismo fondo abstracto con diagramas diferentes no cuenta como variedad visual.
+
+**Por qué:** Los fondos oscuros y abstractos repetidos hacen que el montaje resulte monótono aunque las animaciones sean correctas; alternar medios contextuales aumenta la riqueza editorial y la retención.
+
+**Validador:** `block-background-asset-variety`
 
 ## 4. Foco, cámara y anotación
 
@@ -274,6 +298,14 @@ Se dejan entre 4 y 8 píxeles de respiración antes del borde cuando la línea e
 
 **Validador:** revisión humana (sin comprobación geométrica posible)
 
+### FC-R-082 · `error` · `catalog`
+
+Los rótulos críticos, cifras y destinos no pueden superponerse con partículas, líneas de trayectoria ni otros elementos animados; deben reservar una zona limpia o usar un panel opaco legible.
+
+**Por qué:** Los componentes personalizados del bloque 05 dibujaban SALIDA y PESO EN EL ÍNDICE sobre monedas y trayectorias sin declarar cajas de colisión.
+
+**Validador:** `layout-no-overlap`
+
 ## 9. Alertas narrativas
 
 ### FC-R-080 · `warning` · `channel`
@@ -287,6 +319,14 @@ Un giro explícito («sin embargo», «atención», «pero») activa alerta con 
 La alerta aparece con la palabra, no antes, y no permanece como decoración.
 
 **Validador:** `alert-cue-transient` · parámetros: `{"alertTones":["negative"]}`
+
+### FC-R-092 · `error` · `catalog`
+
+Cuando un concepto crítico actúa como giro causal, puede declararse como heroKeyword y debe aparecer centrado durante su mención con fondo semántico, zoom visible y sonido sincronizado.
+
+**Por qué:** La palabra recesión era el catalizador central de la escena, pero quedaba implícita detrás de una barra roja sin suficiente jerarquía.
+
+**Validador:** `hero-keyword-sound`
 
 ## 10. Pausas de locución
 
@@ -375,6 +415,14 @@ Toda composición orbital distribuye sus elementos de forma equidistante y evita
 
 **Validador:** `orbit-symmetry-clearance`
 
+### FC-R-123 · `error` · `catalog`
+
+Las tarjetas categóricas usan etiquetas horizontales legibles y un icono semántico por categoría cuando exista espacio suficiente.
+
+**Por qué:** El texto vertical obliga a girar la lectura y deja tarjetas informativas visualmente vacías.
+
+**Validador:** `categorical-card-legibility`
+
 ## 14. Cámara y zoom narrativo
 
 ### FC-R-130 · `review` · `catalog`
@@ -397,6 +445,22 @@ Todo `cue.target` pertenece a los `focusTargets` declarados por el patrón.
 
 **Validador:** `cue-target-declared`
 
+### FC-R-035 · `error` · `catalog`
+
+Todo zoom debe producir un cambio visible en su destino; una transformación de cámara sin aparición, énfasis o información nueva se considera un zoom vacío.
+
+**Por qué:** Los zooms sin consecuencia visual consumen atención sin aportar significado.
+
+**Validador:** `cue-visible-target-change`
+
+### FC-R-134 · `error` · `catalog`
+
+En una relación parte-total, la cámara enfoca primero la parte mencionada, vuelve al plano general y después enfoca el efecto sobre el total.
+
+**Por qué:** La secuencia parte, contexto y consecuencia hace visible la relación causal y evita encadenar zooms confusos.
+
+**Validador:** `part-whole-camera-sequence`
+
 ## 15. Entidades mencionadas
 
 ### FC-R-140 · `error` · `catalog`
@@ -410,6 +474,14 @@ Cada entidad narrada activa su tarjeta o su logo en su palabra exacta, mientras 
 La activación vuelve al estado base antes de la siguiente entidad; no se resaltan todas a la vez si la voz las recorre una a una.
 
 **Validador:** revisión humana (sin comprobación geométrica posible)
+
+### FC-R-014 · `error` · `catalog`
+
+Cuando la locución enumera entidades equivalentes, todas reciben el mismo tratamiento de foco y sonido al pronunciarse.
+
+**Por qué:** Resaltar Cisco y Microsoft pero no Intel y Dell rompe la correspondencia entre voz e imagen.
+
+**Validador:** `entity-enumeration-equal-treatment`
 
 ## 16. Fuentes visibles y procedencia interna
 
@@ -446,6 +518,14 @@ Se mantienen familias sonoras diferenciadas para interfaz, datos, cámara, tensi
 Se prefieren efectos propios sintetizados y registrados; los assets `library-*` solo se publican con licencia verificada.
 
 **Validador:** `library-asset-licensed` · parámetros: `{"libraryPrefix":"library-"}`
+
+### FC-R-172 · `error` · `catalog`
+
+Cuando la locución usa una acción física clara como cerrar, caer, salir o desmoronarse, la escena debe materializarla con una metáfora visual reconocible y no limitarse a recolorear una gráfica abstracta.
+
+**Por qué:** Una válvula abstracta y un rectángulo rojo no comunicaban con claridad el cierre del flujo ni el desmoronamiento de la concentración.
+
+**Validador:** `physical-action-metaphor`
 
 ## 18. Bloques aprobados y continuidad de producción
 

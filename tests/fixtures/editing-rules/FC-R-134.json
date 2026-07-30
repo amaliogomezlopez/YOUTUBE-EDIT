@@ -1,0 +1,1 @@
+{"ruleId":"FC-R-134","check":"part-whole-camera-sequence","expect":"fail","context":{"scenes":[{"id":"part-whole","cameraSequence":["part","whole"]}]}}

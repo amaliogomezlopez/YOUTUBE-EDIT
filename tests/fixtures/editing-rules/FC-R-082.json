@@ -1,0 +1,52 @@
+{
+  "ruleId": "FC-R-082",
+  "statement": "Los rótulos críticos, cifras y destinos no pueden superponerse con partículas, líneas de trayectoria ni otros elementos animados; deben reservar una zona limpia o usar un panel opaco legible.",
+  "check": "layout-no-overlap",
+  "expect": "fail",
+  "note": "Plan mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "words": [
+      {
+        "text": "ejemplo",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "mínimo",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "cues": [],
+        "layoutBoxes": [
+          {
+            "id": "critical-label",
+            "x": 100,
+            "y": 100,
+            "width": 400,
+            "height": 160
+          },
+          {
+            "id": "animated-particles",
+            "x": 300,
+            "y": 140,
+            "width": 500,
+            "height": 220
+          }
+        ],
+        "connectors": [],
+        "assets": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

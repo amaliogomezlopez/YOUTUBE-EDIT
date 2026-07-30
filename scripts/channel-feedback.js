@@ -14,6 +14,7 @@ import path from 'node:path';
 import {fileURLToPath, pathToFileURL} from 'node:url';
 import {CHECKS, loadCustomChecks} from '../src/modules/editorial-video/visuals/rules-engine.js';
 import {renderPlaybook} from './render-editing-playbook.js';
+import {nextRuleId} from '../src/modules/video-studio/rule-intake.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -51,7 +52,7 @@ function slugify(value) {
 
 // La numeración por bloques de sección la comparten las tres superficies:
 // `src/modules/video-studio/rule-intake.js`. Se reexporta para no romper importadores.
-export {nextRuleId} from '../src/modules/video-studio/rule-intake.js';
+export {nextRuleId};
 
 function checkTemplate(checkId, statement) {
   return `/**

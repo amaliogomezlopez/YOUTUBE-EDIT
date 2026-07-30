@@ -1,0 +1,1 @@
+{"ruleId":"FC-R-123","check":"categorical-card-legibility","expect":"fail","context":{"scenes":[{"id":"vertical-cards","categoryCards":[{"id":"energy","label":"ENERGÍA","labelOrientation":"vertical"}]}]}}

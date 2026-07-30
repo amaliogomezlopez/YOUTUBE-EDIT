@@ -1,0 +1,1 @@
+{"ruleId":"FC-R-035","check":"cue-visible-target-change","expect":"fail","context":{"scenes":[{"id":"empty-zoom","visibleTargets":["headline"],"cues":[{"id":"zoom-core","action":"zoom","target":"missing-core"}]}]}}

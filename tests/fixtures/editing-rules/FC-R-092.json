@@ -1,0 +1,39 @@
+{
+  "ruleId": "FC-R-092",
+  "statement": "Cuando un concepto crítico actúa como giro causal, puede declararse como heroKeyword y debe aparecer centrado durante su mención con fondo semántico, zoom visible y sonido sincronizado.",
+  "check": "hero-keyword-sound",
+  "expect": "fail",
+  "note": "Plan mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "words": [
+      {
+        "text": "ejemplo",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "mínimo",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "heroKeyword": "RECESIÓN",
+        "semanticCues": [],
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

@@ -1,0 +1,1 @@
+{"ruleId":"FC-R-014","check":"entity-enumeration-equal-treatment","expect":"fail","context":{"scenes":[{"id":"entity-sequence","entitySequence":["cisco","intel"],"cues":[{"entityId":"cisco","action":"focus","sound":{"family":"reveal","intensity":0.5}}]}]}}

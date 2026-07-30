@@ -129,23 +129,24 @@ const audioName =
   `${blockSlug}-${sourceStartSeconds.toFixed(3).replace('.', '_')}-` +
   `${sourceEndSeconds.toFixed(3).replace('.', '_')}.m4a`;
 const outputAudio = path.join(publicDirectory, audioName);
-if (!(await exists(outputAudio))) {
-  await run('ffmpeg', [
-    '-n',
-    '-ss',
-    String(sourceStartSeconds),
-    '-to',
-    String(sourceEndSeconds),
-    '-i',
-    sourceAudio,
-    '-vn',
-    '-c:a',
-    'aac',
-    '-b:a',
-    '192k',
-    outputAudio
-  ]);
-}
+// Un proceso interrumpido puede dejar un M4A existente pero sin átomo `moov`.
+// Regenerar el recorte es barato y evita que Remotion renderice únicamente los
+// efectos al reutilizar silenciosamente un archivo truncado.
+await run('ffmpeg', [
+  '-y',
+  '-ss',
+  String(sourceStartSeconds),
+  '-to',
+  String(sourceEndSeconds),
+  '-i',
+  sourceAudio,
+  '-vn',
+  '-c:a',
+  'aac',
+  '-b:a',
+  '192k',
+  outputAudio
+]);
 
 const blockProps = {
   ...props,

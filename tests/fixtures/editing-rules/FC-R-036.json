@@ -1,0 +1,73 @@
+{
+  "ruleId": "FC-R-036",
+  "statement": "Cada bloque de cuatro a seis escenas debe incorporar al menos dos fondos contextuales distintos —fotografía, vídeo, textura documental o asset gestionado— ligados a lo narrado y tratados para preservar la legibilidad. Repetir el mismo fondo abstracto con diagramas diferentes no cuenta como variedad visual.",
+  "check": "block-background-asset-variety",
+  "expect": "fail",
+  "note": "Plan mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "words": [
+      {
+        "text": "ejemplo",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "mínimo",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      },
+      {
+        "id": "scene-fixture-002",
+        "componentKey": "chart",
+        "startSeconds": 4,
+        "endSeconds": 8,
+        "geometry": "chart",
+        "emphasis": "draw",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      },
+      {
+        "id": "scene-fixture-003",
+        "componentKey": "comparison",
+        "startSeconds": 8,
+        "endSeconds": 12,
+        "geometry": "split",
+        "emphasis": "wipe",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      },
+      {
+        "id": "scene-fixture-004",
+        "componentKey": "kinetic-text",
+        "startSeconds": 12,
+        "endSeconds": 16,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}

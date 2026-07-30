@@ -758,6 +758,130 @@
         "recordedAt": "2026-07-29T20:44:02Z"
       },
       "fixture": "tests/fixtures/editing-rules/FC-R-133.json"
+    },
+    {
+      "id": "FC-R-034",
+      "section": "rhythm",
+      "statement": "No repetir en un bloque nuevo una geometría o metáfora visual dominante ya usada en los dos bloques aprobados anteriores; en especial, no reutilizar el logo del canal en el centro con entidades orbitando alrededor salvo excepción explícita.",
+      "rationale": "La repetición entre bloques hace que el vídeo parezca una plantilla y reduce la riqueza narrativa aunque cada escena pase la validación interna de variedad.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "approved-block-visual-novelty",
+      "origin": {
+        "feedback": "No repetir en un bloque nuevo una geometría o metáfora visual dominante ya usada en los dos bloques aprobados anteriores; en especial, no reutilizar el logo del canal en el centro con entidades orbitando alrededor salvo excepción explícita.",
+        "recordedAt": "2026-07-30T06:59:35Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-034.json"
+    },
+    {
+      "id": "FC-R-014",
+      "section": "entities",
+      "statement": "Cuando la locución enumera entidades equivalentes, todas reciben el mismo tratamiento de foco y sonido al pronunciarse.",
+      "rationale": "Resaltar Cisco y Microsoft pero no Intel y Dell rompe la correspondencia entre voz e imagen.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "entity-enumeration-equal-treatment",
+      "fixture": "tests/fixtures/editing-rules/FC-R-014.json"
+    },
+    {
+      "id": "FC-R-035",
+      "section": "narrative-camera",
+      "statement": "Todo zoom debe producir un cambio visible en su destino; una transformación de cámara sin aparición, énfasis o información nueva se considera un zoom vacío.",
+      "rationale": "Los zooms sin consecuencia visual consumen atención sin aportar significado.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "cue-visible-target-change",
+      "fixture": "tests/fixtures/editing-rules/FC-R-035.json"
+    },
+    {
+      "id": "FC-R-123",
+      "section": "safe-geometry",
+      "statement": "Las tarjetas categóricas usan etiquetas horizontales legibles y un icono semántico por categoría cuando exista espacio suficiente.",
+      "rationale": "El texto vertical obliga a girar la lectura y deja tarjetas informativas visualmente vacías.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "categorical-card-legibility",
+      "fixture": "tests/fixtures/editing-rules/FC-R-123.json"
+    },
+    {
+      "id": "FC-R-134",
+      "section": "narrative-camera",
+      "statement": "En una relación parte-total, la cámara enfoca primero la parte mencionada, vuelve al plano general y después enfoca el efecto sobre el total.",
+      "rationale": "La secuencia parte, contexto y consecuencia hace visible la relación causal y evita encadenar zooms confusos.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "part-whole-camera-sequence",
+      "fixture": "tests/fixtures/editing-rules/FC-R-134.json"
+    },
+    {
+      "id": "FC-R-082",
+      "section": "spatial-safety",
+      "statement": "Los rótulos críticos, cifras y destinos no pueden superponerse con partículas, líneas de trayectoria ni otros elementos animados; deben reservar una zona limpia o usar un panel opaco legible.",
+      "rationale": "Los componentes personalizados del bloque 05 dibujaban SALIDA y PESO EN EL ÍNDICE sobre monedas y trayectorias sin declarar cajas de colisión.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "layout-no-overlap",
+      "origin": {
+        "feedback": "Los rótulos críticos, cifras y destinos no pueden superponerse con partículas, líneas de trayectoria ni otros elementos animados; deben reservar una zona limpia o usar un panel opaco legible.",
+        "recordedAt": "2026-07-30T10:13:55Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-082.json"
+    },
+    {
+      "id": "FC-R-172",
+      "section": "literal-metaphors",
+      "statement": "Cuando la locución usa una acción física clara como cerrar, caer, salir o desmoronarse, la escena debe materializarla con una metáfora visual reconocible y no limitarse a recolorear una gráfica abstracta.",
+      "rationale": "Una válvula abstracta y un rectángulo rojo no comunicaban con claridad el cierre del flujo ni el desmoronamiento de la concentración.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "physical-action-metaphor",
+      "origin": {
+        "feedback": "Cuando la locución usa una acción física clara como cerrar, caer, salir o desmoronarse, la escena debe materializarla con una metáfora visual reconocible y no limitarse a recolorear una gráfica abstracta.",
+        "recordedAt": "2026-07-30T10:14:03Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-172.json"
+    },
+    {
+      "id": "FC-R-036",
+      "section": "rhythm",
+      "statement": "Cada bloque de cuatro a seis escenas debe incorporar al menos dos fondos contextuales distintos —fotografía, vídeo, textura documental o asset gestionado— ligados a lo narrado y tratados para preservar la legibilidad. Repetir el mismo fondo abstracto con diagramas diferentes no cuenta como variedad visual.",
+      "rationale": "Los fondos oscuros y abstractos repetidos hacen que el montaje resulte monótono aunque las animaciones sean correctas; alternar medios contextuales aumenta la riqueza editorial y la retención.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "block-background-asset-variety",
+      "origin": {
+        "feedback": "Cada bloque de cuatro a seis escenas debe incorporar al menos dos fondos contextuales distintos —fotografía, vídeo, textura documental o asset gestionado— ligados a lo narrado y tratados para preservar la legibilidad. Repetir el mismo fondo abstracto con diagramas diferentes no cuenta como variedad visual.",
+        "recordedAt": "2026-07-30T11:51:32Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-036.json"
+    },
+    {
+      "id": "FC-R-025",
+      "section": "graphic-truth",
+      "statement": "Cuando la locución dice observa, mira o fíjate en una gráfica, la gráfica real debe aparecer en esa escena o en la inmediatamente siguiente; un diagrama conceptual no sustituye a la serie señalada.",
+      "rationale": "Se prometía al espectador una gráfica SLOOS, pero el montaje mostraba solamente una puerta conceptual del crédito.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "deictic-chart-presence",
+      "origin": {
+        "feedback": "Cuando la locución dice observa, mira o fíjate en una gráfica, la gráfica real debe aparecer en esa escena o en la inmediatamente siguiente; un diagrama conceptual no sustituye a la serie señalada.",
+        "recordedAt": "2026-07-30T15:28:02Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-025.json"
+    },
+    {
+      "id": "FC-R-092",
+      "section": "narrative-alerts",
+      "statement": "Cuando un concepto crítico actúa como giro causal, puede declararse como heroKeyword y debe aparecer centrado durante su mención con fondo semántico, zoom visible y sonido sincronizado.",
+      "rationale": "La palabra recesión era el catalizador central de la escena, pero quedaba implícita detrás de una barra roja sin suficiente jerarquía.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "hero-keyword-sound",
+      "origin": {
+        "feedback": "Cuando un concepto crítico actúa como giro causal, puede declararse como heroKeyword y debe aparecer centrado durante su mención con fondo semántico, zoom visible y sonido sincronizado.",
+        "recordedAt": "2026-07-30T15:28:03Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-092.json"
     }
   ]
 }

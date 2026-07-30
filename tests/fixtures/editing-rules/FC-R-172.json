@@ -1,0 +1,19 @@
+{
+  "ruleId": "FC-R-172",
+  "statement": "Las acciones físicas narradas deben materializarse mediante una metáfora visual reconocible.",
+  "check": "physical-action-metaphor",
+  "expect": "fail",
+  "context": {
+    "scenes": [
+      {
+        "id": "scene-collapse-without-metaphor",
+        "semanticCues": [
+          {
+            "id": "concentration-collapses",
+            "target": "concentration-frame"
+          }
+        ]
+      }
+    ]
+  }
+}

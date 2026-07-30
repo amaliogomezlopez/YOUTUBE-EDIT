@@ -1,0 +1,19 @@
+{
+  "ruleId": "FC-R-034",
+  "statement": "No repetir en un bloque nuevo una geometría o metáfora visual dominante ya usada en los dos bloques aprobados anteriores; en especial, no reutilizar el logo del canal en el centro con entidades orbitando alrededor salvo excepción explícita.",
+  "check": "approved-block-visual-novelty",
+  "expect": "fail",
+  "note": "Una órbita de marca ya aprobada no puede volver a dominar el bloque siguiente.",
+  "context": {
+    "approvedVisualSignatures": [
+      "brand-center-orbit"
+    ],
+    "scenes": [
+      {
+        "id": "scene-repeated-orbit",
+        "patternId": "asset.logo-ecosystem",
+        "visualSignature": "brand-center-orbit"
+      }
+    ]
+  }
+}

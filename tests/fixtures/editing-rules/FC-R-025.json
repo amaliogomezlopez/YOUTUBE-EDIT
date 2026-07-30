@@ -1,0 +1,39 @@
+{
+  "ruleId": "FC-R-025",
+  "statement": "Cuando la locución dice observa, mira o fíjate en una gráfica, la gráfica real debe aparecer en esa escena o en la inmediatamente siguiente; un diagrama conceptual no sustituye a la serie señalada.",
+  "check": "deictic-chart-presence",
+  "expect": "fail",
+  "note": "Plan mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "words": [
+      {
+        "text": "ejemplo",
+        "start": 0,
+        "end": 0.4
+      },
+      {
+        "text": "mínimo",
+        "start": 0.5,
+        "end": 0.9
+      }
+    ],
+    "scenes": [
+      {
+        "id": "scene-fixture-001",
+        "narrationText": "Observa esta gráfica.",
+        "chartData": [],
+        "componentKey": "kinetic-text",
+        "startSeconds": 0,
+        "endSeconds": 4,
+        "geometry": "typography",
+        "emphasis": "scale",
+        "cues": [],
+        "layoutBoxes": [],
+        "connectors": [],
+        "assets": []
+      }
+    ],
+    "coverage": [],
+    "issues": []
+  }
+}
