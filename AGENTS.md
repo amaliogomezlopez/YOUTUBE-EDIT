@@ -29,15 +29,27 @@ el pipeline de `src/lib/pipeline.js` (ese recorta un video largo). Es
 `src/modules/shorts-studio` + `remotion-animations/src/shorts`, documentado en
 `docs/shorts-desde-cero.md`.
 
-Reglas duras de ese flujo:
+Las reglas duras de ese flujo no son consejos: son un set ejecutable en
+`src/modules/shorts-studio/rules/shorts-rules.json` que `shorts:build` corre contra
+el `short-build.json` resuelto, fallando en `error` y avisando en `warning`. La
+version legible es `docs/shorts-playbook.md`, generada desde el JSON. Antes de tocar
+un plan, leer ese JSON.
 
 - El indice de palabra de la transcripcion es el ancla de los cues (`atWord`).
   `atSeconds` solo vale si el clip no tiene transcripcion.
-- El sonido se pide por familia, nunca por fichero.
-- Dos cues no comparten slot a la vez; el build lo valida y falla.
-- El texto en pantalla anade informacion; no repite la locucion.
-- Una captura de texto denso exige layout `stage`, no `split`.
-- Nada informativo por debajo de `y = 1748`: ahi dibuja la interfaz de Shorts.
+- El sonido se pide por familia, nunca por fichero, y ningun cue entra en silencio
+  sin `soundNote` que lo justifique (SH-R-050).
+- Dos cues no comparten slot a la vez (SH-R-010).
+- El texto en pantalla anade informacion; no repite la locucion (SH-R-030).
+- Una captura de texto denso exige layout `stage`, no `split` (SH-R-020).
+- Un logo oscuro sobre alfa necesita `plate`; uno con fondo negro solido, `blend`
+  (SH-R-021 y SH-R-022). Lo decide la medida del arte, no el nombre del fichero.
+- Nada informativo por debajo de `y = 1748`: ahi dibuja la interfaz de Shorts
+  (SH-R-040).
+
+Todo feedback del usuario sobre el montaje vertical se convierte en regla con
+`npm run shorts:feedback`, que crea regla, validador y fixture de una vez. La regla
+no esta cerrada mientras su validador siga devolviendo `TODO`: `npm test` lo caza.
 
 El ciclo es `shorts:ingest` -> editar `short-plan.json` -> `shorts:build` ->
 `shorts:render` -> `shorts:publishing`, y no exige tocar codigo: `shorts:build`

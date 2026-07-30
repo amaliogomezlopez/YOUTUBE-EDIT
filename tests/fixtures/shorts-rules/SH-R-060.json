@@ -1,0 +1,23 @@
+{
+  "ruleId": "SH-R-060",
+  "statement": "Una escena no deja mas silencio en sus extremos que el margen configurado mas un cuarto de segundo.",
+  "check": "shorts-scene-edge-silence",
+  "expect": "fail",
+  "note": "Trim declarado a mano con 2,1 s de silencio antes de la primera palabra y 1,8 s tras la ultima; el margen del plan es 0,5 s.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-060",
+        "layout": "full",
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 9,
+        "speechLeadSeconds": 2.1,
+        "speechTailSeconds": 1.8,
+        "captionPages": [],
+        "cues": []
+      }
+    ]
+  }
+}

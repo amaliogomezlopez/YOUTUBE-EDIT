@@ -1,0 +1,40 @@
+{
+  "ruleId": "SH-R-030",
+  "statement": "El texto en pantalla anade informacion.",
+  "check": "shorts-onscreen-text-adds-information",
+  "expect": "fail",
+  "note": "El caso real de harness-vs-modelo: chips TIEMPO / TOKENS / PRECIO mientras la locucion dice 'en cuanto a tiempo, tokens y precio'.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-030",
+        "layout": "stage",
+        "captionPages": [
+          {
+            "fromFrame": 0,
+            "durationInFrames": 240,
+            "words": [
+              {"text": "en", "fromFrame": 0, "toFrame": 20},
+              {"text": "cuanto", "fromFrame": 20, "toFrame": 50},
+              {"text": "a", "fromFrame": 50, "toFrame": 60},
+              {"text": "tiempo,", "fromFrame": 60, "toFrame": 100},
+              {"text": "tokens", "fromFrame": 100, "toFrame": 150},
+              {"text": "y", "fromFrame": 150, "toFrame": 160},
+              {"text": "precio", "fromFrame": 160, "toFrame": 220}
+            ]
+          }
+        ],
+        "cues": [
+          {
+            "id": "chip-tiempo", "type": "chip", "assetId": null, "slot": "stage-footer",
+            "presentation": "card", "text": "TIEMPO", "note": null, "fromFrame": 70,
+            "durationInFrames": 150, "dense": true,
+            "sound": {"family": "tick", "file": "sfx/tick-01.wav"}, "art": null
+          }
+        ]
+      }
+    ]
+  }
+}

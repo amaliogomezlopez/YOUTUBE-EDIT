@@ -1,0 +1,26 @@
+{
+  "ruleId": "SH-R-020",
+  "statement": "Una captura de pantalla con texto exige layout stage.",
+  "check": "shorts-dense-capture-needs-stage",
+  "expect": "fail",
+  "note": "La captura del tuit se muestra en split, donde el escenario mide 540 px y el texto no se lee.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-020",
+        "layout": "split",
+        "captionPages": [],
+        "cues": [
+          {
+            "id": "captura", "type": "screenshot", "assetId": "costs", "slot": "stage-full",
+            "presentation": "card", "text": null, "fromFrame": 30,
+            "durationInFrames": 240, "dense": true,
+            "sound": {"family": "whoosh", "file": "sfx/whoosh-01.wav"}, "art": null
+          }
+        ]
+      }
+    ]
+  }
+}

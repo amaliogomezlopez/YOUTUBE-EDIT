@@ -1,6 +1,6 @@
 {
   "slug": "harness-vs-modelo",
-  "generatedAt": "2026-07-30T08:48:52.322Z",
+  "generatedAt": "2026-07-30T09:53:23.338Z",
   "format": {
     "width": 1080,
     "height": 1920,
@@ -16,6 +16,7 @@
     "position": "lower",
     "uppercase": true
   },
+  "silencePaddingSeconds": 0.5,
   "soundEnabled": true,
   "soundMix": 0.55,
   "clipVolume": 1,
@@ -29,6 +30,8 @@
       "trimStartSeconds": 0,
       "trimEndSeconds": 2.8,
       "silenceTrimmedSeconds": 1.7,
+      "speechLeadSeconds": 0.24,
+      "speechTailSeconds": 0.5,
       "layout": "full",
       "camera": "punch-in",
       "cameraIntensity": 1.15,
@@ -53,7 +56,19 @@
           "atWord": 3,
           "atSeconds": 1.52,
           "fromFrame": 91,
-          "durationInFrames": 77
+          "durationInFrames": 77,
+          "dense": true,
+          "sound": {
+            "family": "hit",
+            "file": "sfx/amaliometria-soft-impact.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.211,
+            "darkRatio": 0.756,
+            "edgeDarkRatio": 1
+          }
         }
       ],
       "captionPages": [
@@ -99,6 +114,8 @@
       "trimStartSeconds": 0,
       "trimEndSeconds": 7.3,
       "silenceTrimmedSeconds": 0,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0,
       "layout": "split",
       "camera": "static",
       "cameraIntensity": 1,
@@ -123,7 +140,14 @@
           "atWord": 4,
           "atSeconds": 1.52,
           "fromFrame": 91,
-          "durationInFrames": 342
+          "durationInFrames": 342,
+          "dense": true,
+          "sound": {
+            "family": "impact",
+            "file": "sfx/amaliometria-impact-01.wav"
+          },
+          "soundNote": null,
+          "art": null
         },
         {
           "id": "coste-cue-2",
@@ -138,7 +162,14 @@
           "atWord": 13,
           "atSeconds": 3.68,
           "fromFrame": 221,
-          "durationInFrames": 210
+          "durationInFrames": 210,
+          "dense": true,
+          "sound": {
+            "family": "impact",
+            "file": "sfx/amaliometria-impact-02.wav"
+          },
+          "soundNote": null,
+          "art": null
         }
       ],
       "captionPages": [
@@ -325,6 +356,8 @@
       "trimStartSeconds": 7.3,
       "trimEndSeconds": 12.72,
       "silenceTrimmedSeconds": 1.58,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0.5,
       "layout": "stage",
       "camera": "static",
       "cameraIntensity": 1,
@@ -349,7 +382,19 @@
           "atWord": 26,
           "atSeconds": 0.1,
           "fromFrame": 6,
-          "durationInFrames": 319
+          "durationInFrames": 319,
+          "dense": true,
+          "sound": {
+            "family": "whoosh",
+            "file": "sfx/amaliometria-rise-whoosh.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.045,
+            "darkRatio": 0.976,
+            "edgeDarkRatio": 1
+          }
         },
         {
           "id": "evidencia-cue-2",
@@ -364,7 +409,14 @@
           "atWord": 29,
           "atSeconds": 1.76,
           "fromFrame": 106,
-          "durationInFrames": 78
+          "durationInFrames": 78,
+          "dense": true,
+          "sound": {
+            "family": "pop",
+            "file": "sfx/library-pop.wav"
+          },
+          "soundNote": null,
+          "art": null
         },
         {
           "id": "evidencia-cue-3",
@@ -379,7 +431,14 @@
           "atWord": 32,
           "atSeconds": 3.16,
           "fromFrame": 190,
-          "durationInFrames": 136
+          "durationInFrames": 136,
+          "dense": true,
+          "sound": {
+            "family": "tick",
+            "file": "sfx/amaliometria-data-tick.wav"
+          },
+          "soundNote": null,
+          "art": null
         }
       ],
       "captionPages": [
@@ -462,6 +521,8 @@
       "trimStartSeconds": 0,
       "trimEndSeconds": 5.36,
       "silenceTrimmedSeconds": 1.54,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0.5,
       "layout": "stage",
       "camera": "static",
       "cameraIntensity": 1,
@@ -486,7 +547,19 @@
           "atWord": 4,
           "atSeconds": 1.72,
           "fromFrame": 103,
-          "durationInFrames": 218
+          "durationInFrames": 218,
+          "dense": true,
+          "sound": {
+            "family": "whoosh",
+            "file": "sfx/library-smooth-whoosh.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.057,
+            "darkRatio": 0.959,
+            "edgeDarkRatio": 1
+          }
         }
       ],
       "captionPages": [
@@ -585,6 +658,8 @@
       "trimStartSeconds": 0,
       "trimEndSeconds": 12.76,
       "silenceTrimmedSeconds": 1.34,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0.5,
       "layout": "split",
       "camera": "punch-in",
       "cameraIntensity": 0.8,
@@ -609,7 +684,14 @@
           "atWord": 7,
           "atSeconds": 1.98,
           "fromFrame": 119,
-          "durationInFrames": 647
+          "durationInFrames": 647,
+          "dense": true,
+          "sound": {
+            "family": "tension",
+            "file": "sfx/amaliometria-tension-swell.wav"
+          },
+          "soundNote": null,
+          "art": null
         },
         {
           "id": "veredicto-cue-2",
@@ -617,14 +699,26 @@
           "assetId": "kimi",
           "src": "projects/shorts/harness-vs-modelo/assets/kimi.png",
           "slot": "podium-1",
-          "presentation": "card",
+          "presentation": "blend",
           "text": "KIMI CODE",
           "note": null,
           "tone": "neutral",
           "atWord": 13,
           "atSeconds": 3.98,
           "fromFrame": 239,
-          "durationInFrames": 360
+          "durationInFrames": 360,
+          "dense": true,
+          "sound": {
+            "family": "pop",
+            "file": "sfx/amaliometria-reveal-01.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.148,
+            "darkRatio": 0.843,
+            "edgeDarkRatio": 1
+          }
         },
         {
           "id": "veredicto-cue-3",
@@ -639,7 +733,19 @@
           "atWord": 15,
           "atSeconds": 4.9,
           "fromFrame": 294,
-          "durationInFrames": 306
+          "durationInFrames": 306,
+          "dense": true,
+          "sound": {
+            "family": "pop",
+            "file": "sfx/amaliometria-reveal-02.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 0.522,
+            "meanLuma": 0,
+            "darkRatio": 1,
+            "edgeDarkRatio": 0.063
+          }
         },
         {
           "id": "veredicto-cue-4",
@@ -654,7 +760,19 @@
           "atWord": 17,
           "atSeconds": 5.76,
           "fromFrame": 346,
-          "durationInFrames": 252
+          "durationInFrames": 252,
+          "dense": true,
+          "sound": {
+            "family": "pop",
+            "file": "sfx/amaliometria-reveal-03.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 0.387,
+            "meanLuma": 0.544,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
         },
         {
           "id": "veredicto-cue-5",
@@ -669,7 +787,14 @@
           "atWord": 24,
           "atSeconds": 8.44,
           "fromFrame": 506,
-          "durationInFrames": 90
+          "durationInFrames": 90,
+          "dense": true,
+          "sound": {
+            "family": "alert",
+            "file": "sfx/amaliometria-needle-strike.wav"
+          },
+          "soundNote": null,
+          "art": null
         },
         {
           "id": "veredicto-cue-6",
@@ -684,7 +809,14 @@
           "atWord": 29,
           "atSeconds": 10,
           "fromFrame": 600,
-          "durationInFrames": 166
+          "durationInFrames": 166,
+          "dense": true,
+          "sound": {
+            "family": "chime",
+            "file": "sfx/amaliometria-success-chime.wav"
+          },
+          "soundNote": null,
+          "art": null
         }
       ],
       "captionPages": [
@@ -1134,5 +1266,21 @@
     "escena 3 (evidencia): recortados 1.58s de silencio (entrada 0s, salida 1.58s)",
     "escena 4 (resultados): recortados 1.54s de silencio (entrada 0s, salida 1.54s)",
     "escena 5 (veredicto): recortados 1.34s de silencio (entrada 0s, salida 1.34s)"
-  ]
+  ],
+  "rules": {
+    "summary": {
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "warned": 0,
+      "waived": 0,
+      "manual": 0,
+      "skipped": 0,
+      "missingCheck": 0,
+      "errors": 0,
+      "warnings": 0,
+      "reviews": 0
+    },
+    "issues": []
+  }
 }

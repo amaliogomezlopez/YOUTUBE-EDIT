@@ -1,28 +1,24 @@
 import {MotionTheme} from "../motion/DesignSystem";
+import geometry from "./geometry.json";
 
 export type ShortLayoutId = "full" | "split" | "stage";
 
 /**
  * Geometria del short 9:16.
  *
+ * Los numeros viven en `geometry.json` porque los comparte el validador de reglas
+ * de Node (`src/modules/shorts-studio/rules`): la zona segura tiene que medirse
+ * con la misma geometria con la que se dibuja, o el aviso no vale nada.
+ *
  * `safeBottom` deja libre el ultimo 9% del alto porque la interfaz de Shorts y
  * Reels dibuja ahi el titulo, el avatar y los botones. Nada informativo debe
  * caer por debajo.
+ *
+ * `captionBottom` ancla el bloque de subtitulos por abajo para que crezca hacia
+ * arriba y una pagina de dos o tres lineas no se cuele bajo la zona segura;
+ * `captionHeight` es el alto disponible antes de chocar con el escenario.
  */
-export const SHORT_LAYOUT = {
-  width: 1080,
-  height: 1920,
-  safeX: 64,
-  safeTop: 96,
-  safeBottom: 1748,
-  /**
-   * El bloque de subtitulos se ancla por abajo y crece hacia arriba, para que una
-   * pagina de dos o tres lineas no se cuele por debajo de la zona segura.
-   */
-  captionBottom: {full: 1560, split: 1742, stage: 1742},
-  /** Alto disponible antes de chocar con el escenario de cada layout. */
-  captionHeight: {full: 430, split: 250, stage: 250},
-} as const;
+export const SHORT_LAYOUT = geometry;
 
 /**
  * Ventana de video por layout.
@@ -32,24 +28,10 @@ export const SHORT_LAYOUT = {
  * la cara a una tarjeta, y es el unico layout en el que cabe una captura de texto
  * densa a tamano legible.
  */
-export const clipRect = (layout: ShortLayoutId) => {
-  switch (layout) {
-    case "full":
-      return {left: 0, top: 0, width: SHORT_LAYOUT.width, height: SHORT_LAYOUT.height, radius: 0};
-    case "stage":
-      return {left: SHORT_LAYOUT.safeX, top: 108, width: 392, height: 392, radius: 30};
-    default:
-      return {left: 0, top: 0, width: SHORT_LAYOUT.width, height: 960, radius: 0};
-  }
-};
+export const clipRect = (layout: ShortLayoutId) => geometry.clip[layout] ?? geometry.clip.split;
 
 /** Zona de imagenes y rotulos por layout. */
-export const stageRect = (layout: ShortLayoutId) => {
-  const left = SHORT_LAYOUT.safeX;
-  const width = SHORT_LAYOUT.width - SHORT_LAYOUT.safeX * 2;
-  if (layout === "stage") return {left, width, top: 552, height: 940};
-  return {left, width, top: 988, height: 540};
-};
+export const stageRect = (layout: ShortLayoutId) => geometry.stage[layout] ?? geometry.stage.split;
 
 export type ShortSlot =
   | "overlay-top"
@@ -72,9 +54,9 @@ export type SlotRect = {
   height: number;
 };
 
-const HEADER_HEIGHT = 84;
-const FOOTER_HEIGHT = 96;
-const PODIUM_GAP = 22;
+const HEADER_HEIGHT = geometry.headerHeight;
+const FOOTER_HEIGHT = geometry.footerHeight;
+const PODIUM_GAP = geometry.podiumGap;
 
 /**
  * Rectangulo de cada slot dentro del escenario del layout activo. Header y footer
@@ -92,9 +74,13 @@ export const slotRect = (
 
   switch (slot) {
     case "overlay-top":
-      return {left: stage.left, top: SHORT_LAYOUT.safeTop, width: stage.width, height: 320};
     case "overlay-center":
-      return {left: stage.left, top: 700, width: stage.width, height: 420};
+      return {
+        left: stage.left,
+        top: geometry.overlay[slot].top,
+        width: stage.width,
+        height: geometry.overlay[slot].height,
+      };
     case "stage-header":
       return {left: stage.left, top: stage.top, width: stage.width, height: HEADER_HEIGHT};
     case "stage-footer":

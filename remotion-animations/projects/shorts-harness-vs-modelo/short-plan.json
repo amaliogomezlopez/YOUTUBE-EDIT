@@ -156,6 +156,7 @@
           "assetId": "kimi",
           "atWord": 13,
           "slot": "podium-1",
+          "presentation": "blend",
           "text": "KIMI CODE",
           "holdSeconds": 6,
           "sound": "pop"

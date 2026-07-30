@@ -23,12 +23,21 @@ const SEVERITY_BADGE = {
   review: '`review`'
 };
 
-export function renderPlaybook(ruleSet) {
+/**
+ * `source` y `feedbackCommand` se parametrizan porque el mismo renderizador sirve
+ * al contrato del canal editorial y al de shorts: cambia de donde sale el JSON y
+ * con que comando se registra una correccion, no la estructura del documento.
+ */
+export function renderPlaybook(ruleSet, {
+  source = `channels/${ruleSet.channelId}/brand/editing-rules.json`,
+  feedbackCommand = `npm run channel:feedback -- --channel ${ruleSet.channelId}` +
+    ' --note "el conector atraviesa la tarjeta" --section spatial-safety --severity error'
+} = {}) {
   const lines = [];
   lines.push(`# ${ruleSet.title}`);
   lines.push('');
   lines.push('<!-- GENERADO por scripts/render-editing-playbook.js desde');
-  lines.push('     channels/' + ruleSet.channelId + '/brand/editing-rules.json.');
+  lines.push('     ' + source + '.');
   lines.push('     No editar a mano: los cambios se pierden en la siguiente generación. -->');
   lines.push('');
   lines.push(ruleSet.intro);
@@ -97,8 +106,7 @@ export function renderPlaybook(ruleSet) {
   lines.push('## Ciclo de feedback');
   lines.push('');
   lines.push('```bash');
-  lines.push('npm run channel:feedback -- --channel ' + ruleSet.channelId +
-    ' --note "el conector atraviesa la tarjeta" --section spatial-safety --severity error');
+  lines.push(feedbackCommand);
   lines.push('```');
   lines.push('');
   lines.push('El comando registra la corrección, crea la regla con id estable, ' +

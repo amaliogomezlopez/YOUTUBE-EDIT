@@ -51,6 +51,12 @@ npm run shorts:render -- --slug mi-short
 npm run shorts:publishing -- --slug mi-short
 ```
 
+Y cuando el usuario corrige algo del montaje, la corrección se convierte en regla:
+
+```bash
+npm run shorts:feedback -- --note "<corrección>" --section <id> --severity error
+```
+
 ## 1. Ingesta
 
 ```bash
@@ -204,6 +210,51 @@ deben contarse dos veces.
 Opciones: `--no-llm` fuerza el fallback local; `--out` deja además una copia en
 `data/output/shorts-<slug>/` junto al MP4; `--out <carpeta>` la deja donde se pida.
 
+## 5. Reglas de montaje y bucle de feedback
+
+`shorts:build` ejecuta un set de reglas contra el `short-build.json` que acaba de
+resolver: falla en `error` (y no escribe el JSON, para que no quede un short
+renderizable que incumple el contrato) y avisa en `warning`. El contrato está en
+`src/modules/shorts-studio/rules/shorts-rules.json` y su versión legible en
+[shorts-playbook.md](shorts-playbook.md), generada desde el JSON.
+
+Reutiliza el motor del canal editorial
+(`src/modules/editorial-video/visuals/rules-engine.js`), que ya es genérico. Lo
+único propio de shorts es el contexto —el `short-build.json`— y el directorio de
+validadores, `src/modules/shorts-studio/rules/checks/`.
+
+Una corrección se convierte en regla con una sola orden:
+
+```bash
+npm run shorts:feedback -- --note "la captura no se lee en split" --section legibility --severity error
+```
+
+Registra la nota en `rules/feedback-log.jsonl`, crea la regla con id estable
+(`SH-R-###`), deja el esqueleto del validador y un fixture en
+`tests/fixtures/shorts-rules/` que la **incumple**, y regenera el playbook. Mientras
+el validador siga devolviendo su incidencia `TODO`, `npm test` está rojo: una regla
+no se puede dar por cerrada sin comprobación real.
+
+Lo que el validador recibe: `context.scenes` con `layout`, `cues` (slot,
+`fromFrame`, `durationInFrames`, `presentation`, `art`, `sound`) y `captionPages`;
+más `format`, `soundCues`, `duckWindows`, `silencePaddingSeconds` y, por escena,
+`speechLeadSeconds` / `speechTailSeconds`.
+
+Dos datos los calcula el build a propósito para las reglas:
+
+- **`cue.art`**: medidas del asset (cobertura opaca, luma media, oscuridad del
+  borde) con `sharp`. Es lo que distingue un logo negro sobre alfa de un wordmark
+  con fondo negro sólido, y por tanto qué `presentation` necesita cada uno. Sin la
+  media presente las reglas de presentación se declaran no evaluables en vez de
+  inventarse un veredicto.
+- **`speechLeadSeconds` / `speechTailSeconds`**: silencio que queda dentro de la
+  escena tras el recorte, para cazar un extremo declarado a mano con dos segundos
+  de nadie hablando.
+
+La geometría de la zona segura no se duplica: vive en
+`remotion-animations/src/shorts/geometry.json` y la leen tanto `layout.ts` (para
+dibujar) como el validador (para medir).
+
 ## Zona segura
 
 La interfaz de Shorts y Reels dibuja título, avatar y botones en la franja
@@ -221,4 +272,8 @@ npm test
 
 ```bash
 npm run remotion:check
+```
+
+```bash
+npm run shorts:playbook:check
 ```

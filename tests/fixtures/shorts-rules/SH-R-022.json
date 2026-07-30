@@ -1,0 +1,27 @@
+{
+  "ruleId": "SH-R-022",
+  "statement": "Un logo o un wordmark con fondo negro solido necesita presentation blend.",
+  "check": "shorts-solid-background-needs-blend",
+  "expect": "fail",
+  "note": "Medidas reales del logo de Kimi: cuadrado negro opaco presentado en tarjeta oscura.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-022",
+        "layout": "split",
+        "captionPages": [],
+        "cues": [
+          {
+            "id": "wordmark", "type": "logo", "assetId": "kimi", "slot": "podium-1",
+            "presentation": "card", "text": "KIMI CODE", "fromFrame": 60,
+            "durationInFrames": 300, "dense": true,
+            "sound": {"family": "pop", "file": "sfx/pop-01.wav"},
+            "art": {"opaqueCoverage": 1, "meanLuma": 0.148, "darkRatio": 0.843, "edgeDarkRatio": 1}
+          }
+        ]
+      }
+    ]
+  }
+}

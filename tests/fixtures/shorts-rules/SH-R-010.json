@@ -1,0 +1,32 @@
+{
+  "ruleId": "SH-R-010",
+  "statement": "Dos cues no pueden ocupar el mismo slot a la vez.",
+  "check": "shorts-slot-overlap",
+  "expect": "fail",
+  "note": "El segundo logo entra en podium-1 mientras el primero sigue en pantalla: se dibujan uno encima del otro.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-010",
+        "layout": "split",
+        "captionPages": [],
+        "cues": [
+          {
+            "id": "logo-a", "type": "logo", "assetId": "a", "slot": "podium-1",
+            "presentation": "card", "text": "UNO", "fromFrame": 60,
+            "durationInFrames": 300, "dense": true,
+            "sound": {"family": "pop", "file": "sfx/pop-01.wav"}, "art": null
+          },
+          {
+            "id": "logo-b", "type": "logo", "assetId": "b", "slot": "podium-1",
+            "presentation": "card", "text": "DOS", "fromFrame": 180,
+            "durationInFrames": 240, "dense": true,
+            "sound": {"family": "pop", "file": "sfx/pop-02.wav"}, "art": null
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "ruleId": "SH-R-021",
+  "statement": "Un logo cuyo arte es oscuro sobre alfa necesita presentation plate.",
+  "check": "shorts-dark-art-needs-plate",
+  "expect": "fail",
+  "note": "Medidas reales del logo de Hermes: trazo negro sobre transparencia presentado en tarjeta oscura.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-021",
+        "layout": "split",
+        "captionPages": [],
+        "cues": [
+          {
+            "id": "logo-oscuro", "type": "logo", "assetId": "hermes", "slot": "podium-2",
+            "presentation": "card", "text": "HERMES", "fromFrame": 60,
+            "durationInFrames": 300, "dense": true,
+            "sound": {"family": "pop", "file": "sfx/pop-01.wav"},
+            "art": {"opaqueCoverage": 0.522, "meanLuma": 0, "darkRatio": 1, "edgeDarkRatio": 0.063}
+          }
+        ]
+      }
+    ]
+  }
+}

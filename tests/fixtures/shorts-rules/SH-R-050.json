@@ -1,0 +1,26 @@
+{
+  "ruleId": "SH-R-050",
+  "statement": "Ningun cue entra en silencio.",
+  "check": "shorts-cue-not-silent",
+  "expect": "fail",
+  "note": "El plan silencio el logo con \"sound\": false y no dejo soundNote que lo justifique.",
+  "context": {
+    "format": {"width": 1080, "height": 1920, "fps": 60},
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-050",
+        "layout": "split",
+        "captionPages": [],
+        "cues": [
+          {
+            "id": "logo-mudo", "type": "logo", "assetId": "kimi", "slot": "podium-1",
+            "presentation": "blend", "text": "KIMI CODE", "fromFrame": 60,
+            "durationInFrames": 300, "dense": true,
+            "sound": null, "soundNote": null, "art": null
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -187,6 +187,11 @@ const LogoCue: React.FC<{
         justifyContent: "center",
         gap: 18,
         transform: `scale(${scale}) rotate(${rotate}deg)`,
+        // `screen` tiene que ir en el elemento que compone contra el video. Este
+        // contenedor ya lleva `opacity` y `transform`, que aislan el grupo de
+        // mezcla: puesto en la imagen de dentro, el negro se sumaba contra un
+        // fondo transparente y seguia siendo negro.
+        mixBlendMode: blend ? "screen" : undefined,
       }}
     >
       <div
@@ -216,7 +221,6 @@ const LogoCue: React.FC<{
               maxWidth: "100%",
               maxHeight: "100%",
               objectFit: "contain",
-              mixBlendMode: blend ? "screen" : undefined,
             }}
           />
         ) : null}

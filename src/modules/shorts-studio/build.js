@@ -3,6 +3,8 @@ import {readJson, round, writeJson} from '../../lib/utils.js';
 import {SHORT_FORMAT, projectDir} from './constants.js';
 import {buildCaptionPages} from './captions.js';
 import {writeShortsRegistry} from './registry.js';
+import {analyzeArtwork} from './artwork.js';
+import {formatIssue, runShortsRules} from './rules/index.js';
 import {
   DEFAULT_CAMERA_SOUND,
   DEFAULT_CUE_SOUND,
@@ -53,8 +55,11 @@ export async function buildShort({slug, log = () => {}}) {
   const rotate = createSoundRotation();
   const padding = Number(plan.silencePaddingSeconds ?? DEFAULT_SILENCE_PADDING_SECONDS);
   const addSound = (familyId, atSeconds, intensity = 1) => {
-    soundCues.push(resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId)));
+    const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId));
+    soundCues.push(cue);
+    return cue;
   };
+  const artByAsset = await measureArtwork(manifest.assets, warnings);
   let cursor = 0;
 
   for (const [index, scene] of (plan.scenes ?? []).entries()) {
@@ -96,7 +101,9 @@ export async function buildShort({slug, log = () => {}}) {
       // una captura que entra en silencio se percibe como un fallo de montaje.
       // `sound: false` es la forma explicita de dejarlo mudo.
       const soundFamily = cue.sound === false ? null : cue.sound ?? DEFAULT_CUE_SOUND[cue.type];
-      if (soundFamily) addSound(soundFamily, cursor / fps + atSeconds, Number(cue.soundIntensity ?? 1));
+      const sound = soundFamily
+        ? addSound(soundFamily, cursor / fps + atSeconds, Number(cue.soundIntensity ?? 1))
+        : null;
       return {
         id: cue.id ?? `${scene.id}-cue-${cueIndex + 1}`,
         type: cue.type,
@@ -110,7 +117,14 @@ export async function buildShort({slug, log = () => {}}) {
         atWord: Number.isInteger(cue.atWord) ? cue.atWord : null,
         atSeconds: round(atSeconds, 3),
         fromFrame: Math.round(atSeconds * fps),
-        durationInFrames: cueFrames
+        durationInFrames: cueFrames,
+        // Campos que consumen las reglas: una captura sin texto se declara con
+        // `dense: false`, el silencio deliberado con `soundNote`, y `art` son las
+        // medidas del asset con las que se valida su presentacion.
+        dense: cue.dense !== false,
+        sound: soundFamily ? {family: soundFamily, file: sound.file} : null,
+        soundNote: cue.soundNote ?? null,
+        art: cue.assetId ? artByAsset.get(cue.assetId) ?? null : null
       };
     }).sort((a, b) => a.fromFrame - b.fromFrame);
 
@@ -126,7 +140,6 @@ export async function buildShort({slug, log = () => {}}) {
       }))
       : [];
 
-    assertNoSlotOverlap(cues, where);
     duckWindows.push(...speechWindows(words, {startSeconds, endSeconds}, cursor / fps, plan.sound?.duckGainDb));
 
     if (transitionIn !== 'cut' && index === 0) {
@@ -156,6 +169,7 @@ export async function buildShort({slug, log = () => {}}) {
       trimStartSeconds: round(startSeconds, 3),
       trimEndSeconds: round(endSeconds, 3),
       silenceTrimmedSeconds: trim.trimmedSeconds,
+      ...edgeSilence(words, startSeconds, endSeconds),
       layout: scene.layout,
       camera,
       cameraIntensity: Number(scene.cameraIntensity ?? 1),
@@ -185,6 +199,7 @@ export async function buildShort({slug, log = () => {}}) {
     dangerColor: plan.dangerColor ?? null,
     backgroundImage: plan.backgroundImage ? (assetsById.get(plan.backgroundImage)?.file ?? plan.backgroundImage) : null,
     captionStyle: plan.captionStyle ?? {},
+    silencePaddingSeconds: padding,
     soundEnabled: plan.sound?.enabled ?? true,
     soundMix: Number(plan.sound?.mix ?? 0.6),
     clipVolume: Number(plan.sound?.clipVolume ?? 1),
@@ -194,11 +209,30 @@ export async function buildShort({slug, log = () => {}}) {
     warnings
   };
 
+  // Las reglas se ejecutan contra el build ya resuelto y antes de escribirlo: un
+  // `error` no debe dejar un short-build.json que Remotion pueda renderizar.
+  const {issues, summary} = await runShortsRules(build, {exceptions: plan.ruleExceptions ?? []});
+  build.rules = {summary, issues};
+  const blocking = issues.filter((issue) => issue.severity === 'error');
+  for (const issue of issues.filter((issue) => issue.severity !== 'error')) {
+    warnings.push(formatIssue(issue));
+  }
+  if (blocking.length) {
+    throw new Error(
+      `El plan incumple ${blocking.length} regla(s) de montaje:\n` +
+      blocking.map((issue) => `  - ${formatIssue(issue)}`).join('\n')
+    );
+  }
+
   await writeJson(path.join(project, 'short-build.json'), build);
   // El registro que importa Root.tsx se regenera aqui: un proyecto nuevo aparece
   // como composicion sin editar codigo, y uno borrado desaparece.
   const registered = await writeShortsRegistry();
   log(`build: ${scenes.length} escenas, ${build.durationSeconds}s, ${soundCues.length} cues de sonido`);
+  log(
+    `reglas: ${summary.passed}/${summary.total} pasan, ${summary.warnings} avisos, ` +
+    `${summary.skipped} no evaluables`
+  );
   log(`registro: ${registered.length} composiciones (${registered.map((entry) => entry.id).join(', ')})`);
   for (const warning of warnings) log(`  aviso: ${warning}`);
   return build;
@@ -261,32 +295,38 @@ function speechWindows(words, window, offsetSeconds, gainDb, gapSeconds = 0.4) {
 }
 
 /**
- * Dos cues en el mismo slot y a la vez se dibujan uno encima del otro. Es el fallo
- * mas facil de introducir al alargar un `holdSeconds`, y no se ve en el JSON: solo
- * aparece al renderizar. Los chips son la excepcion, porque `stage-footer` los
- * maqueta en fila a proposito.
+ * Silencio que queda dentro de la escena tras el recorte. El recorte automatico lo
+ * deja acotado, pero un extremo declarado a mano puede esconder dos segundos de
+ * nadie hablando, y eso solo se ve viendo el short. Lo mide la regla SH-R-060.
  */
-function assertNoSlotOverlap(cues, where) {
-  const bySlot = new Map();
-  for (const cue of cues) {
-    if (cue.type === 'chip') continue;
-    const slot = cue.slot ?? 'stage-full';
-    if (!bySlot.has(slot)) bySlot.set(slot, []);
-    bySlot.get(slot).push(cue);
-  }
-  for (const [slot, slotCues] of bySlot) {
-    for (let index = 1; index < slotCues.length; index += 1) {
-      const previous = slotCues[index - 1];
-      const current = slotCues[index];
-      const previousEnd = previous.fromFrame + previous.durationInFrames;
-      if (current.fromFrame < previousEnd) {
-        throw new Error(
-          `${where}: los cues "${previous.id}" y "${current.id}" se solapan en el slot "${slot}". ` +
-          `Reduce holdSeconds de "${previous.id}" o mueve uno a otro slot.`
-        );
-      }
+function edgeSilence(words, startSeconds, endSeconds) {
+  const inside = (words ?? []).filter(
+    (word) => word.end > startSeconds && word.start < endSeconds
+  );
+  if (!inside.length) return {};
+  return {
+    speechLeadSeconds: round(Math.max(0, inside[0].start - startSeconds), 3),
+    speechTailSeconds: round(Math.max(0, endSeconds - inside.at(-1).end), 3)
+  };
+}
+
+/**
+ * Medidas del arte de los assets, una vez por build. Si la media no esta presente
+ * (carpeta ignorada por git, otra maquina) se avisa y las reglas de presentacion se
+ * declaran no evaluables en vez de inventarse un veredicto.
+ */
+async function measureArtwork(assets, warnings) {
+  const measured = new Map();
+  for (const asset of assets ?? []) {
+    try {
+      measured.set(asset.id, await analyzeArtwork(asset.file));
+    } catch (error) {
+      warnings.push(
+        `no se pudo medir el arte de "${asset.id}" (${asset.file}): ${error.message}`
+      );
     }
   }
+  return measured;
 }
 
 /**

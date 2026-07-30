@@ -1,0 +1,143 @@
+{
+  "version": 1,
+  "channelId": "shorts-studio",
+  "title": "Lenguaje de montaje — Shorts desde cero",
+  "intro": "Este contrato convierte cada corrección del montaje vertical en una regla ejecutable. El validador recibe `short-build.json`, así que mide el montaje resuelto en frames, no las intenciones del plan. `docs/shorts-playbook.md` se genera desde este fichero: nunca se edita a mano.",
+  "severities": {
+    "error": "Bloquea `shorts:build`. El short no se compila.",
+    "warning": "No bloquea, pero aparece en el informe del build y exige justificación.",
+    "review": "Requiere mirada humana; no hay comprobación geométrica posible."
+  },
+  "scopes": {
+    "catalog": "Regla universal del formato vertical: aplica a cualquier short.",
+    "channel": "Regla de marca del canal que publica los shorts."
+  },
+  "promotionPolicy": "Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.",
+  "sections": [
+    {
+      "id": "slots",
+      "number": 1,
+      "title": "Slots y ocupación",
+      "notes": [
+        "Slots disponibles: `stage-full`, `stage-left`, `stage-right`, `stage-header`, `stage-footer`, `stage-badge`, `podium-1..3`, `podium-3-verdict`, `overlay-top`, `overlay-center`."
+      ]
+    },
+    {
+      "id": "legibility",
+      "number": 2,
+      "title": "Legibilidad de imágenes",
+      "notes": [
+        "Presentaciones: `card` (tarjeta oscura, por defecto), `plate` (placa clara), `plain` (sin marco) y `blend` (suma con `screen`).",
+        "El build mide el arte de cada asset una vez y deja el resultado en `cue.art`; las reglas de presentación leen esa medida, no el nombre del fichero."
+      ]
+    },
+    {
+      "id": "information",
+      "number": 3,
+      "title": "Información en pantalla"
+    },
+    {
+      "id": "safe-area",
+      "number": 4,
+      "title": "Zona segura",
+      "notes": [
+        "La geometría vive en `remotion-animations/src/shorts/geometry.json` y la comparten el renderer y el validador."
+      ]
+    },
+    {
+      "id": "sound",
+      "number": 5,
+      "title": "Sonido",
+      "notes": [
+        "El sonido se pide por familia, nunca por fichero. Cada tipo de cue, cada transición y cada movimiento de cámara tienen familia por defecto."
+      ]
+    },
+    {
+      "id": "pacing",
+      "number": 6,
+      "title": "Ritmo y silencios"
+    }
+  ],
+  "rules": [
+    {
+      "id": "SH-R-010",
+      "section": "slots",
+      "statement": "Dos cues no pueden ocupar el mismo slot a la vez. Los chips son la excepción: `stage-footer` los maqueta en fila a propósito.",
+      "rationale": "Dos cues solapados se dibujan uno encima del otro y no se ve en el JSON: solo aparece al renderizar. Es el fallo más fácil de introducir al alargar un holdSeconds.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-slot-overlap",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-010.json"
+    },
+    {
+      "id": "SH-R-020",
+      "section": "legibility",
+      "statement": "Una captura de pantalla con texto exige layout `stage`. En `split` el escenario mide 540 px de alto y el texto no se lee; una captura sin texto se declara con `\"dense\": false`.",
+      "rationale": "En `stage` la captura ocupa 952x760 px y el tuit se lee; en `split` entra a la mitad de escala y solo se ve que hay un tuit. Si la escena empieza con la cara, se parte en dos con trims contiguos y el audio sigue continuo.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-dense-capture-needs-stage",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-020.json"
+    },
+    {
+      "id": "SH-R-021",
+      "section": "legibility",
+      "statement": "Un logo cuyo arte es oscuro sobre alfa necesita `presentation: \"plate\"`.",
+      "rationale": "Sobre la tarjeta oscura de `card` el trazo negro desaparece y queda un marco vacío. Pasó con el logo de Hermes en harness-vs-modelo.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-dark-art-needs-plate",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-021.json"
+    },
+    {
+      "id": "SH-R-022",
+      "section": "legibility",
+      "statement": "Un logo o un wordmark con fondo negro sólido necesita `presentation: \"blend\"`.",
+      "rationale": "Un wordmark exportado sin alfa arrastra su rectángulo negro: dentro de la tarjeta se ve el escalón y sobre el vídeo, un parche. `blend` suma con `screen` y el negro desaparece. Pasó con el wordmark de Claude Code y con el logo de Kimi.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-solid-background-needs-blend",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-022.json"
+    },
+    {
+      "id": "SH-R-030",
+      "section": "information",
+      "statement": "El texto en pantalla añade información. Un chip o una cifra cuyas palabras ya están todas en la locución de su propia ventana sobra.",
+      "rationale": "En la escena de resultados había tres chips TIEMPO / TOKENS / PRECIO mientras la locución decía «en cuanto a tiempo, tokens y precio»: ocupaban el sitio del dato sin añadir nada que el subtítulo no dijera. Un rótulo que fija una entidad sobre la imagen sí aporta, y por eso la regla no mide `label` ni `logo`.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "shorts-onscreen-text-adds-information",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-030.json"
+    },
+    {
+      "id": "SH-R-040",
+      "section": "safe-area",
+      "statement": "Nada informativo baja de y = 1748: ni el rectángulo de un slot ni el ancla del bloque de subtítulos.",
+      "rationale": "La interfaz de Shorts y Reels dibuja ahí título, avatar y botones. El texto queda tapado en el reproductor real aunque en el MP4 se lea perfectamente, así que el render no delata el fallo.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-safe-area-bottom",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-040.json"
+    },
+    {
+      "id": "SH-R-050",
+      "section": "sound",
+      "statement": "Ningún cue entra en silencio. Silenciarlo con `\"sound\": false` exige un `soundNote` que lo justifique.",
+      "rationale": "Todo tipo de cue tiene familia por defecto, así que un cue mudo solo aparece si alguien lo pidió; sin explicación se lee como un fallo de montaje y no como una decisión.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "shorts-cue-not-silent",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-050.json"
+    },
+    {
+      "id": "SH-R-060",
+      "section": "pacing",
+      "statement": "Una escena no deja más silencio en sus extremos que el margen configurado (`silencePaddingSeconds`) más un cuarto de segundo.",
+      "rationale": "El recorte automático ya deja ese aire; el exceso solo aparece cuando el plan declara un extremo a mano. En un short de 30 s, dos segundos mirando a alguien que no habla son el 7 % del tiempo.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "shorts-scene-edge-silence",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-060.json"
+    }
+  ]
+}
