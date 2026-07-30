@@ -210,7 +210,20 @@ deben contarse dos veces.
 Opciones: `--no-llm` fuerza el fallback local; `--out` deja además una copia en
 `data/output/shorts-<slug>/` junto al MP4; `--out <carpeta>` la deja donde se pida.
 
-## 5. Reglas de montaje y bucle de feedback
+## 5. Publicar
+
+```bash
+npm run shorts:publish -- --slug mi-short [--platforms youtube,instagram,tiktok,x]
+```
+
+Consume el `publishing-metadata.json` del proyecto y el último MP4 renderizado, y
+delega en los conectores de `src/lib/publishers/`: el short se publica con el
+mismo contrato que un clip del pipeline de vídeo largo, sin duplicarlo. Lo que no
+se pueda publicar automáticamente (sin credenciales, o Instagram sin hosting
+HTTPS vía `asset-host`) queda en `requires_manual_action` con caption y asset
+listos en `publish-runs.json`, que se escribe en el proyecto y no se versiona.
+
+## 6. Reglas de montaje y bucle de feedback
 
 `shorts:build` ejecuta un set de reglas contra el `short-build.json` que acaba de
 resolver: falla en `error` (y no escribe el JSON, para que no quede un short

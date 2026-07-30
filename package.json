@@ -25,6 +25,7 @@
     "shorts:build": "node scripts/shorts-build.js",
     "shorts:render": "node scripts/shorts-render.js",
     "shorts:publishing": "node scripts/shorts-publishing.js",
+    "shorts:publish": "node scripts/shorts-publish.js",
     "shorts:feedback": "node scripts/shorts-feedback.js",
     "shorts:playbook": "node scripts/shorts-playbook.js",
     "shorts:playbook:check": "node scripts/shorts-playbook.js --check",

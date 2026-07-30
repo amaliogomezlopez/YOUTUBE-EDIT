@@ -10,3 +10,6 @@ out
 public/projects/
 public/assets/projects/*
 !public/assets/projects/.gitkeep
+
+# Estado de las publicaciones de shorts: es volatil y no se versiona.
+projects/shorts-*/publish-runs.json

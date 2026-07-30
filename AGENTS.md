@@ -52,7 +52,8 @@ Todo feedback del usuario sobre el montaje vertical se convierte en regla con
 no esta cerrada mientras su validador siga devolviendo `TODO`: `npm test` lo caza.
 
 El ciclo es `shorts:ingest` -> editar `short-plan.json` -> `shorts:build` ->
-`shorts:render` -> `shorts:publishing`, y no exige tocar codigo: `shorts:build`
+`shorts:render` -> `shorts:publishing` -> `shorts:publish`, y no exige tocar
+codigo: `shorts:build`
 regenera `remotion-animations/src/shorts/registry.generated.ts`, que es de donde
 `Root.tsx` saca las composiciones. Tras anadir o quitar una, `npm run
 remotion:capabilities`.
@@ -62,7 +63,10 @@ La metadata de publicacion del short sale de `npm run shorts:publishing -- --slu
 `src/lib/publishing.js` y escribe `publishing-metadata.json` con el contrato de la
 seccion "Metadata de Publicacion". Describe la transcripcion del short **montado**
 (palabras dentro del recorte de cada escena, rebasadas al reloj del short), no la de
-los clips crudos.
+los clips crudos. `npm run shorts:publish -- --slug <slug>` publica con esa metadata
+y el ultimo MP4 renderizado usando los conectores de `src/lib/publishers/`, con los
+mismos estados que el pipeline de video largo (`requires_manual_action` cuando
+falta una credencial o el hosting HTTPS de Instagram).
 
 ## Motor de animacion editorial
 
