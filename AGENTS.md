@@ -39,6 +39,13 @@ Reglas duras de ese flujo:
 - Una captura de texto denso exige layout `stage`, no `split`.
 - Nada informativo por debajo de `y = 1748`: ahi dibuja la interfaz de Shorts.
 
+La metadata de publicacion del short sale de `npm run shorts:publishing -- --slug
+<slug>`, que reutiliza `generatePublishingMetadata` y `buildClipPublishing` de
+`src/lib/publishing.js` y escribe `publishing-metadata.json` con el contrato de la
+seccion "Metadata de Publicacion". Describe la transcripcion del short **montado**
+(palabras dentro del recorte de cada escena, rebasadas al reloj del short), no la de
+los clips crudos.
+
 ## Motor de animacion editorial
 
 Si el encargo es "en esta carpeta estan los clips del episodio N, haz las

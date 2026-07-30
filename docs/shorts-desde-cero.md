@@ -146,6 +146,30 @@ Tras añadir una composición hay que regenerar el manifest o `npm test` falla:
 npm run remotion:capabilities
 ```
 
+## 4. Metadata de publicación
+
+```bash
+npm run shorts:publishing -- --slug mi-short
+```
+
+Escribe `publishing-metadata.json` en el proyecto con el contrato de `AGENTS.md`:
+`summary.short`, `summary.medium`, `summary.youtube_description`, 10 títulos por
+plataforma, exactamente 14 hashtags en una sola línea, `timestamps` (el primero
+`00:00`) y `platform_posts` para `youtube`, `youtube_shorts`, `instagram`, `tiktok`
+y `x`. Reutiliza `generatePublishingMetadata` y `buildClipPublishing` de
+`src/lib/publishing.js`, así que con MiniMax configurado los títulos y hashtags los
+decide el LLM y sin él se derivan del texto con fallback local y un `warning` en el
+JSON.
+
+La transcripción que describe es la del short **montado**, no la de los clips
+crudos: cada escena aporta solo las palabras dentro de su recorte y los tiempos se
+rebasan al reloj del short. En `harness-vs-modelo` eso son casi 6 s de silencio que
+no existen en el resultado, y el clip 02 partido en dos escenas, cuyas palabras no
+deben contarse dos veces.
+
+Opciones: `--no-llm` fuerza el fallback local; `--out` deja además una copia en
+`data/output/shorts-<slug>/` junto al MP4; `--out <carpeta>` la deja donde se pida.
+
 ## Zona segura
 
 La interfaz de Shorts y Reels dibuja título, avatar y botones en la franja
