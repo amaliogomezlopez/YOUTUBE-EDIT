@@ -198,7 +198,7 @@ Por CLI:
 npm run process -- --video "D:\videos\directo.mp4" --stt-provider faster-whisper --stt-model large-v3-turbo --stt-prompt "Kimi K3, GPT-5, Claude Opus" --subtitle-mode progressive --subtitle-preset progressive-punchy --top 5 --no-llm
 ```
 
-En Windows, `--stt-device cuda --stt-compute-type float16` requiere CUDA 12/cuBLAS y cuDNN 9 compatibles con CTranslate2. Se puede usar el fallback completamente local `--stt-device cpu --stt-compute-type int8` mientras se prepara ese runtime.
+En Windows, `--stt-device cuda --stt-compute-type float16` requiere CUDA 12/cuBLAS y cuDNN 9 compatibles con CTranslate2. `npm run stt:setup` instala Faster-Whisper y ese runtime CUDA automáticamente. Se puede usar el fallback completamente local `--stt-device cpu --stt-compute-type int8` solo mientras se prepara o repara ese runtime.
 
 El modo progresivo conserva timestamps por palabra, construye bloques acumulativos y genera `captions.ass` más `caption-plan.json` junto a cada Short. Copia fuentes TTF/OTF con licencia adecuada en `data/fonts` y selecciona su nombre de familia en la UI.
 

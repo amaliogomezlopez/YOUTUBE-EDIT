@@ -1,0 +1,43 @@
+{
+  "ruleId": "SH-R-041",
+  "statement": "Un cue brand en layout full usa el slot overlay-top para no cubrir la cara.",
+  "check": "shorts-full-brand-top",
+  "expect": "fail",
+  "note": "Montaje mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "format": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-000",
+        "clipId": "01",
+        "layout": "full",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 240,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 4,
+        "speechLeadSeconds": 0.2,
+        "speechTailSeconds": 0.2,
+        "cues": [
+          {
+            "id": "marca-central",
+            "type": "brand",
+            "slot": "stage-full",
+            "sound": {
+              "family": "chime",
+              "file": "sounds/shorts/chime-01.wav"
+            }
+          }
+        ],
+        "captionPages": []
+      }
+    ],
+    "soundCues": [],
+    "duckWindows": []
+  }
+}

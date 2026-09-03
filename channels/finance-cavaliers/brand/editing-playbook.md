@@ -19,7 +19,7 @@ Este contrato convierte la locución en decisiones visuales reutilizables. Cada 
 | `catalog` | Regla universal del catálogo: aplica a cualquier canal. |
 | `channel` | Regla de marca de Finance Cavaliers. |
 
-Reglas: **74** · con validador automático: **57** · marcadas `manual`: **17** · sin implementar: **0**.
+Reglas: **75** · con validador automático: **58** · marcadas `manual`: **17** · sin implementar: **0**.
 
 Una regla `channel` aplicada en dos canales asciende a `catalog` y se documenta en capabilities.manifest.json (ANM-I06).
 
@@ -366,6 +366,14 @@ El montaje largo se revisa en bloques de aproximadamente un minuto que empiezan 
 Cada entrega incluye render-props, manifiesto, audio recortado, cinco stills de QA y un MP4 independiente.
 
 **Validador:** `delivery-completeness` · parámetros: `{"files":["render-props.json","manifest.json","audio.m4a","block.mp4"],"minStills":5}`
+
+### FC-R-113 · `error` · `channel`
+
+Cada bloque termina y empieza en una frontera segura de palabra: ningún límite de bloque puede caer entre el inicio y el final de una palabra de la transcripción; se permite una pausa real posterior a la última palabra.
+
+**Por qué:** Una frontera dentro de una palabra corta el fonema y produce una interrupción audible al concatenar los bloques aprobados.
+
+**Validador:** `block-boundary-word-safe`
 
 ## 12. Assets remotos
 

@@ -1,0 +1,603 @@
+{
+  "clipId": "04",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 10.4,
+      "text": "De momento parece que solo está accesible vía API. Pásate por el canal de YouTube de Amaliometría donde lo voy a probar a fondo y vamos a ver hasta dónde llega. Esto es Amaliometría, sígueme para no perderte nada.",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.14,
+          "text": "De",
+          "confidence": 0.96924
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.14,
+          "end": 0.4,
+          "text": "momento",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.4,
+          "end": 0.7,
+          "text": "parece",
+          "confidence": 0.80518
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 0.7,
+          "end": 0.9,
+          "text": "que",
+          "confidence": 0.98828
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 0.9,
+          "end": 1.1,
+          "text": "solo",
+          "confidence": 0.76025
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 1.1,
+          "end": 1.3,
+          "text": "está",
+          "confidence": 0.94141
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 1.3,
+          "end": 1.8,
+          "text": "accesible",
+          "confidence": 0.9895
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 1.8,
+          "end": 2.06,
+          "text": "vía",
+          "confidence": 0.93555
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.06,
+          "end": 2.26,
+          "text": "API.",
+          "confidence": 0.88184
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 2.54,
+          "end": 2.94,
+          "text": "Pásate",
+          "confidence": 0.99723
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 2.94,
+          "end": 3.08,
+          "text": "por",
+          "confidence": 0.9917
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 3.08,
+          "end": 3.2,
+          "text": "el",
+          "confidence": 0.9751
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 3.2,
+          "end": 3.4,
+          "text": "canal",
+          "confidence": 0.96826
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 3.4,
+          "end": 3.54,
+          "text": "de",
+          "confidence": 0.98975
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 3.54,
+          "end": 3.76,
+          "text": "YouTube",
+          "confidence": 0.56494
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 3.76,
+          "end": 3.94,
+          "text": "de",
+          "confidence": 0.979
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 3.94,
+          "end": 4.46,
+          "text": "Amaliometría",
+          "confidence": 0.89551
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 4.46,
+          "end": 4.76,
+          "text": "donde",
+          "confidence": 0.64697
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 4.76,
+          "end": 4.96,
+          "text": "lo",
+          "confidence": 0.97949
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 4.96,
+          "end": 5.1,
+          "text": "voy",
+          "confidence": 0.98389
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 5.1,
+          "end": 5.16,
+          "text": "a",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 5.16,
+          "end": 5.48,
+          "text": "probar",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 5.48,
+          "end": 5.54,
+          "text": "a",
+          "confidence": 0.98047
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 5.54,
+          "end": 5.82,
+          "text": "fondo",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 5.82,
+          "end": 6.06,
+          "text": "y",
+          "confidence": 0.95459
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 6.06,
+          "end": 6.24,
+          "text": "vamos",
+          "confidence": 0.9751
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 6.24,
+          "end": 6.4,
+          "text": "a",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 6.4,
+          "end": 6.58,
+          "text": "ver",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 6.58,
+          "end": 6.96,
+          "text": "hasta",
+          "confidence": 0.9917
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 6.96,
+          "end": 7.2,
+          "text": "dónde",
+          "confidence": 0.71924
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 7.2,
+          "end": 7.52,
+          "text": "llega.",
+          "confidence": 0.9873
+        },
+        {
+          "id": "seg-1-word-32",
+          "start": 7.84,
+          "end": 8.04,
+          "text": "Esto",
+          "confidence": 0.93115
+        },
+        {
+          "id": "seg-1-word-33",
+          "start": 8.04,
+          "end": 8.12,
+          "text": "es",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-34",
+          "start": 8.12,
+          "end": 8.66,
+          "text": "Amaliometría,",
+          "confidence": 0.99634
+        },
+        {
+          "id": "seg-1-word-35",
+          "start": 8.84,
+          "end": 9.32,
+          "text": "sígueme",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-36",
+          "start": 9.32,
+          "end": 9.72,
+          "text": "para",
+          "confidence": 0.98877
+        },
+        {
+          "id": "seg-1-word-37",
+          "start": 9.72,
+          "end": 9.86,
+          "text": "no",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-38",
+          "start": 9.86,
+          "end": 10.2,
+          "text": "perderte",
+          "confidence": 0.99976
+        },
+        {
+          "id": "seg-1-word-39",
+          "start": 10.2,
+          "end": 10.4,
+          "text": "nada.",
+          "confidence": 0.99902
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "De",
+      "start": 0,
+      "end": 0.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "momento",
+      "start": 0.14,
+      "end": 0.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "parece",
+      "start": 0.4,
+      "end": 0.7,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "que",
+      "start": 0.7,
+      "end": 0.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "solo",
+      "start": 0.9,
+      "end": 1.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "está",
+      "start": 1.1,
+      "end": 1.3,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "accesible",
+      "start": 1.3,
+      "end": 1.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "vía",
+      "start": 1.8,
+      "end": 2.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "API.",
+      "start": 2.06,
+      "end": 2.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "Pásate",
+      "start": 2.54,
+      "end": 2.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "por",
+      "start": 2.94,
+      "end": 3.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "el",
+      "start": 3.08,
+      "end": 3.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "canal",
+      "start": 3.2,
+      "end": 3.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "de",
+      "start": 3.4,
+      "end": 3.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "YouTube",
+      "start": 3.54,
+      "end": 3.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "de",
+      "start": 3.76,
+      "end": 3.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "Amaliometría",
+      "start": 3.94,
+      "end": 4.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "donde",
+      "start": 4.46,
+      "end": 4.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "lo",
+      "start": 4.76,
+      "end": 4.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "voy",
+      "start": 4.96,
+      "end": 5.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "a",
+      "start": 5.1,
+      "end": 5.16,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "probar",
+      "start": 5.16,
+      "end": 5.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "a",
+      "start": 5.48,
+      "end": 5.54,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "fondo",
+      "start": 5.54,
+      "end": 5.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "y",
+      "start": 5.82,
+      "end": 6.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "vamos",
+      "start": 6.06,
+      "end": 6.24,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "a",
+      "start": 6.24,
+      "end": 6.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "ver",
+      "start": 6.4,
+      "end": 6.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "hasta",
+      "start": 6.58,
+      "end": 6.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "dónde",
+      "start": 6.96,
+      "end": 7.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "llega.",
+      "start": 7.2,
+      "end": 7.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "Esto",
+      "start": 7.84,
+      "end": 8.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "es",
+      "start": 8.04,
+      "end": 8.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "Amaliometría,",
+      "start": 8.12,
+      "end": 8.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "sígueme",
+      "start": 8.84,
+      "end": 9.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": "para",
+      "start": 9.32,
+      "end": 9.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "no",
+      "start": 9.72,
+      "end": 9.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 37,
+      "text": "perderte",
+      "start": 9.86,
+      "end": 10.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 38,
+      "text": "nada.",
+      "start": 10.2,
+      "end": 10.4,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

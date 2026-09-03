@@ -9,20 +9,24 @@
   "footerHeight": 96,
   "podiumGap": 22,
   "podiumVerdictHeight": 70,
-  "captionBottom": {"full": 1560, "split": 1742, "stage": 1742},
-  "captionHeight": {"full": 430, "split": 250, "stage": 250},
+  "captionBottom": {"full": 1560, "split": 1742, "stage": 1742, "pip": 1742, "fit": 1742},
+  "captionHeight": {"full": 430, "split": 250, "stage": 250, "pip": 250, "fit": 250},
   "clip": {
     "full": {"left": 0, "top": 0, "width": 1080, "height": 1920, "radius": 0},
     "split": {"left": 0, "top": 0, "width": 1080, "height": 960, "radius": 0},
-    "stage": {"left": 64, "top": 108, "width": 392, "height": 392, "radius": 30}
+    "stage": {"left": 32, "top": 64, "width": 448, "height": 448, "radius": 30},
+    "pip": {"left": 0, "top": 0, "width": 1080, "height": 1920, "radius": 0},
+    "fit": {"left": 0, "top": 0, "width": 1080, "height": 1920, "radius": 0}
   },
   "stage": {
     "full": {"left": 64, "top": 988, "width": 952, "height": 540},
     "split": {"left": 64, "top": 988, "width": 952, "height": 540},
-    "stage": {"left": 64, "top": 552, "width": 952, "height": 940}
+    "stage": {"left": 64, "top": 552, "width": 952, "height": 940},
+    "pip": {"left": 64, "top": 988, "width": 952, "height": 540},
+    "fit": {"left": 64, "top": 988, "width": 952, "height": 540}
   },
   "overlay": {
-    "overlay-top": {"top": 96, "height": 320},
+    "overlay-top": {"top": 96, "height": 220},
     "overlay-center": {"top": 700, "height": 420}
   }
 }

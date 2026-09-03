@@ -1,7 +1,7 @@
 import {MotionTheme} from "../motion/DesignSystem";
 import geometry from "./geometry.json";
 
-export type ShortLayoutId = "full" | "split" | "stage";
+export type ShortLayoutId = "full" | "split" | "stage" | "pip" | "fit";
 
 /**
  * Geometria del short 9:16.
@@ -26,11 +26,21 @@ export const SHORT_LAYOUT = geometry;
  * `full` es el clip a sangre para hooks y remates. `split` es el reparto por
  * defecto: cara arriba, escenario debajo. `stage` invierte la jerarquia y reduce
  * la cara a una tarjeta, y es el unico layout en el que cabe una captura de texto
- * densa a tamano legible.
+ * densa a tamano legible. `pip` y `fit` ocupan el frame entero: su composicion
+ * (fondo desenfocado, pantalla, tarjeta de cara) la dibuja `PipStage` con los
+ * rectangulos precalculados del build, no este rect.
  */
 export const clipRect = (layout: ShortLayoutId) => geometry.clip[layout] ?? geometry.clip.split;
 
-/** Zona de imagenes y rotulos por layout. */
+/**
+ * Zona de imagenes y rotulos por layout.
+ *
+ * En `pip` y `fit` la zona de cues es la misma que en `full` (decision
+ * deliberada): la cara del pip vive en la banda superior y la pantalla es
+ * contenido de fondo, asi que la franja 988-1528 queda libre de interfaz y es
+ * donde una captura o un logo se leen sin tapar al sujeto. El planificador debe
+ * evitar `overlay-top` en pip: esa banda la ocupa la tarjeta de la cara.
+ */
 export const stageRect = (layout: ShortLayoutId) => geometry.stage[layout] ?? geometry.stage.split;
 
 export type ShortSlot =

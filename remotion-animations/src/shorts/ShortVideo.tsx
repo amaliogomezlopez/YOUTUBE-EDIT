@@ -1,3 +1,4 @@
+import {Audio} from "@remotion/media";
 import {
   AbsoluteFill,
   CalculateMetadataFunction,
@@ -12,11 +13,12 @@ import {
 } from "remotion";
 import {getMotionTheme} from "../motion/DesignSystem";
 import {MOTION_FONT_FAMILY} from "../motion/fonts";
-import {Soundtrack} from "../motion/SoundDesign";
+import {Soundtrack, duckGainAt} from "../motion/SoundDesign";
 import {clamp, rgba} from "../motion/Toolkit";
 import {CaptionTrack} from "./CaptionTrack";
 import {ClipStage} from "./ClipStage";
 import {CueLayer} from "./CueLayer";
+import {PipStage} from "./PipStage";
 import {SHORT_LAYOUT, clipRect} from "./layout";
 import {ShortScene, ShortVideoProps} from "./schemas";
 
@@ -33,6 +35,14 @@ export const ShortVideo: React.FC<ShortVideoProps> = (props) => {
   const danger = props.dangerColor ?? theme.danger;
   const palette = {theme, accent, danger};
   const uppercase = props.captionStyle?.uppercase ?? true;
+  const captionMode = props.captionStyle?.mode ?? "karaoke";
+  const {fps} = useVideoConfig();
+  const music = props.music;
+  // La cama baja con la locucion usando su propio duckGainDb (las ventanas
+  // traen el gainDb de los efectos, que no es el de la musica).
+  const musicDuckWindows = music
+    ? props.duckWindows.map((window) => ({...window, gainDb: music.duckGainDb ?? window.gainDb}))
+    : [];
 
   return (
     <AbsoluteFill style={{background: theme.background}}>
@@ -57,7 +67,7 @@ export const ShortVideo: React.FC<ShortVideoProps> = (props) => {
           key={scene.id}
           name={`${scene.id} (${scene.layout})`}
         >
-          <SceneBlock palette={palette} scene={scene} uppercase={uppercase} volume={props.clipVolume} />
+          <SceneBlock captionMode={captionMode} palette={palette} scene={scene} uppercase={uppercase} volume={props.clipVolume} />
         </Sequence>
       ))}
 
@@ -67,6 +77,16 @@ export const ShortVideo: React.FC<ShortVideoProps> = (props) => {
         enabled={props.soundEnabled}
         masterVolume={props.soundMix}
       />
+
+      {music ? (
+        <Audio
+          loop
+          src={staticFile(music.file)}
+          volume={(audioFrame) =>
+            music.volume * duckGainAt(audioFrame / fps, musicDuckWindows, 0.06, 0.18)
+          }
+        />
+      ) : null}
     </AbsoluteFill>
   );
 };
@@ -75,8 +95,9 @@ const SceneBlock: React.FC<{
   scene: ShortScene;
   palette: {theme: ReturnType<typeof getMotionTheme>; accent: string; danger: string};
   uppercase: boolean;
+  captionMode: "karaoke" | "progressive";
   volume: number;
-}> = ({scene, palette, uppercase, volume}) => {
+}> = ({scene, palette, uppercase, captionMode, volume}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const transition = transitionStyle(scene.transitionIn, frame, fps);
@@ -84,20 +105,25 @@ const SceneBlock: React.FC<{
 
   return (
     <AbsoluteFill style={transition}>
-      <ClipStage
-        height={clip.height}
-        left={clip.left}
-        radius={clip.radius}
-        scene={scene}
-        top={clip.top}
-        volume={volume}
-        width={clip.width}
-      />
+      {scene.layout === "pip" || scene.layout === "fit" ? (
+        <PipStage scene={scene} volume={volume} />
+      ) : (
+        <ClipStage
+          height={clip.height}
+          left={clip.left}
+          radius={clip.radius}
+          scene={scene}
+          top={clip.top}
+          volume={volume}
+          width={clip.width}
+        />
+      )}
 
       {/* Degradado inferior: separa el video del escenario y sostiene el subtitulo
           sobre cualquier fondo del clip. En `stage` la cara es una tarjeta suelta,
-          asi que no hay costura que disimular. */}
-      {scene.layout === "stage" ? null : (
+          asi que no hay costura que disimular; en `pip` la pantalla ocupa la zona
+          baja y el degradado la taparia. */}
+      {scene.layout === "stage" || scene.layout === "pip" ? null : (
         <div
           style={{
             position: "absolute",
@@ -119,6 +145,7 @@ const SceneBlock: React.FC<{
       <CaptionTrack
         accent={palette.accent}
         layout={scene.layout}
+        mode={captionMode}
         pages={scene.captionPages}
         theme={palette.theme}
         uppercase={uppercase}
@@ -129,8 +156,8 @@ const SceneBlock: React.FC<{
 
 /**
  * Rotulo de escena. En `stage` no va arriba a la izquierda: ese hueco lo ocupa la
- * tarjeta de la cara, asi que el rotulo se coloca a su derecha y aprovecha la
- * banda superior, que de otro modo queda vacia.
+ * tarjeta de la cara, asi que el rotulo se coloca debajo de ella, centrado en la
+ * franja que separa la webcam de la captura principal.
  */
 const SceneLabel: React.FC<{label: string; accent: string; layout: ShortScene["layout"]}> = ({
   label,
@@ -146,25 +173,27 @@ const SceneLabel: React.FC<{label: string; accent: string; layout: ShortScene["l
     <div
       style={{
         position: "absolute",
-        left: beside ? clip.left + clip.width + 32 : SHORT_LAYOUT.safeX,
-        top: beside ? clip.top + 26 : SHORT_LAYOUT.safeTop,
+        left: beside ? SHORT_LAYOUT.safeX : SHORT_LAYOUT.safeX,
+        top: beside ? clip.top + clip.height + 18 : SHORT_LAYOUT.safeTop,
         maxWidth: beside
-          ? SHORT_LAYOUT.width - SHORT_LAYOUT.safeX - (clip.left + clip.width + 32)
+          ? SHORT_LAYOUT.width - SHORT_LAYOUT.safeX * 2
           : undefined,
+        width: beside ? SHORT_LAYOUT.width - SHORT_LAYOUT.safeX * 2 : undefined,
         padding: beside ? 0 : "12px 26px",
         borderRadius: beside ? 0 : 999,
         background: beside ? undefined : rgba(accent, 0.2),
         border: beside ? undefined : `2px solid ${rgba(accent, 0.6)}`,
-        borderLeft: beside ? `5px solid ${accent}` : undefined,
-        paddingLeft: beside ? 22 : undefined,
+        borderLeft: undefined,
+        paddingLeft: beside ? 0 : undefined,
         fontFamily: MOTION_FONT_FAMILY,
         fontWeight: 800,
-        fontSize: beside ? 40 : 30,
+        fontSize: beside ? 36 : 30,
         lineHeight: beside ? 1.16 : 1,
         letterSpacing: beside ? 0.6 : 2.2,
         textTransform: "uppercase",
         // El plan puede partir el rotulo con \n para controlar el corte de linea.
         whiteSpace: beside ? "pre-line" : "nowrap",
+        textAlign: beside ? "center" : undefined,
         color: "#FFFFFF",
         opacity: entry,
         transform: `translateY(${interpolate(entry, [0, 1], [-20, 0])}px)`,

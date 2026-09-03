@@ -37,7 +37,7 @@
     "intro:playbook:check": "node scripts/intro-playbook.js --check",
     "scout:animations": "node scripts/animation-scout.js",
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",
-    "stt:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-faster-whisper.ps1",
+    "stt:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File setup-faster-whisper-gpu.ps1",
     "server": "node src/server.js",
     "test": "node --test tests/*.test.js",
     "smoke": "node tests/smoke-e2e.js",

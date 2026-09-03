@@ -1,0 +1,573 @@
+{
+  "clipId": "02",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 13.44,
+      "text": "Mucho, pero mucho ojito porque en las métricas y evaluaciones es mejor que GLM 5.2 y en Artificial Analysis aparece con la misma inteligencia un salto de 10 puntos hasta 50 que Gemini 3.6 Flash",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.58,
+          "text": "Mucho,",
+          "confidence": 0.9646
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.62,
+          "end": 0.7,
+          "text": "pero",
+          "confidence": 0.98438
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.7,
+          "end": 1,
+          "text": "mucho",
+          "confidence": 0.99121
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 1,
+          "end": 1.36,
+          "text": "ojito",
+          "confidence": 0.93262
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 1.36,
+          "end": 1.64,
+          "text": "porque",
+          "confidence": 0.60107
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 1.64,
+          "end": 1.78,
+          "text": "en",
+          "confidence": 0.98584
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 1.78,
+          "end": 1.94,
+          "text": "las",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 1.94,
+          "end": 2.44,
+          "text": "métricas",
+          "confidence": 0.98958
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 2.44,
+          "end": 2.5,
+          "text": "y",
+          "confidence": 0.98438
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 2.5,
+          "end": 3.1,
+          "text": "evaluaciones",
+          "confidence": 0.99756
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 3.1,
+          "end": 3.56,
+          "text": "es",
+          "confidence": 0.93994
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 3.56,
+          "end": 3.9,
+          "text": "mejor",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 3.9,
+          "end": 4.08,
+          "text": "que",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 4.08,
+          "end": 4.62,
+          "text": "GLM",
+          "confidence": 0.97998
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 4.62,
+          "end": 4.92,
+          "text": "5",
+          "confidence": 0.93018
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 4.92,
+          "end": 5.52,
+          "text": ".2",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 5.52,
+          "end": 6,
+          "text": "y",
+          "confidence": 0.96631
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 6,
+          "end": 6.14,
+          "text": "en",
+          "confidence": 0.94873
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 6.14,
+          "end": 6.56,
+          "text": "Artificial",
+          "confidence": 0.97803
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 6.56,
+          "end": 7.06,
+          "text": "Analysis",
+          "confidence": 0.98438
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 7.06,
+          "end": 7.74,
+          "text": "aparece",
+          "confidence": 0.98682
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 7.74,
+          "end": 8.28,
+          "text": "con",
+          "confidence": 0.98291
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 8.28,
+          "end": 8.42,
+          "text": "la",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 8.42,
+          "end": 8.66,
+          "text": "misma",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 8.66,
+          "end": 9.26,
+          "text": "inteligencia",
+          "confidence": 0.99919
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 9.26,
+          "end": 9.4,
+          "text": "un",
+          "confidence": 0.47607
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 9.4,
+          "end": 9.7,
+          "text": "salto",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 9.7,
+          "end": 9.82,
+          "text": "de",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 9.82,
+          "end": 10.12,
+          "text": "10",
+          "confidence": 0.99512
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 10.12,
+          "end": 10.46,
+          "text": "puntos",
+          "confidence": 0.86279
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 10.46,
+          "end": 10.74,
+          "text": "hasta",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-32",
+          "start": 10.74,
+          "end": 11.22,
+          "text": "50",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-33",
+          "start": 11.22,
+          "end": 11.72,
+          "text": "que",
+          "confidence": 0.98779
+        },
+        {
+          "id": "seg-1-word-34",
+          "start": 11.72,
+          "end": 12.1,
+          "text": "Gemini",
+          "confidence": 0.96021
+        },
+        {
+          "id": "seg-1-word-35",
+          "start": 12.1,
+          "end": 12.36,
+          "text": "3",
+          "confidence": 0.99121
+        },
+        {
+          "id": "seg-1-word-36",
+          "start": 12.36,
+          "end": 13.04,
+          "text": ".6",
+          "confidence": 0.99927
+        },
+        {
+          "id": "seg-1-word-37",
+          "start": 13.04,
+          "end": 13.44,
+          "text": "Flash",
+          "confidence": 0.75488
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Mucho,",
+      "start": 0,
+      "end": 0.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "pero",
+      "start": 0.62,
+      "end": 0.7,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "mucho",
+      "start": 0.7,
+      "end": 1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "ojito",
+      "start": 1,
+      "end": 1.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "porque",
+      "start": 1.36,
+      "end": 1.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "en",
+      "start": 1.64,
+      "end": 1.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "las",
+      "start": 1.78,
+      "end": 1.94,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "métricas",
+      "start": 1.94,
+      "end": 2.44,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "y",
+      "start": 2.44,
+      "end": 2.5,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "evaluaciones",
+      "start": 2.5,
+      "end": 3.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "es",
+      "start": 3.1,
+      "end": 3.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "mejor",
+      "start": 3.56,
+      "end": 3.9,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "que",
+      "start": 3.9,
+      "end": 4.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "GLM",
+      "start": 4.08,
+      "end": 4.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "5",
+      "start": 4.62,
+      "end": 4.92,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": ".2",
+      "start": 4.92,
+      "end": 5.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "y",
+      "start": 5.52,
+      "end": 6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "en",
+      "start": 6,
+      "end": 6.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "Artificial",
+      "start": 6.14,
+      "end": 6.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "Analysis",
+      "start": 6.56,
+      "end": 7.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "aparece",
+      "start": 7.06,
+      "end": 7.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "con",
+      "start": 7.74,
+      "end": 8.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "la",
+      "start": 8.28,
+      "end": 8.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "misma",
+      "start": 8.42,
+      "end": 8.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "inteligencia",
+      "start": 8.66,
+      "end": 9.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "un",
+      "start": 9.26,
+      "end": 9.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "salto",
+      "start": 9.4,
+      "end": 9.7,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "de",
+      "start": 9.7,
+      "end": 9.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "10",
+      "start": 9.82,
+      "end": 10.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "puntos",
+      "start": 10.12,
+      "end": 10.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "hasta",
+      "start": 10.46,
+      "end": 10.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "50",
+      "start": 10.74,
+      "end": 11.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "que",
+      "start": 11.22,
+      "end": 11.72,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "Gemini",
+      "start": 11.72,
+      "end": 12.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "3",
+      "start": 12.1,
+      "end": 12.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": ".6",
+      "start": 12.36,
+      "end": 13.04,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "Flash",
+      "start": 13.04,
+      "end": 13.44,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

@@ -1,0 +1,783 @@
+{
+  "clipId": "03",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0,
+      "end": 14.24,
+      "text": "Y espera, que lo más loco es que no le han cambiado ni el tamaño ni la arquitectura, así que si tienes 128 GB de RAM unificada, por ejemplo, en una DGX Spark o en un Mac Studio, lo vas a poder ejecutar en local. Piensa lo que estamos hablando.",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0,
+          "end": 0.1,
+          "text": "Y",
+          "confidence": 0.85303
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 0.1,
+          "end": 0.36,
+          "text": "espera,",
+          "confidence": 0.95996
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 0.46,
+          "end": 0.58,
+          "text": "espera,",
+          "confidence": 0.94238
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 0.72,
+          "end": 0.78,
+          "text": "que",
+          "confidence": 0.99463
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 0.78,
+          "end": 0.96,
+          "text": "lo",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 0.96,
+          "end": 1.18,
+          "text": "más",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 1.18,
+          "end": 1.56,
+          "text": "loco",
+          "confidence": 0.99878
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 1.56,
+          "end": 1.98,
+          "text": "es",
+          "confidence": 0.97754
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 1.98,
+          "end": 2.1,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 2.1,
+          "end": 2.22,
+          "text": "no",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 2.22,
+          "end": 2.32,
+          "text": "le",
+          "confidence": 0.67822
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 2.32,
+          "end": 2.36,
+          "text": "han",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 2.36,
+          "end": 2.76,
+          "text": "cambiado",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 2.76,
+          "end": 3.08,
+          "text": "ni",
+          "confidence": 0.98389
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 3.08,
+          "end": 3.24,
+          "text": "el",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 3.24,
+          "end": 3.68,
+          "text": "tamaño",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 3.68,
+          "end": 4.08,
+          "text": "ni",
+          "confidence": 0.95215
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 4.08,
+          "end": 4.2,
+          "text": "la",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 4.2,
+          "end": 4.76,
+          "text": "arquitectura,",
+          "confidence": 0.99984
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 4.84,
+          "end": 5.06,
+          "text": "así",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-21",
+          "start": 5.06,
+          "end": 5.2,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-22",
+          "start": 5.2,
+          "end": 5.32,
+          "text": "si",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-23",
+          "start": 5.32,
+          "end": 5.6,
+          "text": "tienes",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-24",
+          "start": 5.6,
+          "end": 6.08,
+          "text": "128",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-25",
+          "start": 6.08,
+          "end": 6.58,
+          "text": "GB",
+          "confidence": 0.47656
+        },
+        {
+          "id": "seg-1-word-26",
+          "start": 6.58,
+          "end": 7.1,
+          "text": "de",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-27",
+          "start": 7.1,
+          "end": 7.36,
+          "text": "RAM",
+          "confidence": 0.97852
+        },
+        {
+          "id": "seg-1-word-28",
+          "start": 7.36,
+          "end": 8.08,
+          "text": "unificada,",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-29",
+          "start": 8.2,
+          "end": 8.4,
+          "text": "por",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-30",
+          "start": 8.4,
+          "end": 8.66,
+          "text": "ejemplo,",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-31",
+          "start": 8.76,
+          "end": 8.86,
+          "text": "en",
+          "confidence": 0.97998
+        },
+        {
+          "id": "seg-1-word-32",
+          "start": 8.86,
+          "end": 8.98,
+          "text": "una",
+          "confidence": 0.94434
+        },
+        {
+          "id": "seg-1-word-33",
+          "start": 8.98,
+          "end": 9.42,
+          "text": "DGX",
+          "confidence": 0.87891
+        },
+        {
+          "id": "seg-1-word-34",
+          "start": 9.42,
+          "end": 9.74,
+          "text": "Spark",
+          "confidence": 0.97314
+        },
+        {
+          "id": "seg-1-word-35",
+          "start": 9.74,
+          "end": 10.18,
+          "text": "o",
+          "confidence": 0.96826
+        },
+        {
+          "id": "seg-1-word-36",
+          "start": 10.18,
+          "end": 10.26,
+          "text": "en",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-37",
+          "start": 10.26,
+          "end": 10.38,
+          "text": "un",
+          "confidence": 0.99805
+        },
+        {
+          "id": "seg-1-word-38",
+          "start": 10.38,
+          "end": 10.48,
+          "text": "Mac",
+          "confidence": 0.96826
+        },
+        {
+          "id": "seg-1-word-39",
+          "start": 10.48,
+          "end": 10.8,
+          "text": "Studio,",
+          "confidence": 0.93848
+        },
+        {
+          "id": "seg-1-word-40",
+          "start": 11.04,
+          "end": 11.12,
+          "text": "lo",
+          "confidence": 0.99902
+        },
+        {
+          "id": "seg-1-word-41",
+          "start": 11.12,
+          "end": 11.28,
+          "text": "vas",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-42",
+          "start": 11.28,
+          "end": 11.4,
+          "text": "a",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-43",
+          "start": 11.4,
+          "end": 11.56,
+          "text": "poder",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-44",
+          "start": 11.56,
+          "end": 12.14,
+          "text": "ejecutar",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-45",
+          "start": 12.14,
+          "end": 12.46,
+          "text": "en",
+          "confidence": 0.99854
+        },
+        {
+          "id": "seg-1-word-46",
+          "start": 12.46,
+          "end": 12.8,
+          "text": "local.",
+          "confidence": 0.99707
+        },
+        {
+          "id": "seg-1-word-47",
+          "start": 13.12,
+          "end": 13.46,
+          "text": "Piensa",
+          "confidence": 0.98462
+        },
+        {
+          "id": "seg-1-word-48",
+          "start": 13.46,
+          "end": 13.56,
+          "text": "lo",
+          "confidence": 0.96973
+        },
+        {
+          "id": "seg-1-word-49",
+          "start": 13.56,
+          "end": 13.64,
+          "text": "que",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-50",
+          "start": 13.64,
+          "end": 13.82,
+          "text": "estamos",
+          "confidence": 1
+        },
+        {
+          "id": "seg-1-word-51",
+          "start": 13.82,
+          "end": 14.24,
+          "text": "hablando.",
+          "confidence": 1
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Y",
+      "start": 0,
+      "end": 0.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "espera,",
+      "start": 0.1,
+      "end": 0.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "espera,",
+      "start": 0.46,
+      "end": 0.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "que",
+      "start": 0.72,
+      "end": 0.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "lo",
+      "start": 0.78,
+      "end": 0.96,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "más",
+      "start": 0.96,
+      "end": 1.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "loco",
+      "start": 1.18,
+      "end": 1.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "es",
+      "start": 1.56,
+      "end": 1.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "que",
+      "start": 1.98,
+      "end": 2.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "no",
+      "start": 2.1,
+      "end": 2.22,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "le",
+      "start": 2.22,
+      "end": 2.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "han",
+      "start": 2.32,
+      "end": 2.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "cambiado",
+      "start": 2.36,
+      "end": 2.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "ni",
+      "start": 2.76,
+      "end": 3.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "el",
+      "start": 3.08,
+      "end": 3.24,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "tamaño",
+      "start": 3.24,
+      "end": 3.68,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "ni",
+      "start": 3.68,
+      "end": 4.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "la",
+      "start": 4.08,
+      "end": 4.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "arquitectura,",
+      "start": 4.2,
+      "end": 4.76,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "así",
+      "start": 4.84,
+      "end": 5.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 20,
+      "text": "que",
+      "start": 5.06,
+      "end": 5.2,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 21,
+      "text": "si",
+      "start": 5.2,
+      "end": 5.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 22,
+      "text": "tienes",
+      "start": 5.32,
+      "end": 5.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 23,
+      "text": "128",
+      "start": 5.6,
+      "end": 6.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 24,
+      "text": "GB",
+      "start": 6.08,
+      "end": 6.58,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 25,
+      "text": "de",
+      "start": 6.58,
+      "end": 7.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 26,
+      "text": "RAM",
+      "start": 7.1,
+      "end": 7.36,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 27,
+      "text": "unificada,",
+      "start": 7.36,
+      "end": 8.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 28,
+      "text": "por",
+      "start": 8.2,
+      "end": 8.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 29,
+      "text": "ejemplo,",
+      "start": 8.4,
+      "end": 8.66,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 30,
+      "text": "en",
+      "start": 8.76,
+      "end": 8.86,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 31,
+      "text": "una",
+      "start": 8.86,
+      "end": 8.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 32,
+      "text": "DGX",
+      "start": 8.98,
+      "end": 9.42,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 33,
+      "text": "Spark",
+      "start": 9.42,
+      "end": 9.74,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 34,
+      "text": "o",
+      "start": 9.74,
+      "end": 10.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 35,
+      "text": "en",
+      "start": 10.18,
+      "end": 10.26,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 36,
+      "text": "un",
+      "start": 10.26,
+      "end": 10.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 37,
+      "text": "Mac",
+      "start": 10.38,
+      "end": 10.48,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 38,
+      "text": "Studio,",
+      "start": 10.48,
+      "end": 10.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 39,
+      "text": "lo",
+      "start": 11.04,
+      "end": 11.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 40,
+      "text": "vas",
+      "start": 11.12,
+      "end": 11.28,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 41,
+      "text": "a",
+      "start": 11.28,
+      "end": 11.4,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 42,
+      "text": "poder",
+      "start": 11.4,
+      "end": 11.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 43,
+      "text": "ejecutar",
+      "start": 11.56,
+      "end": 12.14,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 44,
+      "text": "en",
+      "start": 12.14,
+      "end": 12.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 45,
+      "text": "local.",
+      "start": 12.46,
+      "end": 12.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 46,
+      "text": "Piensa",
+      "start": 13.12,
+      "end": 13.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 47,
+      "text": "lo",
+      "start": 13.46,
+      "end": 13.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 48,
+      "text": "que",
+      "start": 13.56,
+      "end": 13.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 49,
+      "text": "estamos",
+      "start": 13.64,
+      "end": 13.82,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 50,
+      "text": "hablando.",
+      "start": 13.82,
+      "end": 14.24,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

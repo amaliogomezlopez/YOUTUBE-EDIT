@@ -17,6 +17,7 @@ Options:
   --min           Minimum clip duration in seconds. Default: 18.
   --max           Maximum clip duration in seconds. Default: 60.
   --render-mode   crop, fit, or pip. Default: pip for horizontal videos, crop for vertical.
+  --render-engine ffmpeg or remotion. Default: ffmpeg.
   --quality       draft, standard, or high. Default: high.
   --subtitle-mode progressive, words, or lines. Default: progressive.
   --subtitle-preset progressive-reference, progressive-punchy, progressive-editorial, progressive-clean, or karaoke-highlight.
@@ -70,6 +71,7 @@ async function main() {
       minDuration: Number(args.min ?? 18),
       maxDuration: Number(args.max ?? 60),
       renderMode: args['render-mode'],
+      renderEngine: args['render-engine'],
       renderQuality: args.quality ?? 'high',
       subtitleMode: args['subtitle-mode'] ?? 'progressive',
       subtitleStyle: {

@@ -142,8 +142,11 @@ function cue(
  * ANM-D09 — Atenuación de la capa de efectos mientras hay locución.
  * `offsetSeconds` traslada la ventana absoluta del episodio al tiempo local de
  * la escena, para que una `Sequence` anidada siga midiendo bien.
+ *
+ * Exportada porque la cama musical de los shorts se atenúa con la misma
+ * mecánica de rampas (ataque 60 ms, salida 180 ms).
  */
-const duckGainAt = (
+export const duckGainAt = (
   seconds: number,
   windows: DuckWindow[],
   attackSeconds: number,
@@ -190,7 +193,12 @@ const CueAudio: React.FC<{
     1,
     Math.round((soundCue.releaseSeconds ?? 0.12) * fps),
   );
-  const releaseStart = Math.max(attackFrames, cueFrames - releaseFrames);
+  // A cue that reaches the end of a very short scene can be truncated to one
+  // or two frames. Keep the release range strictly increasing in that case;
+  // Remotion rejects an interpolation such as [1, 1].
+  const releaseStart = cueFrames <= 1
+    ? 0
+    : Math.min(Math.max(0, cueFrames - 2), Math.max(0, cueFrames - releaseFrames));
 
   return (
     <Sequence
@@ -211,15 +219,17 @@ const CueAudio: React.FC<{
               easing: Easing.out(Easing.cubic),
             },
           );
-          const release = interpolate(
-            audioFrame,
-            [releaseStart, cueFrames - 1],
-            [1, 0],
-            {
-              ...clamp,
-              easing: Easing.in(Easing.cubic),
-            },
-          );
+          const release = cueFrames <= 1
+            ? 1
+            : interpolate(
+                audioFrame,
+                [releaseStart, cueFrames - 1],
+                [1, 0],
+                {
+                  ...clamp,
+                  easing: Easing.in(Easing.cubic),
+                },
+              );
           const absoluteSeconds =
             duckOffsetSeconds + soundCue.startSeconds + audioFrame / fps;
           const duck = duckWindows.length

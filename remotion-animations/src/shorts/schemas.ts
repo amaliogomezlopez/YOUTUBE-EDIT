@@ -22,6 +22,9 @@ export const shortCueSchema = z.object({
    * negro solido: es lo que necesita un wordmark exportado en JPG sin alfa.
    */
   presentation: z.enum(["card", "plate", "plain", "blend"]).default("card"),
+  decoration: z.enum(["none", "frame", "blend"]).nullable().optional(),
+  displayScale: z.number().optional(),
+  offsetY: z.number().optional(),
   text: z.string().nullable().optional(),
   note: z.string().nullable().optional(),
   tone: z.enum(["neutral", "accent", "warning", "danger", "positive"]).default("neutral"),
@@ -37,9 +40,22 @@ export const captionWordSchema = z.object({
   toFrame: z.number(),
 });
 
+const rectSchema = z.object({
+  left: z.number(),
+  top: z.number(),
+  width: z.number(),
+  height: z.number(),
+});
+
 export const captionPageSchema = z.object({
   fromFrame: z.number(),
   durationInFrames: z.number(),
+  /**
+   * Indice de la palabra hero dentro de `words` en modo `progressive`
+   * (lead/hero/tail apilados). Ausente o -1 cuando la pagina no tiene hero:
+   * opcional para que los builds karaoke ya compilados sigan validando.
+   */
+  heroIndex: z.number().optional(),
   words: z.array(captionWordSchema),
 });
 
@@ -52,14 +68,49 @@ export const shortSceneSchema = z.object({
   trimStartSeconds: z.number(),
   trimEndSeconds: z.number().optional(),
   silenceTrimmedSeconds: z.number().optional(),
-  layout: z.enum(["full", "split", "stage"]),
+  layout: z.enum(["full", "split", "stage", "pip", "fit"]),
   camera: z.enum(["static", "punch-in", "push-out", "drift-left", "drift-right"]),
   cameraIntensity: z.number().default(1),
   focus: shortFocusSchema,
+  /**
+   * Muestras del punto focal a lo largo del clip ({t en segundos dentro del
+   * clip, x/y normalizados}). El build lo emite cuando el plan no fija `focus`:
+   * ClipStage interpola el encuadre en vez de quedarse estatico.
+   */
+  focusTrack: z
+    .array(z.object({t: z.number(), x: z.number(), y: z.number()}))
+    .nullable()
+    .optional(),
+  /** Caja de la webcam en pixeles fuente; exigida por el layout `pip`. */
+  webcamBox: z
+    .object({x: z.number(), y: z.number(), w: z.number(), h: z.number()})
+    .nullable()
+    .optional(),
   transitionIn: z.enum(["cut", "fade", "whip", "slide-up", "zoom-blur"]),
   label: z.string().nullable().optional(),
   cues: z.array(shortCueSchema),
   captionPages: z.array(captionPageSchema),
+  /** Rectangulos precalculados del layout `pip` (src/modules/shorts-studio/pip-layout.js). */
+  pip: z
+    .object({
+      camCard: rectSchema,
+      camCrop: z.object({
+        scale: z.number(),
+        offsetX: z.number(),
+        offsetY: z.number(),
+        videoWidth: z.number(),
+        videoHeight: z.number(),
+      }),
+      screen: rectSchema,
+      mask: rectSchema,
+    })
+    .nullable()
+    .optional(),
+  /** Rectangulos precalculados del layout `fit`. */
+  fit: z
+    .object({screen: rectSchema})
+    .nullable()
+    .optional(),
 });
 
 export const soundCueSchema = z.object({
@@ -85,6 +136,12 @@ export const shortVideoSchema = z.object({
     .object({
       position: z.enum(["auto", "lower", "center"]).optional(),
       uppercase: z.boolean().optional(),
+      /**
+       * `karaoke` ilumina la palabra que suena dentro de la pagina visible;
+       * `progressive` oculta las futuras y apila lead/hero/tail cuando la
+       * pagina trae `heroIndex`.
+       */
+      mode: z.enum(["karaoke", "progressive"]).optional(),
     })
     .default({}),
   soundEnabled: z.boolean().default(true),
@@ -92,6 +149,18 @@ export const shortVideoSchema = z.object({
   clipVolume: z.number().default(1),
   scenes: z.array(shortSceneSchema),
   soundCues: z.array(soundCueSchema),
+  /**
+   * Cama musical opcional: suena en bucle todo el short y baja a
+   * `volume * duckGainDb` mientras hay locucion (mismas rampas que Soundtrack).
+   */
+  music: z
+    .object({
+      file: z.string(),
+      volume: z.number(),
+      duckGainDb: z.number().optional(),
+    })
+    .nullable()
+    .optional(),
   /** Tramos con locucion: los efectos bajan de nivel mientras se habla. */
   duckWindows: z
     .array(

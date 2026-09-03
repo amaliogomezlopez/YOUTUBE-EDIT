@@ -1,0 +1,43 @@
+{
+  "ruleId": "SH-R-031",
+  "statement": "Los subtitulos fusionan nombres de modelo y versiones decimales; no dejan fragmentos como .2 ni separan GLM de 5.2.",
+  "check": "shorts-caption-compound-together",
+  "expect": "fail",
+  "note": "Montaje mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "format": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-000",
+        "clipId": "01",
+        "layout": "split",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 240,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 4,
+        "speechLeadSeconds": 0.2,
+        "speechTailSeconds": 0.2,
+        "cues": [],
+        "captionPages": [
+          {
+            "fromFrame": 0,
+            "durationInFrames": 120,
+            "words": [
+              {"text": "GLM", "fromFrame": 0, "toFrame": 30},
+              {"text": "5", "fromFrame": 30, "toFrame": 60},
+              {"text": ".2", "fromFrame": 60, "toFrame": 90}
+            ]
+          }
+        ]
+      }
+    ],
+    "soundCues": [],
+    "duckWindows": []
+  }
+}

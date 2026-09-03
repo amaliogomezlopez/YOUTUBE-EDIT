@@ -74,6 +74,11 @@ Por cada clip: remuxea a MP4 (Chrome no decodifica Matroska), normaliza el audio
 −14 LUFS con techo en −1.5 dBTP, detecta la cara con YuNet para obtener el punto
 focal del recorte vertical, y transcribe con Faster-Whisper local.
 
+La detección de cara guarda además `focusTrack`: un punto focal por muestra
+temporal. Si la escena no fija `focus` en el plan, `ClipStage` interpola ese track
+frame a frame y el encuadre **sigue al sujeto** en vez de quedarse en un punto
+fijo.
+
 Las transcripciones se reutilizan entre ejecuciones porque son la parte caras del
 proceso; `--retranscribe` fuerza a rehacerlas. Otras opciones: `--assets <carpeta>`
 si las imágenes no están en una subcarpeta `ASSETS`, `--no-face`, `--no-transcribe`
@@ -126,6 +131,14 @@ Reglas del formato:
   `holdSeconds`.
 - El texto en pantalla debe **añadir** información. Un chip que repite la locución
   palabra por palabra sobra: lo dice ya el subtítulo.
+- **Los subtítulos tienen dos modos.** `captions: {"mode": "karaoke"}` (por
+  defecto) mantiene la página entera visible e ilumina la palabra que suena.
+  `captions: {"mode": "progressive"}` revela las palabras al sonar y compone la
+  palabra más pesada de cada página en su propia línea, en mayúsculas y ~1.5×
+  (portado del planner progresivo del pipeline de video largo).
+- **Cama musical opcional.** `sound: {"music": {"assetId": "mi-pista", "volume":
+  0.35, "duckGainDb": -10}}` (o `"assetId": "music"` para la pista ingerida con
+  `--music`). Suena en bucle y cede durante las ventanas de locución.
 
 ### Layouts
 
@@ -137,6 +150,13 @@ Reglas del formato:
   denso se lee.** Si una escena empieza con la cara y luego necesita mostrar una
   captura, se parte en dos escenas con el mismo `clipId` y trims contiguos: el
   audio sigue siendo continuo y el layout cambia.
+- `pip`: réplica del montaje webcam + pantalla del pipeline de video largo. Fondo
+  con el propio clip desenfocado y oscurecido, la pantalla a 1600 px con la webcam
+  incrustada enmascarada, y la cara recortada en una tarjeta con borde negro
+  arriba. Exige `webcamBox` (en la escena o en el clip del manifest) y la cámara
+  queda fija en `static`.
+- `fit`: para clips horizontales sin webcam: fondo desenfocado + el clip entero a
+  1080 px de ancho centrado. Sin requisitos.
 
 ### Slots
 
@@ -179,8 +199,10 @@ npm run shorts:render -- --slug mi-short
 
 Delega en `remotion-animations/scripts/render-safe.mjs`, así que cada render reserva
 su propio directorio de ejecución en `remotion-animations/out/shorts-<slug>/runs/` con
-su manifiesto. Cualquier opción extra (`--frames`, `--scale`, `--concurrency`) viaja
-tal cual a Remotion. Para revisar en el estudio antes de renderizar:
+su manifiesto. Por defecto codifica H.264 con CRF 17 (el estándar del pipeline de
+video largo); se puede pisar con `--crf` o la variable `REMOTION_CRF`. Cualquier
+opción extra (`--frames`, `--scale`, `--concurrency`) viaja tal cual a Remotion.
+Para revisar en el estudio antes de renderizar:
 
 ```bash
 npm run remotion:studio
@@ -192,6 +214,46 @@ Tras añadir o quitar composiciones hay que regenerar el manifest de capacidades
 ```bash
 npm run remotion:capabilities
 ```
+
+## Shorts desde video largo con este renderer
+
+El pipeline de extracción (`npm run process`) puede renderizar los cortes
+seleccionados con este mismo motor en vez del filtergraph ffmpeg de
+`src/lib/ffmpeg.js`:
+
+```bash
+npm run process -- --video "D:\videos\directo.mp4" --transcript "D:\videos\directo.srt" \
+  --top 5 --render-engine remotion
+```
+
+Con `--render-engine remotion`, cada candidato pasa por
+`src/modules/shorts-studio/from-long-video.js`: corta el segmento con loudnorm,
+rebaja la transcripción al reloj del corte, genera `manifest.json` +
+`short-plan.json` (una escena), compila con `shorts:build` y renderiza con
+`render-safe.mjs`. El MP4 termina en `data/output/<job>/<clip>/short.mp4`, como
+siempre, y la metadata del clip declara `renderSettings.engine: "remotion"` y el
+`slug` del proyecto generado (`short-<job>-<clip>`), editable y re-renderizable
+como cualquier otro proyecto de este flujo. El modo de subtítulos es
+`progressive`.
+
+El layout se clasifica **por segmento**, no por job: los videos reales mezclan
+cara a pantalla completa y grabación de pantalla con webcam en una esquina, y el
+mismo renderMode no sirve para las dos. Sin `--render-mode` explícito, cada
+candidato se resuelve así:
+
+1. Fuente vertical → `crop` (layout `full` con `focusTrack`).
+2. Fuente horizontal con webcam en esquina detectada **dentro de la ventana del
+   candidato** (`detectWebcamBox` con `window`) → `pip` con ese `webcamBox`.
+3. Si no, cara a pantalla completa sobre el clip cortado (`trackFace`) → `crop`.
+4. Si tampoco → `fit` (fondo blur + centrado).
+
+Con `--render-mode` explícito se fuerza el modo para todos los cortes (y en
+`pip` se usa el `webcamBox` de nivel job, detectado como siempre). En la rama
+Remotion sin modo explícito la detección de webcam de nivel job no se ejecuta:
+la clasificación la hace cada segmento.
+
+El default sigue siendo `ffmpeg`, y los re-renders editoriales (`rerenderClip`,
+la UI) también usan ffmpeg de momento.
 
 ## 4. Metadata de publicación
 

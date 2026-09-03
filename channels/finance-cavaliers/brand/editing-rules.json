@@ -882,6 +882,20 @@
         "recordedAt": "2026-07-30T15:28:03Z"
       },
       "fixture": "tests/fixtures/editing-rules/FC-R-092.json"
+    },
+    {
+      "id": "FC-R-113",
+      "section": "approval-blocks",
+      "statement": "Cada bloque termina y empieza en una frontera segura de palabra: ningún límite de bloque puede caer entre el inicio y el final de una palabra de la transcripción; se permite una pausa real posterior a la última palabra.",
+      "rationale": "Una frontera dentro de una palabra corta el fonema y produce una interrupción audible al concatenar los bloques aprobados.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "block-boundary-word-safe",
+      "origin": {
+        "feedback": "Los bloques de aproximadamente un minuto nunca deben cortar la locución en mitad de una palabra; la frontera debe caer después del final de una palabra o en una pausa real para evitar microinterrupciones al unirlos.",
+        "recordedAt": "2026-07-30T20:14:20Z"
+      },
+      "fixture": "tests/fixtures/editing-rules/FC-R-113.json"
     }
   ]
 }

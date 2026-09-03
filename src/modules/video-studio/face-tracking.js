@@ -21,10 +21,12 @@ export async function trackFace(videoFile, media, options = {}) {
   const workspace = path.join(TMP_DIR, 'video-studio-face', `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`);
   await ensureDir(workspace);
   const frames = [];
+  const sampleTimes = [];
   try {
     for (let index = 0; index < samples; index += 1) {
       options.signal?.throwIfAborted();
       const at = samples === 1 ? start : start + ((end - start) * index) / (samples - 1);
+      sampleTimes.push(round(at, 3));
       const frameFile = path.join(workspace, `frame-${index}.ppm`);
       await run('ffmpeg', [
         '-y',
@@ -48,7 +50,7 @@ export async function trackFace(videoFile, media, options = {}) {
     await rm(workspace, {recursive: true, force: true});
   }
 
-  const tracked = selectTrackedFace(frames, {trackIou: 0.15});
+  const tracked = selectTrackedFace(frames, {trackIou: 0.15, withFaces: true});
   if (!tracked) return null;
   return {
     box: {
@@ -58,6 +60,19 @@ export async function trackFace(videoFile, media, options = {}) {
       h: Math.round(tracked.h)
     },
     focus: focusFromFace(tracked, media),
+    // Un punto focal por muestra del track ganador, para que el montaje pueda
+    // seguir a la cara en vez de quedarse con la mediana estatica. La membresia
+    // la da `selectTrackedFace` (`frame` es la referencia al array de
+    // detecciones de la muestra); las muestras sin cara del track se omiten.
+    track: (tracked.faces ?? [])
+      .map((face) => {
+        const sampleIndex = frames.indexOf(face.frame);
+        if (sampleIndex === -1) return null;
+        const focus = focusFromFace(face, media);
+        return {t: sampleTimes[sampleIndex], x: focus.x, y: focus.y};
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.t - b.t),
     confidence: tracked.confidence,
     detectionScore: tracked.detectionScore,
     method: 'yunet-fullframe'

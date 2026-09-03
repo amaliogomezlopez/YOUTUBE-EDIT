@@ -36,6 +36,7 @@ export const ClipStage: React.FC<ClipStageProps> = ({
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const camera = cameraTransform(scene, frame);
+  const focus = focusAt(scene, scene.trimStartSeconds + frame / fps);
 
   // `cover` cubre exactamente la ventana; el zoom de camara solo puede crecer, y
   // los desplazamientos laterales viajan sobre el 5% de holgura que anade
@@ -43,8 +44,8 @@ export const ClipStage: React.FC<ClipStageProps> = ({
   const cover = coverGeometry({
     width,
     height,
-    focusX: scene.focus.x,
-    focusY: scene.focus.y,
+    focusX: focus.x,
+    focusY: focus.y,
   });
 
   return (
@@ -67,7 +68,7 @@ export const ClipStage: React.FC<ClipStageProps> = ({
           width: cover.width,
           height: cover.height,
           transform: `scale(${camera.scale}) translate(${camera.translateX}px, ${camera.translateY}px)`,
-          transformOrigin: `${scene.focus.x * 100}% ${scene.focus.y * 100}%`,
+          transformOrigin: `${focus.x * 100}% ${focus.y * 100}%`,
         }}
       >
         <Video
@@ -79,6 +80,30 @@ export const ClipStage: React.FC<ClipStageProps> = ({
       </div>
     </div>
   );
+};
+
+/**
+ * Punto focal en un instante del clip. Con dos o mas muestras de `focusTrack`
+ * (el seguimiento de cara de la ingesta) se interpola linealmente entre
+ * muestras y se clampa en los extremos; con menos, el foco estatico de siempre.
+ */
+const focusAt = (scene: ShortScene, seconds: number) => {
+  const track = scene.focusTrack;
+  if (!track || track.length < 2) return scene.focus;
+  if (seconds <= track[0].t) return track[0];
+  const last = track[track.length - 1];
+  if (seconds >= last.t) return last;
+  for (let index = 1; index < track.length; index += 1) {
+    const next = track[index];
+    if (seconds > next.t) continue;
+    const previous = track[index - 1];
+    const progress = (seconds - previous.t) / Math.max(0.001, next.t - previous.t);
+    return {
+      x: previous.x + (next.x - previous.x) * progress,
+      y: previous.y + (next.y - previous.y) * progress,
+    };
+  }
+  return last;
 };
 
 const cameraTransform = (scene: ShortScene, frame: number) => {

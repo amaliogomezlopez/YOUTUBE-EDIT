@@ -31,6 +31,21 @@ const remotionCli = path.resolve(
   "remotion-cli.js",
 );
 
+// Calidad de encode por defecto: sin flags explicitos, los renders salian con el
+// CRF por defecto de Remotion (18) y sin tope de bitrate, por debajo del
+// estandar del pipeline ffmpeg (CRF 17, preset slow). El caller puede pisar
+// ambos pasando --codec/--crf en la linea de comandos, y el CRF tambien por
+// entorno (REMOTION_CRF).
+const hasFlag = (name) =>
+  renderArgs.some((arg) => arg === name || arg.startsWith(`${name}=`));
+const qualityArgs =
+  command === "render"
+    ? [
+        ...(hasFlag("--codec") ? [] : ["--codec=h264"]),
+        ...(hasFlag("--crf") ? [] : [`--crf=${process.env.REMOTION_CRF ?? 17}`]),
+      ]
+    : [];
+
 console.log(`\nEjecución ${run.runId}`);
 console.log(`Renderizando ${compositionId} -> ${outputPath}`);
 const result = spawnSync(
@@ -41,6 +56,7 @@ const result = spawnSync(
     "src/index.ts",
     compositionId,
     outputPath,
+    ...qualityArgs,
     ...renderArgs,
   ],
   {

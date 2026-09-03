@@ -118,6 +118,7 @@ export async function ingestMediaProject({
       height: probe.height,
       fps: round(probe.fps, 3),
       focus: face?.focus ?? DEFAULT_FOCUS,
+      focusTrack: face?.track ?? null,
       faceBox: face?.box ?? null,
       faceConfidence: face?.confidence ?? 0,
       transcript: transcript ? `transcripts/${id}.json` : null,

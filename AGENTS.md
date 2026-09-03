@@ -58,6 +58,20 @@ regenera `remotion-animations/src/shorts/registry.generated.ts`, que es de donde
 `Root.tsx` saca las composiciones. Tras anadir o quitar una, `npm run
 remotion:capabilities`.
 
+Contratos que se suman a ese ciclo: los layouts `pip` (webcam + pantalla, exige
+`webcamBox`, replica el filtergraph del pipeline de video largo) y `fit`
+(horizontal sin webcam); los subtitulos admiten `captions.mode: "progressive"`
+(revelado palabra a palabra con palabra heroe) ademas del `karaoke` por defecto;
+la ingesta guarda `focusTrack` y el encuadre sigue a la cara salvo que el plan
+fije `focus`; y `sound.music` anade una cama musical con ducking. El pipeline de
+video largo puede renderizar sus cortes con este mismo motor con
+`--render-engine remotion` (puente: `src/modules/shorts-studio/from-long-video.js`;
+el default sigue siendo ffmpeg). En esa rama el layout se clasifica **por
+segmento**: webcam en esquina dentro de la ventana del candidato -> `pip` con ese
+box; si no, cara a pantalla completa -> `full` con `focusTrack`; si tampoco ->
+`fit`. Un `--render-mode` explicito fuerza el modo para todos los cortes y usa el
+webcamBox de nivel job. Los renders salen en H.264 CRF 17 por defecto.
+
 La metadata de publicacion del short sale de `npm run shorts:publishing -- --slug
 <slug>`, que reutiliza `generatePublishingMetadata` y `buildClipPublishing` de
 `src/lib/publishing.js` y escribe `publishing-metadata.json` con el contrato de la

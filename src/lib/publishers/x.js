@@ -181,6 +181,25 @@ async function oauth1FormPost(url, form, credentials, options = {}) {
   return payload;
 }
 
+async function oauth1JsonPost(url, body, credentials, options = {}) {
+  const response = await fetchWithTimeout(url, {
+    method: 'POST',
+    headers: {
+      authorization: oauthHeader('POST', url, {}, credentials),
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.requestTimeoutMs ?? 30_000});
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || payload.errors?.length) {
+    const message = payload.errors?.[0]?.message || payload.detail || payload.title || `X OAuth1 API v2 failed with ${response.status}`;
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
+  }
+  return payload;
+}
+
 async function oauth1MultipartPost(url, query, fields, credentials, options = {}) {
   const parsed = new URL(url);
   for (const [key, value] of Object.entries(query)) parsed.searchParams.set(key, String(value));
@@ -426,9 +445,9 @@ async function createPost({token, text, mediaId, options = {}}) {
 }
 
 async function createPostOAuth1({text, mediaId, credentials, options = {}}) {
-  return oauth1FormPost(`${X_API_1_1_BASE}/1.1/statuses/update.json`, {
-    status: text,
-    media_ids: mediaId
+  return oauth1JsonPost(`${X_API_BASE}/2/tweets`, {
+    text,
+    media: {media_ids: [mediaId]}
   }, credentials, options);
 }
 
@@ -499,9 +518,20 @@ export async function publishToX({videoFile, metadata, clip, options = {}}) {
     const mediaId = uploadResult.mediaId;
     await options.onRemoteState?.({status: 'processing', phase: 'media-ready', remote: {mediaId, videoSize, bytesUploaded: videoSize, uploadMode}});
     await options.onRemoteState?.({status: 'processing', phase: 'posting', remote: {mediaId, videoSize, bytesUploaded: videoSize, uploadMode, phase: 'posting'}});
-    const created = uploadMode === 'oauth1_1_1' && oauth1
-      ? await postTweetOAuth1({text, mediaId, credentials: oauth1, options})
-      : await postTweet({token, text, mediaId, options});
+    // Media uploaded through the OAuth 1.0a fallback can still be attached to a
+    // post created through API v2. Prefer v2 whenever a user OAuth 2.0 token is
+    // available; statuses/update.json is a legacy endpoint and may return 404.
+    let created;
+    try {
+      created = token
+        ? await postTweet({token, text, mediaId, options})
+        : await postTweetOAuth1({text, mediaId, credentials: oauth1, options});
+    } catch (error) {
+      // A rejected OAuth2 credential cannot have created the post, so it is
+      // safe to retry the same API v2 request using the OAuth1 user context.
+      if (!oauth1 || !token || ![401, 403].includes(error?.status)) throw error;
+      created = await postTweetOAuth1({text, mediaId, credentials: oauth1, options});
+    }
     const tweetId = created.data?.id || created.id_str || created.id;
     if (!tweetId) throw new Error('X no devolvio id del post publicado.');
     await options.onRemoteState?.({status: 'published', phase: 'published', remote: {mediaId, videoSize, bytesUploaded: videoSize, uploadMode, postId: tweetId}});

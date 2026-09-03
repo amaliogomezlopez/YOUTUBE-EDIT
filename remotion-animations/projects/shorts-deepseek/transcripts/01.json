@@ -1,0 +1,318 @@
+{
+  "clipId": "01",
+  "language": null,
+  "segments": [
+    {
+      "id": "seg-1",
+      "start": 0.18,
+      "end": 7.7,
+      "text": "Tenemos nuevo momento Deep Seek, en este caso con el checkpoint del Deep Seek V4 Flash que acaban de sacar",
+      "speaker": null,
+      "confidence": null,
+      "words": [
+        {
+          "id": "seg-1-word-1",
+          "start": 0.18,
+          "end": 1.06,
+          "text": "Tenemos",
+          "confidence": 0.89307
+        },
+        {
+          "id": "seg-1-word-2",
+          "start": 1.06,
+          "end": 1.56,
+          "text": "nuevo",
+          "confidence": 0.90918
+        },
+        {
+          "id": "seg-1-word-3",
+          "start": 1.56,
+          "end": 2.1,
+          "text": "momento",
+          "confidence": 0.99072
+        },
+        {
+          "id": "seg-1-word-4",
+          "start": 2.1,
+          "end": 2.46,
+          "text": "Deep",
+          "confidence": 0.62793
+        },
+        {
+          "id": "seg-1-word-5",
+          "start": 2.46,
+          "end": 2.8,
+          "text": "Seek,",
+          "confidence": 0.71069
+        },
+        {
+          "id": "seg-1-word-6",
+          "start": 2.94,
+          "end": 3.08,
+          "text": "en",
+          "confidence": 0.99365
+        },
+        {
+          "id": "seg-1-word-7",
+          "start": 3.08,
+          "end": 3.32,
+          "text": "este",
+          "confidence": 0.99609
+        },
+        {
+          "id": "seg-1-word-8",
+          "start": 3.32,
+          "end": 3.62,
+          "text": "caso",
+          "confidence": 0.99658
+        },
+        {
+          "id": "seg-1-word-9",
+          "start": 3.62,
+          "end": 3.98,
+          "text": "con",
+          "confidence": 0.93652
+        },
+        {
+          "id": "seg-1-word-10",
+          "start": 3.98,
+          "end": 4.1,
+          "text": "el",
+          "confidence": 0.99365
+        },
+        {
+          "id": "seg-1-word-11",
+          "start": 4.1,
+          "end": 4.52,
+          "text": "checkpoint",
+          "confidence": 0.6958
+        },
+        {
+          "id": "seg-1-word-12",
+          "start": 4.52,
+          "end": 5.12,
+          "text": "del",
+          "confidence": 0.96289
+        },
+        {
+          "id": "seg-1-word-13",
+          "start": 5.12,
+          "end": 5.38,
+          "text": "Deep",
+          "confidence": 0.97412
+        },
+        {
+          "id": "seg-1-word-14",
+          "start": 5.38,
+          "end": 5.64,
+          "text": "Seek",
+          "confidence": 0.98511
+        },
+        {
+          "id": "seg-1-word-15",
+          "start": 5.64,
+          "end": 6.24,
+          "text": "V4",
+          "confidence": 0.8645
+        },
+        {
+          "id": "seg-1-word-16",
+          "start": 6.24,
+          "end": 6.6,
+          "text": "Flash",
+          "confidence": 0.62402
+        },
+        {
+          "id": "seg-1-word-17",
+          "start": 6.6,
+          "end": 6.78,
+          "text": "que",
+          "confidence": 0.99072
+        },
+        {
+          "id": "seg-1-word-18",
+          "start": 6.78,
+          "end": 7.18,
+          "text": "acaban",
+          "confidence": 0.99487
+        },
+        {
+          "id": "seg-1-word-19",
+          "start": 7.18,
+          "end": 7.32,
+          "text": "de",
+          "confidence": 0.99951
+        },
+        {
+          "id": "seg-1-word-20",
+          "start": 7.32,
+          "end": 7.7,
+          "text": "sacar",
+          "confidence": 0.99756
+        }
+      ]
+    }
+  ],
+  "words": [
+    {
+      "index": 0,
+      "text": "Tenemos",
+      "start": 0.18,
+      "end": 1.06,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 1,
+      "text": "nuevo",
+      "start": 1.06,
+      "end": 1.56,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 2,
+      "text": "momento",
+      "start": 1.56,
+      "end": 2.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 3,
+      "text": "Deep",
+      "start": 2.1,
+      "end": 2.46,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 4,
+      "text": "Seek,",
+      "start": 2.46,
+      "end": 2.8,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 5,
+      "text": "en",
+      "start": 2.94,
+      "end": 3.08,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 6,
+      "text": "este",
+      "start": 3.08,
+      "end": 3.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 7,
+      "text": "caso",
+      "start": 3.32,
+      "end": 3.62,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 8,
+      "text": "con",
+      "start": 3.62,
+      "end": 3.98,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 9,
+      "text": "el",
+      "start": 3.98,
+      "end": 4.1,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 10,
+      "text": "checkpoint",
+      "start": 4.1,
+      "end": 4.52,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 11,
+      "text": "del",
+      "start": 4.52,
+      "end": 5.12,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 12,
+      "text": "Deep",
+      "start": 5.12,
+      "end": 5.38,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 13,
+      "text": "Seek",
+      "start": 5.38,
+      "end": 5.64,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 14,
+      "text": "V4",
+      "start": 5.64,
+      "end": 6.24,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 15,
+      "text": "Flash",
+      "start": 6.24,
+      "end": 6.6,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 16,
+      "text": "que",
+      "start": 6.6,
+      "end": 6.78,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 17,
+      "text": "acaban",
+      "start": 6.78,
+      "end": 7.18,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 18,
+      "text": "de",
+      "start": 7.18,
+      "end": 7.32,
+      "confidence": null,
+      "timing": "word"
+    },
+    {
+      "index": 19,
+      "text": "sacar",
+      "start": 7.32,
+      "end": 7.7,
+      "confidence": null,
+      "timing": "word"
+    }
+  ]
+}

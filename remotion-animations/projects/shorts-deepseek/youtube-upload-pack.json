@@ -1,0 +1,40 @@
+{
+  "sourceVideo": "D:\\2-YOUTUBE-EDIT\\remotion-animations\\out\\shorts-deepseek\\runs\\20260731T082833996Z-90ab5852\\renders\\deepseek.mp4",
+  "recommendedTitle": "DeepSeek V4 Flash viene MUY fuerte",
+  "alternativeTitles": [
+    "El nuevo DeepSeek V4 Flash sorprende",
+    "DeepSeek V4 Flash supera a GLM 5.2",
+    "DeepSeek V4 Flash alcanza a Gemini",
+    "DeepSeek V4 Flash: 50 puntos de inteligencia",
+    "DeepSeek da un salto de 10 puntos",
+    "El nuevo DeepSeek cabe en 128 GB",
+    "DeepSeek V4 Flash se ejecuta en local",
+    "DeepSeek no creció, pero mejoró",
+    "DeepSeek V4 Flash ya está aquí",
+    "Misma arquitectura, mucho más rendimiento",
+    "¿Qué tan potente es DeepSeek V4 Flash?",
+    "DeepSeek V4 Flash llega vía API"
+  ],
+  "summary": "DeepSeek acaba de lanzar V4 Flash en beta pública y sus primeras métricas llaman mucho la atención. En los benchmarks mostrados supera a GLM 5.2 y en Artificial Analysis alcanza 50 puntos, a la altura de Gemini 3.6 Flash. Lo más sorprendente es que conserva el tamaño y la arquitectura del modelo anterior: con 128 GB de RAM unificada puede ejecutarse en local, por ejemplo en una DGX Spark o un Mac Studio. De momento está disponible mediante API y pronto lo probaré a fondo en Amaliometría.",
+  "timestamps": [
+    "00:00 DeepSeek V4 Flash",
+    "00:31 Ejecución local y API"
+  ],
+  "hashtags": [
+    "#DeepSeek",
+    "#DeepSeekV4",
+    "#DeepSeekV4Flash",
+    "#InteligenciaArtificial",
+    "#IA",
+    "#ModelosDeIA",
+    "#LLM",
+    "#BenchmarksIA",
+    "#ArtificialAnalysis",
+    "#GLM52",
+    "#Gemini36Flash",
+    "#APIDeIA",
+    "#IAEnLocal",
+    "#Amaliometria"
+  ],
+  "hashtagsLine": "#DeepSeek #DeepSeekV4 #DeepSeekV4Flash #InteligenciaArtificial #IA #ModelosDeIA #LLM #BenchmarksIA #ArtificialAnalysis #GLM52 #Gemini36Flash #APIDeIA #IAEnLocal #Amaliometria"
+}

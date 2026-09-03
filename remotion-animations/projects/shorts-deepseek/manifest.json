@@ -1,0 +1,328 @@
+{
+  "slug": "deepseek",
+  "surface": "shorts",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 60
+  },
+  "createdAt": "2026-07-31T08:03:27.328Z",
+  "source": {
+    "clipsDir": "C:\\Users\\amalio\\Desktop\\VIDEOS-YOUTUBE\\VIDEOS YOUTUBE\\VIDEOS_RECORDED\\DEEPSEEK",
+    "assetsDir": "C:\\Users\\amalio\\Desktop\\VIDEOS-YOUTUBE\\VIDEOS YOUTUBE\\VIDEOS_RECORDED\\DEEPSEEK\\ASSETS",
+    "musicFile": null
+  },
+  "totalClipSeconds": 53.304,
+  "clips": [
+    {
+      "id": "01",
+      "sourceName": "1.mkv",
+      "file": "projects/shorts/deepseek/clips/01.mp4",
+      "durationSeconds": 9.8,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.002,
+      "focus": {
+        "x": 0.4798,
+        "y": 0.5346,
+        "faceHeightRatio": 0.3587
+      },
+      "focusTrack": [
+        {
+          "t": 0.98,
+          "x": 0.4807,
+          "y": 0.4947
+        },
+        {
+          "t": 1.96,
+          "x": 0.4872,
+          "y": 0.5044
+        },
+        {
+          "t": 2.94,
+          "x": 0.4816,
+          "y": 0.5514
+        },
+        {
+          "t": 3.92,
+          "x": 0.4816,
+          "y": 0.513
+        },
+        {
+          "t": 4.9,
+          "x": 0.4797,
+          "y": 0.5283
+        },
+        {
+          "t": 5.88,
+          "x": 0.4764,
+          "y": 0.5466
+        },
+        {
+          "t": 6.86,
+          "x": 0.4728,
+          "y": 0.5422
+        },
+        {
+          "t": 7.84,
+          "x": 0.4747,
+          "y": 0.5504
+        },
+        {
+          "t": 8.82,
+          "x": 0.474,
+          "y": 0.5454
+        }
+      ],
+      "faceBox": {
+        "x": 778,
+        "y": 337,
+        "w": 287,
+        "h": 387
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/01.json",
+      "wordCount": 20
+    },
+    {
+      "id": "02",
+      "sourceName": "2.mkv",
+      "file": "projects/shorts/deepseek/clips/02.mp4",
+      "durationSeconds": 15.5,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.001,
+      "focus": {
+        "x": 0.4807,
+        "y": 0.5392,
+        "faceHeightRatio": 0.3658
+      },
+      "focusTrack": [
+        {
+          "t": 1.55,
+          "x": 0.4839,
+          "y": 0.5306
+        },
+        {
+          "t": 3.1,
+          "x": 0.489,
+          "y": 0.5159
+        },
+        {
+          "t": 4.65,
+          "x": 0.4824,
+          "y": 0.5427
+        },
+        {
+          "t": 6.2,
+          "x": 0.4804,
+          "y": 0.5303
+        },
+        {
+          "t": 7.75,
+          "x": 0.4812,
+          "y": 0.5392
+        },
+        {
+          "t": 9.3,
+          "x": 0.4746,
+          "y": 0.5482
+        },
+        {
+          "t": 10.85,
+          "x": 0.475,
+          "y": 0.5506
+        },
+        {
+          "t": 12.4,
+          "x": 0.4741,
+          "y": 0.5414
+        },
+        {
+          "t": 13.95,
+          "x": 0.4757,
+          "y": 0.5467
+        }
+      ],
+      "faceBox": {
+        "x": 774,
+        "y": 337,
+        "w": 298,
+        "h": 395
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/02.json",
+      "wordCount": 37
+    },
+    {
+      "id": "03",
+      "sourceName": "3.mkv",
+      "file": "projects/shorts/deepseek/clips/03.mp4",
+      "durationSeconds": 15.9,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.003,
+      "focus": {
+        "x": 0.4613,
+        "y": 0.5379,
+        "faceHeightRatio": 0.3698
+      },
+      "focusTrack": [
+        {
+          "t": 1.59,
+          "x": 0.4581,
+          "y": 0.5146
+        },
+        {
+          "t": 3.18,
+          "x": 0.4626,
+          "y": 0.5319
+        },
+        {
+          "t": 4.77,
+          "x": 0.4588,
+          "y": 0.538
+        },
+        {
+          "t": 6.36,
+          "x": 0.4603,
+          "y": 0.5262
+        },
+        {
+          "t": 7.95,
+          "x": 0.4616,
+          "y": 0.5401
+        },
+        {
+          "t": 9.54,
+          "x": 0.4609,
+          "y": 0.5319
+        },
+        {
+          "t": 11.13,
+          "x": 0.4635,
+          "y": 0.5019
+        },
+        {
+          "t": 12.72,
+          "x": 0.4509,
+          "y": 0.5501
+        },
+        {
+          "t": 14.31,
+          "x": 0.4604,
+          "y": 0.5413
+        }
+      ],
+      "faceBox": {
+        "x": 735,
+        "y": 333,
+        "w": 301,
+        "h": 399
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/03.json",
+      "wordCount": 51
+    },
+    {
+      "id": "04",
+      "sourceName": "4.mkv",
+      "file": "projects/shorts/deepseek/clips/04.mp4",
+      "durationSeconds": 12.104,
+      "width": 1920,
+      "height": 1080,
+      "fps": 60.002,
+      "focus": {
+        "x": 0.447,
+        "y": 0.5348,
+        "faceHeightRatio": 0.3785
+      },
+      "focusTrack": [
+        {
+          "t": 1.21,
+          "x": 0.4466,
+          "y": 0.5352
+        },
+        {
+          "t": 2.421,
+          "x": 0.4486,
+          "y": 0.5368
+        },
+        {
+          "t": 3.631,
+          "x": 0.4442,
+          "y": 0.5473
+        },
+        {
+          "t": 4.842,
+          "x": 0.4459,
+          "y": 0.5161
+        },
+        {
+          "t": 6.052,
+          "x": 0.4443,
+          "y": 0.5388
+        },
+        {
+          "t": 7.262,
+          "x": 0.4473,
+          "y": 0.5433
+        },
+        {
+          "t": 8.473,
+          "x": 0.4476,
+          "y": 0.5325
+        },
+        {
+          "t": 9.683,
+          "x": 0.4439,
+          "y": 0.5242
+        },
+        {
+          "t": 10.894,
+          "x": 0.4528,
+          "y": 0.531
+        }
+      ],
+      "faceBox": {
+        "x": 707,
+        "y": 324,
+        "w": 303,
+        "h": 409
+      },
+      "faceConfidence": 1,
+      "transcript": "transcripts/04.json",
+      "wordCount": 39
+    }
+  ],
+  "assets": [
+    {
+      "id": "anunciodeepseek",
+      "kind": "image",
+      "sourceName": "anunciodeepseek.PNG",
+      "file": "projects/shorts/deepseek/assets/anunciodeepseek.png",
+      "bytes": 258256
+    },
+    {
+      "id": "artificialanalysis",
+      "kind": "image",
+      "sourceName": "artificialanalysis.PNG",
+      "file": "projects/shorts/deepseek/assets/artificialanalysis.png",
+      "bytes": 39396
+    },
+    {
+      "id": "deepseek-logo-svg",
+      "kind": "image",
+      "sourceName": "DeepSeek_logo.svg.png",
+      "file": "projects/shorts/deepseek/assets/deepseek-logo-svg.png",
+      "bytes": 77416
+    },
+    {
+      "id": "size",
+      "kind": "image",
+      "sourceName": "size.PNG",
+      "file": "projects/shorts/deepseek/assets/size.png",
+      "bytes": 297632
+    }
+  ]
+}

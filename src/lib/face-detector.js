@@ -115,7 +115,11 @@ export function selectTrackedFace(frames, options = {}) {
     w: median(best.faces.map((face) => face.w)),
     h: median(best.faces.map((face) => face.h)),
     confidence: Number((best.faces.length / Math.max(1, frames.length)).toFixed(2)),
-    detectionScore: Number(average(best.faces.map((face) => face.score)).toFixed(3))
+    detectionScore: Number(average(best.faces.map((face) => face.score)).toFixed(3)),
+    // `withFaces` expone la membresia del cluster ganador: cada cara conserva en
+    // `frame` la referencia al array de detecciones de su muestra, que es como
+    // el caller la reconduce al indice temporal sin rehacer la agrupacion.
+    ...(options.withFaces ? {faces: best.faces} : {})
   };
 }
 

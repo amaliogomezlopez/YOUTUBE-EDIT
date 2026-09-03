@@ -2,6 +2,7 @@ import path from 'node:path';
 import {readJson, round, writeJson} from '../../lib/utils.js';
 import {SHORT_FORMAT, projectDir} from './constants.js';
 import {buildCaptionPages} from './captions.js';
+import {fitLayout, pipLayout} from './pip-layout.js';
 import {writeShortsRegistry} from './registry.js';
 import {analyzeArtwork} from './artwork.js';
 import {formatIssue, runShortsRules} from './rules/index.js';
@@ -25,7 +26,7 @@ import {
 export {DEFAULT_SILENCE_PADDING_SECONDS, resolveTrim} from '../video-studio/timeline.js';
 
 export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand']);
-export const LAYOUTS = new Set(['full', 'split', 'stage']);
+export const LAYOUTS = new Set(['full', 'split', 'stage', 'pip', 'fit']);
 export const CAMERAS = new Set(['static', 'punch-in', 'push-out', 'drift-left', 'drift-right']);
 export const TRANSITIONS = new Set(['cut', 'fade', 'whip', 'slide-up', 'zoom-blur']);
 
@@ -59,12 +60,17 @@ export async function buildShort({slug, log = () => {}}) {
   const duckWindows = [];
   const rotate = createSoundRotation();
   const padding = Number(plan.silencePaddingSeconds ?? DEFAULT_SILENCE_PADDING_SECONDS);
+  // El modo de subtitulo se puede declarar en `captions` (paginador) o en
+  // `captionStyle` (renderer); el build lo fija en los dos sitios para que el
+  // paginador y Remotion no se desacuerden.
+  const captionMode = plan.captions?.mode ?? plan.captionStyle?.mode ?? 'karaoke';
   const addSound = (familyId, atSeconds, intensity = 1) => {
     const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId));
     soundCues.push(cue);
     return cue;
   };
   const artByAsset = await measureArtwork(manifest.assets, warnings, analyzeArtwork);
+  const music = resolveMusicBed(plan, manifest);
   let cursor = 0;
 
   for (const [index, scene] of (plan.scenes ?? []).entries()) {
@@ -72,10 +78,29 @@ export async function buildShort({slug, log = () => {}}) {
     const clip = clipsById.get(scene.clipId);
     if (!clip) throw new Error(`${where}: clipId "${scene.clipId}" no existe en manifest.json`);
     if (!LAYOUTS.has(scene.layout)) throw new Error(`${where}: layout "${scene.layout}" no valido (${[...LAYOUTS].join(', ')})`);
-    const camera = scene.camera ?? 'static';
+    let camera = scene.camera ?? 'static';
     if (!CAMERAS.has(camera)) throw new Error(`${where}: camera "${camera}" no valida (${[...CAMERAS].join(', ')})`);
+    // En pip/fit el encuadre lo fija el layout (pantalla, tarjeta de cara), asi
+    // que un movimiento de camara no tiene donde aplicar: se fuerza static.
+    if ((scene.layout === 'pip' || scene.layout === 'fit') && camera !== 'static') {
+      warnings.push(`${where}: camera "${camera}" no aplica en layout "${scene.layout}"; se usa static`);
+      camera = 'static';
+    }
     const transitionIn = scene.transitionIn ?? 'cut';
     if (!TRANSITIONS.has(transitionIn)) throw new Error(`${where}: transitionIn "${transitionIn}" no valida (${[...TRANSITIONS].join(', ')})`);
+
+    // La caja de la webcam la puede declarar la escena o traerla el clip del
+    // manifest (passthrough, igual que `focus`). El layout pip la exige.
+    const webcamBox = scene.webcamBox ?? clip.webcamBox ?? null;
+    if (scene.layout === 'pip' && !webcamBox) {
+      throw new Error(
+        `${where}: layout "pip" necesita webcamBox; declaralo en la escena ` +
+        'o en el clip del manifest'
+      );
+    }
+    const source = {sourceWidth: clip.width, sourceHeight: clip.height};
+    const pip = scene.layout === 'pip' ? pipLayout(webcamBox, source) : null;
+    const fit = scene.layout === 'fit' ? fitLayout(source) : null;
 
     const words = transcripts.get(clip.id)?.words ?? [];
     if (!words.length) warnings.push(`${where}: el clip ${clip.id} no tiene transcripcion; sin subtitulos ni anclaje por palabra`);
@@ -100,6 +125,13 @@ export async function buildShort({slug, log = () => {}}) {
       const atSeconds = resolveCueSeconds(cue, words, startSeconds, cueWhere);
       const asset = cue.assetId ? assetsById.get(cue.assetId) : null;
       if (cue.assetId && !asset) throw new Error(`${cueWhere}: assetId "${cue.assetId}" no existe en manifest.json`);
+      const dense = cue.dense !== false;
+      const expandedStageCapture = scene.layout === 'stage' && cue.type === 'screenshot' && dense;
+      const displayScale = Number(cue.displayScale ?? (expandedStageCapture ? 1.16 : 1));
+      const offsetY = Number(cue.offsetY ?? (expandedStageCapture ? 18 : 0));
+      const decoration = cue.type === 'logo'
+        ? (cue.presentation === 'plain' ? 'none' : cue.presentation === 'blend' ? 'blend' : 'frame')
+        : null;
       const holdSeconds = Number(cue.holdSeconds ?? (endSeconds - startSeconds) - atSeconds);
       const cueFrames = Math.max(1, Math.round(Math.min(holdSeconds, endSeconds - startSeconds - atSeconds) * fps));
       // Todo cue suena. Si el plan no pide familia se usa la del tipo: un logo o
@@ -116,6 +148,9 @@ export async function buildShort({slug, log = () => {}}) {
         src: asset?.file ?? null,
         slot: cue.slot ?? null,
         presentation: cue.presentation ?? 'card',
+        decoration,
+        displayScale,
+        offsetY,
         text: cue.text ?? null,
         note: cue.note ?? null,
         tone: cue.tone ?? 'neutral',
@@ -126,7 +161,7 @@ export async function buildShort({slug, log = () => {}}) {
         // Campos que consumen las reglas: una captura sin texto se declara con
         // `dense: false`, el silencio deliberado con `soundNote`, y `art` son las
         // medidas del asset con las que se valida su presentacion.
-        dense: cue.dense !== false,
+        dense,
         sound: soundFamily ? {family: soundFamily, file: sound.file} : null,
         soundNote: cue.soundNote ?? null,
         art: cue.assetId ? artByAsset.get(cue.assetId) ?? null : null
@@ -134,9 +169,10 @@ export async function buildShort({slug, log = () => {}}) {
     }).sort((a, b) => a.fromFrame - b.fromFrame);
 
     const captionPages = words.length && scene.captions !== false
-      ? buildCaptionPages(words, {startSeconds, endSeconds}, plan.captions ?? {}).map((page) => ({
+      ? buildCaptionPages(words, {startSeconds, endSeconds}, {...(plan.captions ?? {}), mode: captionMode}).map((page) => ({
         fromFrame: Math.round(page.startSeconds * fps),
         durationInFrames: Math.max(1, Math.round((page.endSeconds - page.startSeconds) * fps)),
+        ...(captionMode === 'progressive' ? {heroIndex: page.heroIndex ?? -1} : {}),
         words: page.words.map((word) => ({
           text: word.text,
           fromFrame: Math.round(word.start * fps),
@@ -179,6 +215,11 @@ export async function buildShort({slug, log = () => {}}) {
       camera,
       cameraIntensity: Number(scene.cameraIntensity ?? 1),
       focus: scene.focus ?? clip.focus,
+      // Un focus fijado a mano en el plan manda sobre el seguimiento de la cara.
+      focusTrack: scene.focus ? null : (clip.focusTrack ?? null),
+      webcamBox,
+      pip,
+      fit,
       transitionIn,
       label: scene.label ?? null,
       cues,
@@ -203,11 +244,12 @@ export async function buildShort({slug, log = () => {}}) {
     accentColor: plan.accentColor ?? null,
     dangerColor: plan.dangerColor ?? null,
     backgroundImage: plan.backgroundImage ? (assetsById.get(plan.backgroundImage)?.file ?? plan.backgroundImage) : null,
-    captionStyle: plan.captionStyle ?? {},
+    captionStyle: {...(plan.captionStyle ?? {}), mode: captionMode},
     silencePaddingSeconds: padding,
     soundEnabled: plan.sound?.enabled ?? true,
     soundMix: Number(plan.sound?.mix ?? 0.6),
     clipVolume: Number(plan.sound?.clipVolume ?? 1),
+    music,
     scenes,
     soundCues: soundCues.sort((a, b) => a.startSeconds - b.startSeconds),
     duckWindows,
@@ -262,4 +304,36 @@ function resolveCueSeconds(cue, words, trimStartSeconds, where) {
     return Number(cue.atSeconds);
   }
   throw new Error(`${where}: falta atWord`);
+}
+
+/**
+ * Cama musical opcional del short (`plan.sound.music`).
+ *
+ * Se declara con `assetId` (un asset del manifest, o "music" para la pista que
+ * registro la ingesta en `manifest.music`) o con `file` directo (ruta
+ * staticFile). El resultado alimenta el `<Audio loop>` de ShortVideo, que baja
+ * a `volume * duckGainDb` mientras hay locucion.
+ */
+export function resolveMusicBed(plan, manifest) {
+  const musicPlan = plan?.sound?.music;
+  if (!musicPlan) return null;
+  let file = null;
+  if (musicPlan.assetId) {
+    const asset = (manifest?.assets ?? []).find((item) => item.id === musicPlan.assetId);
+    file = asset?.file ?? (musicPlan.assetId === 'music' ? manifest?.music?.file ?? null : null);
+    if (!file) {
+      throw new Error(
+        `plan.sound.music: assetId "${musicPlan.assetId}" no existe en manifest.json`
+      );
+    }
+  } else if (musicPlan.file) {
+    file = musicPlan.file;
+  } else {
+    throw new Error('plan.sound.music necesita assetId o file');
+  }
+  return {
+    file,
+    volume: Number(musicPlan.volume ?? 0.35),
+    duckGainDb: Number(musicPlan.duckGainDb ?? -10)
+  };
 }

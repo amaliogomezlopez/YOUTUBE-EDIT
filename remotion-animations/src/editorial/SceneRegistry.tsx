@@ -34,6 +34,7 @@ import {ConcentrationCycleScene} from "./ConcentrationCycleScene";
 import {EarningsCapitalCycleScene} from "./EarningsCapitalCycleScene";
 import {CurrentEarningsContrastScene} from "./CurrentEarningsContrastScene";
 import {RecessionCreditScene} from "./RecessionCreditScene";
+import {CreditCycleScene} from "./CreditCycleScene";
 import {EditorialScene} from "./schemas";
 
 const COLORS = {
@@ -1724,7 +1725,10 @@ export const FinanceEditorialScene: React.FC<{
   const route = resolvePattern(scene.patternId);
   let content: React.ReactNode;
   let ownsFrame: boolean;
-  if (["scene-035", "scene-036", "scene-037", "scene-038", "scene-039"].includes(scene.id)) {
+  if (["scene-040", "scene-041", "scene-042", "scene-043", "scene-044", "scene-045", "scene-046", "scene-047", "scene-048", "scene-049", "scene-050", "scene-051", "scene-052", "scene-053", "scene-054", "scene-055", "scene-056", "scene-057", "scene-058"].includes(scene.id)) {
+    content = <CreditCycleScene scene={scene} />;
+    ownsFrame = true;
+  } else if (["scene-035", "scene-036", "scene-037", "scene-038", "scene-039"].includes(scene.id)) {
     content = <RecessionCreditScene scene={scene} />;
     ownsFrame = true;
   } else if (["scene-030", "scene-031", "scene-032", "scene-033", "scene-034"].includes(scene.id)) {

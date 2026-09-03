@@ -173,8 +173,8 @@ const LogoCue: React.FC<{
 }> = ({cue, color, entry, palette, style}) => {
   const scale = interpolate(entry, [0, 1], [0.62, 1]);
   const rotate = interpolate(entry, [0, 1], [-7, 0]);
-  const blend = cue.presentation === "blend";
-  const framed = cue.presentation !== "plain" && !blend;
+  const blend = cue.decoration === "blend" || cue.presentation === "blend";
+  const framed = cue.decoration === "frame" || (cue.decoration == null && cue.presentation !== "plain" && !blend);
   const plate = cue.presentation === "plate";
   const surface = plate ? "#F5F1EA" : palette.theme.surfaceRaised;
   return (
@@ -206,7 +206,9 @@ const LogoCue: React.FC<{
           border: framed ? `3px solid ${rgba(color, 0.55)}` : undefined,
           boxShadow: framed
             ? `0 0 0 ${8 * entry}px ${rgba(color, 0.14)}, 0 24px 48px ${rgba("#000000", 0.45)}`
-            : `0 0 44px ${rgba(color, 0.3 * entry)}`,
+            : blend
+              ? `0 0 44px ${rgba(color, 0.3 * entry)}`
+              : undefined,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -255,7 +257,13 @@ const ScreenshotCue: React.FC<{
   // Zoom lento en lugar de desplazamiento: una captura es texto, y moverla en
   // vertical obliga a releer. El acercamiento minimo la mantiene viva sin que se
   // pierda ninguna linea.
-  const zoom = interpolate(frame, [0, cue.durationInFrames], [1, 1.04], clamp);
+  const displayScale = cue.displayScale ?? 1;
+  const zoom = interpolate(
+    frame,
+    [0, cue.durationInFrames],
+    [displayScale, displayScale * 1.04],
+    clamp,
+  );
   return (
     <div
       style={{
@@ -263,7 +271,7 @@ const ScreenshotCue: React.FC<{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        transform: `translateY(${rise}px)`,
+        transform: `translateY(${rise + (cue.offsetY ?? 0)}px)`,
       }}
     >
       {cue.src ? (

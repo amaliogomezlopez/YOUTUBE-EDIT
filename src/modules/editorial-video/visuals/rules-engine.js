@@ -582,6 +582,43 @@ export const CHECKS = {
     return issues;
   },
 
+  /** §11 — Las uniones de bloques nunca parten una palabra. */
+  'block-boundary-word-safe'(context) {
+    const blocks = context.artifacts?.reviewBlocks;
+    const words = context.words ?? [];
+    if (!blocks?.length || !words.length) {
+      return notEvaluable('Sin bloques de revisión y transcripción por palabras no se puede comprobar la seguridad de las fronteras.');
+    }
+    const normalizedWords = words.map((word) => ({
+      text: String(word.text ?? '').trim(),
+      start: Number(word.start ?? word.startSeconds),
+      end: Number(word.end ?? word.endSeconds ?? word.start ?? word.startSeconds),
+    })).filter((word) => Number.isFinite(word.start) && Number.isFinite(word.end));
+    if (!normalizedWords.length) {
+      return notEvaluable('La transcripción no contiene intervalos de palabra utilizables.');
+    }
+    const issues = [];
+    const epsilon = 0.005;
+    const checkBoundary = (block, boundary, edge) => {
+      if (!Number.isFinite(boundary)) return;
+      const word = normalizedWords.find((candidate) =>
+        candidate.start + epsilon < boundary && boundary < candidate.end - epsilon
+      );
+      if (word) {
+        issues.push({
+          blockId: block.id,
+          boundarySeconds: boundary,
+          message: `La frontera ${edge} del bloque ${block.id} cae en mitad de «${word.text}» (${word.start.toFixed(3)}–${word.end.toFixed(3)} s).`,
+        });
+      }
+    };
+    for (const block of blocks) {
+      checkBoundary(block, Number(block.sourceStartSeconds), 'inicial');
+      checkBoundary(block, Number(block.sourceEndSeconds), 'final');
+    }
+    return issues;
+  },
+
   /** §11 — Una fotografía da atmósfera; nunca sostiene una cifra. */
   'photo-not-data-source'(context, rule) {
     const photoKinds = new Set(rule.params?.photoKinds ?? ['photo', 'stock', 'image']);

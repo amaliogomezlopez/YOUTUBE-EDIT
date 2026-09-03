@@ -124,10 +124,30 @@ export function webcamBoxForTrackedFace(trackedFace, media) {
   };
 }
 
+/**
+ * Rango temporal de muestreo de la deteccion.
+ *
+ * Sin `window`, el historico: del 8% al 88% del video completo (los extremos
+ * suelen ser intro/outro y confunden la mediana). Con `window` (un candidato del
+ * scoring), el muestreo se hace dentro de la ventana con un inset del 5% en
+ * cada extremo, porque el corte del short puede entrar a mitad de un plano.
+ */
+export function sampleRange(duration, window = null) {
+  if (window && Number.isFinite(window.startSeconds) && Number.isFinite(window.endSeconds)) {
+    const span = Math.max(0.2, window.endSeconds - window.startSeconds);
+    const inset = span * 0.05;
+    const start = clamp(window.startSeconds + inset, 0, duration);
+    const end = clamp(window.endSeconds - inset, start + 0.2, duration);
+    return {start, end};
+  }
+  const start = Math.max(8, duration * 0.08);
+  const end = Math.max(start + 1, duration * 0.88);
+  return {start, end};
+}
+
 export async function detectWebcamBox(videoFile, media, options = {}) {
   const samples = Number(options.samples ?? 7);
-  const start = Math.max(8, media.duration * 0.08);
-  const end = Math.max(start + 1, media.duration * 0.88);
+  const {start, end} = sampleRange(media.duration, options.window);
   const sampleDir = path.join(TMP_DIR, 'webcam-detect', String(Date.now()));
   await mkdir(sampleDir, {recursive: true});
   const detections = [];
@@ -144,6 +164,7 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
         '-i', videoFile,
         '-frames:v', '1',
         '-vf', 'scale=640:-1',
+        '-pix_fmt', 'rgb24',
         '-f', 'image2',
         frameFile
       ], {signal: options.signal, timeoutMs: Number(options.frameTimeoutMs ?? 30_000)});

@@ -22,8 +22,70 @@ const DEFAULT_STYLE = {
   maxLineChars: 18,
   pauseBreakSeconds: 0.42,
   maxPageSeconds: 2.6,
-  tailHoldSeconds: 0.22
+  tailHoldSeconds: 0.22,
+  /**
+   * `karaoke` muestra la pagina entera y solo ilumina la palabra que suena.
+   * `progressive` oculta las palabras que aun no han sonado y, cuando la pagina
+   * tiene una palabra que se sostiene sola, la saca como heroe en su propia fila
+   * (`heroIndex`); el renderer compone lead/hero/tail apilados.
+   */
+  mode: 'karaoke'
 };
+
+// Las stop-words y la puntuacion de enfasis estan portadas de
+// `src/lib/captions/planner.js` (subtitulos progresivos con FFmpeg): la palabra
+// hero de una pagina de Remotion se elige con el mismo criterio que la del ASS,
+// para que los dos renderers destaquen lo mismo.
+const STOP_WORDS = new Set([
+  'a', 'al', 'and', 'as', 'at', 'con', 'como', 'de', 'del', 'el', 'en', 'es', 'esta', 'este', 'for',
+  'la', 'las', 'lo', 'los', 'of', 'o', 'para', 'por', 'que', 'se', 'sin', 'the', 'to', 'un', 'una', 'y'
+]);
+
+function normalizedWord(value) {
+  return String(value ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]/gu, '');
+}
+
+function emphasisScore(word, index, words) {
+  const normalized = normalizedWord(word.text);
+  if (!normalized || STOP_WORDS.has(normalized)) return -100;
+  let score = Math.min(12, normalized.length);
+  if (/\d/.test(normalized)) score += 7;
+  if (normalized.length >= 5) score += 3;
+  if (index > 0 && index < words.length - 1) score += 2;
+  if (/[!:]$/.test(word.text)) score += 2;
+  return score;
+}
+
+/**
+ * Indice de la palabra hero dentro de una pagina, o -1 si no hay hero.
+ *
+ * Es la variante `reference-stack` del planner: el hero no puede abrir ni cerrar
+ * la pagina (lead y tail enmarcan la fila grande) y se prefiere el centro con un
+ * bonus estructural. A diferencia del planner, aqui una stop-word nunca sale
+ * hero aunque sea la unica candidata: el suelo de puntuacion es 0, y cualquier
+ * candidato con carga semantica lo supera.
+ */
+export function chooseHeroIndex(words) {
+  if (words.length < 3) return -1;
+  const target = Math.floor(words.length / 2);
+  let bestIndex = -1;
+  let bestScore = 0;
+  for (let index = 1; index < words.length - 1; index += 1) {
+    const structural = Math.max(0, 4 - Math.abs(index - target) * 1.5);
+    const score = emphasisScore(words[index], index, words) + structural;
+    if (score > bestScore) {
+      bestScore = score;
+      bestIndex = index;
+    }
+  }
+  return bestIndex;
+}
 
 export function resolveCaptionStyle(overrides = {}) {
   return {
@@ -37,20 +99,54 @@ function closesThought(text) {
 }
 
 /**
+ * Une tokens que forman una sola entidad visual. Whisper puede separar `5.2`
+ * como `5` + `.2`; después se une el nombre inmediatamente anterior para que
+ * `GLM 5.2` o `Gemini 3.6` no se rompan entre filas del subtítulo.
+ */
+export function compactCaptionCompounds(words) {
+  const decimals = [];
+  for (const word of words ?? []) {
+    const previous = decimals.at(-1);
+    if (previous && /^\.\d+$/.test(word.text) && /^\d+$/.test(previous.text)) {
+      previous.text += word.text;
+      previous.end = word.end;
+      continue;
+    }
+    decimals.push({...word});
+  }
+
+  const compounds = [];
+  for (const word of decimals) {
+    const previous = compounds.at(-1);
+    if (
+      previous &&
+      /^\d+(?:\.\d+)+$/.test(word.text) &&
+      /^[\p{L}][\p{L}\p{N}-]{1,15}$/u.test(previous.text)
+    ) {
+      previous.text = `${previous.text}\u00A0${word.text}`;
+      previous.end = word.end;
+      continue;
+    }
+    compounds.push({...word});
+  }
+  return compounds;
+}
+
+/**
  * @param {{text: string, start: number, end: number}[]} words palabras del clip
  * @param {{startSeconds: number, endSeconds: number}} window recorte del clip
  * @returns paginas con tiempos relativos al inicio del recorte
  */
 export function buildCaptionPages(words, window, overrides = {}) {
   const style = resolveCaptionStyle(overrides);
-  const inWindow = (words ?? [])
+  const inWindow = compactCaptionCompounds((words ?? [])
     .filter((word) => word.end > window.startSeconds && word.start < window.endSeconds)
     .map((word) => ({
       text: word.text,
       start: round(Math.max(0, word.start - window.startSeconds), 3),
       end: round(Math.min(window.endSeconds - window.startSeconds, word.end - window.startSeconds), 3)
     }))
-    .filter((word) => word.end > word.start);
+    .filter((word) => word.end > word.start));
 
   const groups = [];
   let current = [];
@@ -100,7 +196,10 @@ export function buildCaptionPages(words, window, overrides = {}) {
     return {
       startSeconds: pageWords[0].start,
       endSeconds: round(end, 3),
-      words: pageWords
+      words: pageWords,
+      // Solo en modo progressive: en karaoke la salida se mantiene igual para no
+      // invalidar los fixtures que comparan paginas campo a campo.
+      ...(style.mode === 'progressive' ? {heroIndex: chooseHeroIndex(pageWords)} : {})
     };
   });
 }

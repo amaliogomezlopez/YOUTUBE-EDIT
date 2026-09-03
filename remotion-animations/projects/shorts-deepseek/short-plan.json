@@ -1,0 +1,242 @@
+{
+  "slug": "deepseek",
+  "title": "DeepSeek V4 Flash acaba de llegar",
+  "themeId": "oxide-documentary",
+  "accentColor": "#4D6BFE",
+  "dangerColor": "#FF5C5C",
+  "backgroundImage": null,
+  "captions": {
+    "mode": "progressive",
+    "maxWords": 5,
+    "maxLineChars": 18,
+    "pauseBreakSeconds": 0.34,
+    "maxPageSeconds": 2.2
+  },
+  "captionStyle": {
+    "position": "lower",
+    "uppercase": true,
+    "mode": "progressive"
+  },
+  "sound": {
+    "enabled": true,
+    "mix": 0.58,
+    "clipVolume": 1,
+    "duckGainDb": -9
+  },
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "layout": "full",
+      "camera": "punch-in",
+      "cameraIntensity": 1.1,
+      "transitionIn": "cut",
+      "trim": {
+        "end": 3.98
+      },
+      "cues": [
+        {
+          "type": "logo",
+          "assetId": "deepseek-logo-svg",
+          "atWord": 3,
+          "slot": "overlay-top",
+          "presentation": "plain",
+          "note": "Identifica la entidad en el primer golpe del hook",
+          "holdSeconds": 1.7,
+          "sound": "hit",
+          "soundIntensity": 1.05
+        }
+      ]
+    },
+    {
+      "id": "lanzamiento",
+      "clipId": "01",
+      "layout": "stage",
+      "camera": "static",
+      "transitionIn": "zoom-blur",
+      "label": "V4 FLASH · BETA PUBLICA",
+      "trim": {
+        "start": 3.98
+      },
+      "cues": [
+        {
+          "type": "screenshot",
+          "assetId": "anunciodeepseek",
+          "atWord": 10,
+          "slot": "stage-full",
+          "presentation": "plain",
+          "note": "Anuncio oficial y tabla de benchmarks del lanzamiento",
+          "holdSeconds": 3.6,
+          "sound": "reveal",
+          "soundIntensity": 0.95
+        }
+      ]
+    },
+    {
+      "id": "benchmarks-oficiales",
+      "clipId": "02",
+      "layout": "stage",
+      "camera": "static",
+      "transitionIn": "whip",
+      "label": "BENCHMARKS OFICIALES",
+      "trim": {
+        "end": 6
+      },
+      "cues": [
+        {
+          "type": "screenshot",
+          "assetId": "anunciodeepseek",
+          "atWord": 7,
+          "slot": "stage-full",
+          "presentation": "plain",
+          "note": "La tabla oficial aporta los resultados concretos que la voz resume",
+          "holdSeconds": 3.7,
+          "sound": "whoosh",
+          "soundIntensity": 0.9
+        }
+      ]
+    },
+    {
+      "id": "inteligencia",
+      "clipId": "02",
+      "layout": "stage",
+      "camera": "static",
+      "transitionIn": "slide-up",
+      "label": "ARTIFICIAL ANALYSIS",
+      "trim": {
+        "start": 6
+      },
+      "cues": [
+        {
+          "type": "screenshot",
+          "assetId": "artificialanalysis",
+          "atWord": 18,
+          "slot": "stage-full",
+          "presentation": "plain",
+          "note": "Comparativa de inteligencia: V4 Flash alcanza 50 puntos",
+          "holdSeconds": 7.4,
+          "sound": "reveal",
+          "soundIntensity": 1
+        }
+      ]
+    },
+    {
+      "id": "misma-arquitectura",
+      "clipId": "03",
+      "layout": "stage",
+      "camera": "static",
+      "transitionIn": "zoom-blur",
+      "label": "MISMO MODELO · SOLO POST-TRAINING",
+      "trim": {
+        "end": 5.2
+      },
+      "cues": [
+        {
+          "type": "screenshot",
+          "assetId": "size",
+          "atWord": 12,
+          "slot": "stage-full",
+          "presentation": "plain",
+          "note": "El changelog oficial confirma misma arquitectura y tamaño",
+          "holdSeconds": 2.8,
+          "sound": "whoosh",
+          "soundIntensity": 0.95
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "clipId": "03",
+      "layout": "split",
+      "camera": "drift-right",
+      "cameraIntensity": 0.65,
+      "transitionIn": "cut",
+      "trim": {
+        "start": 5.2
+      },
+      "cues": [
+        {
+          "type": "stat",
+          "atWord": 23,
+          "slot": "stage-full",
+          "text": "128 GB",
+          "note": "RAM unificada para ejecutar el modelo en local",
+          "tone": "accent",
+          "holdSeconds": 5.6,
+          "sound": "impact",
+          "soundIntensity": 1.15
+        },
+        {
+          "type": "label",
+          "atWord": 43,
+          "slot": "stage-header",
+          "text": "EJECUCION LOCAL",
+          "tone": "positive",
+          "holdSeconds": 2.7,
+          "sound": "chime",
+          "soundIntensity": 1
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "clipId": "04",
+      "layout": "split",
+      "camera": "push-out",
+      "cameraIntensity": 0.7,
+      "transitionIn": "fade",
+      "trim": {
+        "end": 7.52
+      },
+      "cues": [
+        {
+          "type": "label",
+          "atWord": 8,
+          "slot": "stage-header",
+          "text": "BETA PUBLICA",
+          "note": "El anuncio oficial añade el estado de lanzamiento que no se verbaliza aquí",
+          "tone": "accent",
+          "holdSeconds": 2.2,
+          "sound": "ui",
+          "soundIntensity": 0.9
+        },
+        {
+          "type": "logo",
+          "assetId": "deepseek-logo-svg",
+          "atWord": 21,
+          "slot": "stage-full",
+          "presentation": "plain",
+          "text": "PRUEBA A FONDO EN YOUTUBE",
+          "note": "Refuerza el destino editorial de la llamada a la acción",
+          "holdSeconds": 2.2,
+          "sound": "pop",
+          "soundIntensity": 0.95
+        }
+      ]
+    },
+    {
+      "id": "cierre",
+      "clipId": "04",
+      "layout": "full",
+      "camera": "punch-in",
+      "cameraIntensity": 0.9,
+      "transitionIn": "whip",
+      "trim": {
+        "start": 7.52
+      },
+      "cues": [
+        {
+          "type": "brand",
+          "atWord": 31,
+          "slot": "overlay-top",
+          "text": "AMALIOMETRIA",
+          "note": "IA, tecnologia y datos sin humo",
+          "holdSeconds": 2.9,
+          "sound": "chime",
+          "soundIntensity": 1.1
+        }
+      ]
+    }
+  ],
+  "silencePaddingSeconds": 0.32
+}

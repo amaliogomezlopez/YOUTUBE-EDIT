@@ -603,7 +603,7 @@ test('x publisher returns failed with sanitized API error', async () => {
   }
 });
 
-test('x publisher falls back to OAuth1 media upload and post', async () => {
+test('x publisher falls back to OAuth1 media upload and creates the post through API v2', async () => {
   const saved = Object.fromEntries(PUBLISHER_ENV_KEYS.map((key) => [key, process.env[key]]));
   process.env.X_USER_ACCESS_TOKEN = 'x-user-token';
   delete process.env.X_REFRESH_TOKEN;
@@ -630,11 +630,14 @@ test('x publisher falls back to OAuth1 media upload and post', async () => {
           assert.equal(credentials.consumerKey, 'api-key');
           return {mediaId: 'media-oauth1'};
         },
-        createPostOAuth1: async ({text, mediaId, credentials}) => {
+        createPost: async ({token, text, mediaId}) => {
+          assert.equal(token, 'x-user-token');
           assert.equal(text, 'Post X');
           assert.equal(mediaId, 'media-oauth1');
-          assert.equal(credentials.token, 'access-token');
-          return {id_str: 'tweet-oauth1'};
+          return {data: {id: 'tweet-oauth1'}};
+        },
+        createPostOAuth1: async () => {
+          assert.fail('OAuth1 posting should not be used when an OAuth2 user token is available');
         }
       }
     });

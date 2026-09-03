@@ -8,6 +8,7 @@ import {transcribeAudio} from './stt.js';
 import {ensureDir, FONTS_DIR, JOBS_DIR, makeId, OUTPUT_DIR, readJson, round, safeFilename, writeJson} from './utils.js';
 import {writeAssFile} from './subtitles.js';
 import {detectWebcamBox} from './webcam.js';
+import {renderCandidateWithRemotion} from '../modules/shorts-studio/from-long-video.js';
 import {buildClipPublishing, generatePublishingMetadata} from './publishing.js';
 import {PersistentJobQueue} from './job-queue.js';
 
@@ -97,11 +98,15 @@ export async function processJob(state, options = {}) {
       await saveJobState(state);
     }
     let webcamBox = options.webcamBox ?? null;
-    if (renderMode === 'pip') {
+    // En la rama Remotion sin --render-mode explicito la clasificacion es por
+    // segmento (webcam -> pip, cara -> crop, nada -> fit), asi que la deteccion
+    // a nivel de job no aplica: coste doble y un warning que ya no significa nada.
+    const classifyPerSegment = options.renderEngine === 'remotion' && !options.renderMode;
+    if (renderMode === 'pip' && !classifyPerSegment) {
       throwIfCancelled(signal);
       state.status = 'detecting-webcam';
       await saveJobState(state);
-      webcamBox = await detectWebcamBox(state.sourceVideo, media, {...(options.webcamDetection ?? {}), signal});
+      webcamBox = await (options.detectWebcam ?? detectWebcamBox)(state.sourceVideo, media, {...(options.webcamDetection ?? {}), signal});
       if (!webcamBox) {
         renderMode = 'fit';
         state.warnings = [...(state.warnings ?? []), 'No se detectó una webcam estable. Se usará pantalla completa para evitar un recorte falso.'];
@@ -187,6 +192,49 @@ export async function processJob(state, options = {}) {
       throwIfCancelled(signal);
       const clipDir = path.join(state.outputDir, candidate.id);
       await ensureDir(clipDir);
+      if (options.renderEngine === 'remotion') {
+        // Rama Remotion: el candidato se convierte en un proyecto shorts-studio
+        // (clip cortado + transcripcion rebasada + plan de una escena) y lo
+        // renderiza el motor de Remotion en vez del filtergraph de FFmpeg.
+        // Sin --render-mode explicito el bridge clasifica cada corte por
+        // separado, asi que no se pasa el webcamBox de nivel job.
+        const renderCandidate = options.renderCandidate ?? renderCandidateWithRemotion;
+        const result = await renderCandidate({
+          state,
+          candidate,
+          captions,
+          // Modo explicito: el local `renderMode` ya puede ser `fit` si pip
+          // no encontro webcam. Sin modo, el bridge clasifica por segmento.
+          renderMode: classifyPerSegment ? null : renderMode,
+          webcamBox: classifyPerSegment ? null : webcamBox,
+          signal
+        });
+        if (result.captionTiming !== 'word') {
+          const timingWarning = 'Los subtítulos progresivos usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
+          if (!(state.warnings ?? []).includes(timingWarning)) state.warnings = [...(state.warnings ?? []), timingWarning];
+        }
+        const metadataFile = path.join(clipDir, 'metadata.json');
+        const metadata = {
+          ...candidate,
+          renderSettings: {
+            mode: result.renderMode,
+            engine: 'remotion',
+            quality: options.renderQuality ?? 'high',
+            slug: result.slug,
+            captionTiming: result.captionTiming,
+            webcamBox: result.webcamBox ?? null
+          },
+          files: {
+            video: result.outputFile,
+            metadata: metadataFile
+          }
+        };
+        await writeJson(metadataFile, metadata);
+        rendered.push(metadata);
+        state.clips = rendered.concat(selected.slice(rendered.length));
+        await saveJobState(state);
+        continue;
+      }
       const clipCaptions = sliceCaptions(captions, candidate.start, candidate.end);
       const assFile = path.join(clipDir, 'captions.ass');
       const captionPlanFile = path.join(clipDir, 'caption-plan.json');

@@ -1,0 +1,2154 @@
+{
+  "slug": "deepseek",
+  "generatedAt": "2026-07-31T08:25:27.769Z",
+  "format": {
+    "width": 1080,
+    "height": 1920,
+    "fps": 60
+  },
+  "durationInFrames": 2824,
+  "durationSeconds": 47.067,
+  "themeId": "oxide-documentary",
+  "accentColor": "#4D6BFE",
+  "dangerColor": "#FF5C5C",
+  "backgroundImage": null,
+  "captionStyle": {
+    "position": "lower",
+    "uppercase": true,
+    "mode": "progressive"
+  },
+  "silencePaddingSeconds": 0.32,
+  "soundEnabled": true,
+  "soundMix": 0.58,
+  "clipVolume": 1,
+  "music": null,
+  "scenes": [
+    {
+      "id": "hook",
+      "clipId": "01",
+      "src": "projects/shorts/deepseek/clips/01.mp4",
+      "from": 0,
+      "durationInFrames": 239,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 3.98,
+      "silenceTrimmedSeconds": 0,
+      "speechLeadSeconds": 0.18,
+      "speechTailSeconds": 0,
+      "layout": "full",
+      "camera": "punch-in",
+      "cameraIntensity": 1.1,
+      "focus": {
+        "x": 0.4798,
+        "y": 0.5346,
+        "faceHeightRatio": 0.3587
+      },
+      "focusTrack": [
+        {
+          "t": 0.98,
+          "x": 0.4807,
+          "y": 0.4947
+        },
+        {
+          "t": 1.96,
+          "x": 0.4872,
+          "y": 0.5044
+        },
+        {
+          "t": 2.94,
+          "x": 0.4816,
+          "y": 0.5514
+        },
+        {
+          "t": 3.92,
+          "x": 0.4816,
+          "y": 0.513
+        },
+        {
+          "t": 4.9,
+          "x": 0.4797,
+          "y": 0.5283
+        },
+        {
+          "t": 5.88,
+          "x": 0.4764,
+          "y": 0.5466
+        },
+        {
+          "t": 6.86,
+          "x": 0.4728,
+          "y": 0.5422
+        },
+        {
+          "t": 7.84,
+          "x": 0.4747,
+          "y": 0.5504
+        },
+        {
+          "t": 8.82,
+          "x": 0.474,
+          "y": 0.5454
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "cut",
+      "label": null,
+      "cues": [
+        {
+          "id": "hook-cue-1",
+          "type": "logo",
+          "assetId": "deepseek-logo-svg",
+          "src": "projects/shorts/deepseek/assets/deepseek-logo-svg.png",
+          "slot": "overlay-top",
+          "presentation": "plain",
+          "decoration": "none",
+          "displayScale": 1,
+          "offsetY": 0,
+          "text": null,
+          "note": "Identifica la entidad en el primer golpe del hook",
+          "tone": "neutral",
+          "atWord": 3,
+          "atSeconds": 2.1,
+          "fromFrame": 126,
+          "durationInFrames": 102,
+          "dense": true,
+          "sound": {
+            "family": "hit",
+            "file": "sfx/amaliometria-soft-impact.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 0.269,
+            "meanLuma": 0.444,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 11,
+          "durationInFrames": 115,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "Tenemos",
+              "fromFrame": 11,
+              "toFrame": 64
+            },
+            {
+              "text": "nuevo",
+              "fromFrame": 64,
+              "toFrame": 94
+            },
+            {
+              "text": "momento",
+              "fromFrame": 94,
+              "toFrame": 126
+            }
+          ]
+        },
+        {
+          "fromFrame": 126,
+          "durationInFrames": 73,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "Deep",
+              "fromFrame": 126,
+              "toFrame": 148
+            },
+            {
+              "text": "Seek,",
+              "fromFrame": 148,
+              "toFrame": 168
+            },
+            {
+              "text": "en",
+              "fromFrame": 176,
+              "toFrame": 185
+            },
+            {
+              "text": "este",
+              "fromFrame": 185,
+              "toFrame": 199
+            }
+          ]
+        },
+        {
+          "fromFrame": 199,
+          "durationInFrames": 40,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "caso",
+              "fromFrame": 199,
+              "toFrame": 217
+            },
+            {
+              "text": "con",
+              "fromFrame": 217,
+              "toFrame": 239
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lanzamiento",
+      "clipId": "01",
+      "src": "projects/shorts/deepseek/clips/01.mp4",
+      "from": 239,
+      "durationInFrames": 242,
+      "trimStartSeconds": 3.98,
+      "trimEndSeconds": 8.02,
+      "silenceTrimmedSeconds": 1.78,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0.32,
+      "layout": "stage",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4798,
+        "y": 0.5346,
+        "faceHeightRatio": 0.3587
+      },
+      "focusTrack": [
+        {
+          "t": 0.98,
+          "x": 0.4807,
+          "y": 0.4947
+        },
+        {
+          "t": 1.96,
+          "x": 0.4872,
+          "y": 0.5044
+        },
+        {
+          "t": 2.94,
+          "x": 0.4816,
+          "y": 0.5514
+        },
+        {
+          "t": 3.92,
+          "x": 0.4816,
+          "y": 0.513
+        },
+        {
+          "t": 4.9,
+          "x": 0.4797,
+          "y": 0.5283
+        },
+        {
+          "t": 5.88,
+          "x": 0.4764,
+          "y": 0.5466
+        },
+        {
+          "t": 6.86,
+          "x": 0.4728,
+          "y": 0.5422
+        },
+        {
+          "t": 7.84,
+          "x": 0.4747,
+          "y": 0.5504
+        },
+        {
+          "t": 8.82,
+          "x": 0.474,
+          "y": 0.5454
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "zoom-blur",
+      "label": "V4 FLASH · BETA PUBLICA",
+      "cues": [
+        {
+          "id": "lanzamiento-cue-1",
+          "type": "screenshot",
+          "assetId": "anunciodeepseek",
+          "src": "projects/shorts/deepseek/assets/anunciodeepseek.png",
+          "slot": "stage-full",
+          "presentation": "plain",
+          "decoration": null,
+          "displayScale": 1.16,
+          "offsetY": 18,
+          "text": null,
+          "note": "Anuncio oficial y tabla de benchmarks del lanzamiento",
+          "tone": "neutral",
+          "atWord": 10,
+          "atSeconds": 0.12,
+          "fromFrame": 7,
+          "durationInFrames": 216,
+          "dense": true,
+          "sound": {
+            "family": "reveal",
+            "file": "sfx/amaliometria-reveal-01.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.447,
+            "darkRatio": 0.508,
+            "edgeDarkRatio": 1
+          }
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 84,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "el",
+              "fromFrame": 0,
+              "toFrame": 7
+            },
+            {
+              "text": "checkpoint",
+              "fromFrame": 7,
+              "toFrame": 32
+            },
+            {
+              "text": "del",
+              "fromFrame": 32,
+              "toFrame": 68
+            },
+            {
+              "text": "Deep",
+              "fromFrame": 68,
+              "toFrame": 84
+            }
+          ]
+        },
+        {
+          "fromFrame": 84,
+          "durationInFrames": 84,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "Seek",
+              "fromFrame": 84,
+              "toFrame": 100
+            },
+            {
+              "text": "V4",
+              "fromFrame": 100,
+              "toFrame": 136
+            },
+            {
+              "text": "Flash",
+              "fromFrame": 136,
+              "toFrame": 157
+            },
+            {
+              "text": "que",
+              "fromFrame": 157,
+              "toFrame": 168
+            }
+          ]
+        },
+        {
+          "fromFrame": 168,
+          "durationInFrames": 68,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "acaban",
+              "fromFrame": 168,
+              "toFrame": 192
+            },
+            {
+              "text": "de",
+              "fromFrame": 192,
+              "toFrame": 200
+            },
+            {
+              "text": "sacar",
+              "fromFrame": 200,
+              "toFrame": 223
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "benchmarks-oficiales",
+      "clipId": "02",
+      "src": "projects/shorts/deepseek/clips/02.mp4",
+      "from": 481,
+      "durationInFrames": 360,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 6,
+      "silenceTrimmedSeconds": 0,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0,
+      "layout": "stage",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4807,
+        "y": 0.5392,
+        "faceHeightRatio": 0.3658
+      },
+      "focusTrack": [
+        {
+          "t": 1.55,
+          "x": 0.4839,
+          "y": 0.5306
+        },
+        {
+          "t": 3.1,
+          "x": 0.489,
+          "y": 0.5159
+        },
+        {
+          "t": 4.65,
+          "x": 0.4824,
+          "y": 0.5427
+        },
+        {
+          "t": 6.2,
+          "x": 0.4804,
+          "y": 0.5303
+        },
+        {
+          "t": 7.75,
+          "x": 0.4812,
+          "y": 0.5392
+        },
+        {
+          "t": 9.3,
+          "x": 0.4746,
+          "y": 0.5482
+        },
+        {
+          "t": 10.85,
+          "x": 0.475,
+          "y": 0.5506
+        },
+        {
+          "t": 12.4,
+          "x": 0.4741,
+          "y": 0.5414
+        },
+        {
+          "t": 13.95,
+          "x": 0.4757,
+          "y": 0.5467
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "whip",
+      "label": "BENCHMARKS OFICIALES",
+      "cues": [
+        {
+          "id": "benchmarks-oficiales-cue-1",
+          "type": "screenshot",
+          "assetId": "anunciodeepseek",
+          "src": "projects/shorts/deepseek/assets/anunciodeepseek.png",
+          "slot": "stage-full",
+          "presentation": "plain",
+          "decoration": null,
+          "displayScale": 1.16,
+          "offsetY": 18,
+          "text": null,
+          "note": "La tabla oficial aporta los resultados concretos que la voz resume",
+          "tone": "neutral",
+          "atWord": 7,
+          "atSeconds": 1.94,
+          "fromFrame": 116,
+          "durationInFrames": 222,
+          "dense": true,
+          "sound": {
+            "family": "whoosh",
+            "file": "sfx/amaliometria-rise-whoosh.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.447,
+            "darkRatio": 0.508,
+            "edgeDarkRatio": 1
+          }
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 60,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "Mucho,",
+              "fromFrame": 0,
+              "toFrame": 35
+            },
+            {
+              "text": "pero",
+              "fromFrame": 37,
+              "toFrame": 42
+            },
+            {
+              "text": "mucho",
+              "fromFrame": 42,
+              "toFrame": 60
+            }
+          ]
+        },
+        {
+          "fromFrame": 60,
+          "durationInFrames": 56,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "ojito",
+              "fromFrame": 60,
+              "toFrame": 82
+            },
+            {
+              "text": "porque",
+              "fromFrame": 82,
+              "toFrame": 98
+            },
+            {
+              "text": "en",
+              "fromFrame": 98,
+              "toFrame": 107
+            },
+            {
+              "text": "las",
+              "fromFrame": 107,
+              "toFrame": 116
+            }
+          ]
+        },
+        {
+          "fromFrame": 116,
+          "durationInFrames": 34,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "métricas",
+              "fromFrame": 116,
+              "toFrame": 146
+            },
+            {
+              "text": "y",
+              "fromFrame": 146,
+              "toFrame": 150
+            }
+          ]
+        },
+        {
+          "fromFrame": 150,
+          "durationInFrames": 84,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "evaluaciones",
+              "fromFrame": 150,
+              "toFrame": 186
+            },
+            {
+              "text": "es",
+              "fromFrame": 186,
+              "toFrame": 214
+            },
+            {
+              "text": "mejor",
+              "fromFrame": 214,
+              "toFrame": 234
+            }
+          ]
+        },
+        {
+          "fromFrame": 234,
+          "durationInFrames": 126,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "que",
+              "fromFrame": 234,
+              "toFrame": 245
+            },
+            {
+              "text": "GLM 5.2",
+              "fromFrame": 245,
+              "toFrame": 331
+            },
+            {
+              "text": "y",
+              "fromFrame": 331,
+              "toFrame": 360
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "inteligencia",
+      "clipId": "02",
+      "src": "projects/shorts/deepseek/clips/02.mp4",
+      "from": 841,
+      "durationInFrames": 466,
+      "trimStartSeconds": 6,
+      "trimEndSeconds": 13.76,
+      "silenceTrimmedSeconds": 1.74,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0.32,
+      "layout": "stage",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4807,
+        "y": 0.5392,
+        "faceHeightRatio": 0.3658
+      },
+      "focusTrack": [
+        {
+          "t": 1.55,
+          "x": 0.4839,
+          "y": 0.5306
+        },
+        {
+          "t": 3.1,
+          "x": 0.489,
+          "y": 0.5159
+        },
+        {
+          "t": 4.65,
+          "x": 0.4824,
+          "y": 0.5427
+        },
+        {
+          "t": 6.2,
+          "x": 0.4804,
+          "y": 0.5303
+        },
+        {
+          "t": 7.75,
+          "x": 0.4812,
+          "y": 0.5392
+        },
+        {
+          "t": 9.3,
+          "x": 0.4746,
+          "y": 0.5482
+        },
+        {
+          "t": 10.85,
+          "x": 0.475,
+          "y": 0.5506
+        },
+        {
+          "t": 12.4,
+          "x": 0.4741,
+          "y": 0.5414
+        },
+        {
+          "t": 13.95,
+          "x": 0.4757,
+          "y": 0.5467
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "slide-up",
+      "label": "ARTIFICIAL ANALYSIS",
+      "cues": [
+        {
+          "id": "inteligencia-cue-1",
+          "type": "screenshot",
+          "assetId": "artificialanalysis",
+          "src": "projects/shorts/deepseek/assets/artificialanalysis.png",
+          "slot": "stage-full",
+          "presentation": "plain",
+          "decoration": null,
+          "displayScale": 1.16,
+          "offsetY": 18,
+          "text": null,
+          "note": "Comparativa de inteligencia: V4 Flash alcanza 50 puntos",
+          "tone": "neutral",
+          "atWord": 18,
+          "atSeconds": 0.14,
+          "fromFrame": 8,
+          "durationInFrames": 444,
+          "dense": true,
+          "sound": {
+            "family": "reveal",
+            "file": "sfx/amaliometria-reveal-02.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.805,
+            "darkRatio": 0.08,
+            "edgeDarkRatio": 0
+          }
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 64,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "en",
+              "fromFrame": 0,
+              "toFrame": 8
+            },
+            {
+              "text": "Artificial",
+              "fromFrame": 8,
+              "toFrame": 34
+            },
+            {
+              "text": "Analysis",
+              "fromFrame": 34,
+              "toFrame": 64
+            }
+          ]
+        },
+        {
+          "fromFrame": 64,
+          "durationInFrames": 96,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "aparece",
+              "fromFrame": 64,
+              "toFrame": 104
+            },
+            {
+              "text": "con",
+              "fromFrame": 104,
+              "toFrame": 137
+            },
+            {
+              "text": "la",
+              "fromFrame": 137,
+              "toFrame": 145
+            },
+            {
+              "text": "misma",
+              "fromFrame": 145,
+              "toFrame": 160
+            }
+          ]
+        },
+        {
+          "fromFrame": 160,
+          "durationInFrames": 62,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "inteligencia",
+              "fromFrame": 160,
+              "toFrame": 196
+            },
+            {
+              "text": "un",
+              "fromFrame": 196,
+              "toFrame": 204
+            },
+            {
+              "text": "salto",
+              "fromFrame": 204,
+              "toFrame": 222
+            }
+          ]
+        },
+        {
+          "fromFrame": 222,
+          "durationInFrames": 91,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "de",
+              "fromFrame": 222,
+              "toFrame": 229
+            },
+            {
+              "text": "10",
+              "fromFrame": 229,
+              "toFrame": 247
+            },
+            {
+              "text": "puntos",
+              "fromFrame": 247,
+              "toFrame": 268
+            },
+            {
+              "text": "hasta",
+              "fromFrame": 268,
+              "toFrame": 284
+            },
+            {
+              "text": "50",
+              "fromFrame": 284,
+              "toFrame": 313
+            }
+          ]
+        },
+        {
+          "fromFrame": 313,
+          "durationInFrames": 146,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "que",
+              "fromFrame": 313,
+              "toFrame": 343
+            },
+            {
+              "text": "Gemini 3.6",
+              "fromFrame": 343,
+              "toFrame": 422
+            },
+            {
+              "text": "Flash",
+              "fromFrame": 422,
+              "toFrame": 446
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "misma-arquitectura",
+      "clipId": "03",
+      "src": "projects/shorts/deepseek/clips/03.mp4",
+      "from": 1307,
+      "durationInFrames": 312,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 5.2,
+      "silenceTrimmedSeconds": 0,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0,
+      "layout": "stage",
+      "camera": "static",
+      "cameraIntensity": 1,
+      "focus": {
+        "x": 0.4613,
+        "y": 0.5379,
+        "faceHeightRatio": 0.3698
+      },
+      "focusTrack": [
+        {
+          "t": 1.59,
+          "x": 0.4581,
+          "y": 0.5146
+        },
+        {
+          "t": 3.18,
+          "x": 0.4626,
+          "y": 0.5319
+        },
+        {
+          "t": 4.77,
+          "x": 0.4588,
+          "y": 0.538
+        },
+        {
+          "t": 6.36,
+          "x": 0.4603,
+          "y": 0.5262
+        },
+        {
+          "t": 7.95,
+          "x": 0.4616,
+          "y": 0.5401
+        },
+        {
+          "t": 9.54,
+          "x": 0.4609,
+          "y": 0.5319
+        },
+        {
+          "t": 11.13,
+          "x": 0.4635,
+          "y": 0.5019
+        },
+        {
+          "t": 12.72,
+          "x": 0.4509,
+          "y": 0.5501
+        },
+        {
+          "t": 14.31,
+          "x": 0.4604,
+          "y": 0.5413
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "zoom-blur",
+      "label": "MISMO MODELO · SOLO POST-TRAINING",
+      "cues": [
+        {
+          "id": "misma-arquitectura-cue-1",
+          "type": "screenshot",
+          "assetId": "size",
+          "src": "projects/shorts/deepseek/assets/size.png",
+          "slot": "stage-full",
+          "presentation": "plain",
+          "decoration": null,
+          "displayScale": 1.16,
+          "offsetY": 18,
+          "text": null,
+          "note": "El changelog oficial confirma misma arquitectura y tamaño",
+          "tone": "neutral",
+          "atWord": 12,
+          "atSeconds": 2.36,
+          "fromFrame": 142,
+          "durationInFrames": 168,
+          "dense": true,
+          "sound": {
+            "family": "whoosh",
+            "file": "sfx/amaliometria-rise-whoosh.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 1,
+            "meanLuma": 0.951,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 47,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "Y",
+              "fromFrame": 0,
+              "toFrame": 6
+            },
+            {
+              "text": "espera,",
+              "fromFrame": 6,
+              "toFrame": 22
+            },
+            {
+              "text": "espera,",
+              "fromFrame": 28,
+              "toFrame": 35
+            },
+            {
+              "text": "que",
+              "fromFrame": 43,
+              "toFrame": 47
+            }
+          ]
+        },
+        {
+          "fromFrame": 47,
+          "durationInFrames": 79,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "lo",
+              "fromFrame": 47,
+              "toFrame": 58
+            },
+            {
+              "text": "más",
+              "fromFrame": 58,
+              "toFrame": 71
+            },
+            {
+              "text": "loco",
+              "fromFrame": 71,
+              "toFrame": 94
+            },
+            {
+              "text": "es",
+              "fromFrame": 94,
+              "toFrame": 119
+            },
+            {
+              "text": "que",
+              "fromFrame": 119,
+              "toFrame": 126
+            }
+          ]
+        },
+        {
+          "fromFrame": 126,
+          "durationInFrames": 59,
+          "heroIndex": 3,
+          "words": [
+            {
+              "text": "no",
+              "fromFrame": 126,
+              "toFrame": 133
+            },
+            {
+              "text": "le",
+              "fromFrame": 133,
+              "toFrame": 139
+            },
+            {
+              "text": "han",
+              "fromFrame": 139,
+              "toFrame": 142
+            },
+            {
+              "text": "cambiado",
+              "fromFrame": 142,
+              "toFrame": 166
+            },
+            {
+              "text": "ni",
+              "fromFrame": 166,
+              "toFrame": 185
+            }
+          ]
+        },
+        {
+          "fromFrame": 185,
+          "durationInFrames": 67,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "el",
+              "fromFrame": 185,
+              "toFrame": 194
+            },
+            {
+              "text": "tamaño",
+              "fromFrame": 194,
+              "toFrame": 221
+            },
+            {
+              "text": "ni",
+              "fromFrame": 221,
+              "toFrame": 245
+            },
+            {
+              "text": "la",
+              "fromFrame": 245,
+              "toFrame": 252
+            }
+          ]
+        },
+        {
+          "fromFrame": 252,
+          "durationInFrames": 60,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "arquitectura,",
+              "fromFrame": 252,
+              "toFrame": 286
+            },
+            {
+              "text": "así",
+              "fromFrame": 290,
+              "toFrame": 304
+            },
+            {
+              "text": "que",
+              "fromFrame": 304,
+              "toFrame": 312
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "clipId": "03",
+      "src": "projects/shorts/deepseek/clips/03.mp4",
+      "from": 1619,
+      "durationInFrames": 562,
+      "trimStartSeconds": 5.2,
+      "trimEndSeconds": 14.56,
+      "silenceTrimmedSeconds": 1.34,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0.32,
+      "layout": "split",
+      "camera": "drift-right",
+      "cameraIntensity": 0.65,
+      "focus": {
+        "x": 0.4613,
+        "y": 0.5379,
+        "faceHeightRatio": 0.3698
+      },
+      "focusTrack": [
+        {
+          "t": 1.59,
+          "x": 0.4581,
+          "y": 0.5146
+        },
+        {
+          "t": 3.18,
+          "x": 0.4626,
+          "y": 0.5319
+        },
+        {
+          "t": 4.77,
+          "x": 0.4588,
+          "y": 0.538
+        },
+        {
+          "t": 6.36,
+          "x": 0.4603,
+          "y": 0.5262
+        },
+        {
+          "t": 7.95,
+          "x": 0.4616,
+          "y": 0.5401
+        },
+        {
+          "t": 9.54,
+          "x": 0.4609,
+          "y": 0.5319
+        },
+        {
+          "t": 11.13,
+          "x": 0.4635,
+          "y": 0.5019
+        },
+        {
+          "t": 12.72,
+          "x": 0.4509,
+          "y": 0.5501
+        },
+        {
+          "t": 14.31,
+          "x": 0.4604,
+          "y": 0.5413
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "cut",
+      "label": null,
+      "cues": [
+        {
+          "id": "local-cue-1",
+          "type": "stat",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-full",
+          "presentation": "card",
+          "decoration": null,
+          "displayScale": 1,
+          "offsetY": 0,
+          "text": "128 GB",
+          "note": "RAM unificada para ejecutar el modelo en local",
+          "tone": "accent",
+          "atWord": 23,
+          "atSeconds": 0.4,
+          "fromFrame": 24,
+          "durationInFrames": 336,
+          "dense": true,
+          "sound": {
+            "family": "impact",
+            "file": "sfx/amaliometria-impact-01.wav"
+          },
+          "soundNote": null,
+          "art": null
+        },
+        {
+          "id": "local-cue-2",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-header",
+          "presentation": "card",
+          "decoration": null,
+          "displayScale": 1,
+          "offsetY": 0,
+          "text": "EJECUCION LOCAL",
+          "note": null,
+          "tone": "positive",
+          "atWord": 43,
+          "atSeconds": 6.36,
+          "fromFrame": 382,
+          "durationInFrames": 162,
+          "dense": true,
+          "sound": {
+            "family": "chime",
+            "file": "sfx/amaliometria-success-chime.wav"
+          },
+          "soundNote": null,
+          "art": null
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 114,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "si",
+              "fromFrame": 0,
+              "toFrame": 7
+            },
+            {
+              "text": "tienes",
+              "fromFrame": 7,
+              "toFrame": 24
+            },
+            {
+              "text": "128",
+              "fromFrame": 24,
+              "toFrame": 53
+            },
+            {
+              "text": "GB",
+              "fromFrame": 53,
+              "toFrame": 83
+            },
+            {
+              "text": "de",
+              "fromFrame": 83,
+              "toFrame": 114
+            }
+          ]
+        },
+        {
+          "fromFrame": 114,
+          "durationInFrames": 78,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "RAM",
+              "fromFrame": 114,
+              "toFrame": 130
+            },
+            {
+              "text": "unificada,",
+              "fromFrame": 130,
+              "toFrame": 173
+            },
+            {
+              "text": "por",
+              "fromFrame": 180,
+              "toFrame": 192
+            }
+          ]
+        },
+        {
+          "fromFrame": 192,
+          "durationInFrames": 61,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "ejemplo,",
+              "fromFrame": 192,
+              "toFrame": 208
+            },
+            {
+              "text": "en",
+              "fromFrame": 214,
+              "toFrame": 220
+            },
+            {
+              "text": "una",
+              "fromFrame": 220,
+              "toFrame": 227
+            },
+            {
+              "text": "DGX",
+              "fromFrame": 227,
+              "toFrame": 253
+            }
+          ]
+        },
+        {
+          "fromFrame": 253,
+          "durationInFrames": 64,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "Spark",
+              "fromFrame": 253,
+              "toFrame": 272
+            },
+            {
+              "text": "o",
+              "fromFrame": 272,
+              "toFrame": 299
+            },
+            {
+              "text": "en",
+              "fromFrame": 299,
+              "toFrame": 304
+            },
+            {
+              "text": "un",
+              "fromFrame": 304,
+              "toFrame": 311
+            },
+            {
+              "text": "Mac",
+              "fromFrame": 311,
+              "toFrame": 317
+            }
+          ]
+        },
+        {
+          "fromFrame": 317,
+          "durationInFrames": 65,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "Studio,",
+              "fromFrame": 317,
+              "toFrame": 336
+            },
+            {
+              "text": "lo",
+              "fromFrame": 350,
+              "toFrame": 355
+            },
+            {
+              "text": "vas",
+              "fromFrame": 355,
+              "toFrame": 365
+            },
+            {
+              "text": "a",
+              "fromFrame": 365,
+              "toFrame": 372
+            },
+            {
+              "text": "poder",
+              "fromFrame": 372,
+              "toFrame": 382
+            }
+          ]
+        },
+        {
+          "fromFrame": 382,
+          "durationInFrames": 88,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "ejecutar",
+              "fromFrame": 382,
+              "toFrame": 416
+            },
+            {
+              "text": "en",
+              "fromFrame": 416,
+              "toFrame": 436
+            },
+            {
+              "text": "local.",
+              "fromFrame": 436,
+              "toFrame": 456
+            }
+          ]
+        },
+        {
+          "fromFrame": 475,
+          "durationInFrames": 42,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "Piensa",
+              "fromFrame": 475,
+              "toFrame": 496
+            },
+            {
+              "text": "lo",
+              "fromFrame": 496,
+              "toFrame": 502
+            },
+            {
+              "text": "que",
+              "fromFrame": 502,
+              "toFrame": 506
+            },
+            {
+              "text": "estamos",
+              "fromFrame": 506,
+              "toFrame": 517
+            }
+          ]
+        },
+        {
+          "fromFrame": 517,
+          "durationInFrames": 38,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "hablando.",
+              "fromFrame": 517,
+              "toFrame": 542
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "clipId": "04",
+      "src": "projects/shorts/deepseek/clips/04.mp4",
+      "from": 2181,
+      "durationInFrames": 451,
+      "trimStartSeconds": 0,
+      "trimEndSeconds": 7.52,
+      "silenceTrimmedSeconds": 0,
+      "speechLeadSeconds": 0,
+      "speechTailSeconds": 0,
+      "layout": "split",
+      "camera": "push-out",
+      "cameraIntensity": 0.7,
+      "focus": {
+        "x": 0.447,
+        "y": 0.5348,
+        "faceHeightRatio": 0.3785
+      },
+      "focusTrack": [
+        {
+          "t": 1.21,
+          "x": 0.4466,
+          "y": 0.5352
+        },
+        {
+          "t": 2.421,
+          "x": 0.4486,
+          "y": 0.5368
+        },
+        {
+          "t": 3.631,
+          "x": 0.4442,
+          "y": 0.5473
+        },
+        {
+          "t": 4.842,
+          "x": 0.4459,
+          "y": 0.5161
+        },
+        {
+          "t": 6.052,
+          "x": 0.4443,
+          "y": 0.5388
+        },
+        {
+          "t": 7.262,
+          "x": 0.4473,
+          "y": 0.5433
+        },
+        {
+          "t": 8.473,
+          "x": 0.4476,
+          "y": 0.5325
+        },
+        {
+          "t": 9.683,
+          "x": 0.4439,
+          "y": 0.5242
+        },
+        {
+          "t": 10.894,
+          "x": 0.4528,
+          "y": 0.531
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "fade",
+      "label": null,
+      "cues": [
+        {
+          "id": "api-cue-1",
+          "type": "label",
+          "assetId": null,
+          "src": null,
+          "slot": "stage-header",
+          "presentation": "card",
+          "decoration": null,
+          "displayScale": 1,
+          "offsetY": 0,
+          "text": "BETA PUBLICA",
+          "note": "El anuncio oficial añade el estado de lanzamiento que no se verbaliza aquí",
+          "tone": "accent",
+          "atWord": 8,
+          "atSeconds": 2.06,
+          "fromFrame": 124,
+          "durationInFrames": 132,
+          "dense": true,
+          "sound": {
+            "family": "ui",
+            "file": "sfx/amaliometria-interface-01.wav"
+          },
+          "soundNote": null,
+          "art": null
+        },
+        {
+          "id": "api-cue-2",
+          "type": "logo",
+          "assetId": "deepseek-logo-svg",
+          "src": "projects/shorts/deepseek/assets/deepseek-logo-svg.png",
+          "slot": "stage-full",
+          "presentation": "plain",
+          "decoration": "none",
+          "displayScale": 1,
+          "offsetY": 0,
+          "text": "PRUEBA A FONDO EN YOUTUBE",
+          "note": "Refuerza el destino editorial de la llamada a la acción",
+          "tone": "neutral",
+          "atWord": 21,
+          "atSeconds": 5.16,
+          "fromFrame": 310,
+          "durationInFrames": 132,
+          "dense": true,
+          "sound": {
+            "family": "pop",
+            "file": "sfx/library-pop.wav"
+          },
+          "soundNote": null,
+          "art": {
+            "opaqueCoverage": 0.269,
+            "meanLuma": 0.444,
+            "darkRatio": 0,
+            "edgeDarkRatio": 0
+          }
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 0,
+          "durationInFrames": 54,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "De",
+              "fromFrame": 0,
+              "toFrame": 8
+            },
+            {
+              "text": "momento",
+              "fromFrame": 8,
+              "toFrame": 24
+            },
+            {
+              "text": "parece",
+              "fromFrame": 24,
+              "toFrame": 42
+            },
+            {
+              "text": "que",
+              "fromFrame": 42,
+              "toFrame": 54
+            }
+          ]
+        },
+        {
+          "fromFrame": 54,
+          "durationInFrames": 54,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "solo",
+              "fromFrame": 54,
+              "toFrame": 66
+            },
+            {
+              "text": "está",
+              "fromFrame": 66,
+              "toFrame": 78
+            },
+            {
+              "text": "accesible",
+              "fromFrame": 78,
+              "toFrame": 108
+            }
+          ]
+        },
+        {
+          "fromFrame": 108,
+          "durationInFrames": 41,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "vía",
+              "fromFrame": 108,
+              "toFrame": 124
+            },
+            {
+              "text": "API.",
+              "fromFrame": 124,
+              "toFrame": 136
+            }
+          ]
+        },
+        {
+          "fromFrame": 152,
+          "durationInFrames": 60,
+          "heroIndex": 3,
+          "words": [
+            {
+              "text": "Pásate",
+              "fromFrame": 152,
+              "toFrame": 176
+            },
+            {
+              "text": "por",
+              "fromFrame": 176,
+              "toFrame": 185
+            },
+            {
+              "text": "el",
+              "fromFrame": 185,
+              "toFrame": 192
+            },
+            {
+              "text": "canal",
+              "fromFrame": 192,
+              "toFrame": 204
+            },
+            {
+              "text": "de",
+              "fromFrame": 204,
+              "toFrame": 212
+            }
+          ]
+        },
+        {
+          "fromFrame": 212,
+          "durationInFrames": 24,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "YouTube",
+              "fromFrame": 212,
+              "toFrame": 226
+            },
+            {
+              "text": "de",
+              "fromFrame": 226,
+              "toFrame": 236
+            }
+          ]
+        },
+        {
+          "fromFrame": 236,
+          "durationInFrames": 61,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "Amaliometría",
+              "fromFrame": 236,
+              "toFrame": 268
+            },
+            {
+              "text": "donde",
+              "fromFrame": 268,
+              "toFrame": 286
+            },
+            {
+              "text": "lo",
+              "fromFrame": 286,
+              "toFrame": 298
+            }
+          ]
+        },
+        {
+          "fromFrame": 298,
+          "durationInFrames": 52,
+          "heroIndex": 2,
+          "words": [
+            {
+              "text": "voy",
+              "fromFrame": 298,
+              "toFrame": 306
+            },
+            {
+              "text": "a",
+              "fromFrame": 306,
+              "toFrame": 310
+            },
+            {
+              "text": "probar",
+              "fromFrame": 310,
+              "toFrame": 329
+            },
+            {
+              "text": "a",
+              "fromFrame": 329,
+              "toFrame": 332
+            },
+            {
+              "text": "fondo",
+              "fromFrame": 332,
+              "toFrame": 349
+            }
+          ]
+        },
+        {
+          "fromFrame": 349,
+          "durationInFrames": 68,
+          "heroIndex": 1,
+          "words": [
+            {
+              "text": "y",
+              "fromFrame": 349,
+              "toFrame": 364
+            },
+            {
+              "text": "vamos",
+              "fromFrame": 364,
+              "toFrame": 374
+            },
+            {
+              "text": "a",
+              "fromFrame": 374,
+              "toFrame": 384
+            },
+            {
+              "text": "ver",
+              "fromFrame": 384,
+              "toFrame": 395
+            },
+            {
+              "text": "hasta",
+              "fromFrame": 395,
+              "toFrame": 418
+            }
+          ]
+        },
+        {
+          "fromFrame": 418,
+          "durationInFrames": 34,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "dónde",
+              "fromFrame": 418,
+              "toFrame": 432
+            },
+            {
+              "text": "llega.",
+              "fromFrame": 432,
+              "toFrame": 451
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cierre",
+      "clipId": "04",
+      "src": "projects/shorts/deepseek/clips/04.mp4",
+      "from": 2632,
+      "durationInFrames": 192,
+      "trimStartSeconds": 7.52,
+      "trimEndSeconds": 10.72,
+      "silenceTrimmedSeconds": 1.384,
+      "speechLeadSeconds": 0.32,
+      "speechTailSeconds": 0.32,
+      "layout": "full",
+      "camera": "punch-in",
+      "cameraIntensity": 0.9,
+      "focus": {
+        "x": 0.447,
+        "y": 0.5348,
+        "faceHeightRatio": 0.3785
+      },
+      "focusTrack": [
+        {
+          "t": 1.21,
+          "x": 0.4466,
+          "y": 0.5352
+        },
+        {
+          "t": 2.421,
+          "x": 0.4486,
+          "y": 0.5368
+        },
+        {
+          "t": 3.631,
+          "x": 0.4442,
+          "y": 0.5473
+        },
+        {
+          "t": 4.842,
+          "x": 0.4459,
+          "y": 0.5161
+        },
+        {
+          "t": 6.052,
+          "x": 0.4443,
+          "y": 0.5388
+        },
+        {
+          "t": 7.262,
+          "x": 0.4473,
+          "y": 0.5433
+        },
+        {
+          "t": 8.473,
+          "x": 0.4476,
+          "y": 0.5325
+        },
+        {
+          "t": 9.683,
+          "x": 0.4439,
+          "y": 0.5242
+        },
+        {
+          "t": 10.894,
+          "x": 0.4528,
+          "y": 0.531
+        }
+      ],
+      "webcamBox": null,
+      "pip": null,
+      "fit": null,
+      "transitionIn": "whip",
+      "label": null,
+      "cues": [
+        {
+          "id": "cierre-cue-1",
+          "type": "brand",
+          "assetId": null,
+          "src": null,
+          "slot": "overlay-top",
+          "presentation": "card",
+          "decoration": null,
+          "displayScale": 1,
+          "offsetY": 0,
+          "text": "AMALIOMETRIA",
+          "note": "IA, tecnologia y datos sin humo",
+          "tone": "neutral",
+          "atWord": 31,
+          "atSeconds": 0.32,
+          "fromFrame": 19,
+          "durationInFrames": 173,
+          "dense": true,
+          "sound": {
+            "family": "chime",
+            "file": "sfx/amaliometria-confirm-01.wav"
+          },
+          "soundNote": null,
+          "art": null
+        }
+      ],
+      "captionPages": [
+        {
+          "fromFrame": 19,
+          "durationInFrames": 60,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "Esto",
+              "fromFrame": 19,
+              "toFrame": 31
+            },
+            {
+              "text": "es",
+              "fromFrame": 31,
+              "toFrame": 36
+            },
+            {
+              "text": "Amaliometría,",
+              "fromFrame": 36,
+              "toFrame": 68
+            }
+          ]
+        },
+        {
+          "fromFrame": 79,
+          "durationInFrames": 61,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "sígueme",
+              "fromFrame": 79,
+              "toFrame": 108
+            },
+            {
+              "text": "para",
+              "fromFrame": 108,
+              "toFrame": 132
+            },
+            {
+              "text": "no",
+              "fromFrame": 132,
+              "toFrame": 140
+            }
+          ]
+        },
+        {
+          "fromFrame": 140,
+          "durationInFrames": 46,
+          "heroIndex": -1,
+          "words": [
+            {
+              "text": "perderte",
+              "fromFrame": 140,
+              "toFrame": 161
+            },
+            {
+              "text": "nada.",
+              "fromFrame": 161,
+              "toFrame": 173
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "soundCues": [
+    {
+      "file": "sfx/amaliometria-camera-01.wav",
+      "startSeconds": 0.05,
+      "durationSeconds": 0.6,
+      "volume": 0.294,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-soft-impact.wav",
+      "startSeconds": 2.1,
+      "durationSeconds": 0.55,
+      "volume": 0.903,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-rewind-sweep.wav",
+      "startSeconds": 3.9833333333333334,
+      "durationSeconds": 0.7,
+      "volume": 0.45,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-reveal-01.wav",
+      "startSeconds": 4.1033333333333335,
+      "durationSeconds": 0.5,
+      "volume": 0.5225,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/library-quick-whip.wav",
+      "startSeconds": 8.016666666666667,
+      "durationSeconds": 0.2,
+      "volume": 0.30600000000000005,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-rise-whoosh.wav",
+      "startSeconds": 9.956666666666667,
+      "durationSeconds": 0.78,
+      "volume": 0.54,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/library-smooth-whoosh.wav",
+      "startSeconds": 14.016666666666667,
+      "durationSeconds": 0.78,
+      "volume": 0.54,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-reveal-02.wav",
+      "startSeconds": 14.156666666666666,
+      "durationSeconds": 0.5,
+      "volume": 0.55,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-rewind-01.wav",
+      "startSeconds": 21.783333333333335,
+      "durationSeconds": 0.7,
+      "volume": 0.45,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-rise-whoosh.wav",
+      "startSeconds": 24.143333333333334,
+      "durationSeconds": 0.78,
+      "volume": 0.57,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 0.95
+    },
+    {
+      "file": "sfx/amaliometria-impact-01.wav",
+      "startSeconds": 27.383333333333333,
+      "durationSeconds": 0.58,
+      "volume": 0.9429999999999998,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-success-chime.wav",
+      "startSeconds": 33.343333333333334,
+      "durationSeconds": 0.52,
+      "volume": 0.6,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-texture-01.wav",
+      "startSeconds": 36.35,
+      "durationSeconds": 1.1,
+      "volume": 0.216,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-camera-02.wav",
+      "startSeconds": 36.4,
+      "durationSeconds": 0.6,
+      "volume": 0.294,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-interface-01.wav",
+      "startSeconds": 38.410000000000004,
+      "durationSeconds": 0.24,
+      "volume": 0.48600000000000004,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/library-pop.wav",
+      "startSeconds": 41.510000000000005,
+      "durationSeconds": 0.46,
+      "volume": 0.475,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1
+    },
+    {
+      "file": "sfx/amaliometria-rewind-01.wav",
+      "startSeconds": 43.86666666666667,
+      "durationSeconds": 0.2,
+      "volume": 0.30600000000000005,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    },
+    {
+      "file": "sfx/amaliometria-camera-03.wav",
+      "startSeconds": 43.916666666666664,
+      "durationSeconds": 0.6,
+      "volume": 0.294,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 0.95
+    },
+    {
+      "file": "sfx/amaliometria-confirm-01.wav",
+      "startSeconds": 44.18666666666667,
+      "durationSeconds": 0.52,
+      "volume": 0.66,
+      "attackSeconds": 0.012,
+      "releaseSeconds": 0.14,
+      "playbackRate": 1.06
+    }
+  ],
+  "duckWindows": [
+    {
+      "startSeconds": 0.18,
+      "endSeconds": 3.98,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 3.983,
+      "endSeconds": 7.703,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 8.017,
+      "endSeconds": 14.017,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 14.017,
+      "endSeconds": 21.457,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 21.783,
+      "endSeconds": 26.983,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 26.983,
+      "endSeconds": 36.023,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 36.35,
+      "endSeconds": 43.87,
+      "gainDb": -9
+    },
+    {
+      "startSeconds": 44.187,
+      "endSeconds": 46.747,
+      "gainDb": -9
+    }
+  ],
+  "warnings": [
+    "escena 2 (lanzamiento): recortados 1.78s de silencio (entrada 0s, salida 1.78s)",
+    "escena 4 (inteligencia): recortados 1.74s de silencio (entrada 0s, salida 1.74s)",
+    "escena 6 (local): recortados 1.34s de silencio (entrada 0s, salida 1.34s)",
+    "escena 8 (cierre): recortados 1.384s de silencio (entrada 0s, salida 1.384s)"
+  ],
+  "rules": {
+    "summary": {
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "warned": 0,
+      "waived": 0,
+      "manual": 0,
+      "skipped": 0,
+      "missingCheck": 0,
+      "errors": 0,
+      "warnings": 0,
+      "reviews": 0
+    },
+    "issues": []
+  }
+}

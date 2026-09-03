@@ -7,7 +7,7 @@
  * devolvía `notEvaluable` desde que se escribió. Aquí se lee del disco, que es
  * la única fuente honesta —un manifiesto puede prometer un MP4 que no existe.
  */
-import {readdir, stat} from 'node:fs/promises';
+import {readFile, readdir, stat} from 'node:fs/promises';
 import path from 'node:path';
 
 /**
@@ -33,7 +33,23 @@ export async function collectReviewBlockArtifacts({visualsDirectory}) {
       const info = await stat(path.join(directory, file)).catch(() => null);
       if (info?.isFile() && info.size > 0) files.push(file);
     }
-    blocks.push({id: entry.name, directory, files: files.sort()});
+    let manifest = null;
+    try {
+      manifest = JSON.parse(await readFile(path.join(directory, 'manifest.json'), 'utf8'));
+    } catch {
+      // FC-R-101 reports the missing manifest; other checks remain evaluable
+      // against the blocks that do declare source boundaries.
+    }
+    blocks.push({
+      id: entry.name,
+      directory,
+      files: files.sort(),
+      ...(manifest ? {
+        manifest,
+        sourceStartSeconds: manifest.sourceStartSeconds,
+        sourceEndSeconds: manifest.sourceEndSeconds,
+      } : {}),
+    });
   }
   return blocks.sort((left, right) => left.id.localeCompare(right.id));
 }

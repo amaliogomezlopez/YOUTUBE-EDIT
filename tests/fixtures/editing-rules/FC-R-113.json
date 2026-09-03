@@ -1,0 +1,24 @@
+{
+  "ruleId": "FC-R-113",
+  "expect": "fail",
+  "check": "block-boundary-word-safe",
+  "context": {
+    "words": [
+      {"text": "una", "start": 0.1, "end": 0.4},
+      {"text": "palabra", "start": 0.5, "end": 1.2}
+    ],
+    "scenes": [],
+    "coverage": [],
+    "issues": [],
+    "artifacts": {
+      "reviewBlocks": [
+        {
+          "id": "block-fixture",
+          "files": ["manifest.json", "block.mp4"],
+          "sourceStartSeconds": 0,
+          "sourceEndSeconds": 0.8
+        }
+      ]
+    }
+  }
+}

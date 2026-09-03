@@ -29,7 +29,7 @@ Usar el Python devuelto por `load_workspace_dependencies` cuando esté disponibl
 Entregar siempre en este orden:
 
 1. **Título recomendado** y 12 alternativas ordenadas por potencial de clic.
-2. **Resumen** en un único párrafo de 70 a 120 palabras.
+2. **Resumen** en un único párrafo de 70 a 120 palabras, escrito en la voz del creador como si él mismo lo hubiera redactado para la descripción de su vídeo de YouTube.
 3. **Timeline** en un bloque copiable con este formato:
 
 ```text
@@ -44,11 +44,12 @@ Timeline:
 Aplicar estas reglas:
 
 - Basar cada afirmación en la transcripción; no inventar resultados.
+- Redactar el resumen en primera persona cuando encaje, con tono natural, directo y personal. Debe sonar listo para copiar en YouTube y evitar fórmulas impersonales como «el vídeo analiza» o «en este contenido se aborda».
 - Favorecer títulos cortos y compactos, con curiosidad o conflicto real y sin clickbait falso.
 - Mezclar alternativas informativas, contundentes y de estilo noticia cuando el contenido lo permita.
 - Mantener pocas secciones: normalmente entre 4 y 8 según la duración.
 - Iniciar siempre en `00:00`, ordenar los capítulos y dejar al menos 25 segundos entre timestamps.
-- Limitar el texto de cada capítulo a unas 2-6 palabras.
+- Hacer los rótulos de los timestamps especialmente cortos y concisos: preferir 1-4 palabras, eliminar contexto redundante y conservar solo el tema reconocible de la sección.
 - Usar hashtags específicos del tema antes que etiquetas genéricas.
 - No incluir saltos de línea dentro de la línea de hashtags.
 
@@ -65,10 +66,11 @@ No sobrescribir `publishing-metadata.json`; conservar el resultado revisado como
 
 Antes de terminar, comprobar:
 
-- El resumen es un solo párrafo.
+- El resumen es un solo párrafo, suena escrito por el creador y está listo para pegar en YouTube.
 - Hay 12 alternativas además del título recomendado.
 - El primer timestamp es `00:00`.
 - Todos los saltos entre capítulos son de 25 segundos o más.
 - Cada capítulo corresponde al tema que comienza en ese punto.
+- Cada rótulo de capítulo es corto y directo, normalmente de 1-4 palabras.
 - `hashtagsLine` contiene exactamente 14 hashtags únicos.
 - No se ha realizado ninguna subida externa.

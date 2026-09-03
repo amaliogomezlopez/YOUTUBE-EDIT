@@ -152,6 +152,62 @@
         "recordedAt": "2026-07-30T10:17:14Z"
       },
       "fixture": "tests/fixtures/shorts-rules/SH-R-011.json"
+    },
+    {
+      "id": "SH-R-023",
+      "section": "legibility",
+      "statement": "Una captura densa en layout stage usa una escala resuelta de al menos 1.10 y ocupa stage-full.",
+      "rationale": "Una captura de métricas demasiado pequeña desperdicia el ancho vertical y vuelve ilegibles las etiquetas.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-dense-stage-expanded",
+      "origin": {
+        "feedback": "las capturas densas en layout stage deben aprovechar casi todo el ancho del escenario y bajar ligeramente",
+        "recordedAt": "2026-07-31T08:23:26Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-023.json"
+    },
+    {
+      "id": "SH-R-024",
+      "section": "legibility",
+      "statement": "Un logo con presentation plain resuelve decoration none: sin tarjeta, borde ni halo.",
+      "rationale": "El halo rectangular hace que un PNG transparente parezca tener un recuadro accidental.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-plain-logo-no-decoration",
+      "origin": {
+        "feedback": "un logo con presentation plain no lleva reborde ni halo alrededor",
+        "recordedAt": "2026-07-31T08:23:26Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-024.json"
+    },
+    {
+      "id": "SH-R-031",
+      "section": "information",
+      "statement": "Los subtitulos fusionan nombres de modelo y versiones decimales; no dejan fragmentos como .2 ni separan GLM de 5.2.",
+      "rationale": "Separar una version entre filas cambia visualmente el nombre del modelo y dificulta la lectura.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-caption-compound-together",
+      "origin": {
+        "feedback": "los nombres de modelo y su version como GLM 5.2 deben aparecer como un compuesto indivisible en subtitulos",
+        "recordedAt": "2026-07-31T08:23:26Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-031.json"
+    },
+    {
+      "id": "SH-R-041",
+      "section": "safe-area",
+      "statement": "Un cue brand en layout full usa el slot overlay-top para no cubrir la cara.",
+      "rationale": "La tarjeta central de marca tapa ojos o boca en un cierre a camara.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-full-brand-top",
+      "origin": {
+        "feedback": "el cierre de marca en layout full debe colocarse arriba para no tapar la cara",
+        "recordedAt": "2026-07-31T08:23:27Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-041.json"
     }
   ]
 }

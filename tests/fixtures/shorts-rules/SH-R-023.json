@@ -1,0 +1,45 @@
+{
+  "ruleId": "SH-R-023",
+  "statement": "Una captura densa en layout stage usa una escala resuelta de al menos 1.10 y ocupa stage-full.",
+  "check": "shorts-dense-stage-expanded",
+  "expect": "fail",
+  "note": "Montaje mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "format": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-000",
+        "clipId": "01",
+        "layout": "stage",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 240,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 4,
+        "speechLeadSeconds": 0.2,
+        "speechTailSeconds": 0.2,
+        "cues": [
+          {
+            "id": "captura-pequena",
+            "type": "screenshot",
+            "slot": "stage-full",
+            "dense": true,
+            "displayScale": 1,
+            "sound": {
+              "family": "whoosh",
+              "file": "sounds/shorts/whoosh-01.wav"
+            }
+          }
+        ],
+        "captionPages": []
+      }
+    ],
+    "soundCues": [],
+    "duckWindows": []
+  }
+}

@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **9** · con validador automático: **9** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **13** · con validador automático: **13** · marcadas `manual`: **0** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -72,6 +72,22 @@ Un logo o un wordmark con fondo negro sólido necesita `presentation: "blend"`.
 
 **Validador:** `art-solid-background-needs-blend`
 
+### SH-R-023 · `error` · `catalog`
+
+Una captura densa en layout stage usa una escala resuelta de al menos 1.10 y ocupa stage-full.
+
+**Por qué:** Una captura de métricas demasiado pequeña desperdicia el ancho vertical y vuelve ilegibles las etiquetas.
+
+**Validador:** `shorts-dense-stage-expanded`
+
+### SH-R-024 · `error` · `catalog`
+
+Un logo con presentation plain resuelve decoration none: sin tarjeta, borde ni halo.
+
+**Por qué:** El halo rectangular hace que un PNG transparente parezca tener un recuadro accidental.
+
+**Validador:** `shorts-plain-logo-no-decoration`
+
 ## 3. Información en pantalla
 
 ### SH-R-030 · `warning` · `catalog`
@@ -81,6 +97,14 @@ El texto en pantalla añade información. Un chip o una cifra cuyas palabras ya 
 **Por qué:** En la escena de resultados había tres chips TIEMPO / TOKENS / PRECIO mientras la locución decía «en cuanto a tiempo, tokens y precio»: ocupaban el sitio del dato sin añadir nada que el subtítulo no dijera. Un rótulo que fija una entidad sobre la imagen sí aporta, y por eso la regla no mide `label` ni `logo`.
 
 **Validador:** `shorts-onscreen-text-adds-information`
+
+### SH-R-031 · `error` · `catalog`
+
+Los subtitulos fusionan nombres de modelo y versiones decimales; no dejan fragmentos como .2 ni separan GLM de 5.2.
+
+**Por qué:** Separar una version entre filas cambia visualmente el nombre del modelo y dificulta la lectura.
+
+**Validador:** `shorts-caption-compound-together`
 
 ## 4. Zona segura
 
@@ -93,6 +117,14 @@ Nada informativo baja de y = 1748: ni el rectángulo de un slot ni el ancla del 
 **Por qué:** La interfaz de Shorts y Reels dibuja ahí título, avatar y botones. El texto queda tapado en el reproductor real aunque en el MP4 se lea perfectamente, así que el render no delata el fallo.
 
 **Validador:** `shorts-safe-area-bottom`
+
+### SH-R-041 · `error` · `catalog`
+
+Un cue brand en layout full usa el slot overlay-top para no cubrir la cara.
+
+**Por qué:** La tarjeta central de marca tapa ojos o boca en un cierre a camara.
+
+**Validador:** `shorts-full-brand-top`
 
 ## 5. Sonido
 
