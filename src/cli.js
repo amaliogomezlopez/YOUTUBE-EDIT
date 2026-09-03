@@ -19,8 +19,8 @@ Options:
   --render-mode   crop, fit, or pip. Default: pip for horizontal videos, crop for vertical.
   --render-engine ffmpeg or remotion. Default: ffmpeg.
   --quality       draft, standard, or high. Default: high.
-  --subtitle-mode progressive, words, or lines. Default: progressive.
-  --subtitle-preset progressive-reference, progressive-punchy, progressive-editorial, progressive-clean, or karaoke-highlight.
+  --subtitle-mode karaoke, progressive, words, or lines. Default: karaoke.
+  --subtitle-preset karaoke-highlight, progressive-reference, progressive-punchy, progressive-editorial, or progressive-clean.
   --subtitle-font  Local font family name. Default: Arial Black.
   --subtitle-position upper-middle, center, lower-middle, or lower.
   --subtitle-color Main text color as #RRGGBB.
@@ -73,9 +73,9 @@ async function main() {
       renderMode: args['render-mode'],
       renderEngine: args['render-engine'],
       renderQuality: args.quality ?? 'high',
-      subtitleMode: args['subtitle-mode'] ?? 'progressive',
+      subtitleMode: args['subtitle-mode'] ?? 'karaoke',
       subtitleStyle: {
-        preset: args['subtitle-preset'] ?? 'progressive-reference',
+        preset: args['subtitle-preset'] ?? 'karaoke-highlight',
         font: args['subtitle-font'],
         position: args['subtitle-position'],
         primary: args['subtitle-color'],

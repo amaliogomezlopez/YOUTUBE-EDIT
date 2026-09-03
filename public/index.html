@@ -126,7 +126,7 @@
                 <p id="duration-error" class="field-error" role="alert" hidden></p>
                 <div class="grid2">
                   <label><span>Calidad</span><select name="renderQuality"><option value="high">Alta</option><option value="standard">Estándar</option><option value="draft">Borrador</option></select></label>
-                  <label><span>Subtítulos</span><select name="subtitleMode"><option value="progressive" selected>Editorial progresivo</option><option value="words">Una palabra</option><option value="lines">Por frases</option></select></label>
+                  <label><span>Subtítulos</span><select name="subtitleMode"><option value="karaoke" selected>Karaoke · palabra activa</option><option value="progressive">Editorial progresivo</option><option value="words">Una palabra</option><option value="lines">Por frases</option></select></label>
                 </div>
                 <fieldset class="local-engine-settings">
                   <legend>Motor local de voz</legend>
@@ -157,34 +157,40 @@
                     <span class="caption-preview-tail" data-preview-line data-role="tail">DESTACADA HOY</span>
                     </div>
                   </div>
-                  <figcaption data-caption-readout>Arial · 86 px · centro inferior</figcaption>
+                  <figcaption data-caption-readout>Schibsted Grotesk · 78 px · centro inferior</figcaption>
                 </figure>
-                <div class="caption-preset-row">
-                  <label><span>Preset</span><select name="subtitlePreset" data-caption-control="preset"><option value="progressive-reference" selected>Referencia · bloque centrado</option><option value="progressive-punchy">Dinámico · menos palabras</option><option value="progressive-editorial">Editorial · palabra protagonista</option><option value="progressive-clean">Clean · acento activo</option><option value="karaoke-highlight">Karaoke · seguimiento</option></select></label>
-                  <label><span>Posición</span><select name="subtitlePosition" data-caption-control="position"><option value="lower">Abajo</option><option value="lower-middle" selected>Centro inferior</option><option value="center">Centro</option><option value="upper-middle">Centro superior</option></select></label>
+                <div class="caption-preset-cards" role="group" aria-label="Estilo de subtítulos">
+                  <button type="button" class="caption-preset-card is-selected" data-caption-preset="karaoke-highlight"><strong>Karaoke</strong><span>Ilumina cada palabra</span></button>
+                  <button type="button" class="caption-preset-card" data-caption-preset="progressive-reference"><strong>Editorial</strong><span>Palabra protagonista</span></button>
+                  <button type="button" class="caption-preset-card" data-caption-preset="progressive-punchy"><strong>Dinámico</strong><span>Bloques cortos</span></button>
+                  <button type="button" class="caption-preset-card" data-caption-preset="progressive-clean"><strong>Clean</strong><span>Acento suave</span></button>
                 </div>
-                <label><span>Familia tipográfica local</span><input name="subtitleFont" data-caption-control="font" type="text" list="caption-font-options" value="Arial" maxlength="80" autocomplete="off"><small>Incluye fuentes del sistema y archivos guardados en <code>data/fonts</code>.</small></label>
+                <div class="caption-preset-row">
+                  <label><span>Preset</span><select name="subtitlePreset" data-caption-control="preset"><option value="karaoke-highlight" selected>Karaoke · seguimiento</option><option value="progressive-reference">Referencia · bloque centrado</option><option value="progressive-punchy">Dinámico · menos palabras</option><option value="progressive-editorial">Editorial · palabra protagonista</option><option value="progressive-clean">Clean · acento activo</option></select></label>
+                  <label><span>Posición</span><select name="subtitlePosition" data-caption-control="position"><option value="safe-lower" selected>Pecho / pantalla</option><option value="lower">Abajo</option><option value="lower-middle">Centro inferior</option><option value="center">Centro</option><option value="upper-middle">Centro superior</option></select></label>
+                </div>
+                <label><span>Familia tipográfica local</span><input name="subtitleFont" data-caption-control="font" type="text" list="caption-font-options" value="Schibsted Grotesk" maxlength="80" autocomplete="off"><small>Incluye fuentes del sistema y archivos guardados en <code>data/fonts</code>.</small></label>
                 <div class="caption-font-options" data-caption-font-options aria-label="Previsualizaciones de fuentes"><span>Cargando fuentes locales…</span></div>
                 <div class="caption-color-row">
                   <label><span>Texto</span><input name="subtitleColor" data-caption-control="primary" type="color" value="#ffffff"></label>
-                  <label><span>Acento</span><input name="subtitleAccent" data-caption-control="accent" type="color" value="#ffffff"></label>
-                  <label><span>Tamaño</span><span class="input-unit"><input name="subtitleSize" data-caption-control="baseFontSize" type="number" min="48" max="132" value="86"><small>px</small></span></label>
+                  <label><span>Acento</span><input name="subtitleAccent" data-caption-control="accent" type="color" value="#7cff6a"></label>
+                  <label><span>Tamaño</span><span class="input-unit"><input name="subtitleSize" data-caption-control="baseFontSize" type="number" min="48" max="132" value="72"><small>px</small></span></label>
                 </div>
                 <div class="grid2">
-                  <label><span>Reborde</span><span class="input-unit"><input name="subtitleOutlineSize" data-caption-control="outlineSize" type="number" min="0" max="12" step="0.5" value="0"><small>px</small></span></label>
-                  <label><span>Sombra</span><span class="input-unit"><input name="subtitleShadow" data-caption-control="shadow" type="number" min="0" max="8" step="0.5" value="0"><small>px</small></span></label>
+                  <label><span>Reborde</span><span class="input-unit"><input name="subtitleOutlineSize" data-caption-control="outlineSize" type="number" min="0" max="12" step="0.5" value="5"><small>px</small></span></label>
+                  <label><span>Sombra</span><span class="input-unit"><input name="subtitleShadow" data-caption-control="shadow" type="number" min="0" max="8" step="0.5" value="2"><small>px</small></span></label>
                 </div>
                 <p class="field-help">Para texto de un solo color, establece reborde y sombra en 0.</p>
-                <label><span>Jerarquía</span><select name="subtitleEmphasis" data-caption-control="emphasis"><option value="auto">Elegir palabra protagonista</option><option value="off">Tamaño uniforme</option></select></label>
+                <label><span>Jerarquía</span><select name="subtitleEmphasis" data-caption-control="emphasis"><option value="off" selected>Tamaño uniforme</option><option value="auto">Elegir palabra protagonista</option></select></label>
                 <details class="caption-fine-tune">
                   <summary>Ajustar ritmo y composición</summary>
                   <div class="caption-fine-grid">
                     <label><span>Alineación</span><select name="subtitleAlign" data-caption-control="align"><option value="center" selected>Centrada</option><option value="left">Izquierda</option></select></label>
-                    <label><span>Capitalización</span><select name="subtitleUppercase" data-caption-control="uppercase"><option value="false" selected>Mixta según preset</option><option value="true">Todo en mayúsculas</option></select></label>
+                    <label><span>Capitalización</span><select name="subtitleUppercase" data-caption-control="uppercase"><option value="true" selected>Todo en mayúsculas</option><option value="false">Mixta según preset</option></select></label>
                     <label><span>Escala protagonista</span><input name="subtitleHeroScale" data-caption-control="heroScale" type="number" min="1" max="2.6" step="0.01" value="2.12"></label>
                     <label><span>Escala primera línea</span><input name="subtitleLeadScale" data-caption-control="leadScale" type="number" min="0.7" max="1.5" step="0.01" value="1"></label>
                     <label><span>Escala última línea</span><input name="subtitleTailScale" data-caption-control="tailScale" type="number" min="0.7" max="1.5" step="0.01" value="1.12"></label>
-                    <label><span>Palabras por bloque</span><input name="subtitleMaxWords" data-caption-control="maxWords" type="number" min="3" max="12" step="1" value="6"></label>
+                    <label><span>Palabras por bloque</span><input name="subtitleMaxWords" data-caption-control="maxWords" type="number" min="2" max="12" step="1" value="4"></label>
                     <label><span>Duración del bloque</span><span class="input-unit"><input name="subtitleMaxPageDuration" data-caption-control="maxPageDuration" type="number" min="1.2" max="6" step="0.05" value="3.05"><small>s</small></span></label>
                     <label><span>Corte por pausa</span><span class="input-unit"><input name="subtitlePauseBreak" data-caption-control="pauseBreak" type="number" min="0.12" max="1.5" step="0.01" value="0.34"><small>s</small></span></label>
                     <label><span>Caracteres por línea</span><input name="subtitleMaxLineChars" data-caption-control="maxLineChars" type="number" min="10" max="30" step="1" value="16"></label>

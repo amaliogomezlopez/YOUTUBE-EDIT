@@ -27,7 +27,7 @@ function boolean(value, fallback) {
 export function resolveCaptionStyle(options = {}) {
   const presetName = CAPTION_PRESETS[options.preset] ? options.preset : 'progressive-reference';
   const preset = CAPTION_PRESETS[presetName];
-  const position = ['upper-middle', 'center', 'lower-middle', 'lower'].includes(options.position)
+  const position = ['upper-middle', 'center', 'lower-middle', 'lower', 'safe-lower'].includes(options.position)
     ? options.position
     : preset.position;
   const align = ['left', 'center'].includes(options.align) ? options.align : preset.align;
@@ -49,10 +49,16 @@ export function resolveCaptionStyle(options = {}) {
     align,
     uppercase: boolean(options.uppercase, preset.uppercase),
     emphasis,
-    maxWords: Math.round(number(options.maxWords, preset.maxWords, 3, 12)),
+    maxWords: Math.round(number(options.maxWords, preset.maxWords, 2, 12)),
+    maxLineWords: Math.round(number(options.maxLineWords, preset.maxLineWords ?? preset.maxWords ?? 6, 2, 8)),
+    maxPageChars: Math.round(number(options.maxPageChars, preset.maxPageChars ?? 80, 12, 120)),
+    maxLines: Math.round(number(options.maxLines, preset.maxLines ?? 3, 1, 3)),
     maxPageDuration: number(options.maxPageDuration, preset.maxPageDuration, 1.2, 6),
     pauseBreak: number(options.pauseBreak, preset.pauseBreak, 0.12, 1.5),
-    maxLineChars: Math.round(number(options.maxLineChars, preset.maxLineChars, 10, 30)),
+    maxLineChars: Math.round(number(options.maxLineChars, preset.maxLineChars, 8, 30)),
+    anchorY: options.anchorY === undefined || options.anchorY === null || options.anchorY === ''
+      ? (Number.isFinite(preset.anchorY) ? preset.anchorY : null)
+      : number(options.anchorY, 1608, 220, 1680),
     marginX: Math.round(number(options.marginX, preset.marginX, 70, 260)),
     outlineSize: number(options.outlineSize, preset.outlineSize, 0, 12),
     shadow: number(options.shadow, preset.shadow, 0, 8),

@@ -1,7 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {buildProgressiveCaptionPlan} from '../src/lib/captions/planner.js';
-import {captionsToAss} from '../src/lib/subtitles.js';
+import {captionPlacement, projectFaceToCanvas} from '../src/lib/captions/placement.js';
+import {pipLayout} from '../src/lib/pip-layout.js';
+import {captionsToAss, captionOverlayFromPlan, isKaraokeCaptions} from '../src/lib/subtitles.js';
 
 const timedCaption = [{
   id: 'seg-1',
@@ -76,6 +78,80 @@ test('reference preset reproduces the centered lowercase, hero and uppercase sta
   assert.match(ass, /TIME EVER/);
   assert.match(ass, /\\an8\\pos\(540,/);
   assert.match(ass, /\\bord0\\shad0/);
+});
+
+test('karaoke pages stay short: four words and a character budget', () => {
+  const plan = buildProgressiveCaptionPlan(timedCaption, {mode: 'karaoke', preset: 'karaoke-highlight'});
+  assert.ok(plan.pages.length >= 2, 'six words split across pages');
+  for (const page of plan.pages) {
+    const pageWords = page.lines.flatMap((line) => line.words);
+    assert.ok(pageWords.length <= 4, `page has ${pageWords.length} words`);
+    assert.ok(page.lines.length <= 2);
+    for (const line of page.lines) {
+      assert.ok(line.words.length <= 4);
+      assert.ok(line.words.map((word) => word.text).join(' ').length <= 18, 'long words force an earlier wrap');
+    }
+  }
+});
+
+test('talking-head captions sit on the chest, not over the mouth', () => {
+  const plan = buildProgressiveCaptionPlan(timedCaption, {
+    mode: 'karaoke',
+    preset: 'karaoke-highlight',
+    anchorY: captionPlacement({layout: 'crop'}).anchorY
+  });
+  const firstY = plan.pages[0].lines[0].y;
+  assert.ok(firstY >= 1450, `caption y ${firstY} covers the face`);
+  assert.ok(firstY <= 1680);
+});
+
+test('pip captions sit in the gap between the webcam card and the screen', () => {
+  const pip = pipLayout({x: 1400, y: 40, w: 400, h: 500}, {sourceWidth: 1920, sourceHeight: 1080});
+  const placement = captionPlacement({layout: 'pip', pip});
+  const camBottom = pip.camCard.top + pip.camCard.height;
+  assert.equal(placement.region, 'gap');
+  assert.ok(placement.anchorY > camBottom);
+  assert.ok(placement.anchorY < pip.screen.top);
+  assert.ok(pip.captionBand.height >= 180);
+  const face = projectFaceToCanvas({x: 1400, y: 40, w: 400, h: 500}, {width: 1920, height: 1080}, 'pip', pip);
+  assert.equal(face.top, pip.camCard.top);
+});
+
+test('karaoke ASS keeps the whole page visible and colors the active word', () => {
+  const ass = captionsToAss(timedCaption, {mode: 'karaoke'});
+  assert.match(ass, /Style: Karaoke,Schibsted Grotesk/);
+  assert.match(ass, /\\1c&H6AFF7C&/);
+  assert.match(ass, /\\1a&H70&/);
+  assert.match(ass, /\\fscx108\\fscy108/);
+  assert.match(ass, /WHERE/);
+  assert.match(ass, /EVER/);
+  assert.match(ass, /WHERE/);
+  assert.match(ass, /FOR/);
+  assert.match(ass, /THE/);
+  assert.match(ass, /FIRST/);
+  assert.match(ass, /TIME/);
+  assert.match(ass, /EVER/);
+  const firstDialogue = ass.split('\n').find((line) => line.startsWith('Dialogue:'));
+  assert.match(firstDialogue, /WHERE/);
+  assert.match(firstDialogue, /\\1a&H70&/);
+});
+
+test('karaoke is the renderer for the karaoke-highlight preset even in progressive mode', () => {
+  assert.equal(isKaraokeCaptions({preset: 'karaoke-highlight'}), true);
+  assert.equal(isKaraokeCaptions({mode: 'karaoke'}), true);
+  assert.equal(isKaraokeCaptions({mode: 'progressive', preset: 'progressive-reference'}), false);
+  const document = captionsToAss(timedCaption, {mode: 'progressive', preset: 'karaoke-highlight'});
+  assert.match(document, /Style: Karaoke/);
+});
+
+test('caption overlay payload keeps word times for the clip player', () => {
+  const plan = buildProgressiveCaptionPlan(timedCaption, {preset: 'karaoke-highlight'});
+  const overlay = captionOverlayFromPlan({...plan, renderer: 'ass-karaoke'});
+  assert.equal(overlay.renderer, 'ass-karaoke');
+  assert.equal(overlay.style.font, 'Schibsted Grotesk');
+  assert.equal(overlay.style.activeColor, '#7CFF6A');
+  assert.ok(overlay.pages[0].lines[0].words[0].start === 0);
+  assert.equal(overlay.pages.flatMap((page) => page.lines.flatMap((line) => line.words)).length, 6);
 });
 
 test('progressive planner reports approximate timing for segment-only captions', () => {

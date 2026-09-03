@@ -44,7 +44,7 @@ export function buildShortPlanForCandidate({candidate, renderMode, webcamBox}) {
       transitionIn: 'cut',
       ...(layout === 'pip' ? {webcamBox} : {})
     }],
-    captions: {mode: 'progressive'}
+    captions: {mode: 'karaoke'}
   };
 }
 
@@ -98,7 +98,8 @@ export async function renderCandidateWithRemotion({
   webcamBox = null,
   signal = null,
   log = () => {},
-  runners = {}
+  runners = {},
+  outputFile = null
 }) {
   const slug = slugify(`short-${state.id}-${candidate.id}`);
   if (!slug) throw new Error(`No se pudo derivar un slug para el candidato ${candidate.id}`);
@@ -210,12 +211,12 @@ export async function renderCandidateWithRemotion({
   const renderedFile = await render({slug, signal});
 
   // 8. Copia al output del job, junto al resto de artefactos del candidato.
-  const outputFile = path.join(state.outputDir, candidate.id, 'short.mp4');
-  await ensureDir(path.dirname(outputFile));
-  await copyFile(renderedFile, outputFile);
+  const destination = outputFile || path.join(state.outputDir, candidate.id, 'short.mp4');
+  await ensureDir(path.dirname(destination));
+  await copyFile(renderedFile, destination);
 
   return {
-    outputFile,
+    outputFile: destination,
     slug,
     buildFile: path.join(project, 'short-build.json'),
     captionTiming,

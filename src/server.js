@@ -238,6 +238,7 @@ function configured(...keys) {
 }
 
 const DASHBOARD_SYSTEM_FONTS = Object.freeze([
+  'Schibsted Grotesk',
   'Arial',
   'Arial Black',
   'Bahnschrift',
@@ -320,7 +321,7 @@ async function systemStatus() {
 function subtitleStyleFromFields(fields) {
   const short = (value, max = 80) => String(value ?? '').replace(/[\r\n]/g, ' ').trim().slice(0, max) || undefined;
   return {
-    preset: short(fields.subtitlePreset, 40) || 'progressive-reference',
+    preset: short(fields.subtitlePreset, 40) || 'karaoke-highlight',
     font: short(fields.subtitleFont),
     position: short(fields.subtitlePosition, 30),
     primary: short(fields.subtitleColor, 9),

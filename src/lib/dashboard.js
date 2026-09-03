@@ -171,6 +171,7 @@ export function publicJobState(state, {queue = null, publishQueue = null, render
       files: {
         video: Boolean(clip.files?.video),
         subtitles: Boolean(clip.files?.subtitles),
+        captionPlan: Boolean(clip.files?.captionPlan),
         metadata: Boolean(clip.files?.metadata)
       },
       renderQueue: publicQueueJob(renderQueues.get(clip.renderQueueId)),

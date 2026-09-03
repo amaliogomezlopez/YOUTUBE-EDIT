@@ -1,5 +1,6 @@
 import path from 'node:path';
 import {ensureDir, run} from './utils.js';
+import {pipLayout} from './pip-layout.js';
 
 const TARGET_WIDTH = 1080;
 const TARGET_HEIGHT = 1920;
@@ -56,23 +57,24 @@ function even(value) {
   return rounded % 2 === 0 ? rounded : rounded + 1;
 }
 
-function pipLayoutForWebcamBox(box) {
-  const maxCamWidth = 650;
-  const minCamWidth = 360;
-  const maxUpscale = 2.5;
-  const camWidth = even(Math.min(maxCamWidth, Math.max(minCamWidth, box.w * maxUpscale)));
-  const camHeightWithPad = even((camWidth * box.h) / box.w) + 12;
-  const camY = 42;
-  const screenY = Math.max(520, Math.round(camY + camHeightWithPad + 42));
-  const camSharpness = camWidth / box.w > 3 ? '0.35:3:3:0.15' : '0.45:3:3:0.18';
-  return {camWidth, camY, screenY, camSharpness};
+function roundedAlpha(radius) {
+  const r = Math.max(4, Math.round(radius));
+  return `if(gt(pow(max(0\\,abs(W/2-X)-(W/2-${r}))\\,2)+pow(max(0\\,abs(H/2-Y)-(H/2-${r}))\\,2)\\,${r * r})\\,0\\,255)`;
 }
 
 function filterPath(value) {
   return String(value).replace(/\\/g, '/').replace(/'/g, "\\'").replace(/:/g, '\\:');
 }
 
-function buildVerticalFilter({subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null}) {
+export function buildVerticalFilter({
+  subtitleFile = null,
+  fontDir = null,
+  cwd = process.cwd(),
+  mode = 'crop',
+  webcamBox = null,
+  sourceWidth = 1920,
+  sourceHeight = 1080
+} = {}) {
   const subtitleName = subtitleFile ? filterPath(path.basename(subtitleFile)) : null;
   const relativeFontDir = fontDir ? filterPath(path.relative(cwd, fontDir) || '.') : null;
   const subtitle = subtitleName
@@ -83,19 +85,33 @@ function buildVerticalFilter({subtitleFile = null, fontDir = null, cwd = process
     const y = Math.max(0, Math.round(webcamBox.y));
     const w = Math.max(24, Math.round(webcamBox.w));
     const h = Math.max(24, Math.round(webcamBox.h));
-    const maskX = Math.max(0, x - 24);
-    const maskY = Math.max(0, y - 18);
-    const maskW = w + 54;
-    const maskH = h + 42;
-    const layout = pipLayoutForWebcamBox({w, h});
-    return [
+    const layout = pipLayout({x, y, w, h}, {sourceWidth, sourceHeight});
+    const stroke = layout.camCard.stroke;
+    const radius = layout.camCard.radius;
+    const camRound = `format=rgba,geq=lum='p(X\\,Y)':cb='p(X\\,Y)':cr='p(X\\,Y)':a='${roundedAlpha(radius)}'`;
+    const screenLabel = layout.mask.visible ? 'screenmasked' : 'screenfit';
+    const parts = [
       '[0:v]split=3[bg][screen][cam]',
       `[bg]${scaleExpr(TARGET_WIDTH, TARGET_HEIGHT, ':force_original_aspect_ratio=increase')},crop=${TARGET_WIDTH}:${TARGET_HEIGHT},boxblur=28:2,eq=brightness=-0.18:saturation=0.7[base]`,
-      `[screen]drawbox=x=${maskX}:y=${maskY}:w=${maskW}:h=${maskH}:color=black@1:t=fill,${scaleExpr(1600, -2)},setsar=1,unsharp=5:5:0.45:3:3:0.2[screenfit]`,
-      `[cam]crop=${w}:${h}:${x}:${y},${scaleExpr(layout.camWidth, -2)},unsharp=5:5:${layout.camSharpness},pad=iw+12:ih+12:6:6:black,setsar=1[camfit]`,
-      `[base][camfit]overlay=(W-w)/2:${layout.camY}[top]`,
-      `[top][screenfit]overlay=-130:${layout.screenY}${subtitle ? `,${subtitle}` : ''}`
-    ].join(';');
+      `[screen]${scaleExpr(layout.screen.width, layout.screen.height, ':force_original_aspect_ratio=increase')},crop=${layout.screen.width}:${layout.screen.height},setsar=1[screenfit]`
+    ];
+    if (layout.mask.visible) {
+      const mx = Math.max(0, Math.round(layout.mask.localLeft));
+      const my = Math.max(0, Math.round(layout.mask.localTop));
+      const mw = Math.min(layout.screen.width - mx, even(Math.max(8, layout.mask.width)));
+      const mh = Math.min(layout.screen.height - my, even(Math.max(8, layout.mask.height)));
+      const blurR = Math.max(2, Math.min(12, Math.floor(Math.min(mw, mh) / 4)));
+      parts.push(`[screenfit]split[skeep][sblur]`);
+      parts.push(`[sblur]crop=${mw}:${mh}:${mx}:${my},boxblur=${blurR}:1[blurredcam]`);
+      parts.push(`[skeep][blurredcam]overlay=${mx}:${my}[screenmasked]`);
+    }
+    parts.push(`[cam]crop=${w}:${h}:${x}:${y},${scaleExpr(layout.camWidth, layout.camHeight)},unsharp=5:5:${layout.camSharpness},pad=iw+${stroke * 2}:ih+${stroke * 2}:${stroke}:${stroke}:white,${camRound}[camrgba]`);
+    parts.push('[camrgba]split[camv][camshsrc]');
+    parts.push('[camshsrc]colorchannelmixer=aa=0.35,boxblur=16:4[camsh]');
+    parts.push(`[base][camsh]overlay=(W-w)/2:${layout.camCard.top + 10}[withsh]`);
+    parts.push(`[withsh][camv]overlay=(W-w)/2:${layout.camCard.top}[top]`);
+    parts.push(`[top][${screenLabel}]overlay=${layout.screen.left}:${layout.screen.top}${subtitle ? `,${subtitle}` : ''}`);
+    return parts.join(';');
   }
   if (mode === 'fit') {
     const filter = [
@@ -132,10 +148,19 @@ function videoEncodeArgs(quality) {
   ];
 }
 
-export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null}) {
+export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null, media = null}) {
   await ensureDir(path.dirname(outputFile));
   const duration = Math.max(0.5, end - start);
-  const filter = buildVerticalFilter({subtitleFile, fontDir, cwd, mode, webcamBox});
+  const source = media?.width && media?.height ? media : await ffprobe(videoFile, {signal});
+  const filter = buildVerticalFilter({
+    subtitleFile,
+    fontDir,
+    cwd,
+    mode,
+    webcamBox,
+    sourceWidth: source.width,
+    sourceHeight: source.height
+  });
   const args = [
     '-y',
     '-ss', String(start),

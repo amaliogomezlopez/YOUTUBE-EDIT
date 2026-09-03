@@ -20,8 +20,9 @@ export const CAPTION_PRESETS = Object.freeze({
     emphasis: 'auto', maxWords: 8, maxPageDuration: 3.4, pauseBreak: 0.46, maxLineChars: 20, marginX: 140, outlineSize: 4, shadow: 2, tracking: 0
   }),
   'karaoke-highlight': Object.freeze({
-    preset: 'karaoke-highlight', font: 'Arial Black', primary: '#FFFFFF', accent: '#FFD83D', activeColor: '#FFD83D',
-    baseFontSize: 76, heroScale: 1.18, leadScale: 1, tailScale: 1, position: 'lower', align: 'center', uppercase: false,
-    emphasis: 'off', maxWords: 6, maxPageDuration: 2.7, pauseBreak: 0.38, maxLineChars: 21, marginX: 120, outlineSize: 5, shadow: 2, tracking: 0
+    preset: 'karaoke-highlight', font: 'Schibsted Grotesk', primary: '#FFFFFF', accent: '#7CFF6A', activeColor: '#7CFF6A',
+    baseFontSize: 72, heroScale: 1, leadScale: 1, tailScale: 1, position: 'safe-lower', align: 'center', uppercase: true,
+    emphasis: 'off', maxWords: 4, maxLineWords: 4, maxPageChars: 20, maxLines: 2, maxPageDuration: 2.1, pauseBreak: 0.32,
+    maxLineChars: 14, marginX: 90, outlineSize: 5, shadow: 2, tracking: 0
   })
 });

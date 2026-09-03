@@ -6,7 +6,10 @@ import {findCandidates} from './scoring.js';
 import {loadTranscript, sliceCaptions} from './transcript.js';
 import {transcribeAudio} from './stt.js';
 import {ensureDir, FONTS_DIR, JOBS_DIR, makeId, OUTPUT_DIR, readJson, round, safeFilename, writeJson} from './utils.js';
-import {writeAssFile} from './subtitles.js';
+import {buildProgressiveCaptionPlan} from './captions/planner.js';
+import {captionPlacement, projectFaceToCanvas} from './captions/placement.js';
+import {pipLayout} from './pip-layout.js';
+import {captionOverlayFromPlan, writeAssFile} from './subtitles.js';
 import {detectWebcamBox} from './webcam.js';
 import {renderCandidateWithRemotion} from '../modules/shorts-studio/from-long-video.js';
 import {buildClipPublishing, generatePublishingMetadata} from './publishing.js';
@@ -83,7 +86,7 @@ export async function processJob(state, options = {}) {
     throwIfCancelled(signal);
     state.status = 'probing';
     await saveJobState(state);
-    const media = await ffprobe(state.sourceVideo, {signal});
+    const media = await (options.ffprobe || ffprobe)(state.sourceVideo, {signal});
     state.media = {
       duration: round(media.duration, 3),
       width: media.width,
@@ -107,13 +110,21 @@ export async function processJob(state, options = {}) {
       state.status = 'detecting-webcam';
       await saveJobState(state);
       webcamBox = await (options.detectWebcam ?? detectWebcamBox)(state.sourceVideo, media, {...(options.webcamDetection ?? {}), signal});
-      if (!webcamBox) {
-        renderMode = 'fit';
-        state.warnings = [...(state.warnings ?? []), 'No se detectó una webcam estable. Se usará pantalla completa para evitar un recorte falso.'];
+      if (webcamBox?.layout === 'crop' || webcamBox?.method === 'talking-head-face') {
+        state.layoutHint = 'talking-head';
+        state.faceBox = webcamBox.faceBox ?? null;
+        webcamBox = null;
+        // Sin modo explicito no se fija crop en todo el job: un mismo video
+        // mezcla plano medio y escritorio+webcam, y cada clip se clasifica
+        // en su ventana.
+      } else if (!webcamBox) {
+        state.warnings = [...(state.warnings ?? []), 'No se detectó una webcam estable a nivel de vídeo. Cada clip se volverá a muestrear; si sigue sin cara, ese corte irá a pantalla completa.'];
+        if (options.renderEngine === 'remotion') renderMode = 'fit';
       }
       state.webcamBox = webcamBox;
     }
     state.renderMode = renderMode;
+    state.renderEngine = options.renderEngine === 'remotion' ? 'remotion' : 'ffmpeg';
 
     state.status = 'transcribing';
     await saveJobState(state);
@@ -210,12 +221,17 @@ export async function processJob(state, options = {}) {
           signal
         });
         if (result.captionTiming !== 'word') {
-          const timingWarning = 'Los subtítulos progresivos usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
+          const timingWarning = 'Los subtítulos karaoke usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
           if (!(state.warnings ?? []).includes(timingWarning)) state.warnings = [...(state.warnings ?? []), timingWarning];
         }
+        const remotionPlan = buildProgressiveCaptionPlan(sliceCaptions(captions, candidate.start, candidate.end), {
+          mode: options.subtitleMode ?? 'karaoke',
+          ...(options.subtitleStyle ?? {})
+        });
         const metadataFile = path.join(clipDir, 'metadata.json');
         const metadata = {
           ...candidate,
+          captionOverlay: captionOverlayFromPlan(remotionPlan),
           renderSettings: {
             mode: result.renderMode,
             engine: 'remotion',
@@ -235,23 +251,33 @@ export async function processJob(state, options = {}) {
         await saveJobState(state);
         continue;
       }
+      const clipLayout = await resolveClipLayout({
+        state,
+        candidate,
+        renderMode,
+        webcamBox,
+        options,
+        signal
+      });
       const clipCaptions = sliceCaptions(captions, candidate.start, candidate.end);
       const assFile = path.join(clipDir, 'captions.ass');
       const captionPlanFile = path.join(clipDir, 'caption-plan.json');
-      const subtitleMode = options.subtitleMode ?? 'progressive';
+      const subtitleMode = options.subtitleMode ?? 'karaoke';
       const subtitleStyle = options.subtitleStyle ?? {};
-      const subtitleDocument = await writeAssFile(assFile, clipCaptions, {
-        mode: subtitleMode,
-        ...(options.subtitleStyle ?? {})
-      });
+      const subtitleDocument = await writeAssFile(assFile, clipCaptions, captionOptionsForClip({
+        subtitleMode,
+        subtitleStyle,
+        clipLayout,
+        media: state.media
+      }));
       if (subtitleDocument.plan) await writeJson(captionPlanFile, subtitleDocument.plan);
       if (subtitleDocument.plan?.timing.source !== 'word') {
-        const timingWarning = 'Los subtítulos progresivos usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
+        const timingWarning = 'Los subtítulos karaoke usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
         if (!(state.warnings ?? []).includes(timingWarning)) state.warnings = [...(state.warnings ?? []), timingWarning];
       }
       const metadataFile = path.join(clipDir, 'metadata.json');
       const outputFile = path.join(clipDir, 'short.mp4');
-      await renderVerticalClip({
+      await (options.renderClip || renderVerticalClip)({
         videoFile: state.sourceVideo,
         outputFile,
         start: candidate.start,
@@ -259,20 +285,24 @@ export async function processJob(state, options = {}) {
         subtitleFile: assFile,
         fontDir: FONTS_DIR,
         cwd: clipDir,
-        mode: renderMode,
-        webcamBox,
+        mode: clipLayout.mode,
+        webcamBox: clipLayout.webcamBox,
         quality: options.renderQuality ?? 'high',
-        signal
+        signal,
+        media: state.media
       });
       const metadata = {
         ...candidate,
+        captionOverlay: captionOverlayFromPlan(subtitleDocument.plan),
         renderSettings: {
-          mode: renderMode,
+          mode: clipLayout.mode,
+          engine: 'ffmpeg',
           quality: options.renderQuality ?? 'high',
           subtitleMode,
           subtitleStyle: subtitleDocument.plan?.style ?? subtitleStyle,
           captionTiming: subtitleDocument.plan?.timing ?? null,
-          webcamBox
+          webcamBox: clipLayout.webcamBox,
+          faceBox: clipLayout.faceBox ?? null
         },
         files: {
           video: outputFile,
@@ -302,6 +332,38 @@ export async function processJob(state, options = {}) {
     await saveJobState(state);
     throw error;
   }
+}
+
+function captionOptionsForClip({subtitleMode, subtitleStyle = {}, clipLayout, media}) {
+  const pip = clipLayout.mode === 'pip' && clipLayout.webcamBox && media?.width
+    ? pipLayout(clipLayout.webcamBox, {sourceWidth: media.width, sourceHeight: media.height})
+    : null;
+  const faceInCanvas = projectFaceToCanvas(clipLayout.faceBox, media, clipLayout.mode, pip);
+  const placement = captionPlacement({layout: clipLayout.mode, pip, faceInCanvas});
+  const pinned = ['upper-middle', 'center'].includes(subtitleStyle.position);
+  return {
+    mode: subtitleMode,
+    ...subtitleStyle,
+    ...(pinned ? {} : {position: placement.position, anchorY: placement.anchorY})
+  };
+}
+
+export async function resolveClipLayout({state, candidate, renderMode, webcamBox, options, signal}) {
+  if (renderMode === 'crop' || renderMode === 'fit') {
+    return {mode: renderMode, webcamBox: null, faceBox: state.faceBox ?? null};
+  }
+  const detect = options.detectWebcam ?? detectWebcamBox;
+  const detected = await detect(state.sourceVideo, state.media, {
+    window: {startSeconds: candidate.start, endSeconds: candidate.end},
+    signal,
+    ...(options.webcamDetection ?? {})
+  });
+  if (detected?.layout === 'crop' || detected?.method === 'talking-head-face') {
+    return {mode: 'crop', webcamBox: null, faceBox: detected.faceBox ?? state.faceBox ?? null};
+  }
+  if (detected?.w >= 24 && detected?.h >= 24) return {mode: 'pip', webcamBox: detected, faceBox: detected};
+  if (options.renderMode === 'pip' && webcamBox) return {mode: 'pip', webcamBox, faceBox: webcamBox};
+  return {mode: 'fit', webcamBox: null, faceBox: state.faceBox ?? null};
 }
 
 function normalizedWebcamBox(box, media) {
@@ -341,7 +403,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
     throw new Error('El rango debe durar entre 1 y 180 segundos y quedar dentro del vídeo.');
   }
   const mode = ['crop', 'fit', 'pip'].includes(edits.renderMode) ? edits.renderMode : (state.renderMode || 'crop');
-  const webcamBox = edits.webcamBox ? normalizedWebcamBox(edits.webcamBox, state.media) : state.webcamBox;
+  const webcamBox = edits.webcamBox ? normalizedWebcamBox(edits.webcamBox, state.media) : (clip.renderSettings?.webcamBox || state.webcamBox);
   if (mode === 'pip' && !webcamBox) throw new Error('Selecciona una caja de webcam antes de renderizar en modo PIP.');
   const captions = await readJson(path.join(state.jobDir, 'transcript.json'));
   const clipDir = path.dirname(clip.files?.metadata || path.join(state.outputDir, clip.id, 'metadata.json'));
@@ -351,22 +413,77 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
   const captionPlanFile = path.join(clipDir, `caption-plan-${renderId}.json`);
   const metadataFile = path.join(clipDir, `metadata-${renderId}.json`);
   const outputFile = path.join(clipDir, `short-${renderId}.mp4`);
-  const subtitleMode = edits.subtitleMode || clip.renderSettings?.subtitleMode || 'progressive';
+  const subtitleMode = edits.subtitleMode || clip.renderSettings?.subtitleMode || 'karaoke';
   const previousSubtitleStyle = clip.renderSettings?.subtitleStyle ?? {};
   const requestedSubtitleStyle = edits.subtitleStyle ?? {};
   const presetChanged = requestedSubtitleStyle.preset && requestedSubtitleStyle.preset !== previousSubtitleStyle.preset;
   const subtitleStyle = presetChanged
     ? requestedSubtitleStyle
     : {...previousSubtitleStyle, ...requestedSubtitleStyle};
+  const engine = edits.renderEngine || clip.renderSettings?.engine || state.renderEngine || 'ffmpeg';
   const previousClip = structuredClone(clip);
   clip.status = 'rendering';
   clip.renderError = null;
   try {
     await saveJobState(state);
-    const subtitleDocument = await writeAssFile(assFile, sliceCaptions(captions, start, end), {
-      mode: subtitleMode,
-      ...subtitleStyle
-    });
+    if (engine === 'remotion' && !options.renderClip) {
+      const result = await (options.renderCandidate ?? renderCandidateWithRemotion)({
+        state,
+        candidate: {...previousClip, start, end},
+        captions,
+        renderMode: mode,
+        webcamBox: mode === 'pip' ? webcamBox : null,
+        signal,
+        outputFile
+      });
+      const remotionPlan = buildProgressiveCaptionPlan(sliceCaptions(captions, start, end), {
+        mode: subtitleMode,
+        ...subtitleStyle
+      });
+      const nextClip = {
+        ...previousClip,
+        start,
+        end,
+        duration: round(end - start, 3),
+        status: 'ready',
+        renderError: null,
+        renderedAt: new Date().toISOString(),
+        captionOverlay: captionOverlayFromPlan(remotionPlan),
+        renderSettings: {
+          mode: result.renderMode,
+          engine: 'remotion',
+          quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high',
+          subtitleMode,
+          subtitleStyle: remotionPlan.style ?? subtitleStyle,
+          captionTiming: result.captionTiming ?? remotionPlan.timing ?? null,
+          slug: result.slug,
+          webcamBox: result.webcamBox ?? webcamBox
+        },
+        files: {
+          ...(previousClip.files ?? {}),
+          video: result.outputFile,
+          metadata: metadataFile
+        }
+      };
+      await writeJson(metadataFile, nextClip);
+      Object.keys(clip).forEach((key) => delete clip[key]);
+      Object.assign(clip, nextClip);
+      await saveJobState(state);
+      const currentFiles = new Set(Object.values(nextClip.files ?? {}));
+      const obsoleteFiles = Object.values(previousClip.files ?? {}).filter((file) => file && !currentFiles.has(file));
+      await Promise.all(obsoleteFiles.map((file) => unlink(file).catch(() => {})));
+      return clip;
+    }
+    const subtitleDocument = await writeAssFile(assFile, sliceCaptions(captions, start, end), captionOptionsForClip({
+      subtitleMode,
+      subtitleStyle,
+      clipLayout: {
+        mode,
+        webcamBox: mode === 'pip' ? webcamBox : null,
+        faceBox: mode === 'pip' ? webcamBox : (state.faceBox || previousClip.renderSettings?.faceBox || null)
+      },
+      media: state.media
+    }));
     if (subtitleDocument.plan) await writeJson(captionPlanFile, subtitleDocument.plan);
     await (options.renderClip || renderVerticalClip)({
       videoFile: state.sourceVideo,
@@ -379,7 +496,8 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
       mode,
       webcamBox,
       quality: edits.renderQuality || 'high',
-      signal
+      signal,
+      media: state.media
     });
     const nextFiles = {
       ...(previousClip.files ?? {}),
@@ -397,8 +515,10 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
       status: 'ready',
       renderError: null,
       renderedAt: new Date().toISOString(),
+      captionOverlay: captionOverlayFromPlan(subtitleDocument.plan),
       renderSettings: {
         mode,
+        engine: 'ffmpeg',
         quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high',
         subtitleMode,
         subtitleStyle: subtitleDocument.plan?.style ?? subtitleStyle,

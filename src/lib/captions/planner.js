@@ -74,6 +74,10 @@ function closesThought(text) {
   return /[.!?]["'»)]?$/.test(text);
 }
 
+function pageCharCount(words) {
+  return words.map((word) => word.text).join(' ').length;
+}
+
 function groupIntoPages(words, style) {
   const pages = [];
   let current = [];
@@ -81,8 +85,10 @@ function groupIntoPages(words, style) {
     const previous = current.at(-1);
     const pause = previous ? word.start - previous.end : 0;
     const duration = current.length ? word.end - current[0].start : 0;
+    const nextChars = pageCharCount([...current, word]);
     const shouldBreak = current.length && (
       current.length >= style.maxWords ||
+      nextChars > style.maxPageChars ||
       pause >= style.pauseBreak ||
       duration > style.maxPageDuration ||
       closesThought(previous.text)
@@ -136,19 +142,22 @@ function chooseEmphasisIndex(words, style) {
   return bestIndex;
 }
 
-function wrapWords(words, maxChars) {
+function wrapWords(words, style) {
+  const maxChars = style.maxLineChars;
+  const maxLineWords = style.maxLineWords ?? style.maxWords ?? 4;
+  const maxLines = style.maxLines ?? 3;
   const lines = [];
   let current = [];
   for (const word of words) {
     const nextLength = [...current, word].map((item) => item.text).join(' ').length;
-    if (current.length && nextLength > maxChars) {
+    if (current.length && (nextLength > maxChars || current.length >= maxLineWords)) {
       lines.push(current);
       current = [];
     }
     current.push(word);
   }
   if (current.length) lines.push(current);
-  while (lines.length > 3) {
+  while (lines.length > maxLines) {
     const tail = lines.pop();
     lines[lines.length - 1].push(...tail);
   }
@@ -157,7 +166,7 @@ function wrapWords(words, maxChars) {
 
 function pageLines(words, style) {
   const emphasisIndex = chooseEmphasisIndex(words, style);
-  if (emphasisIndex === -1) return wrapWords(words, style.maxLineChars).map((lineWords) => ({words: lineWords, role: 'normal'}));
+  if (emphasisIndex === -1) return wrapWords(words, style).map((lineWords) => ({words: lineWords, role: 'normal'}));
   const before = words.slice(0, emphasisIndex);
   const hero = [words[emphasisIndex]];
   const after = words.slice(emphasisIndex + 1);
@@ -175,7 +184,7 @@ function pageLines(words, style) {
   if (lines.length <= 3 && lines.every((line) => line.words.map((word) => word.text).join(' ').length <= style.maxLineChars * 1.5 || line.role === 'hero')) {
     return lines;
   }
-  return wrapWords(words, style.maxLineChars).map((lineWords) => ({
+  return wrapWords(words, style).map((lineWords) => ({
     words: lineWords,
     role: lineWords.includes(hero[0]) && lineWords.length === 1 ? 'hero' : 'normal'
   }));
@@ -201,8 +210,9 @@ function lineFontSize(line, style) {
   return style.baseFontSize;
 }
 
-function positionCenter(position) {
-  return { 'upper-middle': 720, center: 930, 'lower-middle': 1220, lower: 1430 }[position] ?? 1220;
+function positionCenter(style) {
+  if (Number.isFinite(style.anchorY)) return style.anchorY;
+  return { 'upper-middle': 720, center: 930, 'lower-middle': 1220, lower: 1430, 'safe-lower': 1608 }[style.position] ?? 1608;
 }
 
 function layoutLines(lines, style) {
@@ -215,7 +225,7 @@ function layoutLines(lines, style) {
     return {...line, fontSize, lineHeight};
   });
   const blockHeight = measured.reduce((sum, line) => sum + line.lineHeight, 0);
-  let y = Math.round(positionCenter(style.position) - blockHeight / 2);
+  let y = Math.round(positionCenter(style) - blockHeight / 2);
   return measured.map((line, index) => {
     const width = 1080 - style.marginX * 2;
     const x = style.align === 'center' ? 540 : style.marginX;

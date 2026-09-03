@@ -1,6 +1,6 @@
 const RENDER_MODES = new Set(['', 'crop', 'fit', 'pip']);
 const RENDER_QUALITIES = new Set(['draft', 'standard', 'high']);
-const SUBTITLE_MODES = new Set(['progressive', 'words', 'lines']);
+const SUBTITLE_MODES = new Set(['karaoke', 'progressive', 'words', 'lines']);
 const STT_PROVIDERS = new Set(['off', 'faster-whisper', 'whisper-cli', 'openai', 'nemotron']);
 
 function boundedNumber(value, {label, fallback, min, max, integer = false}) {
@@ -30,7 +30,7 @@ export function validateJobOptions(fields = {}) {
     maxDuration,
     renderMode: choice(fields.renderMode, RENDER_MODES, '', 'El modo de composición'),
     renderQuality: choice(fields.renderQuality, RENDER_QUALITIES, 'high', 'La calidad de render'),
-    subtitleMode: choice(fields.subtitleMode, SUBTITLE_MODES, 'progressive', 'El modo de subtítulos'),
+    subtitleMode: choice(fields.subtitleMode, SUBTITLE_MODES, 'karaoke', 'El modo de subtítulos'),
     sttProvider: choice(fields.sttProvider, STT_PROVIDERS, 'faster-whisper', 'El proveedor de transcripción'),
     sttModel: String(fields.sttModel || '').replace(/[\r\n]/g, ' ').trim().slice(0, 120) || undefined,
     sttLanguage: language,

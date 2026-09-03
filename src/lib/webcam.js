@@ -92,32 +92,33 @@ function median(values) {
   return sorted[Math.floor(sorted.length / 2)];
 }
 
+export function isCornerWebcamFace(face, media, options = {}) {
+  const areaRatio = (face.w * face.h) / (media.width * media.height);
+  const centerX = (face.x + face.w / 2) / media.width;
+  const centerY = (face.y + face.h / 2) / media.height;
+  const sideLimit = Number(options.maxSideCenter ?? 0.32);
+  const sideAnchored = centerX <= sideLimit || centerX >= 1 - sideLimit;
+  const topAnchored = centerY <= Number(options.maxTopCenter ?? 0.42);
+  return areaRatio <= Number(options.maxFaceAreaRatio ?? 0.08) && sideAnchored && topAnchored;
+}
+
 export function webcamBoxForTrackedFace(trackedFace, media) {
-  const centerX = (trackedFace.x + trackedFace.w / 2) / media.width;
-  const anchoredRight = centerX >= 0.72;
-  const anchoredLeft = centerX <= 0.28;
-  const padTop = trackedFace.h * 0.9;
-  const padBottom = trackedFace.h * 0.65;
-  let x;
-  let w;
-  if (anchoredRight) {
-    x = clamp(trackedFace.x - trackedFace.w * 0.25, 0, media.width - 24);
-    w = media.width - x;
-  } else if (anchoredLeft) {
-    x = 0;
-    w = clamp(trackedFace.x + trackedFace.w * 1.25, 24, media.width);
-  } else {
-    const padX = trackedFace.w * 0.85;
-    x = clamp(trackedFace.x - padX, 0, media.width - 24);
-    w = clamp(trackedFace.w + padX * 2, 24, media.width - x);
-  }
-  const y = clamp(trackedFace.y - padTop, 0, media.height - 24);
-  const h = clamp(trackedFace.h + padTop + padBottom, 24, media.height - y);
+  const headroom = trackedFace.h * 0.4;
+  const below = trackedFace.h * 0.35;
+  const height = Math.max(24, trackedFace.h + headroom + below);
+  const width = height * 4 / 5;
+  const centerX = trackedFace.x + trackedFace.w / 2;
+  let x = centerX - width / 2;
+  let y = trackedFace.y - headroom;
+  x = clamp(x, 0, media.width - 24);
+  y = clamp(y, 0, media.height - 24);
+  const w = clamp(width, 24, media.width - x);
+  const h = clamp(w * 5 / 4, 24, media.height - y);
   return {
     x: Math.round(x),
     y: Math.round(y),
-    w: Math.round(Math.min(w, media.width - x)),
-    h: Math.round(Math.min(h, media.height - y)),
+    w: Math.round(w),
+    h: Math.round(h),
     confidence: trackedFace.confidence,
     detectionScore: trackedFace.detectionScore,
     method: 'yunet-face-tracking'
@@ -151,7 +152,8 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
   const sampleDir = path.join(TMP_DIR, 'webcam-detect', String(Date.now()));
   await mkdir(sampleDir, {recursive: true});
   const detections = [];
-  const faceFrames = [];
+  const cornerFaceFrames = [];
+  const allFaceFrames = [];
   let faceDetectorAvailable = options.faceDetection !== false;
   try {
     for (let i = 0; i < samples; i += 1) {
@@ -177,16 +179,15 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
             x: face.x * sx, y: face.y * sy, w: face.w * sx, h: face.h * sy, score: face.score
           })).filter((face) => {
             const areaRatio = (face.w * face.h) / (media.width * media.height);
-            const centerX = (face.x + face.w / 2) / media.width;
-            const centerY = (face.y + face.h / 2) / media.height;
-            const edgeDistance = Math.min(centerX, 1 - centerX, centerY, 1 - centerY);
-            return areaRatio <= Number(options.maxFaceAreaRatio ?? 0.1) && edgeDistance <= Number(options.maxEdgeDistance ?? 0.34);
+            return areaRatio > 0.004 && areaRatio < 0.45;
           });
-          faceFrames.push(faces);
+          allFaceFrames.push(faces);
+          cornerFaceFrames.push(faces.filter((face) => isCornerWebcamFace(face, media, options)));
         } catch (error) {
           if (options.signal?.aborted) throw error;
           faceDetectorAvailable = false;
-          faceFrames.length = 0;
+          cornerFaceFrames.length = 0;
+          allFaceFrames.length = 0;
         }
       }
       const detection = detectInFrame(frame);
@@ -207,9 +208,27 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
     await rm(sampleDir, {recursive: true, force: true});
   }
 
-  const trackedFace = faceDetectorAvailable ? selectTrackedFace(faceFrames, {minimumFrames: Math.ceil(samples * 0.45)}) : null;
+  const trackedFace = faceDetectorAvailable
+    ? selectTrackedFace(cornerFaceFrames, {minimumFrames: Math.ceil(samples * 0.45)})
+    : null;
   if (trackedFace) {
     return webcamBoxForTrackedFace(trackedFace, media);
+  }
+  const talkingFace = faceDetectorAvailable
+    ? selectTrackedFace(allFaceFrames, {minimumFrames: Math.ceil(samples * 0.45)})
+    : null;
+  if (talkingFace) {
+    return {
+      method: 'talking-head-face',
+      layout: 'crop',
+      confidence: talkingFace.confidence,
+      faceBox: {
+        x: Math.round(talkingFace.x),
+        y: Math.round(talkingFace.y),
+        w: Math.round(talkingFace.w),
+        h: Math.round(talkingFace.h)
+      }
+    };
   }
   if (detections.length < Math.ceil(samples * Number(options.minimumSkinCoverage ?? 0.6))) return null;
   const x = median(detections.map((item) => item.x));
@@ -219,20 +238,21 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
   // The detector often locks onto the face area. Recover the surrounding
   // webcam rectangle asymmetrically: streamers usually need more headroom than
   // chest room, and symmetric padding can still cut hair/forehead.
-  const touchesTop = y < media.height * 0.08;
-  const touchesRight = x + w > media.width * 0.78;
-  const padX = w * (touchesRight ? 0.7 : 0.5);
-  const padTop = h * (touchesTop ? 0.35 : 0.95);
-  const padBottom = h * 0.95;
+  const faceH = h;
+  const headroom = faceH * 0.4;
+  const height = faceH + headroom + faceH * 0.35;
+  const width = height * 4 / 5;
+  const centerX = x + w / 2;
   const box = {
-    x: Math.round(clamp(x - padX, 0, media.width - 8)),
-    y: Math.round(clamp(y - padTop, 0, media.height - 8)),
-    w: Math.round(clamp(w + padX * 2, 24, media.width)),
-    h: Math.round(clamp(h + padTop + padBottom, 24, media.height)),
+    x: Math.round(clamp(centerX - width / 2, 0, media.width - 8)),
+    y: Math.round(clamp(y - headroom, 0, media.height - 8)),
+    w: Math.round(clamp(width, 24, media.width)),
+    h: Math.round(clamp(height, 24, media.height)),
     confidence: Number(Math.min(0.75, detections.length / samples).toFixed(2)),
     method: 'skin-window-sampling'
   };
   box.w = Math.min(box.w, media.width - box.x - 2);
-  box.h = Math.min(box.h, media.height - box.y - 2);
+  box.h = Math.min(box.w * 5 / 4, media.height - box.y - 2);
+  if (!isCornerWebcamFace(box, media, options)) return null;
   return box;
 }

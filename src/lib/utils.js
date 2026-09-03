@@ -1,7 +1,7 @@
 import {spawn} from 'node:child_process';
 import {createHash, randomUUID} from 'node:crypto';
 import {existsSync} from 'node:fs';
-import {mkdir, readFile, rename, writeFile} from 'node:fs/promises';
+import {copyFile, mkdir, readdir, readFile, rename, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -13,13 +13,24 @@ export const OUTPUT_DIR = path.join(DATA_DIR, 'output');
 export const TMP_DIR = path.join(DATA_DIR, 'tmp');
 export const CAROUSELS_DIR = path.join(DATA_DIR, 'carousels');
 export const FONTS_DIR = path.join(DATA_DIR, 'fonts');
+export const BUNDLED_FONTS_DIR = path.join(ROOT, 'assets', 'fonts');
 
 export async function ensureDir(dir) {
   await mkdir(dir, {recursive: true});
 }
 
+async function syncBundledFonts() {
+  if (!existsSync(BUNDLED_FONTS_DIR)) return;
+  const entries = await readdir(BUNDLED_FONTS_DIR).catch(() => []);
+  await Promise.all(entries.filter((name) => /\.(?:ttf|otf)$/i.test(name)).map(async (name) => {
+    const dest = path.join(FONTS_DIR, name);
+    if (!existsSync(dest)) await copyFile(path.join(BUNDLED_FONTS_DIR, name), dest);
+  }));
+}
+
 export async function ensureDataDirs() {
   await Promise.all([UPLOADS_DIR, JOBS_DIR, OUTPUT_DIR, TMP_DIR, CAROUSELS_DIR, FONTS_DIR].map(ensureDir));
+  await syncBundledFonts();
 }
 
 export async function loadDotEnv(file = path.join(ROOT, '.env')) {

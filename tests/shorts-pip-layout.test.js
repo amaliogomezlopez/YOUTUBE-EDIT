@@ -4,46 +4,48 @@ import path from 'node:path';
 import test from 'node:test';
 import {buildShort} from '../src/modules/shorts-studio/build.js';
 import {projectDir} from '../src/modules/shorts-studio/constants.js';
-import {fitLayout, pipLayout} from '../src/modules/shorts-studio/pip-layout.js';
+import {fitLayout, pipLayout, PIP_CARD} from '../src/modules/shorts-studio/pip-layout.js';
+import {buildVerticalFilter} from '../src/lib/ffmpeg.js';
 import {writeJson} from '../src/lib/utils.js';
 
-// Los numeros se verifican contra el filtergraph de `src/lib/ffmpeg.js`
-// (`pipLayoutForWebcamBox` + `buildVerticalFilter`): el PIP de Remotion tiene
-// que salir igual que el que ya renderiza el pipeline de video largo.
-
-test('la tarjeta de cara crece x2.5 con techo 650 y suelo 360', () => {
+test('la tarjeta de cara cabe en 540 y arranca a 80 px del borde superior', () => {
   const layout = pipLayout({x: 1400, y: 700, w: 320, h: 240}, {sourceWidth: 1920, sourceHeight: 1080});
-  // 320 * 2.5 = 800, capado a 650. La tarjeta incluye el borde negro de 6 px.
-  assert.deepEqual(layout.camCard, {left: 209, top: 42, width: 662, height: 500});
-  assert.deepEqual(layout.camCrop, {
-    scale: 2.03125,
-    offsetX: -2843.75,
-    offsetY: -1421.87,
-    videoWidth: 3900,
-    videoHeight: 2193.75
-  });
-
-  const small = pipLayout({x: 10, y: 5, w: 100, h: 100}, {sourceWidth: 1920, sourceHeight: 1080});
-  // 100 * 2.5 = 250, elevado al minimo 360.
-  assert.equal(small.camCard.width, 372);
-  // 42 + 372 + 42 = 456 < 520: la pantalla nunca sube del minimo.
-  assert.equal(small.screen.top, 520);
+  assert.equal(layout.camCard.top, 80);
+  assert.equal(layout.camCard.radius, 28);
+  assert.equal(layout.camCard.stroke, 3);
+  assert.ok(layout.camCard.width <= PIP_CARD.maxWidth + layout.camCard.stroke * 2);
+  assert.equal(layout.screen.left, 0);
+  assert.equal(layout.screen.width, 1080);
+  assert.ok(layout.screen.top >= layout.camCard.top + layout.camCard.height + 180);
+  assert.equal(layout.captionBand.height, PIP_CARD.screenGap);
+  assert.equal(layout.captionBand.top, layout.camCard.top + layout.camCard.height);
+  assert.equal(layout.captionBand.bottom, layout.screen.top);
+  assert.equal(layout.screen.top + layout.screen.height, 1920);
 });
 
-test('la pantalla va a 1600 de ancho en x=-130 y la mascara replica los margenes', () => {
+test('la pantalla cubre el hueco restante y no usa el recorte 1600/-130', () => {
   const layout = pipLayout({x: 1400, y: 700, w: 320, h: 240}, {sourceWidth: 1920, sourceHeight: 1080});
-  // screenY = max(520, 42 + (488+12) + 42) = 584; alto par de 1600x1080/1920.
-  assert.deepEqual(layout.screen, {left: -130, top: 584, width: 1600, height: 900});
-  // Mascara fuente (1376, 682, 374, 282) proyectada sobre la pantalla a 1600.
-  assert.deepEqual(layout.mask, {left: 1016.67, top: 1152.33, width: 311.67, height: 235});
+  assert.equal(layout.screen.left, 0);
+  assert.ok(layout.screen.width === 1080);
+  assert.ok(layout.cover.scale > 1, 'cover agranda el 16:9 para llenar el hueco vertical');
+  const small = pipLayout({x: 10, y: 5, w: 100, h: 100}, {sourceWidth: 1920, sourceHeight: 1080});
+  assert.ok(small.camCard.width >= PIP_CARD.minWidth);
+});
 
-  // Cerca del borde la mascara no sale del frame: los margenes 24/18 se capan a 0.
-  const corner = pipLayout({x: 10, y: 5, w: 100, h: 100}, {sourceWidth: 1920, sourceHeight: 1080});
-  assert.equal(corner.mask.left, -130, 'maskX = max(0, x-24) = 0 -> borde izquierdo de la pantalla');
-  assert.equal(corner.mask.top, 520, 'maskY = max(0, y-18) = 0 -> borde superior de la pantalla');
-  // (100+54) y (100+42) escalados por 1600/1920.
-  assert.equal(corner.mask.width, 128.33);
-  assert.equal(corner.mask.height, 118.33);
+test('el filtergraph de FFmpeg ya no pega la pantalla en x=-130 ni usa pad negro', () => {
+  const filter = buildVerticalFilter({
+    mode: 'pip',
+    webcamBox: {x: 1400, y: 700, w: 320, h: 240},
+    sourceWidth: 1920,
+    sourceHeight: 1080
+  });
+  assert.equal(filter.includes('overlay=-130:'), false);
+  assert.equal(filter.includes('pad=iw+12:ih+12:6:6:black'), false);
+  assert.match(filter, /pad=iw\+6:ih\+6:3:3:white/);
+  assert.match(filter, /format=rgba,geq=/);
+  assert.match(filter, /colorchannelmixer=aa=0.35,boxblur=16:4/);
+  assert.match(filter, /overlay=0:\d+/);
+  assert.equal(filter.includes('overlay=0:520'), false);
 });
 
 test('sin webcamBox no hay layout pip', () => {
@@ -54,7 +56,6 @@ test('fit centra el video a 1080 de ancho manteniendo la proporcion', () => {
   assert.deepEqual(fitLayout({sourceWidth: 1920, sourceHeight: 1080}), {
     screen: {left: 0, top: 656, width: 1080, height: 608}
   });
-  // Un clip vertical ya llena el frame: centrado es top 0.
   assert.deepEqual(fitLayout({sourceWidth: 1080, sourceHeight: 1920}), {
     screen: {left: 0, top: 0, width: 1080, height: 1920}
   });
@@ -84,8 +85,6 @@ test('el build rechaza una escena pip sin webcamBox', async () => {
     });
     await assert.rejects(buildShort({slug}), /webcamBox/);
   } finally {
-    // El error salta antes de escribir short-build.json, asi que el proyecto
-    // nunca llega a aparecer en el registro de composiciones.
     await rm(project, {recursive: true, force: true});
   }
 });

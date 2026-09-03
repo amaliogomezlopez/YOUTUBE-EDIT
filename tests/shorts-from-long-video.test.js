@@ -22,7 +22,7 @@ test('el plan mapea renderMode a layout y solo pip lleva webcamBox', () => {
   const pip = buildShortPlanForCandidate({candidate, renderMode: 'pip', webcamBox: box});
   assert.equal(pip.scenes[0].layout, 'pip');
   assert.deepEqual(pip.scenes[0].webcamBox, box);
-  assert.equal(pip.captions.mode, 'progressive');
+  assert.equal(pip.captions.mode, 'karaoke');
   assert.equal(pip.scenes[0].camera, 'static');
   assert.ok(!('trim' in pip.scenes[0]), 'el clip ya viene cortado: sin trim');
 
@@ -140,7 +140,7 @@ test('el bridge escribe proyecto coherente y copia el mp4 al output del job', as
 
     const plan = await readJson(path.join(projectDir(slug), 'short-plan.json'));
     assert.equal(plan.scenes[0].layout, 'fit');
-    assert.equal(plan.captions.mode, 'progressive');
+    assert.equal(plan.captions.mode, 'karaoke');
 
     const transcript = await readJson(path.join(projectDir(slug), 'transcripts', '01.json'));
     assert.equal(transcript.words[0].start, 0.5);

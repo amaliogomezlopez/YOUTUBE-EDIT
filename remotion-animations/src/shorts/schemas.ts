@@ -93,7 +93,10 @@ export const shortSceneSchema = z.object({
   /** Rectangulos precalculados del layout `pip` (src/modules/shorts-studio/pip-layout.js). */
   pip: z
     .object({
-      camCard: rectSchema,
+      camCard: rectSchema.extend({
+        radius: z.number().optional(),
+        stroke: z.number().optional(),
+      }),
       camCrop: z.object({
         scale: z.number(),
         offsetX: z.number(),
@@ -102,7 +105,11 @@ export const shortSceneSchema = z.object({
         videoHeight: z.number(),
       }),
       screen: rectSchema,
-      mask: rectSchema,
+      mask: rectSchema.extend({
+        localLeft: z.number().optional(),
+        localTop: z.number().optional(),
+        visible: z.boolean().optional(),
+      }),
     })
     .nullable()
     .optional(),

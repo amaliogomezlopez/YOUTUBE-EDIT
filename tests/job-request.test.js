@@ -9,7 +9,7 @@ test('job request validates numeric limits and compatible durations', () => {
     maxDuration: 60,
     renderMode: undefined,
     renderQuality: 'high',
-    subtitleMode: 'progressive',
+    subtitleMode: 'karaoke',
     sttProvider: 'faster-whisper',
     sttModel: undefined,
     sttLanguage: 'auto',

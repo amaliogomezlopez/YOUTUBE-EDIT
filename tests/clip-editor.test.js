@@ -81,6 +81,25 @@ test('switching caption preset resets inherited visual defaults', async () => {
   }
 });
 
+test('switching to karaoke-highlight uses Schibsted Grotesk and a green accent', async () => {
+  const {root, state} = await fixture();
+  try {
+    const clip = await rerenderClip(state, 'clip-1', {
+      subtitleMode: 'karaoke',
+      subtitleStyle: {preset: 'karaoke-highlight'}
+    }, {
+      renderClip: async ({outputFile}) => writeFile(outputFile, 'karaoke')
+    });
+    assert.equal(clip.renderSettings.subtitleMode, 'karaoke');
+    assert.equal(clip.renderSettings.subtitleStyle.font, 'Schibsted Grotesk');
+    assert.equal(clip.renderSettings.subtitleStyle.activeColor, '#7CFF6A');
+    assert.equal(clip.renderSettings.subtitleStyle.outlineSize, 5);
+    assert.equal(clip.captionOverlay.renderer, 'ass-karaoke');
+  } finally {
+    await rm(root, {recursive: true, force: true});
+  }
+});
+
 test('failed rerender rolls back clip settings and removes staged artifacts', async () => {
   const {root, state} = await fixture();
   try {

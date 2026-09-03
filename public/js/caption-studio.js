@@ -7,13 +7,15 @@ const POSITION_LABELS = Object.freeze({
   'upper-middle': 'centro superior',
   center: 'centro',
   'lower-middle': 'centro inferior',
-  lower: 'abajo'
+  lower: 'abajo',
+  'safe-lower': 'pecho / pantalla'
 });
 
 let fontsPromise;
 let dashboardFonts = [];
 const previewTimers = new WeakMap();
 const previewVersions = new WeakMap();
+const karaokeTimers = new WeakMap();
 
 function clamp(value, min, max, fallback = min) {
   const parsed = Number(value);
@@ -89,10 +91,51 @@ function lineText(line) {
   return text;
 }
 
+function stopKaraokePreview(root) {
+  clearInterval(karaokeTimers.get(root));
+  karaokeTimers.delete(root);
+}
+
+function applyKaraokePreview(root, page, style) {
+  const copy = $('[data-caption-preview-copy]', root);
+  if (!copy || !page) return;
+  stopKaraokePreview(root);
+  const words = page.lines.flatMap((line) => line.words);
+  copy.style.display = 'flex';
+  copy.style.flexWrap = 'wrap';
+  copy.style.justifyContent = 'center';
+  copy.style.gap = '0.08em 0.28em';
+  copy.replaceChildren(...words.map((word) => {
+    const span = document.createElement('span');
+    span.className = 'caption-preview-word';
+    span.dataset.previewLine = '';
+    span.textContent = style.uppercase ? word.text.toLocaleUpperCase('es-ES') : word.text;
+    return span;
+  }));
+  copy.dataset.planned = 'true';
+  let active = 0;
+  const tick = () => {
+    $$('.caption-preview-word', copy).forEach((el, index) => {
+      el.classList.toggle('is-active', index === active);
+      el.classList.toggle('is-future', index > active);
+    });
+    active = (active + 1) % Math.max(1, words.length);
+  };
+  tick();
+  karaokeTimers.set(root, setInterval(tick, 420));
+}
+
 function applyPreviewPlan(root, plan) {
   const copy = $('[data-caption-preview-copy]', root);
   const page = plan?.pages?.[0];
   if (!copy || !page?.lines?.length) return;
+  const style = readStyle(root);
+  if (style.preset === 'karaoke-highlight') {
+    applyKaraokePreview(root, page, style);
+    return;
+  }
+  stopKaraokePreview(root);
+  copy.style.display = 'grid';
   copy.replaceChildren(...page.lines.map((line) => {
     const element = document.createElement(line.role === 'hero' ? 'strong' : 'span');
     element.className = `caption-preview-${line.role === 'normal' ? 'lead' : line.role}`;
@@ -164,6 +207,7 @@ export function applyCaptionPreset(root, presetName) {
   const preset = CAPTION_UI_PRESETS[presetName];
   if (!preset) return;
   for (const [key, next] of Object.entries(preset)) setValue(root, key, next);
+  $$('[data-caption-preset]', root).forEach((button) => button.classList.toggle('is-selected', button.dataset.captionPreset === presetName));
   syncCaptionPreview(root);
 }
 
@@ -190,7 +234,7 @@ async function loadDashboardFonts() {
       if (datalist) datalist.innerHTML = fonts.map((font) => `<option value="${escapeHtml(font.family)}">${escapeHtml(font.label || font.family)} · ${font.source === 'local' ? 'Archivo local' : 'Sistema'}</option>`).join('');
       return fonts;
     }).catch(() => {
-      dashboardFonts = ['Arial', 'Arial Black', 'Bahnschrift', 'Segoe UI Black'].map((family) => ({family, source: 'system'}));
+      dashboardFonts = ['Schibsted Grotesk', 'Arial', 'Arial Black', 'Bahnschrift', 'Segoe UI Black'].map((family) => ({family, source: 'system'}));
       return dashboardFonts;
     });
   }
@@ -206,6 +250,12 @@ export function wireCaptionStudio(root) {
     else syncCaptionPreview(root);
   });
   root.addEventListener('click', (event) => {
+    const presetButton = event.target.closest('[data-caption-preset]');
+    if (presetButton) {
+      setValue(root, 'preset', presetButton.dataset.captionPreset);
+      applyCaptionPreset(root, presetButton.dataset.captionPreset);
+      return;
+    }
     const button = event.target.closest('[data-caption-font]');
     if (!button) return;
     setValue(root, 'font', button.dataset.captionFont);
