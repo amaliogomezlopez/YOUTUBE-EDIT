@@ -57,6 +57,7 @@ function emphasisScore(word, index, words) {
   let score = Math.min(12, normalized.length);
   if (/\d/.test(normalized)) score += 7;
   if (normalized.length >= 5) score += 3;
+  if (['error','gratis','resultado','rapido','lento','mejor','peor','coste','precio','limite','funciona','falla'].includes(normalized)) score += 12;
   if (index > 0 && index < words.length - 1) score += 2;
   if (/[!:]$/.test(word.text)) score += 2;
   return score;
@@ -172,7 +173,7 @@ export function buildCaptionPages(words, window, overrides = {}) {
 
   // Una ultima pagina de una sola palabra se lee como un error de montaje. Si
   // cabe en la anterior sin pasarse del limite de caracteres, se fusiona.
-  if (groups.length > 1 && groups.at(-1).length === 1) {
+  if (style.maxWords > 1 && groups.length > 1 && groups.at(-1).length === 1) {
     const orphan = groups.at(-1);
     const previous = groups.at(-2);
     const merged = [...previous, ...orphan].map((word) => word.text).join(' ');

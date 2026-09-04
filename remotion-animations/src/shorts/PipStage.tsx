@@ -1,5 +1,5 @@
 import {Video} from "@remotion/media";
-import {staticFile, useVideoConfig} from "remotion";
+import {interpolate, staticFile, useCurrentFrame, useVideoConfig} from "remotion";
 import {ShortScene} from "./schemas";
 
 type PipStageProps = {
@@ -14,10 +14,18 @@ type PipStageProps = {
  */
 export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
   const {fps} = useVideoConfig();
+  const frame = useCurrentFrame();
+  const detailEntry = scene.screenEmphasis ? interpolate(frame, [0, Math.round(fps * .22)], [.985, 1], {extrapolateLeft:"clamp",extrapolateRight:"clamp"}) : 1;
   const trimBefore = Math.round(scene.trimStartSeconds * fps);
   const pip = scene.layout === "pip" ? scene.pip : null;
   const fit = scene.layout === "fit" ? scene.fit : null;
   if (!pip && !fit) return null;
+  if (scene.comparison?.length) return <div style={{position:"absolute",inset:0,background:"#111720"}}>
+    {scene.comparison.map((item,i)=><div key={i} style={{position:"absolute",...item.slot,overflow:"hidden",borderRadius:18,background:"#080c12"}}>
+      <Video muted src={staticFile(scene.src)} trimBefore={trimBefore} style={{position:"absolute",...item.transform}} volume={0}/>
+      <div style={{position:"absolute",left:16,top:12,padding:"8px 16px",background:"#080c12",color:"white",fontSize:28,fontWeight:700}}>{item.label}</div>
+    </div>)}
+  </div>;
 
   const backgroundFilter = pip
     ? "blur(28px) brightness(0.82) saturate(0.7)"
@@ -30,12 +38,12 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
     <>
       <Video
         muted
+        objectFit="cover"
         src={staticFile(scene.src)}
         style={{
           position: "absolute",
           width: "100%",
           height: "100%",
-          objectFit: "cover",
           filter: backgroundFilter,
         }}
         trimBefore={trimBefore}
@@ -50,11 +58,15 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
           width: screen.width,
           height: screen.height,
           overflow: "hidden",
+          background: "#10141b",
+          borderRadius: scene.screenEmphasis ? 18 : 0,
+          transform: `scale(${detailEntry})`,
         }}
       >
         <Video
           src={staticFile(scene.src)}
-          style={{width: "100%", height: "100%", display: "block", objectFit: "cover"}}
+          objectFit={scene.screenTransform ? "fill" : "cover"}
+          style={scene.screenTransform ? {position:"absolute",left:scene.screenTransform.left,top:scene.screenTransform.top,width:scene.screenTransform.width,height:scene.screenTransform.height,display:"block"} : {width: "100%", height: "100%", display: "block"}}
           trimBefore={trimBefore}
           volume={volume}
         />
@@ -109,7 +121,8 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
               <Video
                 muted
                 src={staticFile(scene.src)}
-                style={{width: "100%", height: "100%", display: "block", objectFit: "fill"}}
+                objectFit="fill"
+                style={{width: "100%", height: "100%", display: "block"}}
                 trimBefore={trimBefore}
                 volume={0}
               />

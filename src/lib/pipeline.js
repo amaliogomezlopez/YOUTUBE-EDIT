@@ -13,6 +13,10 @@ import {captionOverlayFromPlan, writeAssFile} from './subtitles.js';
 import {detectWebcamBox} from './webcam.js';
 import {renderCandidateWithRemotion} from '../modules/shorts-studio/from-long-video.js';
 import {buildClipPublishing, generatePublishingMetadata} from './publishing.js';
+import {analyzeVisualTimeline} from '../modules/video-studio/visual-analysis.js';
+import {captionsToTimedWords} from './captions/planner.js';
+import {trackFace, focusFromFace} from '../modules/video-studio/face-tracking.js';
+import {classifyDetection} from '../modules/video-studio/framing.js';
 import {PersistentJobQueue} from './job-queue.js';
 
 function throwIfCancelled(signal) {
@@ -81,6 +85,7 @@ function sourceQualityWarning(media, renderMode) {
 
 export async function processJob(state, options = {}) {
   const started = performance.now();
+  if (options.editing?.enabled) options = {...options, renderEngine: 'remotion'};
   const {signal} = options;
   try {
     throwIfCancelled(signal);
@@ -172,11 +177,30 @@ export async function processJob(state, options = {}) {
     let candidates = findCandidates(captions, {
       minDuration: Number(options.minDuration ?? 18),
       maxDuration: Number(options.maxDuration ?? 60),
-      stride: Number(options.stride ?? 1)
+      stride: Number(options.stride ?? 1),
+      refineBoundaries: Boolean(options.editing?.enabled),
+      topicProfile: options.editing?.topicProfile ?? 'general'
     });
+    if (options.editing?.enabled && !options.renderCandidate) {
+      const limit = Math.min(candidates.length, Math.max(2, Math.min(8, Number(options.topN ?? 8) * 2)));
+      for (const candidate of candidates.slice(0,limit)) {
+        const words = captionsToTimedWords(sliceCaptions(captions,candidate.start,candidate.end));
+        const analysisDir=path.join(state.jobDir,'analysis',candidate.id);
+        const analysis=await analyzeVisualTimeline(state.sourceVideo,{...state.media,duration:candidate.end-candidate.start},
+          {outDir:analysisDir,words,signal,window:{start:candidate.start,end:candidate.end}});
+        const visible=analysis.samples.filter(s=>s.confidence>=.65 || s.region?.confidence>=.55).length/Math.max(1,analysis.samples.length);
+        candidate.visualScore=Math.round(visible*100);
+        candidate.viralScore=Math.round(candidate.viralScore*.9+candidate.visualScore*.1);
+        candidate.analysisFile=path.join(analysisDir,'visual-analysis.json');
+        candidate.analysisStart=candidate.start;candidate.analysisEnd=candidate.end;
+        candidate.visualSummary={shots:analysis.shots.length,readableRegion:analysis.shots.some(s=>s.region),warnings:analysis.warnings};
+        candidate.reasons.push(visible>.5?'Encuadre o demostracion identificables en el video':'La evidencia visual necesita revision');
+      }
+      candidates.sort((a,b)=>b.viralScore-a.viralScore);
+    }
     if (options.useLlm !== false) {
       try {
-        candidates = await enrichCandidatesWithLlm(candidates, {limit: Number(options.llmLimit ?? 15), signal});
+        candidates = await enrichCandidatesWithLlm(candidates, {limit: Number(options.llmLimit ?? 15), topicProfile: options.editing?.topicProfile ?? 'general', signal});
       } catch (error) {
         state.warnings = [
           ...(state.warnings ?? []),
@@ -218,24 +242,31 @@ export async function processJob(state, options = {}) {
           // no encontro webcam. Sin modo, el bridge clasifica por segmento.
           renderMode: classifyPerSegment ? null : renderMode,
           webcamBox: classifyPerSegment ? null : webcamBox,
-          signal
+          signal,
+          editing: options.editing,
+          subtitleMode: options.subtitleMode,
+          subtitleStyle: options.subtitleStyle,
+          quality: options.renderQuality
         });
         if (result.captionTiming !== 'word') {
           const timingWarning = 'Los subtítulos karaoke usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
           if (!(state.warnings ?? []).includes(timingWarning)) state.warnings = [...(state.warnings ?? []), timingWarning];
         }
-        const remotionPlan = buildProgressiveCaptionPlan(sliceCaptions(captions, candidate.start, candidate.end), {
-          mode: options.subtitleMode ?? 'karaoke',
-          ...(options.subtitleStyle ?? {})
-        });
         const metadataFile = path.join(clipDir, 'metadata.json');
         const metadata = {
           ...candidate,
-          captionOverlay: captionOverlayFromPlan(remotionPlan),
+          captionOverlay: null,
+          duration: result.duration ?? candidate.duration,
+          editing: result.editing,
+          transcript: result.transcript,
+          text: result.transcript?.map(w=>w.text).join(' ') || candidate.text,
+          qa: result.qa,
           renderSettings: {
             mode: result.renderMode,
             engine: 'remotion',
             quality: options.renderQuality ?? 'high',
+            subtitleMode: options.subtitleMode ?? 'karaoke',
+            subtitleStyle: result.captionStyle ?? options.subtitleStyle ?? {},
             slug: result.slug,
             captionTiming: result.captionTiming,
             webcamBox: result.webcamBox ?? null
@@ -259,6 +290,12 @@ export async function processJob(state, options = {}) {
         options,
         signal
       });
+      let focusTrack = null;
+      if (clipLayout.mode === 'crop' && !options.renderClip) {
+        const tracked = await trackFace(state.sourceVideo, {...state.media, duration: candidate.end - candidate.start}, {signal, startOffset: candidate.start});
+        focusTrack = tracked?.track ?? null;
+        clipLayout.focus = tracked?.focus ?? (clipLayout.faceBox ? focusFromFace(clipLayout.faceBox, state.media) : null);
+      }
       const clipCaptions = sliceCaptions(captions, candidate.start, candidate.end);
       const assFile = path.join(clipDir, 'captions.ass');
       const captionPlanFile = path.join(clipDir, 'caption-plan.json');
@@ -288,6 +325,8 @@ export async function processJob(state, options = {}) {
         mode: clipLayout.mode,
         webcamBox: clipLayout.webcamBox,
         quality: options.renderQuality ?? 'high',
+        focus: clipLayout.focus,
+        focusTrack,
         signal,
         media: state.media
       });
@@ -358,10 +397,11 @@ export async function resolveClipLayout({state, candidate, renderMode, webcamBox
     signal,
     ...(options.webcamDetection ?? {})
   });
-  if (detected?.layout === 'crop' || detected?.method === 'talking-head-face') {
+  const classification = classifyDetection(detected, state.media);
+  if (classification.mode === 'crop') {
     return {mode: 'crop', webcamBox: null, faceBox: detected.faceBox ?? state.faceBox ?? null};
   }
-  if (detected?.w >= 24 && detected?.h >= 24) return {mode: 'pip', webcamBox: detected, faceBox: detected};
+  if (classification.mode === 'pip') return classification;
   if (options.renderMode === 'pip' && webcamBox) return {mode: 'pip', webcamBox, faceBox: webcamBox};
   return {mode: 'fit', webcamBox: null, faceBox: state.faceBox ?? null};
 }
@@ -402,7 +442,17 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
   if (!Number.isFinite(start) || !Number.isFinite(end) || start < 0 || end > state.media.duration || end - start < 1 || end - start > 180) {
     throw new Error('El rango debe durar entre 1 y 180 segundos y quedar dentro del vídeo.');
   }
-  const mode = ['crop', 'fit', 'pip'].includes(edits.renderMode) ? edits.renderMode : (state.renderMode || 'crop');
+  const editing = {...(clip.editing ?? {}), ...(edits.editing ?? {})};
+  editing.wordEdits = [...new Map([...(clip.editing?.wordEdits ?? []), ...(edits.editing?.wordEdits ?? [])].map(w=>[w.index,w])).values()];
+  if (start !== clip.start || end !== clip.end) {
+    editing.sceneEdits=[];editing.wordEdits=[];
+    if (editing.enabled) state.warnings=[...(state.warnings ?? []),'Al cambiar el rango se regenera el montaje y se revisan de nuevo sus palabras y encuadres.'];
+  }
+  if (editing.profile !== clip.editing?.profile && clip.editing?.enabled) {
+    editing.sceneEdits=[];
+    state.warnings=[...(state.warnings ?? []),'Al cambiar el perfil se reconstruyen las escenas y sus encuadres; se conservan las correcciones de palabras.'];
+  }
+  const mode = edits.renderMode === 'auto' ? null : ['crop', 'fit', 'pip'].includes(edits.renderMode) ? edits.renderMode : (clip.renderSettings?.mode || state.renderMode || 'crop');
   const webcamBox = edits.webcamBox ? normalizedWebcamBox(edits.webcamBox, state.media) : (clip.renderSettings?.webcamBox || state.webcamBox);
   if (mode === 'pip' && !webcamBox) throw new Error('Selecciona una caja de webcam antes de renderizar en modo PIP.');
   const captions = await readJson(path.join(state.jobDir, 'transcript.json'));
@@ -420,7 +470,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
   const subtitleStyle = presetChanged
     ? requestedSubtitleStyle
     : {...previousSubtitleStyle, ...requestedSubtitleStyle};
-  const engine = edits.renderEngine || clip.renderSettings?.engine || state.renderEngine || 'ffmpeg';
+  const engine = editing.enabled ? 'remotion' : edits.renderEngine || clip.renderSettings?.engine || state.renderEngine || 'ffmpeg';
   const previousClip = structuredClone(clip);
   clip.status = 'rendering';
   clip.renderError = null;
@@ -434,7 +484,11 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         renderMode: mode,
         webcamBox: mode === 'pip' ? webcamBox : null,
         signal,
-        outputFile
+        outputFile,
+        editing,
+        subtitleMode,
+        subtitleStyle,
+        quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high'
       });
       const remotionPlan = buildProgressiveCaptionPlan(sliceCaptions(captions, start, end), {
         mode: subtitleMode,
@@ -444,17 +498,21 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         ...previousClip,
         start,
         end,
-        duration: round(end - start, 3),
+        duration: result.duration ?? round(end - start, 3),
+        editing: result.editing,
+        transcript: result.transcript,
+        text: result.transcript?.map(w=>w.text).join(' ') || sliceCaptions(captions,start,end).map(c=>c.text).join(' '),
+        qa: result.qa,
         status: 'ready',
         renderError: null,
         renderedAt: new Date().toISOString(),
-        captionOverlay: captionOverlayFromPlan(remotionPlan),
+        captionOverlay: null,
         renderSettings: {
           mode: result.renderMode,
           engine: 'remotion',
           quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high',
           subtitleMode,
-          subtitleStyle: remotionPlan.style ?? subtitleStyle,
+          subtitleStyle: result.captionStyle ?? subtitleStyle,
           captionTiming: result.captionTiming ?? remotionPlan.timing ?? null,
           slug: result.slug,
           webcamBox: result.webcamBox ?? webcamBox
@@ -495,6 +553,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
       cwd: clipDir,
       mode,
       webcamBox,
+      focus: state.faceBox ? focusFromFace(state.faceBox, state.media) : null,
       quality: edits.renderQuality || 'high',
       signal,
       media: state.media
@@ -594,4 +653,3 @@ export async function processVideo({videoFile, transcriptFile = null, options = 
   const state = await createJob({videoFile, transcriptFile});
   return processJob(state, options);
 }
-

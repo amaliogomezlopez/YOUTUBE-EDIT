@@ -15,6 +15,7 @@ import {getMotionTheme} from "../motion/DesignSystem";
 import {MOTION_FONT_FAMILY} from "../motion/fonts";
 import {Soundtrack, duckGainAt} from "../motion/SoundDesign";
 import {clamp, rgba} from "../motion/Toolkit";
+import {StyledCaptionTrack, defaultCaptionRect} from "./StyledCaptionTrack";
 import {CaptionTrack} from "./CaptionTrack";
 import {ClipStage} from "./ClipStage";
 import {CueLayer} from "./CueLayer";
@@ -30,8 +31,9 @@ export const shortVideoMetadata: CalculateMetadataFunction<ShortVideoProps> = ({
 });
 
 export const ShortVideo: React.FC<ShortVideoProps> = (props) => {
-  const theme = getMotionTheme(props.themeId);
-  const accent = props.accentColor ?? theme.accent;
+  const theme = {...getMotionTheme(props.themeId)};
+  const accent = props.captionStyle?.accent ?? props.accentColor ?? theme.accent;
+  if (props.captionStyle?.primary) theme.ink = props.captionStyle.primary;
   const danger = props.dangerColor ?? theme.danger;
   const palette = {theme, accent, danger};
   const uppercase = props.captionStyle?.uppercase ?? true;
@@ -67,9 +69,12 @@ export const ShortVideo: React.FC<ShortVideoProps> = (props) => {
           key={scene.id}
           name={`${scene.id} (${scene.layout})`}
         >
-          <SceneBlock captionMode={captionMode} palette={palette} scene={scene} uppercase={uppercase} volume={props.clipVolume} />
+          <SceneBlock captionMode={captionMode} palette={palette} scene={scene} uppercase={uppercase} volume={0} captionStyle={props.captionStyle} captionRect={scene.captionRect} baseFontSize={props.captionStyle?.baseFontSize} />
+
         </Sequence>
       ))}
+
+      {(props.audioSegments ?? props.scenes).map((segment, i) => <Sequence key={"voice-"+i} from={segment.from} durationInFrames={segment.durationInFrames}><Audio src={staticFile(segment.src)} trimBefore={Math.round(segment.trimStartSeconds * fps)} volume={(f) => props.clipVolume * Math.min(1, (f+1)/2, (segment.durationInFrames-f)/2)} /></Sequence>)}
 
       <Soundtrack
         cues={props.soundCues}
@@ -81,6 +86,7 @@ export const ShortVideo: React.FC<ShortVideoProps> = (props) => {
       {music ? (
         <Audio
           loop
+          loopVolumeCurveBehavior="extend"
           src={staticFile(music.file)}
           volume={(audioFrame) =>
             music.volume * duckGainAt(audioFrame / fps, musicDuckWindows, 0.06, 0.18)
@@ -95,9 +101,12 @@ const SceneBlock: React.FC<{
   scene: ShortScene;
   palette: {theme: ReturnType<typeof getMotionTheme>; accent: string; danger: string};
   uppercase: boolean;
-  captionMode: "karaoke" | "progressive";
+  captionMode: "karaoke" | "progressive" | "words" | "lines";
+  captionRect?: {left:number;top:number;width:number;height:number} | null;
+  baseFontSize?: number;
+  captionStyle?: ShortVideoProps["captionStyle"];
   volume: number;
-}> = ({scene, palette, uppercase, captionMode, volume}) => {
+}> = ({scene, palette, uppercase, captionMode, volume, captionRect, baseFontSize, captionStyle}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const transition = transitionStyle(scene.transitionIn, frame, fps);
@@ -142,14 +151,16 @@ const SceneBlock: React.FC<{
 
       <CueLayer cues={scene.cues} layout={scene.layout} palette={palette} />
 
-      <CaptionTrack
+      {captionStyle?.renderer === "styled" ? <StyledCaptionTrack pages={scene.captionPages} mode={captionMode} appearance={captionStyle} rect={captionRect ?? defaultCaptionRect(scene.layout)} /> : <CaptionTrack
         accent={palette.accent}
         layout={scene.layout}
         mode={captionMode}
         pages={scene.captionPages}
         theme={palette.theme}
         uppercase={uppercase}
-      />
+        rect={captionRect}
+        baseFontSize={baseFontSize}
+      />}
     </AbsoluteFill>
   );
 };

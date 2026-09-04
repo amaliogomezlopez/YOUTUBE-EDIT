@@ -1,0 +1,22 @@
+{
+  "ruleId": "SH-R-061",
+  "check": "shorts-editing-budget",
+  "expect": "fail",
+  "context": {
+    "budget": {
+      "maxSceneSeconds": 5,
+      "maxCutsPerTenSeconds": 4,
+      "maxEffectsPerMinute": 10
+    },
+    "format": {
+      "fps": 60
+    },
+    "scenes": [
+      {
+        "id": "larga",
+        "from": 0,
+        "durationInFrames": 900
+      }
+    ]
+  }
+}

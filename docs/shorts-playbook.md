@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **13** · con validador automático: **13** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **15** · con validador automático: **15** · marcadas `manual`: **0** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -126,6 +126,14 @@ Un cue brand en layout full usa el slot overlay-top para no cubrir la cara.
 
 **Validador:** `shorts-full-brand-top`
 
+### SH-R-042 · `error` · `catalog`
+
+El subtitulo adaptativo queda en zona segura y no tapa la webcam.
+
+**Por qué:** El build debe detectar errores de montaje antes del render final.
+
+**Validador:** `shorts-adaptive-geometry`
+
 ## 5. Sonido
 
 - El sonido se pide por familia, nunca por fichero. Cada tipo de cue, cada transición y cada movimiento de cámara tienen familia por defecto.
@@ -148,6 +156,14 @@ Una escena no deja más silencio en sus extremos que el margen configurado (`sil
 
 **Validador:** `shorts-scene-edge-silence`
 
+### SH-R-061 · `warning` · `catalog`
+
+El ritmo del montaje respeta el presupuesto de su perfil de estilo.
+
+**Por qué:** El build debe detectar errores de montaje antes del render final.
+
+**Validador:** `shorts-editing-budget`
+
 ## Ciclo de feedback
 
 ```bash
@@ -155,4 +171,3 @@ npm run shorts:feedback -- --note "la captura no se lee en split" --section legi
 ```
 
 El comando registra la corrección, crea la regla con id estable, genera el esqueleto del validador y el fixture que la incumple, y regenera este documento. Una corrección dada una vez queda aplicada para siempre y para cualquier agente.
-

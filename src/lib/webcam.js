@@ -1,6 +1,7 @@
 import {mkdir, readFile, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {clamp, run, TMP_DIR} from './utils.js';
+import {webcamPanel} from '../modules/video-studio/webcam-art.js';
 import {detectFacesInFrame, selectTrackedFace} from './face-detector.js';
 
 export function parsePpm(buffer) {
@@ -21,7 +22,8 @@ export function parsePpm(buffer) {
   const height = Number(token());
   const max = Number(token());
   if (max !== 255) throw new Error('Expected 8-bit PPM frame.');
-  while (offset < buffer.length && /\s/.test(String.fromCharCode(buffer[offset]))) offset += 1;
+  if (buffer[offset] === 13 && buffer[offset + 1] === 10) offset += 2;
+  else offset += 1;
   return {width, height, data: buffer.subarray(offset)};
 }
 
@@ -68,11 +70,11 @@ function detectInFrame(frame) {
       const h = Math.round(w / aspect);
       if (h < height * 0.1 || h > height * 0.42) continue;
       for (let y = 0; y <= height - h; y += step) {
-        for (let x = Math.round(width * 0.3); x <= width - w; x += step) {
+        for (let x = 0; x <= width - w; x += step) {
           const skin = rectSum(integral, width, x, y, w, h);
           const density = skin / (w * h);
           if (density < 0.035) continue;
-          const rightPrior = x / width;
+          const rightPrior = Math.max(x / width, 1 - (x + w) / width);
           const topPrior = 1 - y / height;
           const cornerPrior = Math.max(topPrior, y / height);
           const sizePrior = 1 - Math.abs(w / width - 0.24);
@@ -98,7 +100,8 @@ export function isCornerWebcamFace(face, media, options = {}) {
   const centerY = (face.y + face.h / 2) / media.height;
   const sideLimit = Number(options.maxSideCenter ?? 0.32);
   const sideAnchored = centerX <= sideLimit || centerX >= 1 - sideLimit;
-  const topAnchored = centerY <= Number(options.maxTopCenter ?? 0.42);
+  const edgeLimit = Number(options.maxTopCenter ?? 0.42);
+  const topAnchored = centerY <= edgeLimit || centerY >= 1 - edgeLimit;
   return areaRatio <= Number(options.maxFaceAreaRatio ?? 0.08) && sideAnchored && topAnchored;
 }
 
@@ -152,6 +155,7 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
   const sampleDir = path.join(TMP_DIR, 'webcam-detect', String(Date.now()));
   await mkdir(sampleDir, {recursive: true});
   const detections = [];
+  let representativeFrame = null;
   const cornerFaceFrames = [];
   const allFaceFrames = [];
   let faceDetectorAvailable = options.faceDetection !== false;
@@ -171,6 +175,7 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
         frameFile
       ], {signal: options.signal, timeoutMs: Number(options.frameTimeoutMs ?? 30_000)});
       const frame = parsePpm(await readFile(frameFile));
+      if (i === Math.floor(samples/2)) representativeFrame = frame;
       if (faceDetectorAvailable) {
         try {
           const sx = media.width / frame.width;
@@ -212,7 +217,9 @@ export async function detectWebcamBox(videoFile, media, options = {}) {
     ? selectTrackedFace(cornerFaceFrames, {minimumFrames: Math.ceil(samples * 0.45)})
     : null;
   if (trackedFace) {
-    return webcamBoxForTrackedFace(trackedFace, media);
+    const box = webcamBoxForTrackedFace(trackedFace, media);
+    if (representativeFrame) box.sourceBox = webcamPanel(representativeFrame, trackedFace, media) ?? undefined;
+    return box;
   }
   const talkingFace = faceDetectorAvailable
     ? selectTrackedFace(allFaceFrames, {minimumFrames: Math.ceil(samples * 0.45)})

@@ -410,9 +410,9 @@ export function initJobs() {
     }
     if (event.target.id === 'metric-platform') {
       const metric = (store.job?.metrics || []).find((item) => item.clipId === store.selectedClipId && item.platform === event.target.value) || {};
-      for (const field of ['views', 'likes', 'comments', 'shares']) {
+      for (const field of ['views', 'likes', 'comments', 'shares', 'stayedToWatchPercent', 'averagePercentageViewed', 'retentionAt3Seconds', 'retentionAt10Seconds']) {
         const input = $(`#metric-${field}`);
-        if (input) input.value = Number(metric[field] || 0);
+        if (input) input.value = metric[field] ?? '';
       }
       rememberMetadataView();
       return;
@@ -441,7 +441,11 @@ export function initJobs() {
             views: $('#metric-views').value,
             likes: $('#metric-likes').value,
             comments: $('#metric-comments').value,
-            shares: $('#metric-shares').value
+            shares: $('#metric-shares').value,
+            stayedToWatchPercent: $('#metric-stayedToWatchPercent').value,
+            averagePercentageViewed: $('#metric-averagePercentageViewed').value,
+            retentionAt3Seconds: $('#metric-retentionAt3Seconds').value,
+            retentionAt10Seconds: $('#metric-retentionAt10Seconds').value
           })
         });
         store.markClean('metrics');

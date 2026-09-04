@@ -147,7 +147,7 @@ test('el short de referencia pasa todas las reglas', async () => {
     'harness-vs-modelo es el proyecto de referencia: no puede incumplir el contrato'
   );
   assert.equal(summary.failed, 0);
-  assert.equal(summary.skipped, 0, 'con la media presente todas las reglas son evaluables');
+  assert.equal(summary.skipped, 2, 'las reglas adaptativas sin budget ni geometria se declaran no evaluables');
 });
 
 test('el playbook de shorts esta generado desde el JSON', async () => {

@@ -114,17 +114,19 @@ export async function enrichCandidatesWithLlm(candidates, options = {}) {
     start: candidate.start,
     end: candidate.end,
     heuristicScore: candidate.viralScore,
-    text: candidate.text.slice(0, 1400)
+    text: candidate.text.slice(0, 5000),
+    visualEvidence: candidate.visualSummary ?? null
   }));
 
+  const general = options.topicProfile === 'general';
   const user = `Puntua estos clips de 0 a 100 y mejora titulo/hook.
-Devuelve JSON valido con una clave "clips" que contenga objetos: id, viralScore, suggestedTitle, hook, critique, reasons.
-Se critico: penaliza clips que dependan de contexto externo, empiecen o terminen a mitad de frase, no tengan payoff o no encajen con IA/ML/Python aplicado a inversion, trading, bolsa, datos o automatizacion.
+Devuelve JSON valido con una clave "clips" que contenga objetos: id, viralScore, suggestedTitle, hook, critique, reasons, narrative (hook, development, payoff), contextDependency.
+No inventes contenido visual: usa solo visualEvidence cuando exista. El hook propuesto debe respetar lo dicho. Valora una idea completa con prueba y cierre, y diversidad entre clips. Se critico: penaliza clips que dependan de contexto externo, empiecen o terminen a mitad de frase, no tengan payoff. ${general ? 'Juzga el tema real de cada clip sin premiar un sector concreto.' : 'Prioriza IA/ML/Python aplicado a inversion, trading, bolsa, datos o automatizacion.'}
 Clips:
 ${JSON.stringify(compact, null, 2)}`;
 
   const parsed = await chatJson([
-    {role: 'system', content: DEFAULT_SYSTEM},
+    {role: 'system', content: general ? 'Eres un editor senior de Shorts/Reels. Evalua retencion, claridad, emocion, una idea completa y cortes naturales. Adapta el criterio al contenido real; no inventes hechos. Devuelve JSON valido.' : DEFAULT_SYSTEM},
     {role: 'user', content: user}
   ], {...options, ...config, temperature: 0.2});
 
@@ -139,6 +141,8 @@ ${JSON.stringify(compact, null, 2)}`;
       suggestedTitle: row.suggestedTitle || candidate.suggestedTitle,
       hook: row.hook || null,
       critique: row.critique || null,
+      narrative: row.narrative && typeof row.narrative === 'object' ? row.narrative : null,
+      contextDependency: row.contextDependency ?? null,
       reasons: Array.isArray(row.reasons) && row.reasons.length ? row.reasons : candidate.reasons,
       llmUsed: true
     };

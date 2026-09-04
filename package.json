@@ -39,7 +39,7 @@
     "cleanup:animations": "node scripts/cleanup-animation-artifacts.js",
     "stt:setup": "powershell -NoProfile -ExecutionPolicy Bypass -File setup-faster-whisper-gpu.ps1",
     "server": "node src/server.js",
-    "test": "node --test tests/*.test.js",
+    "test": "node --test --test-concurrency=1 tests/*.test.js",
     "smoke": "node tests/smoke-e2e.js",
     "smoke:captions": "node scripts/smoke-progressive-captions.js",
     "remotion:studio": "npm --prefix remotion-animations run dev",

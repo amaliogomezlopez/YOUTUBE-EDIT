@@ -1,0 +1,18 @@
+{
+  "ruleId": "SH-R-042",
+  "check": "shorts-adaptive-geometry",
+  "expect": "fail",
+  "context": {
+    "scenes": [
+      {
+        "id": "fuera",
+        "captionRect": {
+          "left": 50,
+          "top": 1800,
+          "width": 900,
+          "height": 200
+        }
+      }
+    ]
+  }
+}

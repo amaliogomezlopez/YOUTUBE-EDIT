@@ -370,6 +370,7 @@ test('el bridge clasifica el layout por segmento', async (t) => {
   // (b) Horizontal sin webcam pero con cara a pantalla completa -> crop/full.
   const head = await runCase('cara', {
     media: {duration: 60, width: 1920, height: 1080, fps: 30},
+    webcamResult: {method:'talking-head-face',layout:'crop',faceBox:{x:600,y:200,w:400,h:400}},
     faceResult: face
   });
   assert.equal(head.result.renderMode, 'crop');

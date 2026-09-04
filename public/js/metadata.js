@@ -48,6 +48,7 @@ export function renderMetadata(job, elements, {draft = null} = {}) {
     <details class="metrics-editor"><summary>Registrar rendimiento del clip</summary><div class="metrics-grid">
       <label><span>Plataforma</span><select id="metric-platform">${['youtube', 'instagram', 'tiktok', 'x'].map((platform) => `<option value="${platform}" ${metric.platform === platform ? 'selected' : ''}>${platformLabel(platform)}</option>`).join('')}</select></label>
       ${['views', 'likes', 'comments', 'shares'].map((field) => `<label><span>${{views: 'Visualizaciones', likes: 'Me gusta', comments: 'Comentarios', shares: 'Compartidos'}[field]}</span><input id="metric-${field}" type="number" min="0" step="1" value="${Number(metric[field] || 0)}"></label>`).join('')}
+${[['stayedToWatchPercent','Se quedaron a ver (%)'],['averagePercentageViewed','Porcentaje medio visto'],['retentionAt3Seconds','Retención a 3 s (%)'],['retentionAt10Seconds','Retención a 10 s (%)']].map(([field,label]) => `<label><span>${label}</span><input id="metric-${field}" type="number" min="0" step="0.1" value="${metric[field] ?? ''}" placeholder="Sin dato"></label>`).join('')}
       <button type="button" class="secondary-action compact" data-save-metrics>Guardar métricas</button>
     </div></details>`;
   saveButton.disabled = false;

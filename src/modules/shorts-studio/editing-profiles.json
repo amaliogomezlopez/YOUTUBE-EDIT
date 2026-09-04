@@ -1,0 +1,35 @@
+{
+  "sobrio": {
+    "minSceneSeconds": 4,
+    "maxSceneSeconds": 12,
+    "minEffectGapSeconds": 8,
+    "maxZoom": 1.06,
+    "maxSilenceSeconds": 1.5,
+    "silencePaddingSeconds": 0.18,
+    "soundMix": 0.22,
+    "maxEffectsPerMinute": 6,
+    "maxCutsPerTenSeconds": 3
+  },
+  "dinamico": {
+    "minSceneSeconds": 3,
+    "maxSceneSeconds": 8,
+    "minEffectGapSeconds": 5,
+    "maxZoom": 1.1,
+    "maxSilenceSeconds": 1,
+    "silencePaddingSeconds": 0.14,
+    "soundMix": 0.34,
+    "maxEffectsPerMinute": 10,
+    "maxCutsPerTenSeconds": 4
+  },
+  "energico": {
+    "minSceneSeconds": 2.2,
+    "maxSceneSeconds": 6,
+    "minEffectGapSeconds": 3.5,
+    "maxZoom": 1.14,
+    "maxSilenceSeconds": 0.75,
+    "silencePaddingSeconds": 0.12,
+    "soundMix": 0.42,
+    "maxEffectsPerMinute": 14,
+    "maxCutsPerTenSeconds": 5
+  }
+}

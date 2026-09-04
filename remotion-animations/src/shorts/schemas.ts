@@ -71,6 +71,13 @@ export const shortSceneSchema = z.object({
   layout: z.enum(["full", "split", "stage", "pip", "fit"]),
   camera: z.enum(["static", "punch-in", "push-out", "drift-left", "drift-right"]),
   cameraIntensity: z.number().default(1),
+  sourceWidth: z.number().optional(),
+  sourceHeight: z.number().optional(),
+  screenRegion: z.object({x:z.number(),y:z.number(),w:z.number(),h:z.number()}).passthrough().nullable().optional(),
+  screenEmphasis: z.boolean().optional(),
+  comparison: z.array(z.object({slot:rectSchema,transform:rectSchema.extend({scale:z.number()}),label:z.string()})).nullable().optional(),
+  screenTransform: rectSchema.partial().extend({left:z.number(),top:z.number(),width:z.number(),height:z.number(),scale:z.number()}).nullable().optional(),
+  captionRect: rectSchema.nullable().optional(),
   focus: shortFocusSchema,
   /**
    * Muestras del punto focal a lo largo del clip ({t en segundos dentro del
@@ -141,20 +148,33 @@ export const shortVideoSchema = z.object({
   backgroundImage: z.string().nullable().optional(),
   captionStyle: z
     .object({
-      position: z.enum(["auto", "lower", "center"]).optional(),
+      position: z.enum(["auto", "lower", "center", "safe-lower", "upper-middle", "lower-middle"]).optional(),
       uppercase: z.boolean().optional(),
       /**
        * `karaoke` ilumina la palabra que suena dentro de la pagina visible;
        * `progressive` oculta las futuras y apila lead/hero/tail cuando la
        * pagina trae `heroIndex`.
        */
-      mode: z.enum(["karaoke", "progressive"]).optional(),
+      mode: z.enum(["karaoke", "progressive", "words", "lines"]).optional(),
+      renderer: z.string().optional(),
+      font: z.string().optional(),
+      activeColor: z.string().optional(),
+      tracking: z.number().optional(),
+      outlineSize: z.number().optional(),
+      shadow: z.number().optional(),
+      align: z.string().optional(),
+      emphasis: z.string().optional(),
+      heroScale: z.number().optional(),
+      primary: z.string().optional(),
+      accent: z.string().optional(),
+      baseFontSize: z.coerce.number().optional(),
     })
     .default({}),
   soundEnabled: z.boolean().default(true),
   soundMix: z.number().default(0.55),
   clipVolume: z.number().default(1),
   scenes: z.array(shortSceneSchema),
+  audioSegments: z.array(z.object({src:z.string(),from:z.number(),durationInFrames:z.number(),trimStartSeconds:z.number(),trimEndSeconds:z.number()})).optional(),
   soundCues: z.array(soundCueSchema),
   /**
    * Cama musical opcional: suena en bucle todo el short y baja a

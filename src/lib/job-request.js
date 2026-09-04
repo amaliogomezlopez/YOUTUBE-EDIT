@@ -28,6 +28,8 @@ export function validateJobOptions(fields = {}) {
     topN,
     minDuration,
     maxDuration,
+    ...(fields.editingProfile ? {renderEngine: fields.editingProfile && fields.editingProfile !== 'off' ? 'remotion' : 'ffmpeg',
+    editing: {enabled: Boolean(fields.editingProfile && fields.editingProfile !== 'off'), profile: choice(fields.editingProfile === 'off' ? undefined : fields.editingProfile, new Set(['sobrio','dinamico','energico']), 'dinamico', 'El estilo de montaje'), effects: fields.disableEffects !== 'on', tighten: fields.keepPauses !== 'on'}} : {}),
     renderMode: choice(fields.renderMode, RENDER_MODES, '', 'El modo de composición'),
     renderQuality: choice(fields.renderQuality, RENDER_QUALITIES, 'high', 'La calidad de render'),
     subtitleMode: choice(fields.subtitleMode, SUBTITLE_MODES, 'karaoke', 'El modo de subtítulos'),

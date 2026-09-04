@@ -30,7 +30,7 @@ export async function trackFace(videoFile, media, options = {}) {
       const frameFile = path.join(workspace, `frame-${index}.ppm`);
       await run('ffmpeg', [
         '-y',
-        '-ss', String(round(at, 3)),
+        '-ss', String(round(at + (options.startOffset ?? 0), 3)),
         '-i', videoFile,
         '-frames:v', '1',
         '-vf', 'scale=640:-1',

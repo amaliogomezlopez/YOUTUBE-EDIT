@@ -1,6 +1,10 @@
-import {spawnSync} from 'node:child_process';
+import {classifyDetection} from '../video-studio/framing.js';
+import {analyzeVisualTimeline} from '../video-studio/visual-analysis.js';
+import {planAdaptiveShort, applySceneEdits} from './editing-plan.js';
+import {finalizeShortAudio, verifyShortMedia} from '../video-studio/render-quality.js';
 import {copyFile, readdir} from 'node:fs/promises';
 import path from 'node:path';
+import {resolveCaptionStyle} from '../../lib/captions/presets.js';
 import {captionsToTimedWords} from '../../lib/captions/planner.js';
 import {ensureDir, readJson, round, run, writeJson} from '../../lib/utils.js';
 import {detectWebcamBox} from '../../lib/webcam.js';
@@ -30,7 +34,7 @@ const LOUDNESS_FILTER = 'loudnorm=I=-14:TP=-1.5:LRA=11';
  * Plan de una escena para un candidato del video largo. Pura y testeable.
  * Sin `trim`: el clip ya viene cortado al rango del candidato.
  */
-export function buildShortPlanForCandidate({candidate, renderMode, webcamBox}) {
+export function buildShortPlanForCandidate({candidate, renderMode, webcamBox, subtitleMode = 'karaoke', subtitleStyle = {}}) {
   const layout = LAYOUT_FOR_MODE[renderMode] ?? 'full';
   if (layout === 'pip' && !webcamBox) {
     throw new Error(`Candidato ${candidate?.id ?? 'sin id'}: layout pip necesita webcamBox`);
@@ -44,7 +48,8 @@ export function buildShortPlanForCandidate({candidate, renderMode, webcamBox}) {
       transitionIn: 'cut',
       ...(layout === 'pip' ? {webcamBox} : {})
     }],
-    captions: {mode: 'karaoke'}
+    captions: {...subtitleStyle, mode: subtitleMode},
+    captionStyle: {...subtitleStyle, mode: subtitleMode}
   };
 }
 
@@ -99,7 +104,11 @@ export async function renderCandidateWithRemotion({
   signal = null,
   log = () => {},
   runners = {},
-  outputFile = null
+  outputFile = null,
+  editing = {},
+  subtitleMode = 'karaoke',
+  subtitleStyle = {},
+  quality = 'high'
 }) {
   const slug = slugify(`short-${state.id}-${candidate.id}`);
   if (!slug) throw new Error(`No se pudo derivar un slug para el candidato ${candidate.id}`);
@@ -128,9 +137,10 @@ export async function renderCandidateWithRemotion({
         window: {startSeconds: candidate.start, endSeconds: candidate.end},
         signal
       });
-      if (box) {
-        effectiveMode = 'pip';
-        effectiveWebcamBox = box;
+      const detected = classifyDetection(box, state.media);
+      if (detected.mode !== 'fit') {
+        effectiveMode = detected.mode;
+        effectiveWebcamBox = detected.webcamBox;
       }
     }
   }
@@ -168,6 +178,17 @@ export async function renderCandidateWithRemotion({
     words
   });
 
+  // Las correcciones de texto mantienen los tiempos y no cambian el audio.
+  for (const correction of editing.wordEdits ?? []) {
+    if (!Number.isInteger(correction.index) || !words[correction.index] || typeof correction.text !== 'string' || !correction.text.trim() || correction.text.length > 120) throw new Error('Correccion de palabra invalida.');
+    words[correction.index].text = correction.text.trim();
+  }
+  await writeJson(path.join(project, 'transcripts', '01.json'), {clipId: '01', language: null, words});
+  const previousAnalysis = candidate.analysisFile && candidate.analysisStart === candidate.start && candidate.analysisEnd === candidate.end ? await readJson(candidate.analysisFile).catch(()=>null) : null;
+  const analysis = editing.enabled
+    ? previousAnalysis ?? await (runners.analyze ?? analyzeVisualTimeline)(clipFile, faceMedia, {outDir: project, words, signal})
+    : null;
+
   // 5. Manifest. El clip cortado conserva la resolucion de la fuente, asi que
   // las medidas del job y el webcamBox valen tal cual.
   const layout = LAYOUT_FOR_MODE[effectiveMode] ?? 'full';
@@ -186,7 +207,7 @@ export async function renderCandidateWithRemotion({
       height: state.media.height,
       fps: state.media.fps,
       focus: face?.focus ?? DEFAULT_FOCUS,
-      focusTrack: face?.track ?? null,
+      focusTrack: analysis?.focusTrack?.length ? analysis.focusTrack : face?.track ?? null,
       webcamBox: layout === 'pip' ? effectiveWebcamBox : null,
       transcript: 'transcripts/01.json',
       wordCount: words.length
@@ -197,23 +218,40 @@ export async function renderCandidateWithRemotion({
 
   // 6. Plan + build (regenera el registro de composiciones). Inyectable porque
   // en tests un build real deja proyectos temporales en el registro.
-  await writeJson(path.join(project, 'short-plan.json'), buildShortPlanForCandidate({
-    candidate,
-    renderMode: effectiveMode,
-    webcamBox: effectiveWebcamBox
-  }));
+  let plan = editing.enabled
+    ? planAdaptiveShort({words, duration: durationSeconds, analysis, renderMode, webcamBox: effectiveWebcamBox,
+      source: state.media, profile: editing.profile, effects: editing.effects !== false, tighten: editing.tighten !== false})
+    : buildShortPlanForCandidate({candidate, renderMode: effectiveMode, webcamBox: effectiveWebcamBox, subtitleMode, subtitleStyle});
+  const style = resolveCaptionStyle({preset: subtitleMode === 'progressive' ? 'progressive-punchy' : 'karaoke-highlight', ...subtitleStyle});
+  plan.captions = {...style, maxWords: Math.min(5,style.maxWords), maxPageChars:Math.min(36,style.maxPageChars), pauseBreakSeconds:style.pauseBreak,maxPageSeconds:style.maxPageDuration,mode:subtitleMode};
+  plan.captionStyle = {...style, mode:subtitleMode, renderer:'styled'};
+  if (editing.musicFile) {
+    if (!/\.(mp3|wav|m4a|ogg)$/i.test(editing.musicFile)) throw new Error('La musica debe ser un archivo de audio.');
+    const musicName='music'+path.extname(editing.musicFile).toLowerCase();
+    await copyFile(editing.musicFile,path.join(media,musicName));
+    plan.sound={...plan.sound,music:{file:staticPath(slug,musicName),volume:.22,duckGainDb:-12}};
+  }
+  if (editing.music) plan.sound = {...plan.sound, music: editing.music};
+  plan = applySceneEdits(plan, editing.sceneEdits);
+  await writeJson(path.join(project, 'short-plan.json'), plan);
   const build = runners.build ?? buildShort;
-  await build({slug, log});
+  const compiled = await build({slug, log});
 
   // 7. Render con render-safe.mjs. La salida se localiza por el manifest del
   // run, no parseando stdout.
   const render = runners.render ?? defaultRemotionRender;
-  const renderedFile = await render({slug, signal});
+  const renderedFile = await render({slug, signal, quality});
 
   // 8. Copia al output del job, junto al resto de artefactos del candidato.
   const destination = outputFile || path.join(state.outputDir, candidate.id, 'short.mp4');
   await ensureDir(path.dirname(destination));
-  await copyFile(renderedFile, destination);
+  let qa = null;
+  if (!runners.render) {
+    await finalizeShortAudio(renderedFile, destination, {signal, duration: compiled?.durationSeconds});
+    qa = await verifyShortMedia(destination, {duration: compiled?.durationSeconds, signal});
+    await writeJson(path.join(project, 'render-qa.json'), qa);
+    if (qa.errors.length) throw new Error('El render no supera QA: ' + qa.errors.join('; '));
+  } else await copyFile(renderedFile, destination);
 
   return {
     outputFile: destination,
@@ -221,7 +259,12 @@ export async function renderCandidateWithRemotion({
     buildFile: path.join(project, 'short-build.json'),
     captionTiming,
     renderMode: effectiveMode,
-    webcamBox: effectiveWebcamBox
+    webcamBox: effectiveWebcamBox,
+    duration: compiled?.durationSeconds,
+    editing: {...editing, scenes: (compiled?.scenes ?? plan.scenes).map(s => ({id:s.id, layout:s.layout, start:s.trimStartSeconds ?? s.trim?.start, end:s.trimEndSeconds ?? s.trim?.end, intent:s.intent, reason:s.reason, screenRegion:s.screenRegion, focus:plan.scenes.find(p=>p.id===s.id)?.focus ?? null, webcamBox:s.webcamBox, camera:s.camera})), sourceMap: compiled?.sourceMap ?? plan.sourceMap},
+    transcript: words,
+    qa,
+    captionStyle: compiled?.captionStyle ?? plan.captionStyle
   };
 }
 
@@ -235,7 +278,7 @@ async function defaultCutClip({videoFile, outputFile, start, durationSeconds, si
     '-af', LOUDNESS_FILTER,
     '-c:v', 'libx264',
     '-preset', 'medium',
-    '-crf', '18',
+    '-crf', '16',
     '-pix_fmt', 'yuv420p',
     '-c:a', 'aac',
     '-b:a', '192k',
@@ -245,21 +288,15 @@ async function defaultCutClip({videoFile, outputFile, start, durationSeconds, si
   return outputFile;
 }
 
-async function defaultRemotionRender({slug}) {
+async function defaultRemotionRender({slug, signal, quality = 'high'}) {
   const compositionId = compositionIdForSlug(slug);
   // Runs existentes ANTES de lanzar: el render tarda minutos y cualquier otra
   // ejecucion de render-safe (un still de verificacion, otro job) puede dejar
   // runs nuevos por medio. El run de ESTE render es uno que no estaba antes.
   const before = await listRunIds(slug);
-  const result = spawnSync(
-    process.execPath,
-    ['scripts/render-safe.mjs', 'render', `shorts-${slug}`, compositionId, `${slug}.mp4`],
-    {cwd: REMOTION_ROOT, stdio: 'inherit'}
-  );
-  if (result.error) throw result.error;
-  if (result.status !== 0) {
-    throw new Error(`render-safe.mjs fallo con codigo ${result.status ?? 'desconocido'} para ${compositionId}`);
-  }
+  await run(process.execPath,
+    ['scripts/render-safe.mjs', 'render', 'shorts-' + slug, compositionId, slug + '.mp4', '--color-space=bt709', '--crf=' + ({draft:23,standard:19,high:17}[quality] ?? 17)],
+    {cwd: REMOTION_ROOT, signal});
   return locateRunOutput(slug, before);
 }
 
@@ -279,7 +316,7 @@ async function listRunIds(slug) {
  * MP4 producido por el run de ESTE render: el primero que no existia antes de
  * lanzarlo (`before`), con salida .mp4 registrada en su run-result.json (ver
  * scripts/lib/output-run.mjs). Si por lo que sea no se encuentra el run nuevo,
- * se cae al ultimo run con salida .mp4.
+ * se falla: un artefacto de una exportacion anterior no prueba el exito actual.
  */
 export async function locateRunOutput(slug, before = []) {
   const runsRoot = path.join(REMOTION_ROOT, 'out', `shorts-${slug}`, 'runs');
@@ -287,11 +324,6 @@ export async function locateRunOutput(slug, before = []) {
   if (!runs.length) throw new Error(`render-safe.mjs no dejo runs en ${runsRoot}`);
   const fresh = runs.filter((runId) => !before.includes(runId));
   const candidates = [...fresh].reverse();
-  // Fallback cronologico: los runIds empiezan por timestamp ISO, asi que el
-  // orden alfabetico inverso es del mas reciente al mas antiguo.
-  for (const runId of [...runs].reverse()) {
-    if (!candidates.includes(runId)) candidates.push(runId);
-  }
   for (const runId of candidates) {
     const manifest = await readJson(path.join(runsRoot, runId, 'run-result.json')).catch(() => null);
     const output = (manifest?.outputs ?? []).find((file) => file.endsWith('.mp4'));

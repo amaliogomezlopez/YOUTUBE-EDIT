@@ -1,4 +1,5 @@
-import {access, readdir, writeFile} from 'node:fs/promises';
+import {randomUUID} from 'node:crypto';
+import {access, readdir, writeFile, rename, rm} from 'node:fs/promises';
 import path from 'node:path';
 import {PROJECTS_ROOT} from './paths.js';
 
@@ -119,6 +120,10 @@ export function renderRegistrySource(projects, {
 /** Regenera el registro de una superficie y devuelve los proyectos listados. */
 export async function writeRegistry(options) {
   const projects = await discoverProjects(options);
-  await writeFile(options.file, renderRegistrySource(projects, options), 'utf8');
+  const temporary=options.file+'.'+randomUUID()+'.tmp';
+  try {
+    await writeFile(temporary, renderRegistrySource(projects, options), 'utf8');
+    await rename(temporary,options.file);
+  } finally { await rm(temporary,{force:true}); }
   return projects;
 }

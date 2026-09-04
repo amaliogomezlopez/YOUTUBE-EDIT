@@ -26,6 +26,23 @@ async function fixture() {
   return {root, state};
 }
 
+
+test('changing editing profile rebuilds scenes while keeping word corrections', async () => {
+  const {root,state}=await fixture();
+  try {
+    state.clips[0].editing={enabled:true,profile:'sobrio',sceneEdits:[{id:'scene-1',layout:'fit'}],wordEdits:[{index:0,text:'Texto'}]};
+    await rerenderClip(state,'clip-1',{renderMode:'auto',editing:{profile:'energico'}},{
+      renderCandidate:async({outputFile,editing})=>{
+        assert.deepEqual(editing.sceneEdits,[]);
+        assert.equal(editing.wordEdits[0].text,'Texto');
+        await writeFile(outputFile,'new');
+        return {outputFile,editing,duration:20,renderMode:'fit',captionTiming:'word'};
+      }
+    });
+    assert.ok(state.warnings.some(w=>w.includes('perfil')));
+  } finally {await rm(root,{recursive:true,force:true});}
+});
+
 test('clip editor persists accept and discard decisions', async () => {
   const {root, state} = await fixture();
   try {

@@ -100,6 +100,9 @@ export function jobRenderSignatures(job, selectedClipId) {
     renderError: clip.renderError,
     renderQueue: clip.renderQueue,
     renderSettings: clip.renderSettings,
+    editing: clip.editing,
+    transcript: clip.transcript,
+    qa: clip.qa,
     hasVideo: Boolean(clip.files?.video),
     publishing: clip.publishing
   }));

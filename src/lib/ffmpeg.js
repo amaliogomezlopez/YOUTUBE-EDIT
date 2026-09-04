@@ -1,6 +1,7 @@
 import path from 'node:path';
 import {ensureDir, run} from './utils.js';
 import {pipLayout} from './pip-layout.js';
+import {smoothFocusTrack} from '../modules/video-studio/framing.js';
 
 const TARGET_WIDTH = 1080;
 const TARGET_HEIGHT = 1920;
@@ -73,7 +74,9 @@ export function buildVerticalFilter({
   mode = 'crop',
   webcamBox = null,
   sourceWidth = 1920,
-  sourceHeight = 1080
+  sourceHeight = 1080,
+  focus = null,
+  focusTrack = null
 } = {}) {
   const subtitleName = subtitleFile ? filterPath(path.basename(subtitleFile)) : null;
   const relativeFontDir = fontDir ? filterPath(path.relative(cwd, fontDir) || '.') : null;
@@ -85,7 +88,7 @@ export function buildVerticalFilter({
     const y = Math.max(0, Math.round(webcamBox.y));
     const w = Math.max(24, Math.round(webcamBox.w));
     const h = Math.max(24, Math.round(webcamBox.h));
-    const layout = pipLayout({x, y, w, h}, {sourceWidth, sourceHeight});
+    const layout = pipLayout({...webcamBox, x, y, w, h}, {sourceWidth, sourceHeight});
     const stroke = layout.camCard.stroke;
     const radius = layout.camCard.radius;
     const camRound = `format=rgba,geq=lum='p(X\\,Y)':cb='p(X\\,Y)':cr='p(X\\,Y)':a='${roundedAlpha(radius)}'`;
@@ -124,10 +127,23 @@ export function buildVerticalFilter({
   }
   return [
     scaleExpr(TARGET_WIDTH, TARGET_HEIGHT, ':force_original_aspect_ratio=increase'),
-    `crop=${TARGET_WIDTH}:${TARGET_HEIGHT}`,
+    `crop=${TARGET_WIDTH}:${TARGET_HEIGHT}:x='max(0,min(iw-ow,iw*(${focusExpression(focusTrack, 'x', focus?.x ?? 0.5)})-ow/2))':y='max(0,min(ih-oh,ih*(${focusExpression(focusTrack, 'y', focus?.y ?? 0.5)})-oh/2))'`,
     'setsar=1',
     subtitle
   ].filter(Boolean).join(',');
+}
+
+export function focusExpression(track, axis, fallback) {
+  const points = smoothFocusTrack(track);
+  const safe = Math.min(1, Math.max(0, Number.isFinite(fallback) ? fallback : 0.5));
+  if (!points.length) return String(safe);
+  let expression = String(points.at(-1)[axis]);
+  for (let i = points.length - 2; i >= 0; i--) {
+    const a = points[i], b = points[i + 1];
+    const value = a[axis] + '+(' + (b[axis]-a[axis]) + ')*(t-' + a.t + ')/' + (b.t-a.t);
+    expression = 'if(lt(t,' + b.t + '),' + value + ',' + expression + ')';
+  }
+  return 'if(lt(t,' + points[0].t + '),' + points[0][axis] + ',' + expression + ')';
 }
 
 function videoEncodeArgs(quality) {
@@ -148,7 +164,7 @@ function videoEncodeArgs(quality) {
   ];
 }
 
-export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null, media = null}) {
+export async function renderVerticalClip({videoFile, outputFile, start, end, subtitleFile = null, fontDir = null, cwd = process.cwd(), mode = 'crop', webcamBox = null, quality = 'high', signal = null, media = null, focus = null, focusTrack = null}) {
   await ensureDir(path.dirname(outputFile));
   const duration = Math.max(0.5, end - start);
   const source = media?.width && media?.height ? media : await ffprobe(videoFile, {signal});
@@ -159,7 +175,9 @@ export async function renderVerticalClip({videoFile, outputFile, start, end, sub
     mode,
     webcamBox,
     sourceWidth: source.width,
-    sourceHeight: source.height
+    sourceHeight: source.height,
+    focus,
+    focusTrack
   });
   const args = [
     '-y',
@@ -168,8 +186,9 @@ export async function renderVerticalClip({videoFile, outputFile, start, end, sub
     '-t', String(duration),
     '-vf', filter,
     ...videoEncodeArgs(quality),
+    '-af', 'loudnorm=I=-14:TP=-1.5:LRA=11',
     '-c:a', 'aac',
-    '-b:a', '160k',
+    '-b:a', '192k',
     '-movflags', '+faststart',
     outputFile
   ];

@@ -1,4 +1,5 @@
 import path from 'node:path';
+import {regionTransform, validSourceBox} from '../video-studio/framing.js';
 import {readJson, round, writeJson} from '../../lib/utils.js';
 import {SHORT_FORMAT, projectDir} from './constants.js';
 import {buildCaptionPages} from './captions.js';
@@ -54,7 +55,7 @@ export async function buildShort({slug, log = () => {}}) {
     transcripts.set(clip.id, await readJson(path.join(project, clip.transcript)));
   }
 
-  const warnings = [];
+  const warnings = [...(plan.warnings ?? [])];
   const scenes = [];
   const soundCues = [];
   const duckWindows = [];
@@ -64,6 +65,7 @@ export async function buildShort({slug, log = () => {}}) {
   // `captionStyle` (renderer); el build lo fija en los dos sitios para que el
   // paginador y Remotion no se desacuerden.
   const captionMode = plan.captions?.mode ?? plan.captionStyle?.mode ?? 'karaoke';
+  if (!['karaoke','progressive','words','lines'].includes(captionMode)) throw new Error('Modo de subtitulos invalido');
   const addSound = (familyId, atSeconds, intensity = 1) => {
     const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId));
     soundCues.push(cue);
@@ -101,6 +103,38 @@ export async function buildShort({slug, log = () => {}}) {
     const source = {sourceWidth: clip.width, sourceHeight: clip.height};
     const pip = scene.layout === 'pip' ? pipLayout(webcamBox, source) : null;
     const fit = scene.layout === 'fit' ? fitLayout(source) : null;
+    const dimensions = {width:clip.width, height:clip.height};
+    if (scene.screenRegion && !validSourceBox(scene.screenRegion, dimensions)) throw new Error(where + ': region fuera de la fuente');
+    if (scene.focus && (![scene.focus.x, scene.focus.y].every(Number.isFinite) || scene.focus.x < 0 || scene.focus.x > 1 || scene.focus.y < 0 || scene.focus.y > 1)) throw new Error(where + ': foco invalido');
+    const screen = pip?.screen ?? fit?.screen;
+    if (screen && scene.screenEmphasis) {
+      // El detalle tiene mas espacio, la webcam conserva un recorte proporcional.
+      if (pip) {
+        const ratio = 360 / pip.camCard.width;
+        pip.camCard.width *= ratio; pip.camCard.height *= ratio;
+        pip.camCard.left = (1080 - pip.camCard.width) / 2;
+        for (const key of ['offsetX','offsetY','videoWidth','videoHeight']) pip.camCrop[key] *= ratio;
+      }
+      screen.left = 54; screen.top = pip ? pip.camCard.top + pip.camCard.height + 230 : 380;
+      screen.width = 900; screen.height = 1680 - screen.top;
+    }
+    const screenTransform = scene.screenRegion && screen ? regionTransform(scene.screenRegion, dimensions, screen) : null;
+    if (pip && screenTransform) {
+      const maskBox = webcamBox.sourceBox ?? webcamBox;
+      const left = Math.max(0, screenTransform.left + maskBox.x * screenTransform.scale);
+      const top = Math.max(0, screenTransform.top + maskBox.y * screenTransform.scale);
+      const right = Math.min(screen.width, screenTransform.left + (maskBox.x+maskBox.w)*screenTransform.scale);
+      const bottom = Math.min(screen.height, screenTransform.top + (maskBox.y+maskBox.h)*screenTransform.scale);
+      pip.mask = {left:screen.left+left,top:screen.top+top,localLeft:left,localTop:top,width:Math.max(0,right-left),height:Math.max(0,bottom-top),visible:right>left && bottom>top};
+    }
+    const comparison = scene.comparison ? scene.comparison.map((region, i) => {
+      if (scene.comparison.length !== 2 || !validSourceBox(region, dimensions)) throw new Error(where + ': comparacion invalida');
+      const slot={left:54,top:350+i*620,width:900,height:560};
+      return {slot,transform:regionTransform(region,dimensions,slot),label:String(region.label ?? '').slice(0,50)};
+    }) : null;
+    const captionRect = comparison ? {left:54,top:110,width:900,height:180} : pip
+      ? {left: 54, top: pip.camCard.top + pip.camCard.height + 14, width: 900, height: Math.max(120, Math.min(190, pip.screen.top - pip.camCard.top - pip.camCard.height - 24))}
+      : scene.screenEmphasis ? {left:54, top:172, width:900, height:180} : null;
 
     const words = transcripts.get(clip.id)?.words ?? [];
     if (!words.length) warnings.push(`${where}: el clip ${clip.id} no tiene transcripcion; sin subtitulos ni anclaje por palabra`);
@@ -169,7 +203,7 @@ export async function buildShort({slug, log = () => {}}) {
     }).sort((a, b) => a.fromFrame - b.fromFrame);
 
     const captionPages = words.length && scene.captions !== false
-      ? buildCaptionPages(words, {startSeconds, endSeconds}, {...(plan.captions ?? {}), mode: captionMode}).map((page) => ({
+      ? buildCaptionPages(words, {startSeconds, endSeconds}, {...(plan.captions ?? {}), ...(captionMode === 'words' ? {maxWords:1} : {}), mode: captionMode}).map((page) => ({
         fromFrame: Math.round(page.startSeconds * fps),
         durationInFrames: Math.max(1, Math.round((page.endSeconds - page.startSeconds) * fps)),
         ...(captionMode === 'progressive' ? {heroIndex: page.heroIndex ?? -1} : {}),
@@ -212,11 +246,20 @@ export async function buildShort({slug, log = () => {}}) {
       silenceTrimmedSeconds: trim.trimmedSeconds,
       ...edgeSilence(words, startSeconds, endSeconds),
       layout: scene.layout,
+      intent: scene.intent ?? null,
+      reason: scene.reason ?? null,
+      comparison,
+      screenRegion: scene.screenRegion ?? null,
+      screenEmphasis: Boolean(scene.screenEmphasis),
+      screenTransform,
+      captionRect,
+      sourceWidth: clip.width,
+      sourceHeight: clip.height,
       camera,
       cameraIntensity: Number(scene.cameraIntensity ?? 1),
       focus: scene.focus ?? clip.focus,
       // Un focus fijado a mano en el plan manda sobre el seguimiento de la cara.
-      focusTrack: scene.focus ? null : (clip.focusTrack ?? null),
+      focusTrack: scene.focus ? null : (scene.focusTrack?.length >= 2 ? scene.focusTrack : clip.focusTrack ?? null),
       webcamBox,
       pip,
       fit,
@@ -234,6 +277,14 @@ export async function buildShort({slug, log = () => {}}) {
     addSound(ambience.family, Number(ambience.atSeconds ?? 0), Number(ambience.intensity ?? 1));
   }
 
+  const audioSegments = [];
+  for (const scene of scenes) {
+    const previous = audioSegments.at(-1);
+    if (previous && previous.src === scene.src && Math.abs(previous.trimEndSeconds - scene.trimStartSeconds) < 1/fps) {
+      previous.durationInFrames += scene.durationInFrames;
+      previous.trimEndSeconds = scene.trimEndSeconds;
+    } else audioSegments.push({src:scene.src,from:scene.from,durationInFrames:scene.durationInFrames,trimStartSeconds:scene.trimStartSeconds,trimEndSeconds:scene.trimEndSeconds});
+  }
   const build = {
     slug,
     generatedAt: new Date().toISOString(),
@@ -244,12 +295,16 @@ export async function buildShort({slug, log = () => {}}) {
     accentColor: plan.accentColor ?? null,
     dangerColor: plan.dangerColor ?? null,
     backgroundImage: plan.backgroundImage ? (assetsById.get(plan.backgroundImage)?.file ?? plan.backgroundImage) : null,
-    captionStyle: {...(plan.captionStyle ?? {}), mode: captionMode},
+    captionStyle: {...(plan.captionStyle ?? {}), uppercase: !['false', false].includes(plan.captionStyle?.uppercase), mode: captionMode},
+    editingProfile: plan.editingProfile ?? null,
+    budget: plan.budget ?? null,
+    sourceMap: scenes.map(s => ({sourceStart:s.trimStartSeconds, sourceEnd:s.trimEndSeconds, outputStart:s.from/fps, outputEnd:(s.from+s.durationInFrames)/fps})),
     silencePaddingSeconds: padding,
     soundEnabled: plan.sound?.enabled ?? true,
     soundMix: Number(plan.sound?.mix ?? 0.6),
     clipVolume: Number(plan.sound?.clipVolume ?? 1),
     music,
+    audioSegments,
     scenes,
     soundCues: soundCues.sort((a, b) => a.startSeconds - b.startSeconds),
     duckWindows,

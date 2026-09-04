@@ -116,6 +116,16 @@ Un validador que se cumple igual en dos superficies asciende a `catalog` y se mu
 `art-dark-on-alpha-needs-plate`, `art-solid-background-needs-blend` y
 `cue-not-silent`.
 
+## Montaje adaptativo desde video largo
+
+El perfil `--editing-profile sobrio|dinamico|energico` activa el puente Remotion.
+La documentacion operativa es `docs/shorts-adaptive-editing.md`. El analisis visual
+vive en video-studio; el plan vertical y sus presupuestos en shorts-studio.
+No duplicar estas capacidades en pipeline.js ni introducir otro renderer.
+Las ampliaciones automaticas necesitan contexto y revision visual. Una etiqueta
+detectada por OCR no demuestra por si sola los limites de una grafica.
+La validacion tecnica del MP4 no sustituye la revision visual.
+
 ## Introducciones a camara
 
 Si el encargo es "tengo clips grabados a camara y quiero la introduccion de mi

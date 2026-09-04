@@ -44,6 +44,8 @@ export const ClipStage: React.FC<ClipStageProps> = ({
   const cover = coverGeometry({
     width,
     height,
+    sourceWidth: scene.sourceWidth,
+    sourceHeight: scene.sourceHeight,
     focusX: focus.x,
     focusY: focus.y,
   });

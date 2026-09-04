@@ -208,6 +208,26 @@
         "recordedAt": "2026-07-31T08:23:27Z"
       },
       "fixture": "tests/fixtures/shorts-rules/SH-R-041.json"
+    },
+    {
+      "id": "SH-R-061",
+      "check": "shorts-editing-budget",
+      "severity": "warning",
+      "section": "pacing",
+      "statement": "El ritmo del montaje respeta el presupuesto de su perfil de estilo.",
+      "rationale": "El build debe detectar errores de montaje antes del render final.",
+      "scope": "catalog",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-061.json"
+    },
+    {
+      "id": "SH-R-042",
+      "check": "shorts-adaptive-geometry",
+      "severity": "error",
+      "section": "safe-area",
+      "statement": "El subtitulo adaptativo queda en zona segura y no tapa la webcam.",
+      "rationale": "El build debe detectar errores de montaje antes del render final.",
+      "scope": "catalog",
+      "fixture": "tests/fixtures/shorts-rules/SH-R-042.json"
     }
   ]
 }

@@ -755,3 +755,20 @@ code { max-width: 48ch; overflow: hidden; color: var(--info); font-size: 0.8rem;
   .secondary-action.compact, a.secondary-action.compact, .primary-action.compact, .caption-fine-tune > summary, .clip-editor summary, .metrics-editor summary, .platform-checks label { min-height: 44px; }
   .platform-selector label, .switch { min-height: 44px; }
 }
+.short-editing { margin-block: 16px; }
+.short-editing fieldset { display: grid; gap: 10px; margin-block: 12px; padding: 14px; border: 1px solid #3a4658; border-radius: 8px; }
+.short-word-editor { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; max-height: 340px; overflow: auto; padding: 12px 4px; }
+.short-word-editor label { min-width: 0; }
+.short-word-editor input { width: 100%; box-sizing: border-box; }
+
+/* El montaje necesita espacio para comparar la imagen con los controles. */
+.clip:has(.clip-editor[open]) { grid-column: 1 / -1; content-visibility: visible; }
+.clip:has(.clip-editor[open]) > .clip-media { width: min(100%, 360px); margin-inline: auto; }
+.short-editing fieldset { grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); }
+.short-editing fieldset > p { grid-column: 1 / -1; }
+@media (min-width: 1100px) {
+  .clip:has(.clip-editor[open]) { display: grid; grid-template-columns: minmax(220px, 300px) minmax(0, 1fr); align-items: start; }
+}
+
+.short-editing label:has(input[type="checkbox"]) { display: flex; align-items: center; gap: 8px; }
+.short-editing input[type="checkbox"] { width: 18px; height: 18px; min-height: 0; padding: 0; flex: 0 0 auto; }

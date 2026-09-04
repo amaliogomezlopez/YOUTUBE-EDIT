@@ -1,4 +1,5 @@
 import {$, escapeHtml, formatTime} from './core.js';
+import {editingControls, collectEditing} from './short-editing.js';
 import {captionPreviewMarkup, wireCaptionStudios} from './caption-studio.js';
 import {restoreControlState} from './editor-state.js';
 import {CAPTION_PRESETS} from './caption-presets.js';
@@ -141,6 +142,7 @@ export function renderClips(job, container, {drafts = {}} = {}) {
         ${clip.critique ? `<p class="clip-critique">${escapeHtml(clip.critique)}</p>` : ''}
         <details class="clip-editor" data-caption-studio ${renderBusy || clip.status === 'render_failed' ? 'open' : ''}>
           <summary>Editar corte, encuadre y subtítulos</summary>
+          ${editingControls(clip)}
           ${captionPreviewMarkup({compact: true})}
           <div class="clip-editor-grid">
             <label><span>Entrada (s)</span><input name="clipStart" type="number" min="0" max="${job.media?.duration || 0}" step="0.1" value="${Number(clip.start).toFixed(1)}"></label>
@@ -287,11 +289,13 @@ export function collectRerenderEdits(article, layoutRoot) {
   const start = Number($('[name="clipStart"]', article).value);
   const end = Number($('[name="clipEnd"]', article).value);
   const renderMode = $('[name="clipRenderMode"]', article).value;
+  const editing = collectEditing(article);
   const value = (id) => Number($(`#${id}`, layoutRoot)?.value) / 100;
   return {
     start,
     end,
-    renderMode,
+    renderMode: editing ? 'auto' : renderMode,
+    editing,
     renderQuality: $('[name="clipQuality"]', article).value,
     subtitleMode: $('[name="clipSubtitleMode"]', article).value,
     subtitleStyle: {

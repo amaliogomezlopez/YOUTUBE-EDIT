@@ -1,4 +1,5 @@
 import {round} from './utils.js';
+import {validSourceBox} from '../modules/video-studio/framing.js';
 
 /**
  * Geometria 9:16 del layout webcam + pantalla. Una sola fuente de verdad para
@@ -67,6 +68,7 @@ function clampRect(rect, width, height) {
  */
 export function pipLayout(webcamBox, {sourceWidth, sourceHeight}) {
   if (!webcamBox) throw new Error('pipLayout necesita webcamBox');
+  if (!validSourceBox(webcamBox, {width: sourceWidth, height: sourceHeight})) throw new Error('webcamBox invalido o fuera de la fuente');
   const boxX = Math.max(0, Math.round(webcamBox.x));
   const boxY = Math.max(0, Math.round(webcamBox.y));
   const boxW = Math.max(24, Math.round(webcamBox.w));
@@ -110,7 +112,7 @@ export function pipLayout(webcamBox, {sourceWidth, sourceHeight}) {
   const cover = coverTransform(sourceWidth, sourceHeight, screen.width, screen.height);
   const pad = 16;
   const projected = projectSourceBox(
-    {x: boxX - pad, y: boxY - pad, w: boxW + pad * 2, h: boxH + pad * 2},
+    webcamBox.sourceBox ?? {x: boxX - pad, y: boxY - pad, w: boxW + pad * 2, h: boxH + pad * 2},
     cover,
     {left: 0, top: 0, width: screen.width, height: screen.height}
   );

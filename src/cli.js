@@ -18,6 +18,10 @@ Options:
   --max           Maximum clip duration in seconds. Default: 60.
   --render-mode   crop, fit, or pip. Default: pip for horizontal videos, crop for vertical.
   --render-engine ffmpeg or remotion. Default: ffmpeg.
+  --editing-profile sobrio, dinamico o energico. Activa montaje adaptativo con Remotion.
+  --no-effects    Desactiva efectos manteniendo encuadres y subtitulos.
+  --music         Archivo local de musica opcional (MP3/WAV/M4A/OGG).
+  --keep-pauses   Conserva las pausas del corte original.
   --quality       draft, standard, or high. Default: high.
   --subtitle-mode karaoke, progressive, words, or lines. Default: karaoke.
   --subtitle-preset karaoke-highlight, progressive-reference, progressive-punchy, progressive-editorial, or progressive-clean.
@@ -71,7 +75,8 @@ async function main() {
       minDuration: Number(args.min ?? 18),
       maxDuration: Number(args.max ?? 60),
       renderMode: args['render-mode'],
-      renderEngine: args['render-engine'],
+      renderEngine: args['editing-profile'] ? 'remotion' : args['render-engine'],
+      editing: {enabled: Boolean(args['editing-profile']), profile: args['editing-profile'] ?? 'dinamico', effects: !args['no-effects'], tighten: !args['keep-pauses'], musicFile: args.music ? path.resolve(String(args.music)) : undefined},
       renderQuality: args.quality ?? 'high',
       subtitleMode: args['subtitle-mode'] ?? 'karaoke',
       subtitleStyle: {

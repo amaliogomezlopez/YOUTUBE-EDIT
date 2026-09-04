@@ -6,7 +6,8 @@ import {clamp, rgba} from "../motion/Toolkit";
 import {SHORT_LAYOUT, ShortLayoutId} from "./layout";
 import {CaptionPage} from "./schemas";
 
-type CaptionMode = "karaoke" | "progressive";
+type CaptionMode = "karaoke" | "progressive" | "words" | "lines";
+type CaptionRect = {left:number;top:number;width:number;height:number};
 
 type CaptionTrackProps = {
   pages: CaptionPage[];
@@ -15,6 +16,8 @@ type CaptionTrackProps = {
   theme: MotionTheme;
   accent: string;
   uppercase: boolean;
+  rect?: CaptionRect | null;
+  baseFontSize?: number;
 };
 
 /**
@@ -34,6 +37,8 @@ export const CaptionTrack: React.FC<CaptionTrackProps> = ({
   theme,
   accent,
   uppercase,
+  rect,
+  baseFontSize,
 }) => (
   <>
     {pages.map((page, index) => (
@@ -51,6 +56,8 @@ export const CaptionTrack: React.FC<CaptionTrackProps> = ({
           page={page}
           theme={theme}
           uppercase={uppercase}
+          rect={rect}
+          baseFontSize={baseFontSize}
         />
       </Sequence>
     ))}
@@ -207,7 +214,9 @@ const CaptionPageBlock: React.FC<{
   theme: MotionTheme;
   accent: string;
   uppercase: boolean;
-}> = ({page, layout, mode, theme, accent, uppercase}) => {
+  rect?: CaptionRect | null;
+  baseFontSize?: number;
+}> = ({page, layout, mode, theme, accent, uppercase, rect, baseFontSize}) => {
   const frame = useCurrentFrame();
   const appear = interpolate(frame, [0, 5], [0, 1], {
     ...clamp,
@@ -219,20 +228,21 @@ const CaptionPageBlock: React.FC<{
     [1, 0],
     clamp,
   );
-  const availableHeight = SHORT_LAYOUT.captionHeight[layout];
+  const availableHeight = rect?.height ?? SHORT_LAYOUT.captionHeight[layout];
   const absolute = frame + page.fromFrame;
   const progressive = mode === "progressive";
   const heroIndex = progressive ? (page.heroIndex ?? -1) : -1;
   const usableWidth = SHORT_LAYOUT.width - SHORT_LAYOUT.safeX * 2;
-  const fontSize =
+  const measuredFontSize =
     heroIndex >= 0
       ? progressiveFontSize(page, availableHeight, uppercase, heroIndex)
       : captionFontSize(page, availableHeight, uppercase);
 
+  const fontSize = Math.min(measuredFontSize, baseFontSize ?? measuredFontSize) * Math.min(1, (rect?.width ?? usableWidth) / usableWidth);
   const wordAt = (index: number, size: number, hero = false) => (
     <CaptionWord
       absolute={absolute}
-      accent={accent}
+      accent={mode === "lines" ? theme.ink : accent}
       fontSize={size}
       hero={hero}
       ink={theme.ink}
@@ -257,10 +267,10 @@ const CaptionPageBlock: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: SHORT_LAYOUT.safeX,
-          top: SHORT_LAYOUT.captionBottom[layout] - availableHeight,
+          left: rect?.left ?? SHORT_LAYOUT.safeX,
+          top: rect?.top ?? SHORT_LAYOUT.captionBottom[layout] - availableHeight,
           height: availableHeight,
-          width: usableWidth,
+          width: rect?.width ?? usableWidth,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -289,11 +299,11 @@ const CaptionPageBlock: React.FC<{
     <div
       style={{
         position: "absolute",
-        left: SHORT_LAYOUT.safeX,
+        left: rect?.left ?? SHORT_LAYOUT.safeX,
         // Anclado por abajo: el bloque crece hacia arriba, hacia el hueco libre.
-        top: SHORT_LAYOUT.captionBottom[layout] - availableHeight,
+        top: rect?.top ?? SHORT_LAYOUT.captionBottom[layout] - availableHeight,
         height: availableHeight,
-        width: usableWidth,
+        width: rect?.width ?? usableWidth,
         display: "flex",
         flexWrap: "wrap",
         alignItems: "flex-end",

@@ -68,9 +68,15 @@ function stripAccents(text) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+function containsTerm(text, term) {
+  const tokens = text.replace(/[^\p{L}\p{N}]+/gu, ' ');
+  const phrase = term.replace(/[^\p{L}\p{N}]+/gu, ' ');
+  return (' ' + tokens + ' ').includes(' ' + phrase + ' ');
+}
+
 function countMatches(text, terms) {
   const normalized = stripAccents(text.toLowerCase());
-  return terms.reduce((sum, term) => sum + (normalized.includes(stripAccents(term.toLowerCase())) ? 1 : 0), 0);
+  return terms.reduce((sum, term) => sum + (containsTerm(normalized, stripAccents(term.toLowerCase())) ? 1 : 0), 0);
 }
 
 function durationScore(duration) {
@@ -90,7 +96,7 @@ function densityScore(wordCount, duration) {
 
 function uniqueHits(text, terms) {
   const normalized = stripAccents(text.toLowerCase());
-  return terms.filter((term) => normalized.includes(stripAccents(term.toLowerCase()))).length;
+  return terms.filter((term) => containsTerm(normalized, stripAccents(term.toLowerCase()))).length;
 }
 
 function topicScore(text) {
@@ -111,8 +117,8 @@ function topicScore(text) {
   );
 }
 
-function editorialScore(text) {
-  const aiHits = uniqueHits(text, AI_TERMS);
+function editorialScore(text, general = false) {
+  const aiHits = general ? 0 : uniqueHits(text, AI_TERMS);
   const opinionHits = uniqueHits(text, MODEL_OPINION_TERMS);
   const actionHits = uniqueHits(text, RECOMMENDATION_VERBS);
   const hasQuestion = /[?¿]/.test(text);
@@ -123,7 +129,7 @@ function editorialScore(text) {
       Math.min(opinionHits, 4) * 14 +
       Math.min(actionHits, 3) * 6 +
       (hasQuestion ? 6 : 0) +
-      (hasNegation && aiHits > 0 ? 8 : 0),
+      (hasNegation && (general || aiHits > 0) ? 8 : 0),
     0,
     100
   );
@@ -158,7 +164,7 @@ function boundaryScore(candidate, words) {
   return startsMidSentence ? Math.min(score, 68) : score;
 }
 
-export function scoreCandidate(candidate) {
+export function scoreCandidate(candidate, options = {}) {
   const text = candidate.text;
   const duration = candidate.end - candidate.start;
   const words = text.split(/\s+/).filter(Boolean);
@@ -180,8 +186,8 @@ export function scoreCandidate(candidate) {
     payoff: clamp(50 + payoffHits * 18, 0, 100),
     duration: durationScore(duration),
     boundary: boundaryScore(candidate, words),
-    topic: topicScore(text),
-    editorial: editorialScore(text)
+    topic: options.topicProfile === 'general' ? boundaryScore(candidate, words) : topicScore(text),
+    editorial: editorialScore(text, options.topicProfile === 'general')
   };
   const repeatPenalty = repetitionPenalty(words);
   const cutPenalty =
@@ -196,8 +202,8 @@ export function scoreCandidate(candidate) {
     components.payoff * 0.1 +
     components.duration * 0.12 +
     components.boundary * 0.14 +
-    components.topic * 0.16 +
-    components.editorial * 0.16 -
+    components.topic * 0.11 +
+    components.editorial * 0.11 -
     repeatPenalty -
     cutPenalty;
 
@@ -208,8 +214,8 @@ export function scoreCandidate(candidate) {
   if (components.payoff >= 70) reasons.push('cierre con payoff');
   if (components.duration >= 85) reasons.push('duracion adecuada para Shorts');
   if (components.boundary >= 78) reasons.push('corte de inicio y cierre solido');
-  if (components.topic >= 75) reasons.push('alineado con IA/ML aplicado a inversion y mercados');
-  if (components.editorial >= 75) reasons.push('opinion o recomendacion clara sobre modelos/IA');
+  if (options.topicProfile !== 'general' && components.topic >= 75) reasons.push('alineado con IA/ML aplicado a inversion y mercados');
+  if (components.editorial >= 75) reasons.push(options.topicProfile === 'general' ? 'opinion o recomendacion clara' : 'opinion o recomendacion clara sobre modelos/IA');
   if (cutPenalty > 0) reasons.push('penalizado por corte incompleto');
   if (repeatPenalty > 0) reasons.push('penalizado por repeticion de transcripcion');
   if (reasons.length === 0) reasons.push('clip entendible y compacto');
@@ -268,13 +274,14 @@ function startsInside(candidate, existing) {
 }
 
 export function findCandidates(captions, options = {}) {
+  if (options.refineBoundaries) captions = sentenceCaptions(captions);
   const minDuration = Number(options.minDuration ?? 18);
   const maxDuration = Number(options.maxDuration ?? 60);
   const stride = Number(options.stride ?? 3);
   const raw = [];
   for (let i = 0; i < captions.length; i += stride) {
     const window = buildWindow(captions, i, minDuration, maxDuration);
-    if (window) raw.push(scoreCandidate(window));
+    if (window) raw.push(scoreCandidate(window, options));
   }
   const ranked = raw.sort((a, b) => b.viralScore - a.viralScore || a.start - b.start);
   const deduped = [];
@@ -289,6 +296,28 @@ export function findCandidates(captions, options = {}) {
     duration: round(candidate.end - candidate.start, 2),
     suggestedTitle: suggestTitle(candidate.text)
   }));
+}
+
+/** Frases reales permiten elegir un gancho dentro de segmentos STT largos. */
+export function sentenceCaptions(captions) {
+  const result = [];
+  for (const caption of captions) {
+    if (!caption.words?.length) { result.push(caption); continue; }
+    let group = [];
+    const emit = () => {
+      if (!group.length) return;
+      result.push({id: caption.id + '-' + result.length, start:group[0].start,end:group.at(-1).end,
+        text:group.map(w=>w.text ?? w.word).join(' '), words:group});
+      group = [];
+    };
+    for (const word of caption.words) {
+      const previous = group.at(-1);
+      if (previous && (word.start - previous.end > 0.45 || /[.!?]$/.test(previous.text ?? previous.word))) emit();
+      group.push(word);
+    }
+    emit();
+  }
+  return result;
 }
 
 export function suggestTitle(text) {
