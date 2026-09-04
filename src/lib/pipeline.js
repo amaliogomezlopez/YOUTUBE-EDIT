@@ -471,6 +471,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
     ? requestedSubtitleStyle
     : {...previousSubtitleStyle, ...requestedSubtitleStyle};
   const engine = editing.enabled ? 'remotion' : edits.renderEngine || clip.renderSettings?.engine || state.renderEngine || 'ffmpeg';
+  const renderQuality = edits.renderQuality || clip.renderSettings?.quality || 'high';
   const previousClip = structuredClone(clip);
   clip.status = 'rendering';
   clip.renderError = null;
@@ -488,7 +489,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         editing,
         subtitleMode,
         subtitleStyle,
-        quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high'
+        quality: renderQuality
       });
       const remotionPlan = buildProgressiveCaptionPlan(sliceCaptions(captions, start, end), {
         mode: subtitleMode,
@@ -510,7 +511,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         renderSettings: {
           mode: result.renderMode,
           engine: 'remotion',
-          quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high',
+          quality: renderQuality,
           subtitleMode,
           subtitleStyle: result.captionStyle ?? subtitleStyle,
           captionTiming: result.captionTiming ?? remotionPlan.timing ?? null,
@@ -554,7 +555,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
       mode,
       webcamBox,
       focus: state.faceBox ? focusFromFace(state.faceBox, state.media) : null,
-      quality: edits.renderQuality || 'high',
+      quality: renderQuality,
       signal,
       media: state.media
     });
@@ -571,6 +572,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
       start,
       end,
       duration: round(end - start, 3),
+      text: captionsToTimedWords(sliceCaptions(captions, start, end)).map((word) => word.text).join(' '),
       status: 'ready',
       renderError: null,
       renderedAt: new Date().toISOString(),
@@ -578,7 +580,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
       renderSettings: {
         mode,
         engine: 'ffmpeg',
-        quality: edits.renderQuality || previousClip.renderSettings?.quality || 'high',
+        quality: renderQuality,
         subtitleMode,
         subtitleStyle: subtitleDocument.plan?.style ?? subtitleStyle,
         captionTiming: subtitleDocument.plan?.timing ?? null,

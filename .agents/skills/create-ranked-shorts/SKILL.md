@@ -5,40 +5,35 @@ description: "Convierte un vídeo largo MP4 en Shorts verticales 9:16 con Shorts
 
 # Crear Shorts rankeados
 
-Generar cortes verticales terminados y revisados, no solo sugerencias de tiempos. Reutilizar el pipeline Node existente y no publicar en ninguna plataforma sin autorización explícita.
+Generar cortes verticales terminados y revisados. Reutilizar el pipeline Node existente. La publicación requiere autorización explícita; generar, corregir y verificar los archivos forma parte del encargo de montaje.
 
-## Flujo
+Esta skill extrae cortes de un vídeo largo. Para montar varios clips desde cero, seguir `docs/shorts-desde-cero.md` y su flujo `shorts:ingest` → `shorts:build` → `shorts:render`.
 
-1. Resolver la ruta absoluta del MP4 y comprobarla con `ffprobe`.
-2. Reutilizar una transcripción aportada por el usuario o el `transcript.json` de un job anterior del mismo vídeo. Verificar coincidencia mediante nombre y duración.
-3. Si no existe transcripción, dejar que Shortsmith use Faster-Whisper local.
-4. Ejecutar desde la raíz del proyecto:
+## Preparación
 
-```powershell
-npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 8 --min 18 --max 60 --quality high --editing-profile dinamico --subtitle-mode progressive --subtitle-preset progressive-punchy --no-llm
-```
+1. Leer las instrucciones del repositorio, [la guía de montaje](../../../docs/shorts-adaptive-editing.md) y `src/modules/shorts-studio/rules/shorts-rules.json` antes de modificar planes. El JSON es el contrato ejecutable.
+2. Resolver la ruta absoluta del MP4 y comprobarla con `ffprobe`. Si la ruta falla, buscar primero el nombre en la carpeta indicada; no sustituir la fuente por otro vídeo sin evidencia.
+3. Reutilizar la transcripción aportada o un job de esa misma fuente, comprobando su ruta de origen y duración. No reutilizar transcripciones solo porque el nombre se parezca.
+4. Si falta transcripción, omitir `--transcript` y usar la configuración local de STT. Conservar proveedor, modelo, idioma, dispositivo y Python configurados; no degradar una instalación GPU a `small`/CPU por defecto. Solo cambiar flags cuando el encargo o un fallo comprobado lo justifique. Un Python genérico no garantiza tener Faster-Whisper instalado. No imprimir `.env` ni credenciales.
+5. Respetar la cantidad y el estilo pedidos. Si el usuario pide uno o dos ejemplos, generar uno o dos. Si no especifica cantidad, usar hasta ocho cortes distintos; entregar menos si no hay suficientes ideas completas y explicarlo.
 
-El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` cuando el usuario lo prefiera. Leer [la guía de montaje](../../../docs/shorts-adaptive-editing.md) para sus controles. El build ejecuta la regla SH-R-043: la pantalla inferior y las comparaciones deben tener márgenes laterales iguales. No reutilizar el margen asimétrico de subtítulos para posicionar la imagen.
+## Generación y revisión editorial
 
-El render de un plan guardado fija geometría, tiempos y efectos. La selección editorial, la transcripción y el análisis pueden variar entre ejecuciones o versiones; conservar el plan, la transcripción y los assets aprobados cuando se necesite reproducir un montaje.
-
-Omitir `--transcript` si no existe. En ese caso añadir `--stt-provider faster-whisper --stt-model small --stt-language es --stt-device cpu --stt-compute-type int8 --stt-python "<python-con-faster-whisper>"`. Obtener el Python mediante `load_workspace_dependencies` cuando esté disponible. Mantener `--no-llm` por defecto; quitarlo solo si el usuario autoriza el LLM configurado.
-
-5. Leer `transcript.json`, `candidates.json` y `job.json`. No aceptar ciegamente los límites automáticos.
-6. Seleccionar entre 6 y 8 ideas distintas. Favorecer cortes que se entiendan sin el vídeo largo y que incluyan gancho, desarrollo y cierre.
-7. Ajustar cada inicio y final a límites naturales de frase. Evitar saludos, contexto prescindible, silencios y finales cortados.
-8. Asignar un título provisional breve y un ranking editorial.
-9. Crear un JSON de refinamiento dentro del job y ejecutar:
+Ejemplo para **dos** cortes; ajustar `--top` a la cantidad acordada:
 
 ```powershell
-node .agents/skills/create-ranked-shorts/scripts/refine-clips.mjs --job <job-id> --spec "<ruta-al-json>"
+npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 2 --min 18 --max 60 --quality high --editing-profile dinamico --subtitle-mode progressive --subtitle-preset progressive-punchy --no-llm
 ```
 
-Validar primero sin renderizar con `--dry-run` cuando los cambios sean amplios.
+El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` según la preferencia del usuario. Estos son valores iniciales: al revisar un job, conservar su perfil y subtítulos aprobados salvo cambio solicitado. Mantener `--no-llm` salvo que el encargo o la autorización previa incluya usar el LLM configurado.
 
-## Especificación de refinamiento
+Leer `transcript.json`, `candidates.json` y `job.json`. Revisar los límites automáticos y escoger ideas que se entiendan sin el vídeo largo, con gancho, desarrollo y cierre. Ajustar inicio y final a frases naturales; evitar palabras cortadas, saludos y contexto prescindible. Mantener normalmente 18–60 segundos, salvo otra duración solicitada o una idea completa que justifique la excepción.
 
-Usar un array JSON. Reutilizar un `clipId` seleccionado por el job para cada corte:
+Ordenar por gancho/conflicto (30 %), novedad (20 %), conclusión (20 %), comprensión autónoma (15 %), temas reconocibles (10 %) y ritmo (5 %). Evitar ángulos repetidos. El `viralScore` es una estimación editorial; no inventar métricas reales ni garantizar viralidad.
+
+## Refinamiento del job
+
+Guardar un JSON dentro del job usando sus `clipId` reales. Incluir únicamente los campos que se quieran cambiar:
 
 ```json
 [
@@ -47,41 +42,45 @@ Usar un array JSON. Reutilizar un `clipId` seleccionado por el job para cada cor
     "rank": 1,
     "start": 42.3,
     "end": 78.6,
-    "title": "La IA encontró una salida inesperada",
-    "subtitlePreset": "progressive-punchy"
+    "title": "La IA encontró una salida inesperada"
   }
 ]
 ```
 
-Mantener normalmente cada corte entre 18 y 60 segundos. Permitir una excepción ligeramente más corta solo si contiene una idea completa y mejora claramente el ritmo.
+```powershell
+node .agents/skills/create-ranked-shorts/scripts/refine-clips.mjs --job <job-id> --spec "<ruta-al-json>" --dry-run
+node .agents/skills/create-ranked-shorts/scripts/refine-clips.mjs --job <job-id> --spec "<ruta-al-json>"
+```
 
-## Ranking editorial
+El `--dry-run` comprueba identificadores, rangos y presencia de transcripción para todo el lote sin escribir ni renderizar. No sustituye los validadores del build ni la revisión del MP4.
 
-Ordenar manualmente por:
+`start` y `end` omitidos conservan el rango actual. El helper acepta `subtitleMode`, `subtitlePreset`, `subtitleStyle`, `quality`, `renderMode`, `webcamBox` y `editing` según los contratos del pipeline. Omitirlos conserva los ajustes existentes. `editing` permite las correcciones de perfil, efectos, escenas y palabras documentadas en la guía; no inventar campos ni coordenadas.
 
-- Fuerza del gancho o conflicto: 30 %.
-- Novedad y capacidad de provocar curiosidad: 20 %.
-- Payoff o conclusión clara: 20 %.
-- Comprensión sin contexto: 15 %.
-- Entidades o temas reconocibles: 10 %.
-- Duración y ritmo: 5 %.
+Cambiar entrada/salida reconstruye el plan y descarta ediciones anteriores de escenas y palabras. Cambiar perfil reconstruye escenas y conserva palabras. Hacer primero ese cambio, leer el nuevo plan y después corregir sus escenas/palabras en una segunda pasada: no enviar correcciones basadas en el plan antiguo junto al cambio de rango o perfil. Anclar correcciones a los índices reales de palabras; regiones de pantalla en píxeles de la fuente y centro facial entre 0 y 1.
 
-Evitar que varios Shorts repitan el mismo ángulo. El `viralScore` automático es una señal, no la decisión final.
+El helper guarda el título y ranking después de un render correcto y actualiza el JSON del clip. Si falla un corte posterior, conserva los anteriores completados. Consultar siempre `job.json` y `clip.files.video` al retomar.
 
 ## Control de calidad
 
-Comprobar cada vídeo actual indicado por `clip.files.video`:
+Verificar cada MP4 actual indicado por `clip.files.video`:
 
-- Archivo existente y reproducible.
-- Resolución `1080x1920`, vídeo H.264, audio AAC y píxel `yuv420p`.
-- Duración coherente con el rango elegido.
-- Webcam o sujeto visible arriba y pantalla legible debajo en fuentes horizontales; usar `fit` si no hay webcam estable.
-- Subtítulos legibles, sincronizados y dentro de márgenes seguros.
-- Inicio con frase completa o gancho deliberado y final con cierre real.
-- Nombres propios corregidos en la transcripción antes del render final.
+- Archivo reproducible, `1080x1920`, vídeo H.264, audio AAC y píxel `yuv420p`.
+- Duración coherente con el plan compilado y su mapa de tiempos; las pausas eliminadas pueden acortarla frente a `end - start`.
+- Leer el informe técnico `render-qa.json` cuando exista y los errores/avisos del build. Corregir los errores y revisar los avisos; justificar las decisiones editoriales que se mantienen.
+- Revisar imágenes del inicio, mitad y final, además de cambios de layout y el momento de pantalla más denso. Verificar webcam/cara, texto, recortes y márgenes en esos momentos; una captura aislada no basta.
+- Clasificar por segmento: webcam en esquina → `pip`; sujeto a pantalla completa → `full`; pantalla sin webcam → `fit`. Evitar forzar un único modo cuando cambia la fuente.
+- Pantalla inferior y comparaciones centradas (SH-R-043): un panel de 900 px sobre un lienzo de 1080 deja 90 px a cada lado. La zona segura de subtítulos tiene su propia geometría.
+- Reproducir y escuchar el MP4 para comprobar sincronía, volumen, cortes de audio, ritmo y cierre. Si la herramienta no permite comprobar alguno, declararlo pendiente; una revisión visual no certifica el audio.
+- Corregir nombres propios con evidencia de la fuente. No añadir información inventada a títulos o subtítulos.
 
-Generar y revisar al menos una captura representativa de cada Short. Si la composición o los subtítulos fallan, corregir y rerenderizar.
+La QA técnica y la visual son pasos distintos. Si la composición o los subtítulos fallan, corregir, volver a renderizar y revisar el nuevo archivo. Un still corregido no actualiza los MP4 anteriores.
+
+## Feedback y reproducibilidad
+
+Convertir feedback general de montaje en regla con `npm run shorts:feedback`, siguiendo el contrato de `AGENTS.md`: regla, validador y fixture, sin dejar `TODO`. Comprobar antes si ya existe una regla aplicable y extenderla cuando corresponda. Una corrección específica de una escena pertenece al plan, con su motivo; no convertir coordenadas de un vídeo en valores globales.
+
+Conservar plan aprobado, transcripción, assets y ajustes/versiones de render para reproducir geometría, tiempos y efectos. La selección editorial, la transcripción y el análisis pueden variar entre ejecuciones o versiones; no prometer que regenerar todo desde cero produzca idéntico resultado. Mantener medios privados y outputs fuera de los commits.
 
 ## Entrega
 
-Responder con una tabla ordenada que incluya ranking, título provisional, duración y enlace absoluto a cada MP4. Enlazar también la carpeta completa del job, indicar cuáles revisar primero y confirmar que no se ha subido nada.
+Entregar únicamente los cortes solicitados, en orden, con título provisional, duración real y enlace absoluto a cada MP4 actual. Enlazar el job cuando ayude a continuar. Indicar qué se verificó y cualquier comprobación pendiente; distinguir ejemplos renderizados, cambios permanentes del pipeline y ajustes particulares del plan. No publicar sin autorización.
