@@ -31,8 +31,9 @@ test('changing editing profile rebuilds scenes while keeping word corrections', 
   const {root,state}=await fixture();
   try {
     state.clips[0].editing={enabled:true,profile:'sobrio',sceneEdits:[{id:'scene-1',layout:'fit'}],wordEdits:[{index:0,text:'Texto'}]};
-    await rerenderClip(state,'clip-1',{renderMode:'auto',editing:{profile:'energico'}},{
-      renderCandidate:async({outputFile,editing})=>{
+    await rerenderClip(state,'clip-1',{editing:{profile:'energico'}},{
+      renderCandidate:async({outputFile,editing,renderMode})=>{
+        assert.equal(renderMode,null);
         assert.deepEqual(editing.sceneEdits,[]);
         assert.equal(editing.wordEdits[0].text,'Texto');
         await writeFile(outputFile,'new');

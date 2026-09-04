@@ -47,6 +47,10 @@ se importa al proyecto y baja bajo la voz. No se descarga música automáticamen
   recibe esa evidencia y evalúa gancho, desarrollo, cierre y dependencia de
   contexto. El score es una estimación editorial, nunca una predicción garantizada.
 
+La regla SH-R-043 exige que cada panel de pantalla esté centrado: un panel de
+900 px en el lienzo de 1080 deja 90 px a cada lado. La zona segura de los
+subtítulos se calcula por separado.
+
 ## Revisión
 
 En cada resultado: Editar corte, encuadre y subtítulos → Revisar montaje por

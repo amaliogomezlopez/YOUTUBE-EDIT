@@ -3,3 +3,4 @@
 {"ruleId":"SH-R-024","feedback":"un logo con presentation plain no lleva reborde ni halo alrededor","recordedAt":"2026-07-31T08:23:26Z","severity":"error","scope":"catalog","check":"shorts-plain-logo-no-decoration"}
 {"ruleId":"SH-R-031","feedback":"los nombres de modelo y su version como GLM 5.2 deben aparecer como un compuesto indivisible en subtitulos","recordedAt":"2026-07-31T08:23:26Z","severity":"error","scope":"catalog","check":"shorts-caption-compound-together"}
 {"ruleId":"SH-R-041","feedback":"el cierre de marca en layout full debe colocarse arriba para no tapar la cara","recordedAt":"2026-07-31T08:23:27Z","severity":"error","scope":"catalog","check":"shorts-full-brand-top"}
+{"ruleId":"SH-R-043","feedback":"La pantalla inferior debe estar centrada: el margen izquierdo y el derecho deben ser iguales.","recordedAt":"2026-09-04T22:44:46Z","severity":"error","scope":"catalog","check":"shorts-screen-centered"}

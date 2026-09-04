@@ -452,7 +452,7 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
     editing.sceneEdits=[];
     state.warnings=[...(state.warnings ?? []),'Al cambiar el perfil se reconstruyen las escenas y sus encuadres; se conservan las correcciones de palabras.'];
   }
-  const mode = edits.renderMode === 'auto' ? null : ['crop', 'fit', 'pip'].includes(edits.renderMode) ? edits.renderMode : (clip.renderSettings?.mode || state.renderMode || 'crop');
+  const mode = edits.renderMode === 'auto' ? null : ['crop', 'fit', 'pip'].includes(edits.renderMode) ? edits.renderMode : (editing.enabled ? null : clip.renderSettings?.mode || state.renderMode || 'crop');
   const webcamBox = edits.webcamBox ? normalizedWebcamBox(edits.webcamBox, state.media) : (clip.renderSettings?.webcamBox || state.webcamBox);
   if (mode === 'pip' && !webcamBox) throw new Error('Selecciona una caja de webcam antes de renderizar en modo PIP.');
   const captions = await readJson(path.join(state.jobDir, 'transcript.json'));

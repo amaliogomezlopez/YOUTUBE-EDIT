@@ -228,6 +228,20 @@
       "rationale": "El build debe detectar errores de montaje antes del render final.",
       "scope": "catalog",
       "fixture": "tests/fixtures/shorts-rules/SH-R-042.json"
+    },
+    {
+      "id": "SH-R-043",
+      "section": "safe-area",
+      "statement": "Los paneles de pantalla inferiores de pip y fit y los paneles de comparacion quedan centrados horizontalmente en el lienzo.",
+      "rationale": "Un ancho de 900 en un lienzo de 1080 requiere 90 pixeles a cada lado; una zona segura de subtitulos no debe desplazar la imagen.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "shorts-screen-centered",
+      "origin": {
+        "feedback": "La pantalla inferior debe estar centrada: el margen izquierdo y el derecho deben ser iguales.",
+        "recordedAt": "2026-09-04T22:44:46Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-043.json"
     }
   ]
 }

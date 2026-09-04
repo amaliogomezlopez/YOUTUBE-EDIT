@@ -1,0 +1,28 @@
+{
+  "ruleId": "SH-R-043",
+  "check": "shorts-screen-centered",
+  "expect": "fail",
+  "context": {
+    "format": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "scenes": [
+      {
+        "id": "pantalla-descentrada",
+        "layout": "pip",
+        "pip": {
+          "screen": {
+            "left": 54,
+            "top": 800,
+            "width": 900,
+            "height": 880
+          }
+        },
+        "cues": [],
+        "captionPages": []
+      }
+    ]
+  }
+}

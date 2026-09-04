@@ -115,7 +115,7 @@ export async function buildShort({slug, log = () => {}}) {
         pip.camCard.left = (1080 - pip.camCard.width) / 2;
         for (const key of ['offsetX','offsetY','videoWidth','videoHeight']) pip.camCrop[key] *= ratio;
       }
-      screen.left = 54; screen.top = pip ? pip.camCard.top + pip.camCard.height + 230 : 380;
+      screen.left = (format.width - 900) / 2; screen.top = pip ? pip.camCard.top + pip.camCard.height + 230 : 380;
       screen.width = 900; screen.height = 1680 - screen.top;
     }
     const screenTransform = scene.screenRegion && screen ? regionTransform(scene.screenRegion, dimensions, screen) : null;
@@ -129,7 +129,7 @@ export async function buildShort({slug, log = () => {}}) {
     }
     const comparison = scene.comparison ? scene.comparison.map((region, i) => {
       if (scene.comparison.length !== 2 || !validSourceBox(region, dimensions)) throw new Error(where + ': comparacion invalida');
-      const slot={left:54,top:350+i*620,width:900,height:560};
+      const slot={left:(format.width-900)/2,top:350+i*620,width:900,height:560};
       return {slot,transform:regionTransform(region,dimensions,slot),label:String(region.label ?? '').slice(0,50)};
     }) : null;
     const captionRect = comparison ? {left:54,top:110,width:900,height:180} : pip

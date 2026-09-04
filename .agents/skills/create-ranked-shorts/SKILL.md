@@ -15,8 +15,12 @@ Generar cortes verticales terminados y revisados, no solo sugerencias de tiempos
 4. Ejecutar desde la raíz del proyecto:
 
 ```powershell
-npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 8 --min 18 --max 60 --quality high --subtitle-mode progressive --subtitle-preset progressive-punchy --no-llm
+npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 8 --min 18 --max 60 --quality high --editing-profile dinamico --subtitle-mode progressive --subtitle-preset progressive-punchy --no-llm
 ```
+
+El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` cuando el usuario lo prefiera. Leer [la guía de montaje](../../../docs/shorts-adaptive-editing.md) para sus controles. El build ejecuta la regla SH-R-043: la pantalla inferior y las comparaciones deben tener márgenes laterales iguales. No reutilizar el margen asimétrico de subtítulos para posicionar la imagen.
+
+El render de un plan guardado fija geometría, tiempos y efectos. La selección editorial, la transcripción y el análisis pueden variar entre ejecuciones o versiones; conservar el plan, la transcripción y los assets aprobados cuando se necesite reproducir un montaje.
 
 Omitir `--transcript` si no existe. En ese caso añadir `--stt-provider faster-whisper --stt-model small --stt-language es --stt-device cpu --stt-compute-type int8 --stt-python "<python-con-faster-whisper>"`. Obtener el Python mediante `load_workspace_dependencies` cuando esté disponible. Mantener `--no-llm` por defecto; quitarlo solo si el usuario autoriza el LLM configurado.
 

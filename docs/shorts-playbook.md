@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **15** · con validador automático: **15** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **16** · con validador automático: **16** · marcadas `manual`: **0** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -133,6 +133,14 @@ El subtitulo adaptativo queda en zona segura y no tapa la webcam.
 **Por qué:** El build debe detectar errores de montaje antes del render final.
 
 **Validador:** `shorts-adaptive-geometry`
+
+### SH-R-043 · `error` · `catalog`
+
+Los paneles de pantalla inferiores de pip y fit y los paneles de comparacion quedan centrados horizontalmente en el lienzo.
+
+**Por qué:** Un ancho de 900 en un lienzo de 1080 requiere 90 pixeles a cada lado; una zona segura de subtitulos no debe desplazar la imagen.
+
+**Validador:** `shorts-screen-centered`
 
 ## 5. Sonido
 
