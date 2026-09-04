@@ -9,9 +9,12 @@ import {
   useVideoConfig,
 } from "remotion";
 import {
+  CHALK_FONT_FAMILY,
   DATA_FONT_FAMILY,
   FINANCE_FONT_FAMILY as MOTION_FONT_FAMILY,
 } from "../motion/fonts";
+import {ChalkBoard} from "../motion/ChalkBoard";
+import {EDITORIAL_COLORS, EDITORIAL_RADIUS, alpha} from "./palette";
 import {
   SOUND_FILES,
   SoundCue,
@@ -37,20 +40,7 @@ import {RecessionCreditScene} from "./RecessionCreditScene";
 import {CreditCycleScene} from "./CreditCycleScene";
 import {EditorialScene} from "./schemas";
 
-const COLORS = {
-  background: "#050817",
-  surface: "#0C1226",
-  surfaceRaised: "#121B34",
-  ink: "#F8E7B0",
-  white: "#FFF9E8",
-  muted: "#A9A9B8",
-  grid: "#28324B",
-  gold: "#FFC83D",
-  amber: "#D89A12",
-  positive: "#49C98A",
-  negative: "#FF5F6D",
-  cyan: "#6ED4FF",
-} as const;
+const COLORS = EDITORIAL_COLORS;
 
 const clamp = {
   extrapolateLeft: "clamp",
@@ -68,70 +58,12 @@ const progress = (
     easing: Easing.bezier(0.16, 1, 0.3, 1),
   });
 
-const alpha = (hex: string, opacity: number) => {
-  const value = hex.replace("#", "");
-  return `rgba(${Number.parseInt(value.slice(0, 2), 16)}, ${Number.parseInt(
-    value.slice(2, 4),
-    16,
-  )}, ${Number.parseInt(value.slice(4, 6), 16)}, ${opacity})`;
-};
-
 const smoothPulse = (frame: number, fps: number, seconds = 1.8) =>
   0.5 + 0.5 * Math.sin((frame / fps / seconds) * Math.PI * 2);
 
-const FrameBackground: React.FC<{accentColor: string}> = ({accentColor}) => {
-  const frame = useCurrentFrame();
-  const {fps} = useVideoConfig();
-  const drift = (frame / fps) * 9;
-  const pulse = smoothPulse(frame, fps, 3.2);
-  return (
-    <AbsoluteFill
-      style={{
-        background: `radial-gradient(circle at ${64 + pulse * 4}% 42%, ${alpha(
-          accentColor,
-          0.09,
-        )}, transparent 35%), linear-gradient(135deg, #050817 0%, #080D1F 55%, #030510 100%)`,
-      }}
-    >
-      <AbsoluteFill
-        style={{
-          backgroundImage: `linear-gradient(${alpha(
-            COLORS.grid,
-            0.24,
-          )} 1px, transparent 1px), linear-gradient(90deg, ${alpha(
-            COLORS.grid,
-            0.24,
-          )} 1px, transparent 1px)`,
-          backgroundPosition: `${drift}px ${drift * 0.45}px`,
-          backgroundSize: "80px 80px",
-          maskImage:
-            "linear-gradient(to bottom, rgba(0,0,0,.72), rgba(0,0,0,.12) 82%, transparent)",
-          opacity: 0.7,
-        }}
-      />
-      {Array.from({length: 18}, (_, index) => {
-        const x = (index * 137 + 83) % 1840;
-        const y = (index * 211 + 71) % 980;
-        const radius = index % 4 === 0 ? 3 : 1.5;
-        return (
-          <div
-            key={index}
-            style={{
-              background: index % 5 === 0 ? accentColor : COLORS.muted,
-              borderRadius: "50%",
-              height: radius * 2,
-              left: x + Math.sin(frame / fps + index) * 12,
-              opacity: 0.12 + pulse * 0.18,
-              position: "absolute",
-              top: y + Math.cos(frame / fps / 2 + index) * 8,
-              width: radius * 2,
-            }}
-          />
-        );
-      })}
-    </AbsoluteFill>
-  );
-};
+const FrameBackground: React.FC<{accentColor: string}> = ({accentColor}) => (
+  <ChalkBoard accentColor={accentColor} />
+);
 
 const SceneHeader: React.FC<{
   scene: EditorialScene;
@@ -147,7 +79,7 @@ const SceneHeader: React.FC<{
         text: scene.headline,
         withinWidth: 1420,
         fontFamily: MOTION_FONT_FAMILY,
-        fontWeight: "800",
+        fontWeight: "600",
       }).fontSize,
     ),
   );
@@ -171,10 +103,11 @@ const SceneHeader: React.FC<{
         style={{
           color: COLORS.white,
           fontFamily: MOTION_FONT_FAMILY,
+          fontOpticalSizing: "auto",
           fontSize: headlineSize,
-          fontWeight: 840,
-          letterSpacing: -1.7,
-          lineHeight: 1,
+          fontWeight: 650,
+          letterSpacing: 0.15,
+          lineHeight: 1.02,
           maxWidth: 1420,
         }}
       >
@@ -182,12 +115,22 @@ const SceneHeader: React.FC<{
       </div>
       <div
         style={{
+          background: COLORS.gold,
+          height: 3,
+          marginTop: 14,
+          opacity: 0.82,
+          transform: "rotate(-0.35deg)",
+          width: Math.min(220, Math.round(headlineSize * 3.2)),
+        }}
+      />
+      <div
+        style={{
           color: COLORS.muted,
-          fontFamily: MOTION_FONT_FAMILY,
-          fontSize: 22,
-          fontWeight: 540,
-          lineHeight: 1.25,
-          marginTop: 12,
+          fontFamily: CHALK_FONT_FAMILY,
+          fontSize: 28,
+          fontWeight: 500,
+          lineHeight: 1.2,
+          marginTop: 10,
           maxWidth: 1180,
         }}
       >
@@ -266,9 +209,9 @@ const CompanyLogoRibbon: React.FC<{scene: EditorialScene}> = ({scene}) => {
           key={asset.id}
           style={{
             alignItems: "center",
-            background: alpha(COLORS.surface, 0.9),
-            border: `1px solid ${alpha(COLORS.white, 0.12)}`,
-            borderRadius: 12,
+            background: alpha(COLORS.surface, 0.72),
+            border: `1.5px solid ${alpha(COLORS.ink, 0.28)}`,
+            borderRadius: EDITORIAL_RADIUS,
             display: "flex",
             height: 56,
             justifyContent: "center",
@@ -314,7 +257,7 @@ const AssetBackdrop: React.FC<{scene: EditorialScene}> = ({scene}) => {
       <AbsoluteFill
         style={{
           background:
-            "linear-gradient(180deg, rgba(5,8,23,.42), rgba(5,8,23,.82) 55%, #050817 100%)",
+            "linear-gradient(180deg, rgba(12,13,11,.42), rgba(12,13,11,.84) 55%, #0C0D0B 100%)",
         }}
       />
     </AbsoluteFill>
@@ -348,8 +291,10 @@ const SourceFooter: React.FC<{
           style={{
             color: COLORS.gold,
             flex: "0 0 auto",
-            fontWeight: 800,
-            letterSpacing: 0.8,
+            fontFamily: CHALK_FONT_FAMILY,
+            fontSize: 22,
+            fontWeight: 600,
+            letterSpacing: 0.4,
           }}
         >
           FUENTE

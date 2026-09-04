@@ -32,6 +32,8 @@ test('QA permite una composición concisa y bloquea títulos desbordados', () =>
 test('las combinaciones tipográficas registradas superan contraste AA', () => {
   assert.ok(contrastRatio('#F2F7F3', '#07110F') >= 4.5);
   assert.ok(contrastRatio('#171713', '#F1EEE6') >= 4.5);
+  assert.ok(contrastRatio('#F3E6C0', '#0C0D0B') >= 4.5);
+  assert.ok(contrastRatio('#E8C04A', '#0C0D0B') >= 4.5);
 });
 
 test('el registro de asset conserva procedencia, tratamiento y punto focal', () => {

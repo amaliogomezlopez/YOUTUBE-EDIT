@@ -9,16 +9,7 @@ import {
 import {DATA_FONT_FAMILY, FINANCE_FONT_FAMILY} from "../motion/fonts";
 import {EditorialScene} from "./schemas";
 
-const C = {
-  bg: "#050817",
-  panel: "#111A31",
-  white: "#FFF9E8",
-  muted: "#9299AD",
-  gold: "#FFC83D",
-  cyan: "#6ED4FF",
-  green: "#49C98A",
-  red: "#FF5F6D",
-} as const;
+import {EDITORIAL_COLORS as C} from "./palette";
 const clamp = {extrapolateLeft: "clamp", extrapolateRight: "clamp"} as const;
 const alpha = (hex: string, opacity: number) => {
   const value = hex.replace("#", "");

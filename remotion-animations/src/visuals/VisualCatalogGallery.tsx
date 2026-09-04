@@ -12,7 +12,7 @@ import {EditorialDoodle} from "./drawings/EditorialDoodle";
 import {MotionIcon} from "./icons/MotionIcon";
 
 export const iconGallerySchema = z.object({
-  page: z.number().int().min(0).max(1),
+  page: z.number().int().min(0).max(2),
 });
 
 export const drawingGallerySchema = z.object({
@@ -50,7 +50,7 @@ export const IconCatalogGallery: React.FC<IconGalleryProps> = ({page}) => {
       <div style={{display: "flex", alignItems: "baseline", gap: 24}}>
         <h1 style={titleStyle}>Catálogo de iconos</h1>
         <span style={{color: "#38BDF8", fontSize: 24, fontWeight: 800}}>
-          {page + 1}/2 · SVG original · 64 × 64
+          {page + 1}/3 · SVG original · 64 × 64
         </span>
       </div>
       <div
@@ -148,9 +148,9 @@ export const DrawingCatalogGallery: React.FC<DrawingGalleryProps> = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
-          gridTemplateRows: "repeat(3, minmax(0, 1fr))",
-          gap: 18,
+          gridTemplateColumns: "repeat(5, minmax(0, 1fr))",
+          gridTemplateRows: "repeat(4, minmax(0, 1fr))",
+          gap: 14,
           height: 820,
           marginTop: 28,
         }}
@@ -177,7 +177,7 @@ export const DrawingCatalogGallery: React.FC<DrawingGalleryProps> = ({
                 id={entry.id}
                 progress={reveal}
                 showLabel={false}
-                style={{width: "100%", height: 210}}
+                style={{width: "100%", height: 132}}
               />
               <div
                 style={{

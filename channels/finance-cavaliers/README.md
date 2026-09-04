@@ -6,8 +6,10 @@ Slug confirmado: `finance-cavaliers`.
 
 Este directorio configura el canal Finance Cavaliers dentro del motor
 editorial compartido. El perfil es explicativo-documental, en español y con
-episodios horizontales de seis a diez minutos. Las decisiones sobre fuentes,
-música y frecuencia siguen siendo configurables.
+episodios horizontales de seis a diez minutos. La identidad visual es una
+pizarra negra con tiza crema y oro heráldico (`slate-chalk`), no un dashboard
+cian. Las decisiones sobre fuentes, música y frecuencia siguen siendo
+configurables.
 
 ## Dónde colocar el material
 

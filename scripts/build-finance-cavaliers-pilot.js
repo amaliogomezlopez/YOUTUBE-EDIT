@@ -1585,7 +1585,7 @@ async function main() {
         ...(kind === 'brand-cta' ? ['finance-cavaliers-logo'] : []),
         ...sceneAssets.map((asset) => asset.id)
       ],
-      themeId: index % 5 === 0 ? 'oxide-documentary' : 'signal-cobalt',
+      themeId: index % 5 === 0 ? 'oxide-documentary' : 'slate-chalk',
       motionProfile: index % 7 === 0 ? 'kinetic' : 'editorial',
       soundProfile: blueprint ? 'word-synced-semantic' :
         kind === 'split-lines' ? 'trend-focus' : 'editorial-semantic',

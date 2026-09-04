@@ -122,7 +122,7 @@ test('sin caja de cara no hay rectangulo que medir', () => {
 });
 
 test('cada perfil declara umbrales completos y un tema valido', async () => {
-  const themes = new Set(['ink-lime', 'editorial-ivory', 'signal-cobalt', 'oxide-documentary']);
+  const themes = new Set(['ink-lime', 'editorial-ivory', 'signal-cobalt', 'oxide-documentary', 'slate-chalk']);
   for (const profile of INTRO_PROFILES.profiles) {
     assert.ok(themes.has(profile.themeId), `${profile.id}: tema desconocido ${profile.themeId}`);
     const budget = profileBudget(profile);

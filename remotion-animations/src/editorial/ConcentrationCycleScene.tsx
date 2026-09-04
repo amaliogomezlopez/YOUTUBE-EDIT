@@ -13,16 +13,7 @@ import {
 } from "../motion/fonts";
 import {EditorialScene} from "./schemas";
 
-const C = {
-  bg: "#050817",
-  panel: "#0B1327",
-  white: "#FFF9E8",
-  muted: "#99A4BA",
-  gold: "#FFC83D",
-  cyan: "#62D4FF",
-  red: "#FF5F6D",
-  green: "#52D69B",
-} as const;
+import {EDITORIAL_COLORS as C} from "./palette";
 
 const clamp = {
   extrapolateLeft: "clamp",
@@ -803,7 +794,7 @@ export const ConcentrationCycleScene: React.FC<{scene: EditorialScene}> = ({
     <AbsoluteFill
       style={{
         background:
-          "radial-gradient(circle at 68% 42%, rgba(44,93,135,.16), transparent 35%), linear-gradient(145deg,#050817,#070C1C 58%,#03050E)",
+          "radial-gradient(circle at 68% 42%, rgba(232,192,74,.08), transparent 35%), linear-gradient(145deg,#0C0D0B,#141510 58%,#090A08)",
         overflow: "hidden",
       }}
     >

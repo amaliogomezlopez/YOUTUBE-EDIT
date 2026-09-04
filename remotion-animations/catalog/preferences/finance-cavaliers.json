@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "id": "finance-cavaliers",
+  "label": "Preferencias visuales de Finance Cavaliers",
+  "kindWeights": {
+    "icon": 0.35,
+    "drawing": 0.85,
+    "image": 0.2
+  },
+  "categoryWeights": {
+    "data": 0.7,
+    "process": 0.4,
+    "finance": 1,
+    "interface": 0.1,
+    "ai-system": 0.05,
+    "software": 0.1,
+    "business": 0.55
+  },
+  "relationshipDrawingBoost": 2.4,
+  "acceptedAssetIds": [
+    "chart",
+    "bank",
+    "credit",
+    "bubble",
+    "contagion",
+    "credit-cycle",
+    "market-concentration",
+    "contagion-path",
+    "bubble-earnings",
+    "rate-channel"
+  ],
+  "rejectedAssetIds": [],
+  "preferredTreatments": [
+    "spotlight-mask",
+    "path-follow",
+    "freeze-and-callout"
+  ],
+  "rejectedTreatments": [
+    "decorative-watermark",
+    "corner-rule",
+    "gratuitous-gradient"
+  ],
+  "layoutDefaults": {
+    "headerPosition": "top-center",
+    "headerOptional": true,
+    "watermark": false,
+    "cornerRule": false
+  },
+  "notes": [
+    "Pizarra negra, tiza crema y oro de la marca. Nada de cian de dashboard.",
+    "Preferir dibujos de relación (ciclo, contagio, concentración) frente a iconos sueltos.",
+    "No generar SVG libre: el fallback combina primitivas auditadas."
+  ]
+}

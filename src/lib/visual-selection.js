@@ -25,7 +25,11 @@ const KIND_FILES = {
 };
 
 const FALLBACK_ROLE_MAP = [
-  {pattern: /\b(datos?|grafica|analitica|rendimiento|metrica)\b/, ids: ['analytics', 'search']},
+  {pattern: /\b(datos?|grafica|analitica|rendimiento|metrica|indice|bolsa)\b/, ids: ['chart', 'analytics']},
+  {pattern: /\b(credito|banco|prestamo|sloos)\b/, ids: ['bank', 'credit']},
+  {pattern: /\b(burbuja|techo|exuberancia)\b/, ids: ['bubble', 'risk']},
+  {pattern: /\b(contagio|propagacion|sector)\b/, ids: ['contagion', 'factory']},
+  {pattern: /\b(inflacion|tipos|empleo|hogar|consumo)\b/, ids: ['inflation', 'employment', 'household']},
   {pattern: /\b(proceso|pipeline|flujo|etapas?)\b/, ids: ['input', 'tool', 'output']},
   {pattern: /\b(ia|modelo|agente|prompt)\b/, ids: ['agent', 'model', 'prompt']},
   {pattern: /\b(nube|servidor|api|despliegue)\b/, ids: ['server', 'cloud', 'api']},
@@ -50,8 +54,28 @@ const SEMANTIC_ONTOLOGY = [
   },
   {
     id: 'market-evidence',
-    terms: ['bolsa', 'sp500', 's&p', 'rendimiento', 'mercado', 'grafica', 'índice'],
-    expands: ['analytics', 'chart', 'finance', 'index', 'trend', 'evidence']
+    terms: ['bolsa', 'sp500', 's&p', 'rendimiento', 'mercado', 'grafica', 'índice', 'concentracion'],
+    expands: ['analytics', 'chart', 'finance', 'index', 'trend', 'evidence', 'balance']
+  },
+  {
+    id: 'credit-cycle',
+    terms: ['credito', 'banco', 'prestamo', 'sloos', 'endurecer', 'hogar'],
+    expands: ['bank', 'credit', 'household', 'cycle']
+  },
+  {
+    id: 'bubble-earnings',
+    terms: ['burbuja', 'techo', 'exuberancia', 'beneficios', 'earnings'],
+    expands: ['bubble', 'chart', 'shield', 'earnings']
+  },
+  {
+    id: 'contagion-path',
+    terms: ['contagio', 'propagacion', 'sectores', 'sistémico', 'sistemico'],
+    expands: ['contagion', 'factory', 'chart', 'spread']
+  },
+  {
+    id: 'rate-channel',
+    terms: ['inflacion', 'tipos', 'empleo', 'transmision', 'fed'],
+    expands: ['inflation', 'credit', 'employment', 'rates']
   },
   {
     id: 'process-flow',
@@ -120,7 +144,7 @@ export function semanticVisualSignals(query) {
     concepts: concepts.map((concept) => concept.id),
     expandedTerms,
     relationshipIntent: concepts.some((concept) =>
-      ['branch-consolidate', 'filter-compress', 'process-flow', 'time-sequence'].includes(concept.id)
+      ['branch-consolidate', 'filter-compress', 'process-flow', 'time-sequence', 'credit-cycle', 'contagion-path', 'rate-channel', 'bubble-earnings'].includes(concept.id)
     )
   };
 }
@@ -130,11 +154,23 @@ async function loadPreferenceProfile(preferenceProfile) {
   if (preferenceProfile && typeof preferenceProfile === 'object') {
     return preferenceProfile;
   }
-  try {
-    return JSON.parse(await readFile(DEFAULT_PREFERENCE_FILE, 'utf8'));
-  } catch {
-    return null;
+  const named = typeof preferenceProfile === 'string' && preferenceProfile
+    ? path.join(
+      ROOT,
+      'remotion-animations',
+      'catalog',
+      'preferences',
+      `${preferenceProfile}.json`
+    )
+    : null;
+  for (const file of [named, DEFAULT_PREFERENCE_FILE].filter(Boolean)) {
+    try {
+      return JSON.parse(await readFile(file, 'utf8'));
+    } catch {
+      continue;
+    }
   }
+  return null;
 }
 
 async function readCatalog(kind) {

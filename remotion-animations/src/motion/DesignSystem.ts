@@ -5,6 +5,7 @@ export const motionThemeSchema = z.enum([
   "editorial-ivory",
   "signal-cobalt",
   "oxide-documentary",
+  "slate-chalk",
 ]);
 
 export type MotionThemeId = z.infer<typeof motionThemeSchema>;
@@ -80,6 +81,20 @@ export const MOTION_THEMES: Record<MotionThemeId, MotionTheme> = {
     danger: "#DF544F",
     positive: "#91B884",
     borderRadius: 1,
+  },
+  "slate-chalk": {
+    id: "slate-chalk",
+    label: "Slate Chalk",
+    background: "#0C0D0B",
+    surface: "#171814",
+    surfaceRaised: "#21221C",
+    ink: "#F3E6C0",
+    muted: "#A39474",
+    grid: "#2C2E24",
+    accent: "#E8C04A",
+    danger: "#D07068",
+    positive: "#7FB56E",
+    borderRadius: 2,
   },
 };
 
@@ -173,6 +188,9 @@ export const MOTION_FORMATS: Record<
 export const getMotionTheme = (
   themeId: MotionThemeId = "ink-lime",
 ): MotionTheme => MOTION_THEMES[themeId];
+
+export const isBoardTheme = (themeId: MotionThemeId) =>
+  themeId === "slate-chalk";
 
 export const getMotionProfile = (
   profileId: MotionProfileId = "editorial",

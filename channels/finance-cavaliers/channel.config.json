@@ -32,8 +32,7 @@
   "visual": {
     "brandProfileId": "finance-cavaliers",
     "themeAllowlist": [
-      "editorial-ivory",
-      "signal-cobalt",
+      "slate-chalk",
       "oxide-documentary"
     ],
     "motionProfileAllowlist": [

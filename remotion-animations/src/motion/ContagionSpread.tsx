@@ -16,14 +16,7 @@ import {Img, staticFile, useCurrentFrame, useVideoConfig} from "remotion";
 import {z} from "zod";
 import {DATA_FONT_FAMILY, FINANCE_FONT_FAMILY} from "./fonts";
 
-const C = {
-  bg: "#050817",
-  panel: "#111A31",
-  white: "#FFF9E8",
-  muted: "#9299AD",
-  cyan: "#6ED4FF",
-  red: "#FF5F6D",
-} as const;
+import {EDITORIAL_COLORS as C} from "../editorial/palette";
 
 const alpha = (hex: string, opacity: number) => {
   const value = hex.replace("#", "");

@@ -2,7 +2,7 @@ import {AbsoluteFill, Easing, interpolate, useCurrentFrame, useVideoConfig} from
 import {DATA_FONT_FAMILY, FINANCE_FONT_FAMILY} from "../motion/fonts";
 import {EditorialScene} from "./schemas";
 
-const C = {bg:"#050817",panel:"#0C1830",white:"#FFF9E8",muted:"#9AA6BC",gold:"#FFC83D",cyan:"#62D4FF",red:"#FF5F6D",green:"#52D69B"} as const;
+import {EDITORIAL_COLORS as C} from "./palette";
 const clamp = {extrapolateLeft:"clamp",extrapolateRight:"clamp"} as const;
 const alpha = (hex:string,a:number) => {
   const v=hex.replace("#","");
@@ -83,7 +83,7 @@ const OpportunityDoor:React.FC<{scene:EditorialScene}>=()=>{
 };
 
 export const CurrentEarningsContrastScene:React.FC<{scene:EditorialScene}>=({scene})=>(
-  <AbsoluteFill style={{background:"radial-gradient(circle at 62% 42%,rgba(42,101,142,.14),transparent 38%),linear-gradient(145deg,#050817,#071126 60%,#03050E)",overflow:"hidden"}}>
+  <AbsoluteFill style={{background:"radial-gradient(circle at 62% 42%,rgba(232,192,74,.08),transparent 38%),linear-gradient(145deg,#0C0D0B,#141510 60%,#090A08)",overflow:"hidden"}}>
     {scene.id==="scene-030"?<PastVsNow scene={scene}/>:scene.id==="scene-031"?<PriceVsProfit scene={scene}/>:scene.id==="scene-032"?<EarningsEngine scene={scene}/>:scene.id==="scene-033"?<CollapseTest scene={scene}/>:<OpportunityDoor scene={scene}/>}
   </AbsoluteFill>
 );

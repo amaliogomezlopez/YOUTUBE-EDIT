@@ -14,11 +14,7 @@ import {Easing, Img, interpolate, staticFile, useCurrentFrame, useVideoConfig} f
 import {z} from "zod";
 import {FINANCE_FONT_FAMILY} from "./fonts";
 
-const C = {
-  surface: "#0C1226",
-  surfaceRaised: "#121B34",
-  white: "#FFF9E8",
-} as const;
+import {EDITORIAL_COLORS as C} from "../editorial/palette";
 
 const clamp = {
   extrapolateLeft: "clamp",

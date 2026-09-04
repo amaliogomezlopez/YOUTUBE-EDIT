@@ -9,6 +9,7 @@ import {
 const compositions = [
   ["Catalog-Icons-01", "icons-01.png", 90],
   ["Catalog-Icons-02", "icons-02.png", 90],
+  ["Catalog-Icons-03", "icons-03.png", 90],
   ["Catalog-Drawings", "drawings.png", 150],
 ];
 const run = createRunDirectory({
@@ -57,8 +58,8 @@ const manifestPath = completeRun(run, {
   outputs,
   metadata: {
     catalog: {
-      icons: 40,
-      drawings: 12,
+      icons: 51,
+      drawings: 17,
     },
   },
 });

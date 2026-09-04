@@ -12,16 +12,23 @@ import {
   useVideoConfig,
 } from "remotion";
 import {z} from "zod";
-import {DATA_FONT_FAMILY, MOTION_FONT_FAMILY} from "./fonts";
+import {
+  CHALK_FONT_FAMILY,
+  DATA_FONT_FAMILY,
+  FINANCE_FONT_FAMILY,
+  MOTION_FONT_FAMILY,
+} from "./fonts";
 import {
   MOTION_FORMATS,
   getMotionProfile,
   getMotionTheme,
   getResponsiveLayout,
+  isBoardTheme,
   motionFormatSchema,
   motionProfileSchema,
   motionThemeSchema,
 } from "./DesignSystem";
+import {ChalkBoard} from "./ChalkBoard";
 import {SOUND_FILES, SoundCue, Soundtrack} from "./SoundDesign";
 import {clamp, motionProgress, rgba} from "./Toolkit";
 
@@ -275,6 +282,8 @@ const PatternFrame: React.FC<
   const layout = getResponsiveLayout(width, height);
   const profile = getMotionProfile(motionProfile);
   const accent = accentColor ?? theme.accent;
+  const board = isBoardTheme(themeId);
+  const displayFont = board ? FINANCE_FONT_FAMILY : MOTION_FONT_FAMILY;
   const intro = motionProgress(frame, fps, 0, 0.52 / profile.tempo);
   const outro = interpolate(
     frame,
@@ -292,8 +301,8 @@ const PatternFrame: React.FC<
           fitText({
             text: title,
             withinWidth: maxTitleWidth,
-            fontFamily: MOTION_FONT_FAMILY,
-            fontWeight: "820",
+            fontFamily: displayFont,
+            fontWeight: board ? "600" : "820",
           }).fontSize,
         ),
       )
@@ -302,13 +311,16 @@ const PatternFrame: React.FC<
   return (
     <AbsoluteFill
       style={{
-        background: `radial-gradient(circle at 52% 52%, ${rgba(accent, 0.07)}, transparent 46%), ${theme.background}`,
+        background: board
+          ? theme.background
+          : `radial-gradient(circle at 52% 52%, ${rgba(accent, 0.07)}, transparent 46%), ${theme.background}`,
         color: theme.ink,
-        fontFamily: MOTION_FONT_FAMILY,
+        fontFamily: displayFont,
         opacity: outro,
         overflow: "hidden",
       }}
     >
+      {board ? <ChalkBoard accentColor={accent} /> : (
       <AbsoluteFill
         style={{
           backgroundImage: `linear-gradient(${rgba(theme.grid, 0.17)} 1px, transparent 1px), linear-gradient(90deg, ${rgba(theme.grid, 0.17)} 1px, transparent 1px)`,
@@ -318,6 +330,7 @@ const PatternFrame: React.FC<
           opacity: themeId === "signal-cobalt" ? 0.46 : 0.25,
         }}
       />
+      )}
       {hasHeader ? (
         <header
           style={{
@@ -334,8 +347,10 @@ const PatternFrame: React.FC<
           <div
             style={{
               fontSize: fittedTitleSize,
-              fontWeight: 820,
-              letterSpacing: -Math.max(1, fittedTitleSize * 0.025),
+              fontFamily: displayFont,
+              fontWeight: board ? 600 : 820,
+              fontOpticalSizing: "auto",
+              letterSpacing: board ? 0.2 : -Math.max(1, fittedTitleSize * 0.025),
               lineHeight: 0.98,
             }}
           >
@@ -345,8 +360,9 @@ const PatternFrame: React.FC<
             <div
               style={{
                 color: theme.muted,
-                fontSize: layout.bodySize,
-                fontWeight: 540,
+                fontFamily: board ? CHALK_FONT_FAMILY : MOTION_FONT_FAMILY,
+                fontSize: board ? layout.bodySize + 6 : layout.bodySize,
+                fontWeight: board ? 500 : 540,
                 lineHeight: 1.25,
                 margin: `${Math.round(layout.gap * 0.45)}px auto 0`,
                 maxWidth: Math.min(maxTitleWidth, layout.portrait ? 820 : 1180),
@@ -368,18 +384,33 @@ const PatternFrame: React.FC<
       >
         {children}
       </div>
-      <div
-        style={{
-          background: accent,
-          bottom: layout.safeY * 0.42,
-          height: 3,
-          left: "50%",
-          opacity: intro * 0.8,
-          position: "absolute",
-          transform: "translateX(-50%)",
-          width: Math.min(90, width * 0.09),
-        }}
-      />
+      {board ? (
+        <div
+          style={{
+            background: accent,
+            bottom: layout.safeY * 0.48,
+            height: 2,
+            left: "50%",
+            opacity: intro * 0.7,
+            position: "absolute",
+            transform: "translateX(-50%) rotate(-0.4deg)",
+            width: Math.min(124, width * 0.11),
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            background: accent,
+            bottom: layout.safeY * 0.42,
+            height: 3,
+            left: "50%",
+            opacity: intro * 0.8,
+            position: "absolute",
+            transform: "translateX(-50%)",
+            width: Math.min(90, width * 0.09),
+          }}
+        />
+      )}
     </AbsoluteFill>
   );
 };

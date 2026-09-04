@@ -22,6 +22,12 @@ const THEMES = {
     ink: '#F2E9DE',
     muted: '#B7A99B',
     accent: '#E57246'
+  },
+  'slate-chalk': {
+    background: '#0C0D0B',
+    ink: '#F3E6C0',
+    muted: '#A39474',
+    accent: '#E8C04A'
   }
 };
 

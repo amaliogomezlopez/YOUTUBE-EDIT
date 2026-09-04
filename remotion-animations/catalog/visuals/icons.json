@@ -61,6 +61,16 @@
     {"id": "limit", "label": "Límite", "category": "business", "tags": ["límite", "tope", "capacidad"], "parts": ["gauge", "needle"]},
     {"id": "lock", "label": "Bloqueo", "category": "business", "tags": ["bloqueo", "seguridad", "cerrado"], "parts": ["shackle", "body"]},
     {"id": "shield", "label": "Protección", "category": "business", "tags": ["protección", "seguridad", "validación"], "parts": ["shield", "check"]},
+    {"id": "chart", "label": "Gráfica", "category": "finance", "tags": ["gráfica", "índice", "mercado", "serie", "bolsa"], "parts": ["axes", "line"]},
+    {"id": "bank", "label": "Banco", "category": "finance", "tags": ["banco", "crédito", "institución", "fed"], "parts": ["columns", "pediment"]},
+    {"id": "credit", "label": "Crédito", "category": "finance", "tags": ["crédito", "préstamo", "tarjeta", "sloos"], "parts": ["card", "stripe"]},
+    {"id": "bubble", "label": "Burbuja", "category": "finance", "tags": ["burbuja", "techo", "exuberancia", "precio"], "parts": ["circle", "stem"]},
+    {"id": "factory", "label": "Industria", "category": "finance", "tags": ["industria", "fábrica", "producción", "empleo"], "parts": ["building", "chimney"]},
+    {"id": "household", "label": "Hogar", "category": "finance", "tags": ["hogar", "consumo", "vivienda", "familia"], "parts": ["roof", "door"]},
+    {"id": "employment", "label": "Empleo", "category": "finance", "tags": ["empleo", "trabajo", "nómina", "laboral"], "parts": ["people"]},
+    {"id": "inflation", "label": "Inflación", "category": "finance", "tags": ["inflación", "precios", "tipos", "subida"], "parts": ["coin", "arrow"]},
+    {"id": "contagion", "label": "Contagio", "category": "finance", "tags": ["contagio", "propagación", "sectores", "riesgo sistémico"], "parts": ["nodes", "links"]},
+    {"id": "balance", "label": "Balanza", "category": "finance", "tags": ["balanza", "equilibrio", "comparar", "peso"], "parts": ["beam", "pans"]},
     {"id": "unknown", "label": "Concepto genérico", "category": "fallback", "tags": ["desconocido", "genérico", "concepto"], "parts": ["circle", "question"]}
   ]
 }

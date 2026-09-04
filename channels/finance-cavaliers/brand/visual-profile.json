@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "id": "finance-cavaliers",
   "label": "Finance Cavaliers",
   "format": {
@@ -8,18 +8,23 @@
     "height": 1080,
     "fps": 30
   },
+  "surface": "slate-board",
   "typography": {
-    "display": "Instrument Sans",
+    "display": "Fraunces",
+    "annotation": "Caveat",
     "data": "Fragment Mono"
   },
   "palette": {
-    "paper": "#050817",
-    "ink": "#F8E7B0",
-    "cobalt": "#FFC83D",
-    "oxide": "#D89A12",
-    "positive": "#49C98A",
-    "negative": "#FF5F6D"
+    "paper": "#0C0D0B",
+    "ink": "#F3E6C0",
+    "gold": "#E8C04A",
+    "cobalt": "#E8C04A",
+    "oxide": "#C49A3C",
+    "secondReading": "#7EAEB8",
+    "positive": "#7FB56E",
+    "negative": "#D07068"
   },
+  "themeId": "slate-chalk",
   "safeZonePercent": 6,
   "headerPolicy": "optional-centered",
   "watermark": false

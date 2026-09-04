@@ -181,6 +181,66 @@ const layouts: Record<string, DrawingLayout> = {
       {from: 1, to: 2},
     ],
   },
+  "credit-cycle": {
+    label: "El crédito recorre banco, préstamo y hogar",
+    nodes: [
+      {icon: "bank", x: 54, y: 110},
+      {icon: "credit", x: 160, y: 110, scale: 1.12},
+      {icon: "household", x: 266, y: 110},
+    ],
+    edges: [
+      {from: 0, to: 1},
+      {from: 1, to: 2},
+    ],
+  },
+  "market-concentration": {
+    label: "El peso se concentra en unos pocos nombres",
+    nodes: [
+      {icon: "chart", x: 58, y: 110},
+      {icon: "balance", x: 160, y: 110, scale: 1.15},
+      {icon: "risk", x: 262, y: 110},
+    ],
+    edges: [
+      {from: 0, to: 1},
+      {from: 1, to: 2},
+    ],
+  },
+  "contagion-path": {
+    label: "El shock se propaga de un sector al resto",
+    nodes: [
+      {icon: "factory", x: 58, y: 70},
+      {icon: "contagion", x: 160, y: 110, scale: 1.2},
+      {icon: "chart", x: 262, y: 150},
+    ],
+    edges: [
+      {from: 0, to: 1},
+      {from: 1, to: 2},
+    ],
+  },
+  "bubble-earnings": {
+    label: "El precio se hincha; los beneficios sostienen o no",
+    nodes: [
+      {icon: "bubble", x: 58, y: 110, scale: 1.12},
+      {icon: "chart", x: 160, y: 110},
+      {icon: "shield", x: 262, y: 110},
+    ],
+    edges: [
+      {from: 0, to: 1},
+      {from: 1, to: 2, dashed: true},
+    ],
+  },
+  "rate-channel": {
+    label: "Los tipos se transmiten al crédito y al empleo",
+    nodes: [
+      {icon: "inflation", x: 54, y: 110},
+      {icon: "credit", x: 160, y: 110, scale: 1.1},
+      {icon: "employment", x: 266, y: 110},
+    ],
+    edges: [
+      {from: 0, to: 1},
+      {from: 1, to: 2},
+    ],
+  },
 };
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value));

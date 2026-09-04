@@ -368,6 +368,16 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{page: 1}}
         />
         <Composition
+          id="Catalog-Icons-03"
+          component={IconCatalogGallery}
+          durationInFrames={180}
+          fps={60}
+          width={1920}
+          height={1080}
+          schema={iconGallerySchema}
+          defaultProps={{page: 2}}
+        />
+        <Composition
           id="Catalog-Drawings"
           component={DrawingCatalogGallery}
           durationInFrames={240}
@@ -580,7 +590,7 @@ const extendedPatternCompositions: {
     props: {
       ...defaultExtendedPatternProps,
       pattern: "timeline-milestones",
-      themeId: "signal-cobalt",
+      themeId: "slate-chalk",
       title: "Cuatro hitos explican el recorrido",
       items: [
         {label: "SEÑAL", detail: "Detectar"},
@@ -623,7 +633,7 @@ const extendedPatternCompositions: {
     props: {
       ...defaultExtendedPatternProps,
       pattern: "funnel-filter",
-      themeId: "signal-cobalt",
+      themeId: "slate-chalk",
       title: "Filtrar antes de cargar",
       primaryLabel: "ENTRADA COMPLETA",
       callout: "SÓLO LO ÚTIL",

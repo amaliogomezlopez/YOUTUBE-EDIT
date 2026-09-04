@@ -10,16 +10,7 @@ import {
 } from "../motion/fonts";
 import {EditorialScene} from "./schemas";
 
-const C = {
-  bg: "#050817",
-  panel: "#121B34",
-  white: "#FFF9E8",
-  muted: "#A9A9B8",
-  gold: "#FFC83D",
-  cyan: "#6ED4FF",
-  green: "#49C98A",
-  red: "#FF5F6D",
-} as const;
+import {EDITORIAL_COLORS as C} from "./palette";
 const clamp = {
   extrapolateLeft: "clamp",
   extrapolateRight: "clamp",

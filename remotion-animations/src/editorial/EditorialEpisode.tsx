@@ -25,7 +25,7 @@ export const EditorialEpisode: React.FC<EditorialEpisodeProps> = (props) => {
     (left, right) => left.startSeconds - right.startSeconds,
   );
   return (
-    <AbsoluteFill style={{backgroundColor: "#050817"}}>
+    <AbsoluteFill style={{backgroundColor: "#0C0D0B"}}>
       <EpisodeAudio
         audioPath={props.audioPath}
         volume={props.narrationVolume}

@@ -8,20 +8,8 @@ import {
   resolveSafeOverlayRect,
 } from "./layoutSafety";
 import type {LayoutRect} from "./layoutSafety";
+import {EDITORIAL_COLORS as COLORS, alpha} from "./palette";
 import {EditorialScene} from "./schemas";
-
-const COLORS = {
-  background: "#050817",
-  surface: "#0C1226",
-  raised: "#121B34",
-  white: "#FFF9E8",
-  muted: "#A9A9B8",
-  grid: "#28324B",
-  gold: "#FFC83D",
-  cyan: "#6ED4FF",
-  positive: "#49C98A",
-  negative: "#FF5F6D",
-} as const;
 
 const clamp = {
   extrapolateLeft: "clamp",
@@ -31,13 +19,7 @@ const clamp = {
 type CueTone = EditorialScene["semanticCues"][number]["tone"];
 type ChartDatum = EditorialScene["chartData"][number];
 
-const alpha = (hex: string, opacity: number) => {
-  const value = hex.replace("#", "");
-  return `rgba(${Number.parseInt(value.slice(0, 2), 16)}, ${Number.parseInt(
-    value.slice(2, 4),
-    16,
-  )}, ${Number.parseInt(value.slice(4, 6), 16)}, ${opacity})`;
-};
+
 
 const toneColor = (tone: CueTone) => {
   if (tone === "gold") return COLORS.gold;

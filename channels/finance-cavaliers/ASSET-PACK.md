@@ -9,12 +9,15 @@ reutilizable.
 - Logos corporativos: los siete Magnificent Seven y las instituciones que se
   repitan. Preferir SVG de Simple Icons o Font Awesome Free Brands; comprobar
   siempre los derechos de marca.
-- Iconografía: Lucide para conceptos de mercado, crédito, empleo, consumo,
-  industria y riesgo.
-- Texturas propias: rejilla, grano, papel, reflejos de pantalla y máscaras.
+- Iconografía: catálogo propio de finanzas (gráfica, banco, crédito, burbuja,
+  contagio, empleo, inflación, hogar, industria, balanza) más Lucide solo
+  cuando el concepto no esté en el catálogo.
+- Texturas propias: pizarra, grano de tiza, polvo y máscaras; no rejilla de
+  dashboard ni partículas flotantes.
 - Sonido: whoosh, pulso, data tick, impacto suave y cierre, sintetizados
   localmente y guardados en `remotion-animations/public/sfx/`.
-- Tipografía: Instrument Sans para editorial y Fragment Mono para datos.
+- Tipografía: Fraunces para titulares, Caveat para anotaciones de pizarra y
+  Fragment Mono para cifras.
 
 ## Paquete por episodio
 

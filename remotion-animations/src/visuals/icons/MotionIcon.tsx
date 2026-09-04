@@ -383,6 +383,87 @@ const renderGlyph = (
           <path d="m20 32 8 8 17-18" {...soft} />
         </>
       );
+    case "chart":
+      return (
+        <>
+          <path d="M8 52h48M12 52V14" {...line} />
+          <path d="M16 40 28 28 38 34 52 16" {...soft} />
+          <circle cx="52" cy="16" r="3" fill={secondaryColor} />
+        </>
+      );
+    case "bank":
+      return (
+        <>
+          <path d="M8 24 32 8 56 24" {...line} />
+          <path d="M14 24v24M26 24v24M38 24v24M50 24v24" {...soft} />
+          <path d="M8 48h48M6 56h52" {...line} />
+        </>
+      );
+    case "credit":
+      return (
+        <>
+          <rect x="8" y="16" width="48" height="32" rx="4" {...line} />
+          <path d="M8 26h48" {...soft} />
+          <path d="M16 38h16M40 38h8" {...line} />
+        </>
+      );
+    case "bubble":
+      return (
+        <>
+          <circle cx="32" cy="30" r="18" {...line} />
+          <circle cx="32" cy="30" r="10" {...soft} />
+          <path d="M22 48 18 58 30 52" {...line} />
+        </>
+      );
+    case "factory":
+      return (
+        <>
+          <path d="M6 54V28h18l8-8v8h26v26z" {...line} />
+          <path d="M16 20v-8M22 20v-10M44 38h10v16H44z" {...soft} />
+        </>
+      );
+    case "household":
+      return (
+        <>
+          <path d="M8 30 32 10 56 30V54H8z" {...line} />
+          <rect x="26" y="36" width="12" height="18" {...soft} />
+        </>
+      );
+    case "employment":
+      return (
+        <>
+          <circle cx="22" cy="20" r="8" {...line} />
+          <circle cx="44" cy="22" r="6" {...soft} />
+          <path d="M6 52c2-12 9-18 16-18s14 6 16 18" {...line} />
+          <path d="M36 48c2-8 7-12 12-12s10 4 12 12" {...soft} />
+        </>
+      );
+    case "inflation":
+      return (
+        <>
+          <circle cx="24" cy="40" r="12" {...line} />
+          <path d="M20 40h8M24 36v8" {...soft} />
+          <path d="M40 46 52 18M44 22h10v10" {...line} />
+        </>
+      );
+    case "contagion":
+      return (
+        <>
+          <circle cx="32" cy="32" r="7" fill={color} />
+          <circle cx="14" cy="18" r="5" {...soft} />
+          <circle cx="52" cy="16" r="5" {...soft} />
+          <circle cx="54" cy="44" r="5" {...soft} />
+          <circle cx="18" cy="50" r="5" {...soft} />
+          <path d="M26 28 18 22M38 28 48 20M37 36 50 42M27 37 21 46" {...line} />
+        </>
+      );
+    case "balance":
+      return (
+        <>
+          <path d="M32 8v44M18 56h28" {...line} />
+          <path d="M12 20h40M12 20l-8 16h16zM52 20l-8 16h16z" {...soft} />
+        </>
+      );
     default:
       return (
         <>

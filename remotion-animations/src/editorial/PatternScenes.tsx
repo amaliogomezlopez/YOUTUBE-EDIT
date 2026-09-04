@@ -402,9 +402,9 @@ const makeExtendedScene = (
       {
         pattern,
         format: "landscape",
-        // El episodio es oscuro; `signal-cobalt` es el tema del catálogo que no
-        // rompe la continuidad, y el acento sigue siendo el de la marca.
-        themeId: "signal-cobalt",
+        // El episodio es pizarra; `slate-chalk` es el tema del catálogo que
+        // mantiene la continuidad, y el acento sigue siendo el de la marca.
+        themeId: "slate-chalk",
         motionProfile: "editorial",
         title: scene.headline,
         supportingText: scene.supportingText,
@@ -556,7 +556,7 @@ const AiCoreScene: React.FC<PatternSceneProps> = ({scene, accentColor}) => {
   const logos = scene.assets.filter((asset) => asset.kind === "logo").slice(0, 5);
   const steps = ["CÓMPUTO", "MODELOS", "PRODUCTOS", "RESULTADOS"];
   return (
-    <AbsoluteFill style={{background: "#050817", color: "#FFF9E8"}}>
+    <AbsoluteFill style={{background: "#0C0D0B", color: "#F3E6C0"}}>
       <div
         style={{
           fontFamily: "Inter, Arial, sans-serif",
@@ -664,7 +664,7 @@ const AiCoreScene: React.FC<PatternSceneProps> = ({scene, accentColor}) => {
                 background: index === steps.length - 1 ? accentColor : "#101A33",
                 border: `2px solid ${index === steps.length - 1 ? accentColor : "#456080"}`,
                 borderRadius: 14,
-                color: index === steps.length - 1 ? "#050817" : "#FFF9E8",
+                color: index === steps.length - 1 ? "#0C0D0B" : "#F3E6C0",
                 fontFamily: "Inter, Arial, sans-serif",
                 fontSize: 22,
                 fontWeight: 900,

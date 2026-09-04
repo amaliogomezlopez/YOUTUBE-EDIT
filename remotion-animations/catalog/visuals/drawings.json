@@ -25,6 +25,11 @@
     {"id": "branch-merge", "label": "Ramificar y reunir", "tags": ["paralelo", "subagentes", "consolidar"], "iconRefs": ["branch", "agent", "merge"], "motionVerb": "dividir y reunir"},
     {"id": "bottleneck", "label": "Cuello de botella", "tags": ["cola", "límite", "saturación"], "iconRefs": ["queue", "limit", "output"], "motionVerb": "acumular"},
     {"id": "review-loop", "label": "Bucle de revisión", "tags": ["revisión", "corregir", "recurrencia"], "iconRefs": ["prompt", "edit", "loop"], "motionVerb": "volver"},
-    {"id": "off-peak", "label": "Horas valle", "tags": ["tiempo", "horas pico", "límite"], "iconRefs": ["clock", "limit", "cost"], "motionVerb": "recorrer y expandir"}
+    {"id": "off-peak", "label": "Horas valle", "tags": ["tiempo", "horas pico", "límite"], "iconRefs": ["clock", "limit", "cost"], "motionVerb": "recorrer y expandir"},
+    {"id": "credit-cycle", "label": "Ciclo de crédito", "tags": ["crédito", "banco", "hogar", "consumo"], "iconRefs": ["bank", "credit", "household"], "motionVerb": "circular"},
+    {"id": "market-concentration", "label": "Concentración de mercado", "tags": ["concentración", "índice", "peso", "magníficos"], "iconRefs": ["chart", "balance", "risk"], "motionVerb": "comprimir"},
+    {"id": "contagion-path", "label": "Contagio entre sectores", "tags": ["contagio", "sectores", "propagación"], "iconRefs": ["contagion", "factory", "chart"], "motionVerb": "propagar"},
+    {"id": "bubble-earnings", "label": "Burbuja frente a beneficios", "tags": ["burbuja", "beneficios", "precio", "techo"], "iconRefs": ["bubble", "chart", "shield"], "motionVerb": "contrastar"},
+    {"id": "rate-channel", "label": "Tipos, crédito y economía", "tags": ["tipos", "crédito", "inflación", "empleo"], "iconRefs": ["inflation", "credit", "employment"], "motionVerb": "transmitir"}
   ]
 }

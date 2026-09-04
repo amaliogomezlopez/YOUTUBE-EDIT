@@ -8,16 +8,7 @@ import {
 import {DATA_FONT_FAMILY, FINANCE_FONT_FAMILY} from "../motion/fonts";
 import {EditorialScene} from "./schemas";
 
-const C = {
-  bg: "#050817",
-  panel: "#0B1327",
-  white: "#FFF9E8",
-  muted: "#9AA6BC",
-  gold: "#FFC83D",
-  cyan: "#62D4FF",
-  red: "#FF5F6D",
-  green: "#52D69B",
-} as const;
+import {EDITORIAL_COLORS as C} from "./palette";
 const clamp = {
   extrapolateLeft: "clamp",
   extrapolateRight: "clamp",
@@ -510,7 +501,7 @@ export const EarningsCapitalCycleScene: React.FC<{scene: EditorialScene}> = ({
   <AbsoluteFill
     style={{
       background:
-        "radial-gradient(circle at 64% 40%,rgba(42,101,142,.14),transparent 36%),linear-gradient(145deg,#050817,#070D1D 58%,#03050E)",
+        "radial-gradient(circle at 64% 40%,rgba(232,192,74,.08),transparent 36%),linear-gradient(145deg,#0C0D0B,#141510 58%,#090A08)",
       overflow: "hidden",
     }}
   >

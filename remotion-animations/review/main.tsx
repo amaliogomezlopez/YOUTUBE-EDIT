@@ -589,6 +589,7 @@ const App: React.FC = () => {
                   <option value="editorial-ivory">Editorial Ivory</option>
                   <option value="signal-cobalt">Signal Cobalt</option>
                   <option value="oxide-documentary">Oxide Documentary</option>
+                  <option value="slate-chalk">Slate Chalk</option>
                 </select>
               </label>
             </div>

@@ -30,12 +30,13 @@ export const SceneBoundary: React.FC<{
     {...clamp, easing: Easing.in(Easing.cubic)},
   );
   const opacity = Math.min(enter, exit);
-  const translate = interpolate(enter, [0, 1], [18, 0], clamp);
+  const translate = interpolate(enter, [0, 1], [22, 0], clamp);
+  const scale = interpolate(enter, [0, 1], [1.045, 1], clamp);
   return (
     <AbsoluteFill
       style={{
         opacity,
-        transform: `translateY(${translate}px)`,
+        transform: `translateY(${translate}px) scale(${scale})`,
       }}
     >
       {children}

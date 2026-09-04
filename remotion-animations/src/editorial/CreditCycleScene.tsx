@@ -10,15 +10,7 @@ import {
 import {DATA_FONT_FAMILY, FINANCE_FONT_FAMILY} from "../motion/fonts";
 import {EditorialScene} from "./schemas";
 
-const C = {
-  bg: "#030711",
-  ink: "#FFF9E8",
-  muted: "#A9B3C7",
-  gold: "#FFC83D",
-  cyan: "#62D4FF",
-  red: "#FF5F6D",
-  green: "#52D69B",
-} as const;
+import {EDITORIAL_COLORS as C} from "./palette";
 const clamp = {extrapolateLeft: "clamp", extrapolateRight: "clamp"} as const;
 const ease = (frame: number, fps: number, a: number, b: number) =>
   interpolate(frame, [a * fps, b * fps], [0, 1], {

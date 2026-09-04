@@ -19,6 +19,14 @@ test('prefiere un dibujo cuando la consulta describe una relación', async () =>
   assert.equal(result.preferenceProfile, 'amaliometria-default');
 });
 
+test('elige dibujos de finanzas por el ciclo de crédito', async () => {
+  const result = await selectVisualAsset('el banco endurece el crédito al hogar', {
+    kind: 'drawing'
+  });
+  assert.equal(result.selected.id, 'credit-cycle');
+  assert.ok(result.semanticSignals.concepts.includes('credit-cycle'));
+});
+
 test('genera solo recetas de fallback con iconos auditados', async () => {
   const result = await selectVisualAsset('ornitorrinco cuántico', {
     kind: 'any',
