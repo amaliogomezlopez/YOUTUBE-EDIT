@@ -1,0 +1,22 @@
+{
+  "ruleId": "SH-R-034",
+  "check": "shorts-talking-head-approved-style",
+  "expect": "fail",
+  "context": {
+    "workflow": "talking-head",
+    "budget": {
+      "styleId": "talking-head-approved-v2",
+      "maxZoom": 1.025,
+      "mediaTransition": "cut",
+      "captionWords": 3,
+      "activeColor": "#43F56C"
+    },
+    "captionStyle": {
+      "font": "Arial",
+      "mode": "karaoke",
+      "emphasis": "color",
+      "primary": "#FFFFFF",
+      "activeColor": "#43F56C"
+    }
+  }
+}

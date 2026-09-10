@@ -35,3 +35,17 @@ remotion-animations/public/assets/library/finance-cavaliers/episodes/*
 
 # Runs con raíz de datos propia: mismos jobs/output que data/, un nivel más abajo.
 data/opus5final-run/
+
+# Proyectos privados de Reels a camara.
+/data/talking-head/
+/remotion-animations/projects/shorts-talking-head-*/
+/remotion-animations/public/assets/library/talking-head-piloto/
+
+# Sonidos personales y recursos privados de Reels.
+/SONIDOS-REELS/*
+!/SONIDOS-REELS/LEEME.md
+/remotion-animations/public/sfx/user-reel-*.wav
+/remotion-animations/public/sfx/import-*.wav
+/remotion-animations/public/assets/library/talking-head-*/
+
+!/SONIDOS-REELS/CATALOGO.md

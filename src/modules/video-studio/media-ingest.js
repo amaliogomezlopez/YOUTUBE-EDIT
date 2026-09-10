@@ -1,4 +1,5 @@
 import path from 'node:path';
+import {analyzeAudioChannels,voiceChannelFilter} from './audio-channels.js';
 import {copyFile, readdir, rm, stat} from 'node:fs/promises';
 import {extractAudio, ffprobe} from '../../lib/ffmpeg.js';
 import {transcribeAudio} from '../../lib/stt.js';
@@ -227,9 +228,10 @@ async function ingestMusic({musicFile, media, project, paths, projectSlug, reuse
  */
 const LOUDNESS_FILTER = 'loudnorm=I=-14:TP=-1.5:LRA=11';
 
-async function toMp4(sourceFile, targetFile, {signal, normalizeAudio = true} = {}) {
+export async function toMp4(sourceFile, targetFile, {signal, normalizeAudio = true} = {}) {
+  const channelFilter = normalizeAudio ? voiceChannelFilter(await analyzeAudioChannels(sourceFile,{signal})) : null;
   const audio = normalizeAudio
-    ? ['-af', LOUDNESS_FILTER, '-c:a', 'aac', '-b:a', '192k']
+    ? ['-af', [channelFilter,LOUDNESS_FILTER].filter(Boolean).join(','), '-c:a', 'aac', '-b:a', '192k']
     : ['-c:a', 'aac', '-b:a', '128k'];
   const base = ['-y', '-i', sourceFile, '-movflags', '+faststart'];
   try {

@@ -9,7 +9,13 @@ export const shortFocusSchema = z.object({
 
 export const shortCueSchema = z.object({
   id: z.string(),
-  type: z.enum(["logo", "screenshot", "stat", "chip", "label", "brand"]),
+  type: z.enum(["logo", "screenshot", "stat", "chip", "label", "brand", "broll"]),
+  sourceLabel: z.string().nullable().optional(),
+  mediaKind: z.enum(["image", "video"]).optional(),
+  mediaTrimSeconds: z.number().min(0).optional(),
+  mediaFit: z.enum(["cover", "contain"]).optional(),
+  mediaZoom: z.number().min(1).max(1.2).optional(),
+  mediaTransition: z.enum(["cut", "fade", "slide"]).optional(),
   assetId: z.string().nullable().optional(),
   src: z.string().nullable().optional(),
   slot: z.string().nullable().optional(),
@@ -68,7 +74,7 @@ export const shortSceneSchema = z.object({
   trimStartSeconds: z.number(),
   trimEndSeconds: z.number().optional(),
   silenceTrimmedSeconds: z.number().optional(),
-  layout: z.enum(["full", "split", "stage", "pip", "fit"]),
+  layout: z.enum(["full", "split", "stage", "pip", "fit", "talking-head"]),
   camera: z.enum(["static", "punch-in", "push-out", "drift-left", "drift-right"]),
   cameraIntensity: z.number().default(1),
   sourceWidth: z.number().optional(),

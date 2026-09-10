@@ -1,0 +1,17 @@
+{
+  "ruleId": "SH-R-033",
+  "check": "shorts-talking-head-karaoke",
+  "expect": "fail",
+  "context": {
+    "workflow": "talking-head",
+    "budget": {
+      "activeColor": "#43F56C"
+    },
+    "captionStyle": {
+      "mode": "karaoke",
+      "emphasis": "off",
+      "primary": "#fff",
+      "activeColor": "#fff"
+    }
+  }
+}

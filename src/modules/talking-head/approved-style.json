@@ -1,0 +1,15 @@
+{
+  "id": "talking-head-approved-v2",
+  "approvedAt": "2026-09-10",
+  "approval": "El video asi esta perfectamente editado",
+  "profile": "editorial",
+  "reference": {
+    "project": "shorts-talking-head-piloto-2026-09-10-v2",
+    "delivery": "remotion-animations/out/talking-head-codex-v2/runs/20260910T163355920Z-02e583fe/renders/codex-mi-experiencia-reel-v2.mp4"
+  },
+  "defaults": "profiles.json",
+  "captions": "planner.js",
+  "layout": "../shorts-studio/geometry.js",
+  "rule": "SH-R-034",
+  "soundPreference": "Archivos copiados a SONIDOS-REELS; sin puntuaciones."
+}

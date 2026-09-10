@@ -63,7 +63,11 @@
     "instagram:doctor": "node scripts/instagram-doctor.js",
     "instagram:refresh-token": "node scripts/instagram-refresh-token.js",
     "instagram:redeem-vps-code": "node scripts/instagram-redeem-vps-code.js",
-    "publishing:doctor": "node scripts/publishing-doctor.js"
+    "publishing:doctor": "node scripts/publishing-doctor.js",
+    "talking-head:plan": "node scripts/talking-head-plan.js",
+    "talking-head:sounds": "node scripts/talking-head-sounds.js",
+    "talking-head": "node scripts/talking-head.js",
+    "talking-head:sounds:import": "node scripts/talking-head.js sounds"
   },
   "engines": {
     "node": ">=20"

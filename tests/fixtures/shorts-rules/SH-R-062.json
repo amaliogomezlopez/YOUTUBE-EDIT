@@ -1,0 +1,43 @@
+{
+  "ruleId": "SH-R-062",
+  "check": "shorts-talking-head-visuals",
+  "expect": "fail",
+  "context": {
+    "workflow": "talking-head",
+    "budget": {
+      "minVisualSeconds": 3,
+      "maxVisualSeconds": 5,
+      "visualSourcePolicy": "real",
+      "activeColor": "#43F56C"
+    },
+    "format": {
+      "fps": 60
+    },
+    "scenes": [
+      {
+        "id": "bad",
+        "from": 0,
+        "cues": [
+          {
+            "type": "broll",
+            "assetId": "card",
+            "fromFrame": 0,
+            "durationInFrames": 600,
+            "provenance": {
+              "kind": "generated"
+            },
+            "sound": {
+              "family": "reveal"
+            }
+          }
+        ]
+      }
+    ],
+    "captionStyle": {
+      "mode": "karaoke",
+      "emphasis": "color",
+      "primary": "#FFFFFF",
+      "activeColor": "#43F56C"
+    }
+  }
+}

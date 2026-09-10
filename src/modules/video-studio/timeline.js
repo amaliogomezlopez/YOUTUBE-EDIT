@@ -104,3 +104,27 @@ export async function measureArtwork(assets, warnings, analyze) {
   }
   return measured;
 }
+
+/** Solo se eliminan pausas confirmadas por audio y transcripcion. Nunca palabras. */
+export function speechEdits(words, duration, silences, budget) {
+  if (!words.length) return [{start: 0, end: duration}];
+  const padding = budget.silencePaddingSeconds;
+  const start = Math.max(0, words[0].start - padding);
+  const end = Math.min(duration, words.at(-1).end + padding);
+  const removals = [];
+  for (let i = 1; i < words.length; i++) {
+    const left = words[i - 1].end;
+    const right = words[i].start;
+    if (right - left <= budget.maxSilenceSeconds) continue;
+    const silence = silences.find((s) => s.start <= left + padding && s.end >= right - padding);
+    if (silence) removals.push({start: left + padding, end: right - padding});
+  }
+  const ranges = [];
+  let cursor = start;
+  for (const removal of removals) {
+    if (removal.start > cursor) ranges.push({start: round(cursor, 3), end: round(removal.start, 3)});
+    cursor = removal.end;
+  }
+  if (end > cursor) ranges.push({start: round(cursor, 3), end: round(end, 3)});
+  return ranges;
+}

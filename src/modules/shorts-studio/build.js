@@ -1,7 +1,8 @@
 import path from 'node:path';
+import {existsSync} from 'node:fs';
 import {regionTransform, validSourceBox} from '../video-studio/framing.js';
 import {readJson, round, writeJson} from '../../lib/utils.js';
-import {SHORT_FORMAT, projectDir} from './constants.js';
+import {SHORT_FORMAT, projectDir, REMOTION_ROOT} from './constants.js';
 import {buildCaptionPages} from './captions.js';
 import {fitLayout, pipLayout} from './pip-layout.js';
 import {writeShortsRegistry} from './registry.js';
@@ -26,8 +27,8 @@ import {
 // las superficies de montaje: `video-studio/timeline.js`.
 export {DEFAULT_SILENCE_PADDING_SECONDS, resolveTrim} from '../video-studio/timeline.js';
 
-export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand']);
-export const LAYOUTS = new Set(['full', 'split', 'stage', 'pip', 'fit']);
+export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand', 'broll']);
+export const LAYOUTS = new Set(['full', 'split', 'stage', 'pip', 'fit', 'talking-head']);
 export const CAMERAS = new Set(['static', 'punch-in', 'push-out', 'drift-left', 'drift-right']);
 export const TRANSITIONS = new Set(['cut', 'fade', 'whip', 'slide-up', 'zoom-blur']);
 
@@ -67,7 +68,7 @@ export async function buildShort({slug, log = () => {}}) {
   const captionMode = plan.captions?.mode ?? plan.captionStyle?.mode ?? 'karaoke';
   if (!['karaoke','progressive','words','lines'].includes(captionMode)) throw new Error('Modo de subtitulos invalido');
   const addSound = (familyId, atSeconds, intensity = 1) => {
-    const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId));
+    const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId), {palette:plan.sound?.palette,metadata:plan.sound?.metadata});
     soundCues.push(cue);
     return cue;
   };
@@ -132,7 +133,7 @@ export async function buildShort({slug, log = () => {}}) {
       const slot={left:(format.width-900)/2,top:350+i*620,width:900,height:560};
       return {slot,transform:regionTransform(region,dimensions,slot),label:String(region.label ?? '').slice(0,50)};
     }) : null;
-    const captionRect = comparison ? {left:54,top:110,width:900,height:180} : pip
+    const captionRect = scene.layout === 'talking-head' ? {left:80,top:854,width:920,height:180} : comparison ? {left:54,top:110,width:900,height:180} : pip
       ? {left: 54, top: pip.camCard.top + pip.camCard.height + 14, width: 900, height: Math.max(120, Math.min(190, pip.screen.top - pip.camCard.top - pip.camCard.height - 24))}
       : scene.screenEmphasis ? {left:54, top:172, width:900, height:180} : null;
 
@@ -168,6 +169,17 @@ export async function buildShort({slug, log = () => {}}) {
         : null;
       const holdSeconds = Number(cue.holdSeconds ?? (endSeconds - startSeconds) - atSeconds);
       const cueFrames = Math.max(1, Math.round(Math.min(holdSeconds, endSeconds - startSeconds - atSeconds) * fps));
+      if (cue.type === 'broll') {
+        if (!asset?.file || !existsSync(path.join(REMOTION_ROOT,'public',asset.file))) throw new Error(cueWhere + ': falta archivo local del recurso');
+        if (scene.layout !== 'talking-head' || cue.slot !== 'broll-panel' || !asset) throw new Error(cueWhere + ': broll necesita layout talking-head, slot broll-panel y asset');
+        if (!Number.isFinite(holdSeconds) || holdSeconds <= 0 || atSeconds < 0 || atSeconds >= endSeconds-startSeconds) throw new Error(cueWhere + ': ventana broll invalida');
+        if (cue.mediaFit && !['cover','contain'].includes(cue.mediaFit)) throw new Error(cueWhere + ': mediaFit invalido');
+        if (cue.mediaTransition && !['cut','fade','slide'].includes(cue.mediaTransition)) throw new Error(cueWhere + ': mediaTransition invalida');
+        const zoom = cue.mediaZoom ?? 1.04;
+        const mediaStart = cue.mediaTrimSeconds ?? 0;
+        if (!Number.isFinite(zoom) || zoom < 1 || zoom > 1.2 || !Number.isFinite(mediaStart) || mediaStart < 0) throw new Error(cueWhere + ': zoom o recorte broll invalido');
+        if (asset.kind === 'video' && (!Number.isFinite(asset.durationSeconds) || mediaStart + cueFrames/fps > asset.durationSeconds)) throw new Error(cueWhere + ': video de apoyo demasiado corto');
+      }
       // Todo cue suena. Si el plan no pide familia se usa la del tipo: un logo o
       // una captura que entra en silencio se percibe como un fallo de montaje.
       // `sound: false` es la forma explicita de dejarlo mudo.
@@ -178,8 +190,10 @@ export async function buildShort({slug, log = () => {}}) {
       return {
         id: cue.id ?? `${scene.id}-cue-${cueIndex + 1}`,
         type: cue.type,
+        ...(cue.soundUse ? {soundUse:cue.soundUse} : {}),
         assetId: cue.assetId ?? null,
         src: asset?.file ?? null,
+        ...(cue.type === 'broll' ? {provenance:asset.provenance ?? null,sourceLabel:asset.provenance?.label ?? null,mediaKind:asset.kind ?? 'image',mediaTrimSeconds:cue.mediaTrimSeconds ?? 0,mediaFit:cue.mediaFit ?? 'cover',mediaZoom:cue.mediaZoom ?? 1.04,mediaTransition:cue.mediaTransition ?? 'fade'} : {}),
         slot: cue.slot ?? null,
         presentation: cue.presentation ?? 'card',
         decoration,
@@ -205,7 +219,7 @@ export async function buildShort({slug, log = () => {}}) {
     const captionPages = words.length && scene.captions !== false
       ? buildCaptionPages(words, {startSeconds, endSeconds}, {...(plan.captions ?? {}), ...(captionMode === 'words' ? {maxWords:1} : {}), mode: captionMode}).map((page) => ({
         fromFrame: Math.round(page.startSeconds * fps),
-        durationInFrames: Math.max(1, Math.round((page.endSeconds - page.startSeconds) * fps)),
+        durationInFrames: Math.max(1, Math.round(page.endSeconds * fps) - Math.round(page.startSeconds * fps)),
         ...(captionMode === 'progressive' ? {heroIndex: page.heroIndex ?? -1} : {}),
         words: page.words.map((word) => ({
           text: word.text,
@@ -287,6 +301,10 @@ export async function buildShort({slug, log = () => {}}) {
   }
   const build = {
     slug,
+    workflow: plan.workflow ?? null,
+    soundPalette: plan.sound?.palette ?? null,
+    soundUses: plan.sound?.uses ?? null,
+    soundSelectionStatus: plan.sound?.selectionStatus ?? null,
     generatedAt: new Date().toISOString(),
     format,
     durationInFrames: cursor,

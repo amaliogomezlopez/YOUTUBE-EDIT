@@ -1,0 +1,17 @@
+{
+  "editorial": {
+    "silencePaddingSeconds": 0.12,
+    "maxSilenceSeconds": 0.7,
+    "maxZoom": 1.025,
+    "soundMix": 0.38,
+    "captionWords": 3,
+    "activeColor": "#43F56C",
+    "minVisualSeconds": 3,
+    "maxVisualSeconds": 5,
+    "visualSourcePolicy": "real",
+    "maxConsecutiveSoundRepeats": 1,
+    "mediaFit": "contain",
+    "mediaTransition": "cut",
+    "styleId": "talking-head-approved-v2"
+  }
+}

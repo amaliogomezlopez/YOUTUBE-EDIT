@@ -21,6 +21,7 @@ export const StyledCaptionTrack:React.FC<Props> = ({pages,...props}) => <>
 
 const StyledPage:React.FC<Omit<Props,"pages">&{page:CaptionPage}> = ({page,mode,appearance:style,rect})=>{
   const frame=useCurrentFrame()+page.fromFrame;
+  const activeIndex=page.words.reduce((last,word,index)=>frame>=word.fromFrame && frame<word.toFrame ? index : last,-1);
   const font=style.font ?? MOTION_FONT_FAMILY;
   const gap=16;
   const tracking=style.tracking ?? 0;
@@ -39,14 +40,14 @@ const StyledPage:React.FC<Omit<Props,"pages">&{page:CaptionPage}> = ({page,mode,
     justifyContent:style.align==="left"?"flex-start":"center",flexWrap:"wrap",gap:"3px "+gap+"px",
     padding:"6px 12px",boxSizing:"border-box",fontFamily:font,fontWeight:900,lineHeight:1.18,fontSize:size,letterSpacing:tracking}}>
     {page.words.map((word,i)=>{
-      const active=frame>=word.fromFrame && frame<word.toFrame;
+      const active=i===activeIndex;
       const visible=mode!=="progressive" || frame>=word.fromFrame;
       const emphasis=active && style.emphasis!=="off" && mode!=="lines";
       return <span key={i} style={{whiteSpace:"nowrap",opacity:visible?1:0,
         color:emphasis?(style.activeColor??style.accent??"#B8F36B"):(style.primary??"#fff"),
         WebkitTextStroke:(style.outlineSize??2)+"px #10141b",paintOrder:"stroke fill",
         textShadow:"0 "+(style.shadow??3)+"px 9px #000",
-        transform:emphasis?"translateY(-2px)":"none"}}>{textFor(word.text,style)}</span>;
+        transform:emphasis && style.emphasis!=="color"?"translateY(-2px)":"none"}}>{textFor(word.text,style)}</span>;
     })}
   </div>;
 };

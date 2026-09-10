@@ -1,0 +1,26 @@
+{
+  "ruleId": "SH-R-051",
+  "check": "shorts-talking-head-sound-variety",
+  "expect": "fail",
+  "context": {
+    "workflow": "talking-head",
+    "budget": {
+      "maxConsecutiveSoundRepeats": 1,
+      "activeColor": "#43F56C"
+    },
+    "soundCues": [
+      {
+        "file": "a"
+      },
+      {
+        "file": "a"
+      }
+    ],
+    "captionStyle": {
+      "mode": "karaoke",
+      "emphasis": "color",
+      "primary": "#FFFFFF",
+      "activeColor": "#43F56C"
+    }
+  }
+}

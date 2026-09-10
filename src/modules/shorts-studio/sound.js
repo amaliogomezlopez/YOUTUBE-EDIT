@@ -21,7 +21,8 @@ export const DEFAULT_CUE_SOUND = {
   stat: 'impact',
   chip: 'ui',
   label: 'tick',
-  brand: 'chime'
+  brand: 'chime',
+  broll: 'reveal'
 };
 
 /** Sonido por defecto de cada transicion de escena. */

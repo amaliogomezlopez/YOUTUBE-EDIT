@@ -19,6 +19,7 @@ import {StyledCaptionTrack, defaultCaptionRect} from "./StyledCaptionTrack";
 import {CaptionTrack} from "./CaptionTrack";
 import {ClipStage} from "./ClipStage";
 import {CueLayer} from "./CueLayer";
+import {BrollLayer} from "./BrollLayer";
 import {PipStage} from "./PipStage";
 import {SHORT_LAYOUT, clipRect} from "./layout";
 import {ShortScene, ShortVideoProps} from "./schemas";
@@ -132,7 +133,7 @@ const SceneBlock: React.FC<{
           sobre cualquier fondo del clip. En `stage` la cara es una tarjeta suelta,
           asi que no hay costura que disimular; en `pip` la pantalla ocupa la zona
           baja y el degradado la taparia. */}
-      {scene.layout === "stage" || scene.layout === "pip" ? null : (
+      {scene.layout === "stage" || scene.layout === "pip" || scene.layout === "talking-head" ? null : (
         <div
           style={{
             position: "absolute",
@@ -149,7 +150,8 @@ const SceneBlock: React.FC<{
         <SceneLabel accent={palette.accent} label={scene.label} layout={scene.layout} />
       ) : null}
 
-      <CueLayer cues={scene.cues} layout={scene.layout} palette={palette} />
+      <BrollLayer cues={scene.cues} />
+      <CueLayer cues={scene.cues.filter(cue => cue.type !== "broll")} layout={scene.layout} palette={palette} />
 
       {captionStyle?.renderer === "styled" ? <StyledCaptionTrack pages={scene.captionPages} mode={captionMode} appearance={captionStyle} rect={captionRect ?? defaultCaptionRect(scene.layout)} /> : <CaptionTrack
         accent={palette.accent}

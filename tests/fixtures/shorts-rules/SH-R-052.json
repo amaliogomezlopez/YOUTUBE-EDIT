@@ -1,0 +1,33 @@
+{
+  "ruleId": "SH-R-052",
+  "check": "shorts-reel-semantic-sounds",
+  "expect": "fail",
+  "context": {
+    "workflow": "talking-head",
+    "budget": {
+      "activeColor": "#43F56C"
+    },
+    "captionStyle": {
+      "mode": "karaoke",
+      "emphasis": "color",
+      "primary": "#FFFFFF",
+      "activeColor": "#43F56C"
+    },
+    "soundUses": {
+      "transition": "whoosh",
+      "money": "chime"
+    },
+    "scenes": [
+      {
+        "cues": [
+          {
+            "sound": {
+              "family": "chime"
+            },
+            "soundUse": "transition"
+          }
+        ]
+      }
+    ]
+  }
+}

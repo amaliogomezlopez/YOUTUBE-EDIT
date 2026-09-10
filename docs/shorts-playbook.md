@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **16** · con validador automático: **16** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **22** · con validador automático: **21** · marcadas `manual`: **1** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -106,6 +106,22 @@ Los subtitulos fusionan nombres de modelo y versiones decimales; no dejan fragme
 
 **Validador:** `shorts-caption-compound-together`
 
+### SH-R-033 · `error` · `channel`
+
+Los Reels a camara resaltan en verde solo la palabra activa dentro del bloque de subtitulos.
+
+**Por qué:** La palabra pronunciada se rellena en verde, el resto queda blanco; bloques de hasta tres palabras.
+
+**Validador:** `shorts-talking-head-karaoke`
+
+### SH-R-034 · `error` · `channel`
+
+Los nuevos Reels del perfil aprobado conservan tipografia, karaoke, zoom y transiciones; cuando hay sonidos de carpeta, usan solo esa seleccion.
+
+**Por qué:** En Reels a camara conservar el estilo aprobado del piloto v2 y reutilizarlo al recibir un nuevo clip; los sonidos favoritos se aportan copiandolos a SONIDOS-REELS, sin puntuaciones.
+
+**Validador:** `shorts-talking-head-approved-style`
+
 ## 4. Zona segura
 
 - La geometría vive en `remotion-animations/src/shorts/geometry.json` y la comparten el renderer y el validador.
@@ -154,6 +170,30 @@ Ningún cue entra en silencio. Silenciarlo con `"sound": false` exige un `soundN
 
 **Validador:** `cue-not-silent`
 
+### SH-R-051 · `warning` · `channel`
+
+Los Reels a camara respetan los favoritos de sonido y evitan repeticiones consecutivas.
+
+**Por qué:** Seleccionar y puntuar efectos favoritos; variar los sonidos de entrada de visuales sin repetir siempre el mismo.
+
+**Validador:** `shorts-talking-head-sound-variety`
+
+### SH-R-052 · `error` · `channel`
+
+Los sonidos especializados respetan su caso de uso y quedan fuera de las transiciones genericas.
+
+**Por qué:** Money solo para dinero; riser para el inicio; Message sound cuando aparece un mensaje o tuit. Los otros efectos sirven indistintamente para cambios de visual.
+
+**Validador:** `shorts-reel-semantic-sounds`
+
+### SH-R-053 · `review` · `channel`
+
+Revisar los canales de la voz: corregir entradas unilaterales antes de mezclar y comprobar ambos canales en la entrega.
+
+**Por qué:** El micro graba voz solo en el canal izquierdo. Medir los canales reales, centrar la voz de una entrada unilateral antes de mezclar y verificar el equilibrio del MP4 final.
+
+**Validador:** revisión humana (sin comprobación geométrica posible)
+
 ## 6. Ritmo y silencios
 
 ### SH-R-060 · `warning` · `catalog`
@@ -171,6 +211,14 @@ El ritmo del montaje respeta el presupuesto de su perfil de estilo.
 **Por qué:** El build debe detectar errores de montaje antes del render final.
 
 **Validador:** `shorts-editing-budget`
+
+### SH-R-062 · `error` · `channel`
+
+El perfil talking-head usa material de fuente real y respeta su presupuesto de duracion visual.
+
+**Por qué:** En Reels a camara usar recursos reales de la noticia, sin tarjetas editoriales genericas, y cambiar la visual cada 3-5 segundos.
+
+**Validador:** `shorts-talking-head-visuals`
 
 ## Ciclo de feedback
 

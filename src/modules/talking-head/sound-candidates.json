@@ -1,0 +1,106 @@
+[
+  {
+    "id": "air-01",
+    "label": "Barrido de aire",
+    "family": "whoosh",
+    "file": "sfx/amaliometria-whoosh-01.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "air-03",
+    "label": "Barrido ligero",
+    "family": "whoosh",
+    "file": "sfx/amaliometria-whoosh-03.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "shutter-02",
+    "label": "Obturador suave",
+    "family": "shutter",
+    "file": "sfx/amaliometria-shutter-02.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "shutter-04",
+    "label": "Obturador seco",
+    "family": "shutter",
+    "file": "sfx/amaliometria-shutter-04.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "ui-02",
+    "label": "Clic corto",
+    "family": "ui",
+    "file": "sfx/amaliometria-interface-02.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "ui-05",
+    "label": "Clic redondo",
+    "family": "ui",
+    "file": "sfx/amaliometria-interface-05.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "tick-01",
+    "label": "Toque de detalle",
+    "family": "tick",
+    "file": "sfx/amaliometria-data-01.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "tick-04",
+    "label": "Tick nítido",
+    "family": "tick",
+    "file": "sfx/amaliometria-data-04.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "reveal-03",
+    "label": "Entrada suave",
+    "family": "reveal",
+    "file": "sfx/amaliometria-reveal-03.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "impact-04",
+    "label": "Golpe discreto",
+    "family": "impact",
+    "file": "sfx/amaliometria-impact-04.wav",
+    "source": "Síntesis propia",
+    "provisional": true
+  },
+  {
+    "id": "library-whoosh",
+    "label": "Smooth Whoosh · biblioteca",
+    "family": "whoosh",
+    "file": "sfx/library-smooth-whoosh.wav",
+    "source": "Biblioteca local del usuario",
+    "provisional": false
+  },
+  {
+    "id": "library-whip",
+    "label": "Quick Whip · biblioteca",
+    "family": "whip",
+    "file": "sfx/library-quick-whip.wav",
+    "source": "Biblioteca local del usuario",
+    "provisional": false
+  },
+  {
+    "id": "library-pop",
+    "label": "Pop · biblioteca",
+    "family": "pop",
+    "file": "sfx/library-pop.wav",
+    "source": "Biblioteca local del usuario",
+    "provisional": false
+  }
+]

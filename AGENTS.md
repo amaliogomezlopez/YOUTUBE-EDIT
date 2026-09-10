@@ -22,6 +22,17 @@ Debe cubrir:
 - Usar MiniMax M3 para estructurar el relato y un renderer SVG determinista para componer textos, flechas, etiquetas, color y layouts sin deformaciones.
 - Permitir temas y layouts variables manteniendo una identidad editorial consistente.
 
+## Reels desde un clip propio a camara
+
+Si el usuario da la ruta de una grabacion propia y pide cara abajo, recursos reales
+arriba y subtitulos verdes, leer `.agents/skills/create-talking-head-reels/SKILL.md`
+y `docs/talking-head-reels.md`. El flujo reutilizable es `npm run talking-head --
+start|prepare|build|render`: ingesta, seleccion por palabras, guion de recursos con
+tiempos automaticos, importacion y exportacion con el estilo aprobado. No rehacer
+React ni usar el ranking de videos largos. Cualquier modelo con herramientas puede
+seguir esos archivos sin el historial de la conversacion. Los sonidos del usuario
+se copian a `SONIDOS-REELS/` y se importan automaticamente; no exigir puntuaciones.
+
 ## Shorts desde cero
 
 Si el encargo es "en esta carpeta tengo unos clips y quiero montar un short", no es

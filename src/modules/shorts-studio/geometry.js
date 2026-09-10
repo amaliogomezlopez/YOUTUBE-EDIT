@@ -26,6 +26,7 @@ function podiumIndex(slot) {
 
 /** Rectangulo de un slot dentro del escenario del layout activo. */
 export function slotRect(slot, layout = 'split', geometry = SHORT_GEOMETRY) {
+  if (slot === 'broll-panel') return geometry.brollPanel;
   const stage = geometry.stage[layout] ?? geometry.stage.split;
   const bodyTop = stage.top + geometry.headerHeight;
   const bodyHeight = stage.height - geometry.headerHeight - geometry.footerHeight;

@@ -63,30 +63,20 @@ const PITCH_STEPS = [1, 1.06, 0.95, 1.03, 0.98, 1.09];
  * @param {number} intensity multiplicador de volumen (0..1.5)
  * @param {number} occurrence cuantas veces se ha usado ya esta familia
  */
-export function resolveSoundCue(familyId, atSeconds, intensity = 1, occurrence = 0) {
+export function resolveSoundCue(familyId, atSeconds, intensity = 1, occurrence = 0, {palette, metadata} = {}) {
   const preset = SOUND_FAMILIES[familyId];
-  if (!preset) throw new Error(`Familia de sonido desconocida: ${familyId}. Disponibles: ${soundFamilyIds.join(', ')}`);
+  if (!preset) throw new Error('Familia de sonido desconocida: '+familyId);
+  const choices = palette?.[familyId] ?? preset.files;
+  if (!Array.isArray(choices) || !choices.length || choices.some(file => !new RegExp('^sfx/[a-z0-9-]+[.]wav$').test(file))) throw new Error('Paleta de sonidos invalida');
   const index = Math.abs(Math.trunc(occurrence));
-  return {
-    file: preset.files[index % preset.files.length],
-    startSeconds: Math.max(0, atSeconds),
-    durationSeconds: preset.durationSeconds,
-    volume: Math.min(1, Math.max(0, preset.volume * intensity)),
-    attackSeconds: 0.012,
-    releaseSeconds: 0.14,
-    playbackRate: PITCH_STEPS[index % PITCH_STEPS.length]
-  };
+  const file = choices[index % choices.length];
+  const durationSeconds = metadata?.[file]?.durationSeconds ?? preset.durationSeconds;
+  if (!Number.isFinite(durationSeconds) || durationSeconds <= 0 || durationSeconds > 30) throw new Error('Duracion de sonido invalida');
+  return {file,startSeconds:Math.max(0,atSeconds),durationSeconds,
+    volume:Math.min(1,Math.max(0,preset.volume*intensity)),attackSeconds:Math.min(.012,durationSeconds*.1),releaseSeconds:Math.min(.14,durationSeconds*.25),
+    playbackRate:palette?1:PITCH_STEPS[index % PITCH_STEPS.length]};
 }
-
-/**
- * Contador de repeticiones por familia dentro de una pieza. Lo crea el build y lo
- * pasa a cada `resolveSoundCue` para que la rotacion avance.
- */
 export function createSoundRotation() {
-  const counters = new Map();
-  return (familyId) => {
-    const next = counters.get(familyId) ?? 0;
-    counters.set(familyId, next + 1);
-    return next;
-  };
+  const counters=new Map();
+  return familyId=>{const next=counters.get(familyId) ?? 0;counters.set(familyId,next+1);return next;};
 }

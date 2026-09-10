@@ -181,7 +181,7 @@ export function buildCaptionPages(words, window, overrides = {}) {
     // palabra sola colgando al final de la escena. Pero una pausa larga es un
     // silencio buscado, y fusionar sobre ella adelantaria el texto al audio.
     const gap = orphan[0].start - previous.at(-1).end;
-    if (merged.length <= Math.round(style.maxPageChars * 1.2) && gap < style.pauseBreakSeconds) {
+    if ((!style.strictMaxWords || previous.length + orphan.length <= style.maxWords) && merged.length <= Math.round(style.maxPageChars * 1.2) && gap < style.pauseBreakSeconds) {
       previous.push(...orphan);
       groups.pop();
     }
@@ -192,7 +192,7 @@ export function buildCaptionPages(words, window, overrides = {}) {
     const nextStart = groups[index + 1]?.[0]?.start;
     const lastEnd = pageWords.at(-1).end;
     const end = Number.isFinite(nextStart)
-      ? Math.max(lastEnd, Math.min(nextStart, lastEnd + style.tailHoldSeconds))
+      ? Math.min(nextStart, lastEnd + style.tailHoldSeconds)
       : Math.min(clipSeconds, lastEnd + style.tailHoldSeconds);
     return {
       startSeconds: pageWords[0].start,

@@ -1,7 +1,7 @@
 import {MotionTheme} from "../motion/DesignSystem";
 import geometry from "./geometry.json";
 
-export type ShortLayoutId = "full" | "split" | "stage" | "pip" | "fit";
+export type ShortLayoutId = "full" | "split" | "stage" | "pip" | "fit" | "talking-head";
 
 /**
  * Geometria del short 9:16.
@@ -44,6 +44,7 @@ export const clipRect = (layout: ShortLayoutId) => geometry.clip[layout] ?? geom
 export const stageRect = (layout: ShortLayoutId) => geometry.stage[layout] ?? geometry.stage.split;
 
 export type ShortSlot =
+  | "broll-panel"
   | "overlay-top"
   | "overlay-center"
   | "stage-full"
@@ -84,6 +85,8 @@ export const slotRect = (
   const bodyHeight = stage.height - HEADER_HEIGHT - FOOTER_HEIGHT;
 
   switch (slot) {
+    case "broll-panel":
+      return geometry.brollPanel;
     case "overlay-top":
     case "overlay-center":
       return {
