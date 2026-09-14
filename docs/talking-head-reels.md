@@ -160,3 +160,8 @@ En resource, soundUse puede ser transition, intro, money o message (vacio: autom
 ### Canales de voz
 
 La ingesta mide el nivel real de cada canal antes de normalizar. Si una grabacion estereo contiene voz solo a un lado y el otro esta practicamente mudo, duplica el canal de voz a izquierda y derecha. Conserva el estereo real de los efectos. La entrega mide ambos canales y rechaza un desequilibrio superior a 18 dB. No basta con que FFprobe indique dos canales.
+
+
+### Sincronizacion de efectos y risers
+
+Las copias de efectos se recortan hasta el inicio/final detectado del sonido (-45 dB), sin anadir margen de silencio y sin quitar pausas internas. Se generan copias nuevas versionadas; los originales y los renders anteriores se conservan. Los efectos normales comienzan en el frame del cambio visual, incluso si la palabra ancla llega unos milisegundos despues. El riser de apertura se coloca hacia atras desde el siguiente cambio de visual: su final coincide con ese corte, con precision de un frame, conservando su velocidad. Un corte de toma que mantiene la misma visual no es su destino. Si el riser no cabe, usar uno mas corto; si no hay cambio de visual, seleccionar soundUse transition.

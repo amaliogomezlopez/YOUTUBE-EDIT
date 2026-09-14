@@ -13,6 +13,32 @@ import {validateJobOptions} from '../src/lib/job-request.js';
 import {buildCaptionPages} from '../src/modules/video-studio/captions.js';
 
 import {scoreCandidate} from '../src/lib/scoring.js';
+import adaptiveGeometry from '../src/modules/shorts-studio/rules/checks/shorts-adaptive-geometry.js';
+import {comparisonPanel} from '../src/modules/shorts-studio/build.js';
+
+test('comparison viewport clips the selected source region and stays centered',()=>{
+  const source={width:3840,height:2160};
+  for(const x of [0,1920]) {
+    const region={x,y:136,w:1920,h:2024,label:'Model'};
+    const {transform:t,viewport:v}=comparisonPanel(region,source,{left:90,top:350,width:900,height:560});
+    assert.ok(Math.abs(t.left-v.left+region.x*t.scale)<1e-8);
+    assert.ok(Math.abs(t.top-v.top+region.y*t.scale)<1e-8);
+    assert.ok(Math.abs(v.left*2+v.width-900)<1e-8);
+    assert.ok(Math.abs(v.height-region.h*t.scale)<1e-8);
+  }
+});
+
+test('comparison hides webcam but normal pip remains protected',()=>{
+  const scene={id:'scene-2',captionRect:{left:54,top:110,width:900,height:180},
+    pip:{camCard:{left:300,top:100,width:400,height:500}}};
+  assert.equal(adaptiveGeometry.run({scenes:[scene]}).length,1);
+  const comparison=[{slot:{left:90,top:350,width:900,height:560}},
+    {slot:{left:90,top:970,width:900,height:560}}];
+  assert.deepEqual(adaptiveGeometry.run({scenes:[{...scene,comparison}]}),[]);
+  assert.equal(adaptiveGeometry.run({scenes:[{...scene,comparison:[]}]}).length,1);
+  assert.equal(adaptiveGeometry.run({scenes:[{...scene,comparison,
+    captionRect:{left:54,top:1700,width:900,height:180}}]}).length,1);
+});
 
 const media={width:1920,height:1080};
 test('un render nuevo sin salida no devuelve un MP4 anterior',async()=>{

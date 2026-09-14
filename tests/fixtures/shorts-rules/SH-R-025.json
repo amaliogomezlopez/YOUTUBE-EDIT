@@ -1,0 +1,28 @@
+{
+  "ruleId": "SH-R-025",
+  "check": "shorts-screen-crop-excludes-webcam",
+  "expect": "fail",
+  "context": {
+    "scenes": [
+      {
+        "id": "crop-test",
+        "layout": "pip",
+        "sourceWidth": 1920,
+        "sourceHeight": 1080,
+        "webcamBox": {
+          "x": 1600,
+          "y": 0,
+          "w": 320,
+          "h": 300
+        },
+        "screenRegion": {
+          "x": 0,
+          "y": 0,
+          "w": 1700,
+          "h": 1080,
+          "webcamPolicy": "exclude"
+        }
+      }
+    ]
+  }
+}

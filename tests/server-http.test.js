@@ -63,7 +63,7 @@ test('HTTP server applies security headers, CSRF and sanitized queue DTOs', {tim
   const authHeaders = {authorization};
   const child = spawn(process.execPath, ['src/server.js'], {
     cwd: path.resolve('.'),
-    env: {...process.env, PORT: String(port), HOST: '127.0.0.1', SHORTSMITH_DATA_DIR: dataDir, SHORTSMITH_AUTH_TOKEN: token},
+    env: {...process.env, PORT: String(port), HOST: '127.0.0.1', SHORTSMITH_DATA_DIR: dataDir, SHORTSMITH_AUTH_TOKEN: token, TIKTOK_SANDBOX_REDIRECT_URI: 'https://example.com/oauth/tiktok/callback/'},
     stdio: ['ignore', 'pipe', 'pipe']
   });
   let stderr = '';
@@ -88,6 +88,18 @@ test('HTTP server applies security headers, CSRF and sanitized queue DTOs', {tim
     const assetModule = await fetch(`${baseUrl}/js/assets.js`, {headers: authHeaders});
     assert.equal(assetModule.status, 200);
     assert.match(assetModule.headers.get('content-type'), /javascript/);
+    const sandboxPage = await fetch(`${baseUrl}/tiktok-sandbox.html`, {headers: authHeaders});
+    assert.equal(sandboxPage.status, 200);
+    assert.match(await sandboxPage.text(), /<option value="direct">Direct Post/);
+    const sandboxBefore = await (await fetch(`${baseUrl}/api/tiktok-sandbox/status`, {headers: authHeaders})).json();
+    assert.equal(sandboxBefore.configured, false);
+    const sandboxBlocked = await fetch(`${baseUrl}/api/tiktok-sandbox/config`, {method: 'POST', headers: authHeaders, body: '{}'});
+    assert.equal(sandboxBlocked.status, 403);
+    const sandboxConfig = await fetch(`${baseUrl}/api/tiktok-sandbox/config`, {method: 'POST', headers: {...authHeaders, 'content-type': 'application/json', 'x-shortsmith-csrf': '1'}, body: JSON.stringify({clientKey: 'sandbox-test-key', clientSecret: 'sandbox-test-secret'})});
+    assert.equal(sandboxConfig.status, 200);
+    const sandboxReport = await sandboxConfig.text();
+    assert.equal(JSON.parse(sandboxReport).configured, true);
+    assert.doesNotMatch(sandboxReport, /sandbox-test-secret|sandbox-test-key/);
     const fontsResponse = await fetch(`${baseUrl}/api/fonts`, {headers: authHeaders});
     assert.equal(fontsResponse.status, 200);
     const fonts = await fontsResponse.json();

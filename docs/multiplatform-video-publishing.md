@@ -84,6 +84,12 @@ Después de reautorizar, ejecutar `npm run publishing:doctor`.
 
 ## TikTok
 
+### Estado de revisión del 6 de septiembre de 2026
+
+Sandbox Shortsmith Review Demo creado con @amaliometria como usuario de prueba. Borrador de producción guardado con explicación de inbox y Direct Post; se retiró user.info.profile y se actualizaron las páginas legales del sitio declarado. No se ha reenviado: falta integración y grabación auténtica en Sandbox, además de resolver la UX de Direct Post. Véase [evidencia y pendientes](tiktok-review-2026-09-06.md).
+
+Las notas históricas de julio y las URLs del VPS indicadas abajo no describen las URLs legales actuales del panel: ahora son https://shortsmith-amaliometria.amalio11111.chatgpt.site/terminos y /privacidad. El redirect OAuth sigue en el VPS. La configuración por entorno refleja la implementación actual; no sustituye la selección explícita de privacidad que exige TikTok. Su revisión excluye el uso privado/personal: la descripción guardada conserva el uso real del operador y no promete aprobación.
+
 Modos disponibles:
 
 - `inbox`: sube un borrador con `video.upload`; el creador termina la publicación dentro de TikTok.
@@ -92,7 +98,7 @@ Modos disponibles:
 Configuración recomendada:
 
 ```text
-TIKTOK_SCOPES=user.info.basic,user.info.profile,video.upload,video.publish
+TIKTOK_SCOPES=user.info.basic,video.upload,video.publish
 TIKTOK_PUBLISH_MODE=direct
 TIKTOK_PRIVACY_LEVEL=SELF_ONLY
 TIKTOK_REDIRECT_URI=https://sibelion.ddns.net:8443/shortsmith/oauth/app/tiktok/callback/
@@ -420,3 +426,11 @@ Notas:
 - Las URLs temporales deberian limpiarse periodicamente en el VPS cuando ya no sean necesarias.
 - No borrar nada del VPS salvo archivos creados expresamente para Shortsmith.
 - La limpieza local del dashboard no elimina assets del VPS. `deleteHostedAsset()` limita cualquier borrado remoto al directorio configurado, pero debe invocarse de forma explícita cuando el propietario confirme que Meta ya no necesita el fichero.
+
+## Prueba real de TikTok Sandbox (6 septiembre 2026)
+
+El panel local /tiktok-sandbox.html permite configurar una sesión de Sandbox aislada, autorizar la cuenta, revisar un MP4 de hasta 100 MB, probar Direct Post privado o inbox, y consultar publishId sin reenviar el archivo. Reutiliza los módulos oficiales existentes. Sus tokens y claves solo viven en memoria; no altera los de producción y requiere reconexión después de reiniciar.
+
+TIKTOK_SANDBOX_REDIRECT_URI permite un retorno exclusivo de pruebas. El retorno público nuevo /oauth/tiktok/callback/ en el sitio chatgpt.site transfiere los parámetros OAuth al servidor local 127.0.0.1:3100, con state de un solo uso, no-store y no-referrer. El retorno de producción a sibelion permanece pendiente de reparación.
+
+Prueba real: OAuth y creator info correctos; Direct Post privado rechazado por las normas de integración; inbox terminó en SEND_TO_USER_INBOX, con publicación manual pendiente en TikTok. No hay publicación pública ni nueva aprobación. El informe actualizado, las limitaciones del panel y la evidencia se describen en docs/tiktok-review-2026-09-06.md. El panel no sustituye la UI de publicación principal ni acredita todos los requisitos de Direct Post.

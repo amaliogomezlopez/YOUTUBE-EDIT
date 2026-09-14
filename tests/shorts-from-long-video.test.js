@@ -110,6 +110,7 @@ test('el bridge escribe proyecto coherente y copia el mp4 al output del job', as
       candidate,
       captions,
       renderMode: 'fit',
+      subtitleStyle: {preset:'talking-head-green'},
       runners: {
         cutClip: async (args) => { cuts.push(args); },
         build: async () => {},
@@ -141,6 +142,10 @@ test('el bridge escribe proyecto coherente y copia el mp4 al output del job', as
     const plan = await readJson(path.join(projectDir(slug), 'short-plan.json'));
     assert.equal(plan.scenes[0].layout, 'fit');
     assert.equal(plan.captions.mode, 'karaoke');
+    assert.equal(plan.captions.maxWords, 3);
+    assert.equal(plan.captions.strictMaxWords, true);
+    assert.equal(plan.captionStyle.activeColor, '#43F56C');
+    assert.equal(plan.captionStyle.emphasis, 'color');
 
     const transcript = await readJson(path.join(projectDir(slug), 'transcripts', '01.json'));
     assert.equal(transcript.words[0].start, 0.5);

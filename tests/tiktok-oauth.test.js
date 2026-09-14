@@ -20,7 +20,7 @@ test('tiktokAuthUrl requests configured scopes with HTTPS redirect', () => {
   assert.equal(url.origin + url.pathname, 'https://www.tiktok.com/v2/auth/authorize/');
   assert.equal(url.searchParams.get('client_key'), 'client-key');
   assert.equal(url.searchParams.get('redirect_uri'), 'https://example.com/oauth/tiktok/callback/');
-  assert.equal(url.searchParams.get('scope'), 'user.info.basic,user.info.profile,video.upload,video.publish');
+  assert.equal(url.searchParams.get('scope'), 'user.info.basic,video.upload,video.publish');
   assert.equal(url.searchParams.get('response_type'), 'code');
   assert.equal(url.searchParams.get('state'), 'state-123');
 });
@@ -66,4 +66,11 @@ test('TikTok creator info verifies Direct Post scope and privacy options', async
   assert.equal(request.url, 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/');
   assert.equal(request.options.headers.authorization, 'Bearer access-token');
   assert.deepEqual(creator.privacy_level_options, ['SELF_ONLY']);
+});
+
+test('TikTok user validation accepts the official ok envelope and rejects API errors', async () => {
+  const {validateTiktokToken} = await import('../src/lib/tiktok-oauth.js');
+  const user = {display_name: 'Sandbox creator', open_id: 'test-user'};
+  assert.deepEqual(await validateTiktokToken('token', {fetch: async () => Response.json({data: {user}, error: {code: 'ok', message: ''}})}), user);
+  await assert.rejects(validateTiktokToken('token', {fetch: async () => Response.json({error: {code: 'access_token_invalid', message: 'Expired'}})}), /Expired/);
 });

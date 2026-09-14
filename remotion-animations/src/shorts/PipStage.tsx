@@ -22,7 +22,11 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
   if (!pip && !fit) return null;
   if (scene.comparison?.length) return <div style={{position:"absolute",inset:0,background:"#111720"}}>
     {scene.comparison.map((item,i)=><div key={i} style={{position:"absolute",...item.slot,overflow:"hidden",borderRadius:18,background:"#080c12"}}>
-      <Video muted src={staticFile(scene.src)} trimBefore={trimBefore} style={{position:"absolute",...item.transform}} volume={0}/>
+      {/* Clip to the selected region, not to the surrounding source pixels. */}
+      <div style={{position:"absolute",...(item.viewport ?? {left:0,top:0,width:item.slot.width,height:item.slot.height}),overflow:"hidden"}}>
+        {/* Dimensions already include scale; applying CSS scale would shrink twice. */}
+        <Video muted src={staticFile(scene.src)} trimBefore={trimBefore} style={{position:"absolute",left:item.transform.left-(item.viewport?.left ?? 0),top:item.transform.top-(item.viewport?.top ?? 0),width:item.transform.width,height:item.transform.height}} volume={0}/>
+      </div>
       <div style={{position:"absolute",left:16,top:12,padding:"8px 16px",background:"#080c12",color:"white",fontSize:28,fontWeight:700}}>{item.label}</div>
     </div>)}
   </div>;
@@ -33,6 +37,11 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
   const screen = pip ? pip.screen : fit!.screen;
   const radius = pip?.camCard.radius ?? 28;
   const stroke = pip?.camCard.stroke ?? 3;
+  // Contain framing must not reveal pixels outside the reviewed source region.
+  const region = scene.screenRegion;
+  const regionClip = region && scene.screenTransform && scene.sourceWidth && scene.sourceHeight
+    ? `inset(${100 * region.y / scene.sourceHeight}% ${100 * (scene.sourceWidth - region.x - region.w) / scene.sourceWidth}% ${100 * (scene.sourceHeight - region.y - region.h) / scene.sourceHeight}% ${100 * region.x / scene.sourceWidth}%)`
+    : undefined;
 
   return (
     <>
@@ -66,7 +75,7 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
         <Video
           src={staticFile(scene.src)}
           objectFit={scene.screenTransform ? "fill" : "cover"}
-          style={scene.screenTransform ? {position:"absolute",left:scene.screenTransform.left,top:scene.screenTransform.top,width:scene.screenTransform.width,height:scene.screenTransform.height,display:"block"} : {width: "100%", height: "100%", display: "block"}}
+          style={scene.screenTransform ? {position:"absolute",left:scene.screenTransform.left,top:scene.screenTransform.top,width:scene.screenTransform.width,height:scene.screenTransform.height,display:"block",clipPath:regionClip} : {width: "100%", height: "100%", display: "block"}}
           trimBefore={trimBefore}
           volume={volume}
         />

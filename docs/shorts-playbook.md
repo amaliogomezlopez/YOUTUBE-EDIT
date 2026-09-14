@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **22** · con validador automático: **21** · marcadas `manual`: **1** · sin implementar: **0**.
+Reglas: **25** · con validador automático: **24** · marcadas `manual`: **1** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -88,6 +88,14 @@ Un logo con presentation plain resuelve decoration none: sin tarjeta, borde ni h
 
 **Validador:** `shorts-plain-logo-no-decoration`
 
+### SH-R-025 · `error` · `channel`
+
+Una region marcada webcamPolicy exclude queda separada de la webcam original y no muestra su mascara de desenfoque.
+
+**Por qué:** Preferir un recorte que excluya la webcam de la pantalla inferior, ampliando el contenido y revisando la accion por escena; evitar el parche desenfocado.
+
+**Validador:** `shorts-screen-crop-excludes-webcam`
+
 ## 3. Información en pantalla
 
 ### SH-R-030 · `warning` · `catalog`
@@ -106,9 +114,17 @@ Los subtitulos fusionan nombres de modelo y versiones decimales; no dejan fragme
 
 **Validador:** `shorts-caption-compound-together`
 
+### SH-R-032 · `error` · `channel`
+
+Los proyectos con estilo blanco dinamico aprobado mantienen Schibsted Grotesk blanca, contorno oscuro y una unidad de subtitulo por pagina; el encuadre se revisa por escena.
+
+**Por qué:** Estilo aprobado: subtitulos dinamicos de una unidad breve, blancos con contorno oscuro; webcam limpia y pantalla ampliada segun contenido.
+
+**Validador:** `shorts-approved-white-captions`
+
 ### SH-R-033 · `error` · `channel`
 
-Los Reels a camara resaltan en verde solo la palabra activa dentro del bloque de subtitulos.
+Los Reels a camara y el preset talking-head-green resaltan solo la palabra activa en verde; el preset conserva hasta tres unidades por pagina.
 
 **Por qué:** La palabra pronunciada se rellena en verde, el resto queda blanco; bloques de hasta tres palabras.
 
@@ -194,6 +210,14 @@ Revisar los canales de la voz: corregir entradas unilaterales antes de mezclar y
 
 **Validador:** revisión humana (sin comprobación geométrica posible)
 
+### SH-R-054 · `error` · `channel`
+
+Los efectos de entrada empiezan en el corte visual y el riser termina en el siguiente cambio de visual.
+
+**Por qué:** Recortar silencios de los extremos de los efectos y hacer coincidir el final audible del riser con el cambio de visual.
+
+**Validador:** `shorts-reel-sound-sync`
+
 ## 6. Ritmo y silencios
 
 ### SH-R-060 · `warning` · `catalog`
@@ -227,3 +251,4 @@ npm run shorts:feedback -- --note "la captura no se lee en split" --section legi
 ```
 
 El comando registra la corrección, crea la regla con id estable, genera el esqueleto del validador y el fixture que la incumple, y regenera este documento. Una corrección dada una vez queda aplicada para siempre y para cualquier agente.
+

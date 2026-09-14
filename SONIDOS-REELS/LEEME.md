@@ -14,3 +14,8 @@ Copia aqui los efectos que quieras usar. Puedes conservar sus nombres.
 Esta carpeta y sus copias de audio son privadas y se excluyen de Git. Los MP4 ya exportados no cambian al copiar nuevos sonidos.
 
 Los usos concretos estan en CATALOGO.md. Money, riser y Message se reservan para sus contextos. Se recortan silencios de los extremos en copias de reproduccion para sincronizarlas; los originales no cambian.
+
+
+### Sincronizacion de efectos y risers
+
+Las copias de efectos se recortan hasta el inicio/final detectado del sonido (-45 dB), sin anadir margen de silencio y sin quitar pausas internas. Se generan copias nuevas versionadas; los originales y los renders anteriores se conservan. Los efectos normales comienzan en el frame del cambio visual, incluso si la palabra ancla llega unos milisegundos despues. El riser de apertura se coloca hacia atras desde el siguiente cambio de visual: su final coincide con ese corte, con precision de un frame, conservando su velocidad. Un corte de toma que mantiene la misma visual no es su destino. Si el riser no cabe, usar uno mas corto; si no hay cambio de visual, seleccionar soundUse transition.

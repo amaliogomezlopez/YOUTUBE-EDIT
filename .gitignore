@@ -36,6 +36,9 @@ remotion-animations/public/assets/library/finance-cavaliers/episodes/*
 # Runs con raíz de datos propia: mismos jobs/output que data/, un nivel más abajo.
 data/opus5final-run/
 
+# Artefactos privados de pruebas y revisión TikTok.
+/data/tiktok-*
+
 # Proyectos privados de Reels a camara.
 /data/talking-head/
 /remotion-animations/projects/shorts-talking-head-*/
@@ -49,3 +52,12 @@ data/opus5final-run/
 /remotion-animations/public/assets/library/talking-head-*/
 
 !/SONIDOS-REELS/CATALOGO.md
+
+# Configuracion local, logs y proyectos derivados de videos privados.
+/.claude/settings.local.json
+/data/logs/
+/shortsmith-server*.log
+/remotion-animations/projects/shorts-short-job-*/
+/remotion-animations/projects/shorts-astra-*/
+# Sitio de TikTok: repositorio independiente ya versionado.
+/tiktok-developer-site/

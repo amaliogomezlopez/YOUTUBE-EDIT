@@ -19,6 +19,14 @@ Opciones adicionales: `--keep-pauses`, `--no-effects` y
 `--music "D:\audio\musica.mp3"`. La música es un archivo elegido por el usuario;
 se importa al proyecto y baja bajo la voz. No se descarga música automáticamente.
 
+Para los nuevos cortes creados con la skill create-ranked-shorts, el estilo preferido
+es `--subtitle-mode karaoke --subtitle-preset talking-head-green`: bloques de hasta
+tres unidades, Schibsted Grotesk blanca, contorno oscuro y palabra activa verde
+#43F56C. Reutiliza el renderer de subtítulos de los Reels a cámara y adapta su
+posición al layout. Requiere tiempos por palabra para una sincronía precisa;
+los tiempos aproximados deben revisarse. El preset es seleccionable y no cambia
+los ajustes guardados de jobs anteriores.
+
 ## Decisiones de montaje
 
 - El análisis muestrea la imagen cada 1,5 segundos. Distingue webcam en cualquiera
@@ -51,6 +59,19 @@ La regla SH-R-043 exige que cada panel de pantalla esté centrado: un panel de
 900 px en el lienzo de 1080 deja 90 px a cada lado. La zona segura de los
 subtítulos se calcula por separado.
 
+## Pantalla inferior sin webcam duplicada
+
+La skill create-ranked-shorts prefiere recortar la región de pantalla para excluir
+el panel de webcam original y ampliar el contenido útil. Con webcam arriba a la
+derecha, empezar revisando el centro-izquierda. Se ajusta por escena: comprobar
+que el recorte conserva la acción o los datos necesarios, usando el panel completo
+de webcam como referencia, no solo la caja de la cara detectada.
+
+Marcar `screenRegion.webcamPolicy: "exclude"` activa SH-R-025: el recorte no puede
+solaparse con la webcam ni dejar su máscara visible. Es una preferencia de montaje
+revisada por el agente, no un recorte fijo para todas las fuentes. Si una escena
+necesita el contexto completo, documentar el motivo y elegir su encuadre específico.
+
 ## Revisión
 
 En cada resultado: Editar corte, encuadre y subtítulos → Revisar montaje por
@@ -59,6 +80,16 @@ pantalla, efectos y palabras. Los cambios se aplican al volver a renderizar.
 Cambiar de perfil reconstruye las escenas y sus encuadres; conserva las palabras corregidas.
 Las coordenadas de región son píxeles de la fuente; el centro facial usa 0–1.
 
+El estilo de canal aprobado `captionStyle.approvedStyle: "white-dynamic-v1"`
+activa SH-R-032: Schibsted Grotesk blanca, contorno oscuro de 5 px, karaoke
+sin enfasis de color y una unidad por pagina (`captions.maxWords: 1`). Los
+nombres compuestos siguen juntos. Es opt-in para no alterar proyectos de otros
+estilos. Las regiones de pantalla y los limites interiores de webcam se revisan
+por escena; no se reutilizan coordenadas de Astra como valores globales.
+Las regiones contain ocultan los pixeles externos al recorte, incluso cuando
+su proporcion deja bandas. Para este lote, `--gl=angle --concurrency=1` resulto
+mas rapido que 4 o 12 procesos; es una medicion local, no una garantia universal.
+
 Cambiar entrada o salida invalida las ediciones anteriores de escenas y palabras:
 se reconstruye el plan y se muestra un aviso. Una región automática puede requerir
 revisión, especialmente con gráficas, texto denso, juegos, varias caras o cambios
@@ -66,6 +97,10 @@ de pantalla muy rápidos. Los ejemplos revisados pueden conservar correcciones
 editoriales; el plan JSON registra su motivo.
 
 La validación de geometría bloquea cajas inválidas y solapamientos previstos. La
+comparación apilada sustituye la tarjeta de webcam: SH-R-042 conserva la zona
+segura sin contar esa tarjeta oculta. En pip normal sigue protegiendo la webcam.
+Las dimensiones de cada región ya incluyen su escala; el renderer no debe
+aplicarla una segunda vez como propiedad CSS. La
 regla de ritmo avisa sobre planos demasiado largos; una explicación puede necesitar
 ese tiempo de lectura. Los umbrales viven en editing-profiles.json, no en el
 validador. Los planes antiguos sin presupuesto se declaran no evaluables.

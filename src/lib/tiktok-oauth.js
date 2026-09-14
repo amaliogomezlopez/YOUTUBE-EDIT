@@ -5,7 +5,7 @@ export const TIKTOK_AUTH_URL = 'https://www.tiktok.com/v2/auth/authorize/';
 export const TIKTOK_TOKEN_URL = 'https://open.tiktokapis.com/v2/oauth/token/';
 export const TIKTOK_USER_INFO_URL = 'https://open.tiktokapis.com/v2/user/info/';
 export const TIKTOK_CREATOR_INFO_URL = 'https://open.tiktokapis.com/v2/post/publish/creator_info/query/';
-export const DEFAULT_TIKTOK_SCOPES = ['user.info.basic', 'user.info.profile', 'video.upload', 'video.publish'];
+export const DEFAULT_TIKTOK_SCOPES = ['user.info.basic', 'video.upload', 'video.publish'];
 
 export {makeOAuthState};
 
@@ -93,7 +93,7 @@ export async function refreshTiktokAccessToken(
     body
   }, {fetchImpl: options.fetch || fetch, signal: options.signal, timeoutMs: options.timeoutMs ?? 30_000});
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok || payload.error?.code) {
+  if (!response.ok || (payload.error?.code && payload.error.code !== 'ok')) {
     const code = payload.error?.code || payload.error || '';
     const message = payload.error?.message || payload.error_description || code || `TikTok token refresh failed with ${response.status}`;
     const error = new Error(message);
@@ -147,7 +147,7 @@ export async function validateTiktokToken(accessToken, {fields = ['open_id', 'av
     headers: {authorization: `Bearer ${accessToken}`}
   }, {fetchImpl, signal, timeoutMs});
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok || payload.error?.code) {
+  if (!response.ok || (payload.error?.code && payload.error.code !== 'ok')) {
     throw new Error(payload.error?.message || payload.error_description || `TikTok user info failed with ${response.status}`);
   }
   return payload.data?.user || payload.data || payload;

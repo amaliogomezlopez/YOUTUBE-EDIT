@@ -40,12 +40,14 @@ import {
   updateReviewSession
 } from './lib/remotion-review.js';
 import {searchEditorialAssets} from './lib/editorial-asset-search.js';
+import {createTikTokSandboxRoutes} from './lib/tiktok-sandbox-routes.js';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const REMOTION_PUBLIC_DIR = path.join(ROOT, 'remotion-animations', 'public');
 let processingQueue = null;
 let publishingQueue = null;
 const oauthStates = new Set();
+const handleTikTokSandbox = createTikTokSandboxRoutes({readBody, sendJson, sendText, redirect});
 const xOauthStates = new Map();
 const OAUTH_STATE_TTL_MS = 10 * 60 * 1000;
 let mutationLimiter = null;
@@ -440,6 +442,7 @@ async function handleApi(req, res, url) {
       return;
     }
   }
+  if (await handleTikTokSandbox(req, res, url)) return;
   if (req.method === 'GET' && url.pathname === '/api/system/status') {
     sendJson(res, 200, await systemStatus());
     return;

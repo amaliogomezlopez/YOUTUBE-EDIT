@@ -244,6 +244,20 @@
       "fixture": "tests/fixtures/shorts-rules/SH-R-043.json"
     },
     {
+      "id": "SH-R-032",
+      "section": "information",
+      "statement": "Los proyectos con estilo blanco dinamico aprobado mantienen Schibsted Grotesk blanca, contorno oscuro y una unidad de subtitulo por pagina; el encuadre se revisa por escena.",
+      "rationale": "Estilo aprobado: subtitulos dinamicos de una unidad breve, blancos con contorno oscuro; webcam limpia y pantalla ampliada segun contenido.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "shorts-approved-white-captions",
+      "origin": {
+        "feedback": "Estilo aprobado: subtitulos dinamicos de una unidad breve, blancos con contorno oscuro; webcam limpia y pantalla ampliada segun contenido.",
+        "recordedAt": "2026-09-06T11:41:11Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-032.json"
+    },
+    {
       "id": "SH-R-062",
       "section": "pacing",
       "statement": "El perfil talking-head usa material de fuente real y respeta su presupuesto de duracion visual.",
@@ -260,14 +274,14 @@
     {
       "id": "SH-R-033",
       "section": "information",
-      "statement": "Los Reels a camara resaltan en verde solo la palabra activa dentro del bloque de subtitulos.",
+      "statement": "Los Reels a camara y el preset talking-head-green resaltan solo la palabra activa en verde; el preset conserva hasta tres unidades por pagina.",
       "rationale": "La palabra pronunciada se rellena en verde, el resto queda blanco; bloques de hasta tres palabras.",
       "scope": "channel",
       "severity": "error",
       "check": "shorts-talking-head-karaoke",
       "origin": {
-        "feedback": "La palabra pronunciada se rellena en verde, el resto queda blanco; bloques de hasta tres palabras.",
-        "recordedAt": "2026-09-10T15:49:59Z"
+        "feedback": "Incorporar a shorts de video largo el karaoke verde con hasta tres unidades del estilo talking-head.",
+        "recordedAt": "2026-09-14T17:01:41Z"
       },
       "fixture": "tests/fixtures/shorts-rules/SH-R-033.json"
     },
@@ -325,6 +339,34 @@
         "feedback": "El micro graba voz solo en el canal izquierdo. Medir los canales reales, centrar la voz de una entrada unilateral antes de mezclar y verificar el equilibrio del MP4 final.",
         "recordedAt": "2026-09-10T19:19:25Z"
       }
+    },
+    {
+      "id": "SH-R-054",
+      "section": "sound",
+      "statement": "Los efectos de entrada empiezan en el corte visual y el riser termina en el siguiente cambio de visual.",
+      "rationale": "Recortar silencios de los extremos de los efectos y hacer coincidir el final audible del riser con el cambio de visual.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "shorts-reel-sound-sync",
+      "origin": {
+        "feedback": "Recortar silencios de los extremos de los efectos y hacer coincidir el final audible del riser con el cambio de visual.",
+        "recordedAt": "2026-09-10T19:38:14Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-054.json"
+    },
+    {
+      "id": "SH-R-025",
+      "section": "legibility",
+      "statement": "Una region marcada webcamPolicy exclude queda separada de la webcam original y no muestra su mascara de desenfoque.",
+      "rationale": "Preferir un recorte que excluya la webcam de la pantalla inferior, ampliando el contenido y revisando la accion por escena; evitar el parche desenfocado.",
+      "scope": "channel",
+      "severity": "error",
+      "check": "shorts-screen-crop-excludes-webcam",
+      "origin": {
+        "feedback": "Preferir un recorte que excluya la webcam de la pantalla inferior, ampliando el contenido y revisando la accion por escena; evitar el parche desenfocado.",
+        "recordedAt": "2026-09-14T17:51:42Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-025.json"
     }
   ]
 }

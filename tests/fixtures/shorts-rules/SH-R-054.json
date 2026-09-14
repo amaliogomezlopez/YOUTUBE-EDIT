@@ -1,0 +1,52 @@
+{
+  "ruleId": "SH-R-054",
+  "check": "shorts-reel-sound-sync",
+  "expect": "fail",
+  "context": {
+    "workflow": "talking-head",
+    "format": {
+      "fps": 60
+    },
+    "soundUses": {},
+    "budget": {
+      "activeColor": "#43F56C"
+    },
+    "captionStyle": {
+      "mode": "karaoke",
+      "emphasis": "color",
+      "primary": "#FFFFFF",
+      "activeColor": "#43F56C"
+    },
+    "scenes": [
+      {
+        "from": 0,
+        "cues": [
+          {
+            "id": "a",
+            "type": "broll",
+            "assetId": "one",
+            "fromFrame": 0,
+            "durationInFrames": 240,
+            "soundNote": "Fixture centrado en la sincronizacion"
+          },
+          {
+            "id": "b",
+            "type": "broll",
+            "assetId": "two",
+            "fromFrame": 240,
+            "durationInFrames": 240,
+            "soundNote": "Fixture centrado en la sincronizacion"
+          }
+        ]
+      }
+    ],
+    "soundCues": [
+      {
+        "cueId": "a",
+        "soundUse": "intro",
+        "startSeconds": 0,
+        "durationSeconds": 1
+      }
+    ]
+  }
+}

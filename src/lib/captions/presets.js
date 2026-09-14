@@ -31,7 +31,7 @@ export function resolveCaptionStyle(options = {}) {
     ? options.position
     : preset.position;
   const align = ['left', 'center'].includes(options.align) ? options.align : preset.align;
-  const emphasis = ['auto', 'off'].includes(options.emphasis) ? options.emphasis : preset.emphasis;
+  const emphasis = ['auto', 'off', 'color'].includes(options.emphasis) ? options.emphasis : preset.emphasis;
   const accent = color(options.accent, preset.accent);
   const activeFallback = preset.activeColor === preset.accent ? accent : preset.activeColor;
   return {

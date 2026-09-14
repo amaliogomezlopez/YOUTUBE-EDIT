@@ -24,7 +24,7 @@ Options:
   --keep-pauses   Conserva las pausas del corte original.
   --quality       draft, standard, or high. Default: high.
   --subtitle-mode karaoke, progressive, words, or lines. Default: karaoke.
-  --subtitle-preset karaoke-highlight, progressive-reference, progressive-punchy, progressive-editorial, or progressive-clean.
+  --subtitle-preset talking-head-green, karaoke-highlight, progressive-reference, progressive-punchy, progressive-editorial, or progressive-clean.
   --subtitle-font  Local font family name. Default: Arial Black.
   --subtitle-position upper-middle, center, lower-middle, or lower.
   --subtitle-color Main text color as #RRGGBB.
@@ -32,7 +32,7 @@ Options:
   --subtitle-size  Base font size for a 1080x1920 canvas.
   --subtitle-outline  Outline width from 0 to 12. Use 0 for no outline.
   --subtitle-shadow  Shadow distance from 0 to 8. Use 0 for flat text.
-  --subtitle-emphasis auto or off.
+  --subtitle-emphasis auto, color, or off.
   --stt-provider  openai, faster-whisper, whisper-cli, or nemotron when no transcript is provided.
   --stt-model     Optional transcription model.
   --stt-language  Optional language, e.g. es or auto.

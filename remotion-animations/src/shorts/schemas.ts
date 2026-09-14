@@ -81,7 +81,7 @@ export const shortSceneSchema = z.object({
   sourceHeight: z.number().optional(),
   screenRegion: z.object({x:z.number(),y:z.number(),w:z.number(),h:z.number()}).passthrough().nullable().optional(),
   screenEmphasis: z.boolean().optional(),
-  comparison: z.array(z.object({slot:rectSchema,transform:rectSchema.extend({scale:z.number()}),label:z.string()})).nullable().optional(),
+  comparison: z.array(z.object({slot:rectSchema,transform:rectSchema.extend({scale:z.number()}),viewport:rectSchema.optional(),label:z.string()})).nullable().optional(),
   screenTransform: rectSchema.partial().extend({left:z.number(),top:z.number(),width:z.number(),height:z.number(),scale:z.number()}).nullable().optional(),
   captionRect: rectSchema.nullable().optional(),
   focus: shortFocusSchema,

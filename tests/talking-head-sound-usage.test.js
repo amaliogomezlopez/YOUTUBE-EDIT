@@ -8,4 +8,16 @@ test('money and message require explicit semantic intent and context',()=>{asser
 test('short whip retains room between attack and release',()=>{const c=resolveSoundCue('whoosh',0,1,0,{palette:{whoosh:['sfx/test.wav']},metadata:{'sfx/test.wav':{durationSeconds:.139}}});assert.ok(c.attackSeconds+c.releaseSeconds<c.durationSeconds/2);});
 
 import {soundEdges} from '../src/modules/video-studio/sound-edges.js';
-test('silent edges are removed without removing interior pauses',()=>{assert.deepEqual(soundEdges([{start:0,end:1.46},{start:1.6,end:3.07}],3.07),{start:1.43,end:1.6800000000000002});assert.deepEqual(soundEdges([{start:.5,end:.7}],1),{start:0,end:1});});
+test('silent edges are removed without removing interior pauses',()=>{assert.deepEqual(soundEdges([{start:0,end:1.46},{start:1.6,end:3.07}],3.07),{start:1.46,end:1.6});assert.deepEqual(soundEdges([{start:.5,end:.7}],1),{start:0,end:1});});
+
+import {syncReelSoundTiming} from '../src/modules/talking-head/sound-timing.js';
+test('riser ends on next actual visual cut and other sounds start on it',()=>{
+ const c={fps:60,scenes:[{from:0,cues:[{id:'a',type:'broll',assetId:'one',fromFrame:7,soundUse:'intro'},{id:'b',type:'broll',assetId:'two',fromFrame:201,soundUse:'transition'}]}],soundCues:[{cueId:'a',durationSeconds:1.707,startSeconds:.12},{cueId:'b',durationSeconds:.2,startSeconds:3.36}]};
+ syncReelSoundTiming(c);assert.equal(Math.round(c.soundCues[0].startSeconds*60)+Math.round(c.soundCues[0].durationSeconds*60),201);assert.equal(c.soundCues[1].startSeconds,201/60);
+});
+test('riser skips continuity cuts and rejects missing or too early visual changes',()=>{
+ const c={fps:60,scenes:[{from:0,cues:[{id:'a',type:'broll',assetId:'same',soundUse:'intro',fromFrame:0}]},{from:60,cues:[{id:'b',type:'broll',assetId:'same',fromFrame:0},{id:'c',type:'broll',assetId:'new',fromFrame:120}]}],soundCues:[{cueId:'a',durationSeconds:2,startSeconds:0}]};
+ syncReelSoundTiming(c);assert.equal(c.soundCues[0].startSeconds,1);
+ c.soundCues[0].durationSeconds=4;assert.throws(()=>syncReelSoundTiming(c),/no cabe/);c.scenes.pop();assert.throws(()=>syncReelSoundTiming(c),/cambio/);
+});
+test('wholly silent effects are rejected instead of being timed as real audio',()=>{assert.throws(()=>soundEdges([{start:0,end:2}],2),/audible/);});

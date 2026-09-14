@@ -1,4 +1,5 @@
 import path from 'node:path';
+import {syncReelSoundTiming} from '../talking-head/sound-timing.js';
 import {existsSync} from 'node:fs';
 import {regionTransform, validSourceBox} from '../video-studio/framing.js';
 import {readJson, round, writeJson} from '../../lib/utils.js';
@@ -31,6 +32,12 @@ export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label',
 export const LAYOUTS = new Set(['full', 'split', 'stage', 'pip', 'fit', 'talking-head']);
 export const CAMERAS = new Set(['static', 'punch-in', 'push-out', 'drift-left', 'drift-right']);
 export const TRANSITIONS = new Set(['cut', 'fade', 'whip', 'slide-up', 'zoom-blur']);
+
+export function comparisonPanel(region, dimensions, slot) {
+  const transform=regionTransform(region,dimensions,slot);
+  const viewport={left:(slot.width-region.w*transform.scale)/2,top:(slot.height-region.h*transform.scale)/2,width:region.w*transform.scale,height:region.h*transform.scale};
+  return {slot,transform,viewport,label:String(region.label ?? '').slice(0,50)};
+}
 
 /**
  * Compila `short-plan.json` (editorial, escrito a mano) contra `manifest.json` y
@@ -131,7 +138,7 @@ export async function buildShort({slug, log = () => {}}) {
     const comparison = scene.comparison ? scene.comparison.map((region, i) => {
       if (scene.comparison.length !== 2 || !validSourceBox(region, dimensions)) throw new Error(where + ': comparacion invalida');
       const slot={left:(format.width-900)/2,top:350+i*620,width:900,height:560};
-      return {slot,transform:regionTransform(region,dimensions,slot),label:String(region.label ?? '').slice(0,50)};
+      return comparisonPanel(region,dimensions,slot);
     }) : null;
     const captionRect = scene.layout === 'talking-head' ? {left:80,top:854,width:920,height:180} : comparison ? {left:54,top:110,width:900,height:180} : pip
       ? {left: 54, top: pip.camCard.top + pip.camCard.height + 14, width: 900, height: Math.max(120, Math.min(190, pip.screen.top - pip.camCard.top - pip.camCard.height - 24))}
@@ -168,7 +175,10 @@ export async function buildShort({slug, log = () => {}}) {
         ? (cue.presentation === 'plain' ? 'none' : cue.presentation === 'blend' ? 'blend' : 'frame')
         : null;
       const holdSeconds = Number(cue.holdSeconds ?? (endSeconds - startSeconds) - atSeconds);
-      const cueFrames = Math.max(1, Math.round(Math.min(holdSeconds, endSeconds - startSeconds - atSeconds) * fps));
+      // Quantize both endpoints so adjacent cues meet on the same frame.
+      const cueFromFrame = Math.round(atSeconds * fps);
+      const cueEndFrame = Math.round(Math.min(atSeconds + holdSeconds, endSeconds - startSeconds) * fps);
+      const cueFrames = Math.max(1, cueEndFrame - cueFromFrame);
       if (cue.type === 'broll') {
         if (!asset?.file || !existsSync(path.join(REMOTION_ROOT,'public',asset.file))) throw new Error(cueWhere + ': falta archivo local del recurso');
         if (scene.layout !== 'talking-head' || cue.slot !== 'broll-panel' || !asset) throw new Error(cueWhere + ': broll necesita layout talking-head, slot broll-panel y asset');
@@ -187,6 +197,7 @@ export async function buildShort({slug, log = () => {}}) {
       const sound = soundFamily
         ? addSound(soundFamily, cursor / fps + atSeconds, Number(cue.soundIntensity ?? 1))
         : null;
+      if (sound) sound.cueId=cue.id ?? `${scene.id}-cue-${cueIndex + 1}`;
       return {
         id: cue.id ?? `${scene.id}-cue-${cueIndex + 1}`,
         type: cue.type,
@@ -204,7 +215,7 @@ export async function buildShort({slug, log = () => {}}) {
         tone: cue.tone ?? 'neutral',
         atWord: Number.isInteger(cue.atWord) ? cue.atWord : null,
         atSeconds: round(atSeconds, 3),
-        fromFrame: Math.round(atSeconds * fps),
+        fromFrame: cueFromFrame,
         durationInFrames: cueFrames,
         // Campos que consumen las reglas: una captura sin texto se declara con
         // `dense: false`, el silencio deliberado con `soundNote`, y `art` son las
@@ -291,6 +302,7 @@ export async function buildShort({slug, log = () => {}}) {
     addSound(ambience.family, Number(ambience.atSeconds ?? 0), Number(ambience.intensity ?? 1));
   }
 
+  if (plan.workflow==='talking-head') syncReelSoundTiming({scenes,soundCues,fps});
   const audioSegments = [];
   for (const scene of scenes) {
     const previous = audioSegments.at(-1);

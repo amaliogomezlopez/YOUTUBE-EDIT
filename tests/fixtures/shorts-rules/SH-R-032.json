@@ -1,0 +1,34 @@
+{
+  "ruleId": "SH-R-032",
+  "statement": "Los proyectos con estilo blanco dinamico aprobado mantienen Schibsted Grotesk blanca, contorno oscuro y una unidad de subtitulo por pagina; el encuadre se revisa por escena.",
+  "check": "shorts-approved-white-captions",
+  "expect": "fail",
+  "note": "Montaje mínimo que INCUMPLE la regla. El test verifica que el motor la detecta.",
+  "context": {
+    "captionStyle": {"approvedStyle":"white-dynamic-v1","font":"Arial","primary":"#FFFF00","mode":"progressive"},
+    "format": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-000",
+        "clipId": "01",
+        "layout": "split",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 240,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 4,
+        "speechLeadSeconds": 0.2,
+        "speechTailSeconds": 0.2,
+        "cues": [],
+        "captionPages": []
+      }
+    ],
+    "soundCues": [],
+    "duckWindows": []
+  }
+}

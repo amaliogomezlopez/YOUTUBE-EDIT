@@ -1,4 +1,10 @@
 export const CAPTION_PRESETS = Object.freeze({
+  'talking-head-green': Object.freeze({
+    preset: 'talking-head-green', font: 'Schibsted Grotesk', primary: '#FFFFFF', accent: '#43F56C', activeColor: '#43F56C',
+    baseFontSize: 82, heroScale: 1, leadScale: 1, tailScale: 1, position: 'safe-lower', align: 'center', uppercase: true,
+    emphasis: 'color', maxWords: 3, strictMaxWords: true, maxLineWords: 3, maxPageChars: 22, maxLines: 2,
+    maxPageDuration: 1.5, pauseBreak: 0.32, maxLineChars: 18, marginX: 90, outlineSize: 5, shadow: 3, tracking: 0
+  }),
   'progressive-reference': Object.freeze({
     preset: 'progressive-reference', layout: 'reference-stack', font: 'Arial', primary: '#FFFFFF', accent: '#FFFFFF', activeColor: '#FFFFFF',
     baseFontSize: 86, heroScale: 2.12, leadScale: 1, tailScale: 1.12, position: 'lower-middle', align: 'center', uppercase: false,
