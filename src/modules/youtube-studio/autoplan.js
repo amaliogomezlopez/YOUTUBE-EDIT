@@ -19,6 +19,7 @@ const PHRASE_PAUSE = 0.12;
 const FALSE_START_SILENCE = 1;
 const FALSE_START_WORDS = 8;
 const FALSE_START_SHARE = 0.4;
+const SPEECH_TAIL = 0.4;
 const norm = (w) => String(w.text ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\p{L}\p{N}]+/gu, '');
 
 /** Numbered recordings (1.mkv, 2.mkv...) are takes in order; anything else is a resource. */
@@ -55,7 +56,8 @@ export function trimTake(words, {headPad, tailPad, maxPause, silences = []}) {
   const kept = spoken.slice(Math.max(0, first));
   // Transcribers stretch a word over the silence before it; the audio says when speech starts and stops.
   const onset = (t) => silences.find((s) => s.start <= t + 0.05 && s.end > t)?.end ?? t;
-  const offset = (t) => silences.find((s) => s.start < t && s.end >= t - 0.05)?.start ?? t;
+  // Word ends run early too: speech stops where the next silence begins, if it begins soon.
+  const offset = (t) => silences.find((s) => s.end >= t - 0.05 && s.start >= t - 0.3 && s.start <= t + SPEECH_TAIL)?.start ?? t;
   const pieces = [];
   let start = Math.max(0, onset(restartAt ?? kept[0].start) - headPad);
   for (let i = 1; i < kept.length; i++) {

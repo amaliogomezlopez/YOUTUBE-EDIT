@@ -420,8 +420,8 @@ Para montar varios clips en un video largo horizontal con zooms a la webcam
 (opiniones) y a la pantalla (explicaciones), leer docs/youtube-studio.md.
 La superficie es src/modules/youtube-studio y el comando npm run youtube:studio.
 Reutiliza video-studio; no ramificar pipeline.js ni reutilizar el build vertical.
-Estado inicial: ingest, prepare y compare; todavia sin render horizontal,
-integracion Recordly ni aprendizaje automatico. Consultar capabilities.
+Hay render horizontal, plan automatico desde tomas en bruto y estilo medido desde
+CapCut; no hay integracion Recordly. Consultar capabilities.
 Los perfiles son provisionales hasta compararlos con una referencia del usuario.
 Guardar propuestas/correcciones en data/editorial-memory, fuera de Git.
 No confundirlo con intro-studio (cabecera) ni con metadata/publicacion.
@@ -435,3 +435,24 @@ warnings. `--allow-incomplete` identifica pilotos con diferencias conocidas.
 `youtube:qa` compara referencia/export y `youtube:feedback` guarda comentarios reales
 por frame y version, pendientes de validacion editorial. No afirmar aprendizaje
 universal, freeze de codigo ni paridad con CapCut por superar tests.
+### Primer montaje automatico con el estilo del autor
+
+Encargo tipico: "en esta carpeta estan las tomas (1.mkv, 2.mkv...) del video, montalo".
+Skill: `.claude/skills/montaje-youtube/SKILL.md`. Comando unico:
+`npm run edit -- --source CARPETA --slug SLUG [--urls NOTAS.txt]`
+(ingesta -> capturas -> plan -> render -> QA -> REVIEW.md). Tambien por MCP:
+`npm run mcp` (registrado en `.mcp.json` como `shortsmith`).
+
+- El gusto sale de `npm run editorial:corpus -- scan|profile|examples` sobre los
+  proyectos reales de CapCut (`docs/editorial-memory.md`). Ninguna cantidad del plan
+  se escribe a mano: si falta, se mide o se pregunta.
+- El agente decide *donde* (intenciones: enfasis, cambios de tema, cortes del gancho),
+  nunca *cuanto*. Formato en `docs/youtube-studio.md`.
+- Recortes por audio (`silencedetect`), no por marcas de palabra: Whisper alarga y
+  acorta palabras sobre el silencio.
+- Recursos: clips no numerados y capturas (`capture`) se colocan donde la charla los
+  anuncia; lo dudoso va a `pending-assets.json`. Nunca renderizar un hueco.
+- `youtube:autoplan export` da FCPXML para DaVinci/Final Cut; `corrections` convierte
+  el FCPXML corregido en correcciones pendientes. No promoverlas a reglas sin el autor.
+- Medir con `youtube:autoplan evaluate` dejando el video fuera de su propio perfil.
+  El criterio final son los minutos de correccion del autor, no los tests.

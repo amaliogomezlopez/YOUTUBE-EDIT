@@ -1,0 +1,85 @@
+#!/usr/bin/env node
+/**
+ * One command from a folder of takes to a reviewed first cut:
+ * ingest -> capture -> plan -> package -> render -> QA -> REVIEW.md.
+ * Every step is the existing CLI, so an agent can also run them one by one.
+ */
+import path from 'node:path';
+import {parseArgs} from 'node:util';
+import {existsSync} from 'node:fs';
+import {readFile, writeFile, mkdir} from 'node:fs/promises';
+import {run} from '../src/lib/utils.js';
+
+const USAGE = 'Uso: npm run edit -- --source DIR --slug SLUG [--urls NOTAS.txt] [--url URL]... [--intents JSON | --llm] [--no-render]';
+const node = (script, args, {allowFail = false} = {}) => run(process.execPath, [script, ...args], {
+  onStdout: (t) => process.stdout.write(t), onStderr: (t) => process.stderr.write(t)
+}).catch((error) => {
+  if (allowFail) return error;
+  throw error;
+});
+
+try {
+  const {values: v} = parseArgs({options: {source: {type: 'string'}, slug: {type: 'string'}, urls: {type: 'string'}, url: {type: 'string', multiple: true},
+    intents: {type: 'string'}, llm: {type: 'boolean'}, 'no-render': {type: 'boolean'}, profile: {type: 'string'}}});
+  if (!v.source || !v.slug) throw Error(USAGE);
+  const project = path.join('remotion-animations', 'projects', `youtube-${v.slug}`);
+  const out = path.join('data', 'editorial-memory', 'autoplan', v.slug);
+  await mkdir(out, {recursive: true});
+  const steps = [];
+
+  if (!existsSync(path.join(project, 'manifest.json'))) {
+    await node('scripts/youtube-studio.js', ['ingest', '--source', path.resolve(v.source), '--slug', v.slug]);
+    steps.push('ingesta');
+  } else steps.push('ingesta reutilizada');
+
+  const assetsFile = path.join(out, 'assets', 'assets.json');
+  if ((v.urls || v.url?.length) && !existsSync(assetsFile)) {
+    await node('scripts/youtube-autoplan.js', ['capture', '--output', path.join(out, 'assets'), ...(v.urls ? ['--urls', v.urls] : []), ...(v.url ?? []).flatMap((u) => ['--url', u])]);
+    steps.push('capturas');
+  }
+
+  const planDir = path.join(out, 'plan-' + new Date().toISOString().replace(/[:.]/g, '-'));
+  await node('scripts/youtube-autoplan.js', ['plan', '--project', project, '--output', planDir,
+    ...(v.profile ? ['--profile', v.profile] : []), ...(existsSync(assetsFile) ? ['--assets', assetsFile] : []),
+    ...(v.intents ? ['--intents', v.intents] : []), ...(v.llm ? ['--llm'] : [])]);
+  steps.push('plan');
+
+  let video = null, qa = null;
+  if (!v['no-render']) {
+    const prepared = await node('scripts/youtube-render.js', ['prepare', '--project', v.slug, '--render-plan', path.join(planDir, 'render-plan.json')]);
+    const pkg = JSON.parse(prepared.stdout.slice(prepared.stdout.indexOf('{'))).package;
+    const rendered = await node('scripts/youtube-render.js', ['render', '--project', v.slug, '--package', pkg]);
+    video = /Final MP4: ([^\r\n]+)/.exec(rendered.stdout)?.[1] ?? null;
+    if (!video) throw Error('El render no devolvio MP4');
+    const qaDir = path.join(planDir, 'qa');
+    await node('scripts/youtube-autoplan.js', ['qa', '--video', video, '--plan', path.join(planDir, 'edit-plan.json'), '--output', qaDir], {allowFail: true});
+    qa = JSON.parse(await readFile(path.join(qaDir, 'qa.json'), 'utf8'));
+    steps.push('render', 'qa');
+  }
+
+  const plan = JSON.parse(await readFile(path.join(planDir, 'edit-plan.json'), 'utf8'));
+  const lines = [
+    `# Primer montaje: ${v.slug}`,
+    '',
+    `Pasos: ${steps.join(' → ')}. Estado editorial: pendiente de tu revision.`,
+    '',
+    video ? `- Video: [${path.basename(video)}](${video.replace(/\\/g, '/')})` : '- Sin render (--no-render).',
+    `- Plan: \`${path.join(planDir, 'edit-plan.json')}\` (${plan.decisions.length} decisiones, ${plan.duration} s)`,
+    qa ? `- QA: ${qa.passed ? 'sin errores' : qa.errors.length + ' errores'}, ${qa.warnings.length} avisos. Hoja: ${qa.reviewSheet ?? '—'}` : '',
+    '',
+    '## Decisiones',
+    ...plan.decisions.filter((d) => d.type !== 'music').map((d) => `- ${d.at.toFixed(1)} s · ${d.type}${d.layout ? ' ' + d.layout : ''} — ${d.reason}`),
+    '',
+    '## Pendiente',
+    ...(plan.pendingAssets.length ? plan.pendingAssets.map((x) => `- ${x.name ?? x.resource ?? x.url}: ${x.reason}`) : ['- Nada.']),
+    ...(qa ? [...qa.errors, ...qa.warnings].map((x) => `- ${x.at != null ? x.at + ' s: ' : ''}${x.message}`) : []),
+    ...plan.warnings.map((w) => `- ${w}`),
+    '',
+    'Correcciones: `npm run youtube:feedback` sobre el paquete, o edita el plan y vuelve a lanzar.'
+  ];
+  await writeFile(path.join(planDir, 'REVIEW.md'), lines.join('\n') + '\n');
+  console.log(`\nRevision: ${path.resolve(planDir, 'REVIEW.md')}`);
+} catch (error) {
+  console.error(error.message);
+  process.exitCode = 1;
+}

@@ -8,6 +8,8 @@ import {buildIntentMessages, retrieveExamples, validateIntents, sentencesOf} fro
 import {chatJson} from '../src/lib/llm.js';
 import {loadDotEnv} from '../src/lib/utils.js';
 import {evaluatePlan, summarizeEvaluation} from '../src/modules/youtube-studio/evaluate.js';
+import {qaRender} from '../src/modules/youtube-studio/qa.js';
+import {toFcpxml, readFcpxml, diffTimelines} from '../src/modules/youtube-studio/fcpxml.js';
 import {resolveBrandKit} from '../src/modules/editorial-memory/kit.js';
 import {detectSilences} from '../src/modules/video-studio/silences.js';
 import {existsSync} from 'node:fs';
@@ -20,13 +22,16 @@ const CORPUS = path.resolve('data/editorial-memory/corpus');
 const USAGE = `Uso:
   youtube-autoplan capture --url URL... [--urls FILE] --output DIR
   youtube-autoplan plan --project DIR --output DIR [--profile JSON] [--exclude ID]... [--intents JSON | --llm] [--assets assets.json]
+  youtube-autoplan qa --video MP4 --plan edit-plan.json --output DIR
+  youtube-autoplan export --plan render-plan.json --output TIMELINE.fcpxml
+  youtube-autoplan corrections --plan render-plan.json --edited EDITADO.fcpxml --output JSON
   youtube-autoplan evaluate --plan edit-plan.json --edit corpus/edits/ID.json --output JSON`;
 const readJson = async (file) => JSON.parse(await readFile(file, 'utf8'));
 
 try {
   const {values: v, positionals: p} = parseArgs({allowPositionals: true, options: {
     project: {type: 'string'}, output: {type: 'string'}, profile: {type: 'string'}, exclude: {type: 'string', multiple: true},
-    intents: {type: 'string'}, llm: {type: 'boolean'}, assets: {type: 'string'}, url: {type: 'string', multiple: true}, urls: {type: 'string'}, plan: {type: 'string'}, edit: {type: 'string'}}});
+    intents: {type: 'string'}, llm: {type: 'boolean'}, assets: {type: 'string'}, url: {type: 'string', multiple: true}, urls: {type: 'string'}, plan: {type: 'string'}, edit: {type: 'string'}, video: {type: 'string'}, edited: {type: 'string'}}});
   if (p[0] === 'capture') {
     if (!v.output || !(v.url?.length || v.urls)) throw Error(USAGE);
     const urls = [...(v.url ?? []), ...(v.urls ? (await readFile(v.urls, 'utf8')).match(/https:\/\/[^\s)>"']+/g) ?? [] : [])];
@@ -101,6 +106,37 @@ try {
     const counts = {};
     for (const d of plan.decisions) counts[d.type] = (counts[d.type] ?? 0) + 1;
     console.log(JSON.stringify({output: path.resolve(v.output), duration: plan.duration, segments: plan.segments.length, decisions: counts, pendingAssets: plan.pendingAssets, warnings: plan.warnings}, null, 2));
+  } else if (p[0] === 'qa') {
+    if (!v.video || !v.plan || !v.output) throw Error(USAGE);
+    const plan = await readJson(v.plan);
+    const report = await qaRender({file: v.video, plan, expected: {width: 1920, height: 1080, duration: plan.duration}, outDir: v.output, sharp});
+    await writeFile(path.join(v.output, 'qa.json'), JSON.stringify(report, null, 2) + '\n');
+    console.log(JSON.stringify({passed: report.passed, errors: report.errors, warnings: report.warnings, loudness: report.metrics.loudness, reviewSheet: report.reviewSheet}, null, 2));
+    if (!report.passed) process.exitCode = 2;
+  } else if (p[0] === 'export' || p[0] === 'corrections') {
+    if (!v.plan || !v.output || (p[0] === 'corrections' && !v.edited)) throw Error(USAGE);
+    const plan = await readJson(v.plan);
+    const resolveFile = (file) => (path.isAbsolute(file) ? file : path.resolve('remotion-animations/public', file));
+    // Real media durations: editors reject assets that claim to be longer than the file.
+    const durations = {};
+    for (const layer of plan.layers) {
+      const file = resolveFile(layer.file);
+      if (layer.type !== 'image' && !(file in durations)) durations[file] = (await ffprobe(file)).duration;
+    }
+    const xml = toFcpxml(plan, {name: path.basename(path.dirname(path.resolve(v.plan))), resolveFile, durations});
+    if (p[0] === 'export') {
+      await writeFile(v.output, xml, {flag: 'wx'});
+      console.log(JSON.stringify({output: path.resolve(v.output), clips: readFcpxml(xml).length}, null, 2));
+    } else {
+      // The editor's corrected timeline against what was proposed: evidence, pending until promoted.
+      const changes = diffTimelines(readFcpxml(xml), readFcpxml(await readFile(v.edited, 'utf8')));
+      const record = {version: 1, kind: 'timeline-corrections', plan: path.resolve(v.plan), edited: path.resolve(v.edited), createdAt: new Date().toISOString(),
+        scope: 'this-example', approval: 'pending', changes};
+      await writeFile(v.output, JSON.stringify(record, null, 2) + '\n', {flag: 'wx'});
+      const counts = {};
+      for (const c of changes) counts[c.type] = (counts[c.type] ?? 0) + 1;
+      console.log(JSON.stringify({output: path.resolve(v.output), changes: counts}, null, 2));
+    }
   } else if (p[0] === 'evaluate') {
     if (!v.plan || !v.edit || !v.output) throw Error(USAGE);
     const result = evaluatePlan(await readJson(v.plan), await readJson(v.edit));

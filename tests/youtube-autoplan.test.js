@@ -29,11 +29,11 @@ test('takes follow their recording number and resources stay out of the timeline
 
 test('trims snap to audio onset and drop a false start the transcriber merged', () => {
   const w = [...words('Y claro cuando Elon', 1.6, 0.35), ...words('Musk dijo que lo iban a entrenar en grandes cantidades de datos de ingenieria de SpaceX y todos esperabamos mucho', 5.3)];
-  const silences = [{start: 0, end: 2.03}, {start: 3.06, end: 4.58}, {start: 12.2, end: 14}];
+  const silences = [{start: 0, end: 2.03}, {start: 3.06, end: 4.58}, {start: 13.3, end: 15}];
   const trim = trimTake(w, {headPad: 0.04, tailPad: 0.08, maxPause: 2, silences});
   assert.equal(trim.restartAt, 4.58);
   assert.equal(trim.pieces[0].in, 4.54);
-  assert.equal(trim.pieces.at(-1).out, 12.28);
+  assert.equal(trim.pieces.at(-1).out, 13.38, 'la voz acaba donde empieza el silencio siguiente');
   assert.deepEqual(trimTake(words('hola que tal', 1), {headPad: 0.04, tailPad: 0.08, maxPause: 2, silences: [{start: 0, end: 1.1}]}).pieces, [{in: 1.06, out: 2.18}]);
 });
 
@@ -90,4 +90,39 @@ test('silences parse ffmpeg output and measure the air around cuts', () => {
   assert.deepEqual(parseSilences(stderr, 12), [{start: 0, end: 1.5}, {start: 9.9, end: 12}]);
   const padding = cutPadding({takes: [{at: 0, duration: 10}, {at: 10, duration: 5}]}, [{start: 9.91, end: 10.04}]);
   assert.deepEqual(padding, {lead: [0.04], tail: [0.09]});
+});
+import {parseIntervals, cutsOnSpeech, judge, takeCuts} from '../src/modules/youtube-studio/qa.js';
+
+test('render QA flags black gaps and clipping as errors and speech cuts as warnings', () => {
+  const black = parseIntervals('[blackdetect] black_start:4.4 black_end:5.33 black_duration:0.93', 'black_start', 'black_end');
+  assert.deepEqual(black, [{start: 4.4, end: 5.33}]);
+  const frozen = parseIntervals('freeze_start: 10\nfreeze_duration: 4\nfreeze_end: 14', 'freeze_start', 'freeze_end');
+  assert.deepEqual(frozen, [{start: 10, end: 14}]);
+  const plan = {segments: [{take: 0, at: 0}, {take: 0, at: 3}, {take: 1, at: 8}, {take: 2, at: 12}]};
+  assert.deepEqual(takeCuts(plan), [8, 12]);
+  assert.deepEqual(cutsOnSpeech([8, 12], [{start: 7.9, end: 8.05}]), [12]);
+  const probe = {width: 1920, height: 1080, duration: 20, raw: {streams: [{codec_type: 'video', codec_name: 'h264'}]}};
+  const verdict = judge({probe, expected: {width: 1920, height: 1080, duration: 20}, black, frozen, loudness: {integrated: -18, truePeak: 0.2}, speechCuts: [12]});
+  assert.equal(verdict.passed, false);
+  assert.deepEqual(verdict.errors.map((e) => e.code), ['black', 'clipping']);
+  assert.deepEqual(verdict.warnings.map((e) => e.code), ['frozen', 'cut-on-speech']);
+});
+import {toFcpxml, readFcpxml, diffTimelines} from '../src/modules/youtube-studio/fcpxml.js';
+
+test('FCPXML round-trips the plan and turns an editor change into a correction', () => {
+  const layer = (id, type, from, duration, extra = {}) => ({id, type, file: `C:/m/${id}.mp4`, from, duration, sourceIn: 1, volume: 1, width: 1920, height: 1080,
+    transform: {x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, opacity: 1}, curves: {}, trackIndex: 0, name: id, ...extra});
+  const plan = {format: {width: 1920, height: 1080, fps: 30}, durationInFrames: 300, layers: [
+    layer('a', 'video', 0, 150), layer('b', 'video', 150, 150, {transform: {x: 0.2, y: 0, scaleX: 1.2, scaleY: 1.2, rotation: 0, opacity: 1}}),
+    layer('s', 'audio', 140, 15, {trackIndex: 20, volume: 0.5}), layer('i', 'image', 200, 60, {trackIndex: 2, sourceIn: 0})]};
+  const xml = toFcpxml(plan, {name: 'x & y'});
+  assert.match(xml, /<fcpxml version="1.9">/);
+  assert.match(xml, /name="x &amp; y"/);
+  const clips = readFcpxml(xml);
+  assert.deepEqual(clips.map((c) => [c.name, c.at, c.lane]), [['a', 0, 0], ['s', 4.667, -1], ['b', 5, 0], ['i', 6.667, 1]]);
+  assert.equal(clips.find((c) => c.name === 'b').scale, 1.2);
+  assert.deepEqual(diffTimelines(clips, clips), []);
+  const edited = readFcpxml(xml.replace(/(<asset-clip ref="a\d+" name="i"[^>]*offset=")(\d+)\/30s/, (m, head, frames) => `${head}${Number(frames) + 15}/30s`));
+  const changes = diffTimelines(clips, edited);
+  assert.deepEqual(changes.map((c) => [c.type, c.clip.name, c.deltas]), [['changed', 'i', {at: 0.5}]]);
 });

@@ -334,3 +334,30 @@ npm run youtube:autoplan -- plan ... --assets data/editorial-memory/autoplan/mi-
 - **Cola de pendientes**: un recurso sin momento claro o una URL que no se puede
   capturar van a `pending-assets.json`. Nunca se renderiza un hueco (ver
   `--substitute`).
+
+## QA sin referencia, comando único y salida editable
+
+```powershell
+npm run edit -- --source CARPETA --slug SLUG [--urls NOTAS.txt] [--intents JSON] [--no-render]
+npm run youtube:autoplan -- qa --video MP4 --plan edit-plan.json --output DIR
+npm run youtube:autoplan -- export --plan render-plan.json --output montaje.fcpxml
+npm run youtube:autoplan -- corrections --plan render-plan.json --edited corregido.fcpxml --output correcciones.json
+npm run mcp
+```
+
+- **QA** (`youtube-studio/qa.js`): **errores** si hay negros de 0,1 s o más,
+  saturación (true peak > 0 dBTP), resolución, códec o duración distintos. **Avisos**
+  si hay imagen congelada 3 s o más, picos por encima de −1 dBTP, volumen fuera de
+  −20..−12 LUFS (tus exportaciones están en −17/−18) y cortes con voz sonando.
+  `review-sheet.jpg` muestra un fotograma por decisión para revisarlo de un vistazo
+  (persona o modelo de visión). No sustituye escucharlo.
+- **`npm run edit`** encadena ingesta, capturas, plan, render y QA, y escribe
+  `REVIEW.md` con decisiones, pendientes y avisos.
+- **FCPXML 1.9** para DaVinci Resolve y Final Cut: narración en la línea principal,
+  recursos y audio en carriles conectados, zoom como keyframes. El GIF del sticker
+  no se repite en bucle en esos editores. `corrections` lee el FCPXML corregido
+  (sea cual sea su anidamiento), lo compara con el plan y guarda lo movido, recortado,
+  reescalado, quitado o añadido como corrección pendiente (`scope: this-example`).
+- **MCP** (`scripts/shortsmith-mcp.js`, sin dependencias): `edit_video`,
+  `plan_video`, `capture_assets`, `qa_render`, `style_profile` y `record_feedback`.
+  Registrado en `.mcp.json`.
