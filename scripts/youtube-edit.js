@@ -9,6 +9,7 @@ import {parseArgs} from 'node:util';
 import {existsSync} from 'node:fs';
 import {readFile, writeFile, mkdir} from 'node:fs/promises';
 import {run} from '../src/lib/utils.js';
+import {reviewMarkdown} from '../src/modules/youtube-studio/review.js';
 
 const USAGE = 'Uso: npm run edit -- --source DIR --slug SLUG [--urls NOTAS.txt] [--url URL]... [--intents JSON | --llm] [--no-render]';
 const node = (script, args, {allowFail = false} = {}) => run(process.execPath, [script, ...args], {
@@ -58,26 +59,7 @@ try {
   }
 
   const plan = JSON.parse(await readFile(path.join(planDir, 'edit-plan.json'), 'utf8'));
-  const lines = [
-    `# Primer montaje: ${v.slug}`,
-    '',
-    `Pasos: ${steps.join(' → ')}. Estado editorial: pendiente de tu revision.`,
-    '',
-    video ? `- Video: [${path.basename(video)}](${video.replace(/\\/g, '/')})` : '- Sin render (--no-render).',
-    `- Plan: \`${path.join(planDir, 'edit-plan.json')}\` (${plan.decisions.length} decisiones, ${plan.duration} s)`,
-    qa ? `- QA: ${qa.passed ? 'sin errores' : qa.errors.length + ' errores'}, ${qa.warnings.length} avisos. Hoja: ${qa.reviewSheet ?? '—'}` : '',
-    '',
-    '## Decisiones',
-    ...plan.decisions.filter((d) => d.type !== 'music').map((d) => `- ${d.at.toFixed(1)} s · ${d.type}${d.layout ? ' ' + d.layout : ''} — ${d.reason}`),
-    '',
-    '## Pendiente',
-    ...(plan.pendingAssets.length ? plan.pendingAssets.map((x) => `- ${x.name ?? x.resource ?? x.url}: ${x.reason}`) : ['- Nada.']),
-    ...(qa ? [...qa.errors, ...qa.warnings].map((x) => `- ${x.at != null ? x.at + ' s: ' : ''}${x.message}`) : []),
-    ...plan.warnings.map((w) => `- ${w}`),
-    '',
-    'Correcciones: `npm run youtube:feedback` sobre el paquete, o edita el plan y vuelve a lanzar.'
-  ];
-  await writeFile(path.join(planDir, 'REVIEW.md'), lines.join('\n') + '\n');
+  await writeFile(path.join(planDir, 'REVIEW.md'), reviewMarkdown({slug: v.slug, steps, planFile: path.join(planDir, 'edit-plan.json'), plan, video, qa}));
   console.log(`\nRevision: ${path.resolve(planDir, 'REVIEW.md')}`);
 } catch (error) {
   console.error(error.message);

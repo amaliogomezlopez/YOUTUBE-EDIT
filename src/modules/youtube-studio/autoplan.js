@@ -8,7 +8,7 @@
  */
 
 import {CAPCUT_STICKER_BASE} from './render-plan.js';
-import {placeResources} from '../video-studio/asset-sourcing.js';
+import {placeResources, resourceTokens} from '../video-studio/asset-sourcing.js';
 import layouts from './layouts.json' with {type: 'json'};
 
 const round = (v, d = 3) => Math.round(v * 10 ** d) / 10 ** d;
@@ -309,6 +309,7 @@ export function compileEditPlan(plan, {clips, kit = {}, assets = []}) {
     }
     layers.push({id: `seg-${i + 1}`, type: 'video', file: clip.file, from: frame(seg.at), duration: frame(seg.at + length) - frame(seg.at),
       sourceIn: seg.in, volume: 1, width: clip.width, height: clip.height,
+      ...(seg.layout && layouts[seg.layout].narrator?.mask ? {mask: layouts[seg.layout].narrator.mask} : {}),
       transform: seg.layout && layouts[seg.layout].narrator ? plain(layouts[seg.layout].narrator.x, layouts[seg.layout].narrator.y, layouts[seg.layout].narrator.scale)
         : {...anchor(clip, seg.zoom), scaleX: seg.zoom, scaleY: seg.zoom, rotation: 0, opacity: 1}, curves, z: 0, trackIndex: 0, name: seg.sourceName});
   }
@@ -320,6 +321,11 @@ export function compileEditPlan(plan, {clips, kit = {}, assets = []}) {
         sourceIn: 0, volume: 0, width: kit.background.width, height: kit.background.height, transform: plain(0, 0, 1), curves: {}, z: 0, trackIndex: -1, name: 'background'});
       d.resources.forEach((id, i) => {
         const item = byId.get(id), place = layout.resources[i] ?? layout.resources[0];
+        const label = layout.labels?.at[i];
+        // Spoken form of the name (grok46 -> "Grok 4.6"), as the editor labels each side of a comparison.
+        if (label && !item.text) layers.push({id: `label-${id}-${d.at}`, type: 'text', file: '', from: frame(d.at), duration: frame(d.until) - frame(d.at), sourceIn: 0, volume: 0, width: 1, height: 1,
+          text: {value: resourceTokens(item.sourceName ?? item.name ?? id).map((w) => w[0].toUpperCase() + w.slice(1)).join(' '), ...layout.labels.style},
+          transform: plain(label.x, label.y, label.scale), curves: {}, z: 0, trackIndex: 6, name: 'label'});
         const span = d.until - d.at, length = item.kind === 'image' ? span : item.durationSeconds;
         // A resource shorter than the passage restarts, as the editor did with grok46/47.
         for (let at = d.at, n = 0; at < d.until - 1 / FPS; at += length, n++) {

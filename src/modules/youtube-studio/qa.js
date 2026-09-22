@@ -19,9 +19,12 @@ export function parseIntervals(stderr, startKey, endKey) {
   return out;
 }
 
-/** Cuts between takes, on the edit clock. */
-export function takeCuts(plan) {
-  return plan.segments.filter((s, i) => i > 0 && s.take !== plan.segments[i - 1].take).map((s) => s.at);
+/** Cuts between takes, on the edit clock. A cut under a planned sound effect cannot be judged by level. */
+export function takeCuts(plan, {skipMasked = false} = {}) {
+  const cuts = plan.segments.filter((s, i) => i > 0 && s.take !== plan.segments[i - 1].take).map((s) => s.at);
+  if (!skipMasked) return cuts;
+  const masks = plan.decisions.filter((d) => d.type === 'sfx' || (d.type === 'insert' && d.sound)).map((d) => d.at - (d.type === 'insert' ? d.lead ?? 0 : 0));
+  return cuts.filter((t) => !masks.some((m) => t >= m - 0.1 && t <= m + 1));
 }
 
 /** A cut is clean when the mix is quiet right at it; otherwise a syllable was probably clipped. */
@@ -57,7 +60,7 @@ export async function qaRender({file, plan, expected, outDir, sharp, loudnessRan
   const json = /\{\s*"input_i"[\s\S]*?\}/.exec(audio);
   const measured = json ? JSON.parse(json[0]) : null;
   const loudness = measured ? {integrated: Number(measured.input_i), truePeak: Number(measured.input_tp), range: Number(measured.input_lra)} : null;
-  const speechCuts = cutsOnSpeech(takeCuts(plan), parseSilences(audio, probe.duration));
+  const speechCuts = cutsOnSpeech(takeCuts(plan, {skipMasked: true}), parseSilences(audio, probe.duration));
   const verdict = judge({probe, expected, black, frozen, loudness, speechCuts, loudnessRange});
   const sheet = outDir && sharp ? await reviewSheet({file, plan, outDir, sharp}) : null;
   return {version: 1, kind: 'render-qa', file: path.resolve(file), ...verdict, metrics: {duration: round(probe.duration, 3), black, frozen, loudness, cuts: takeCuts(plan).length},
