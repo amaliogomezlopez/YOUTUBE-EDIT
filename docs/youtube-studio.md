@@ -310,3 +310,27 @@ Compara en el reloj de cada toma (nombre + segundo de fuente): recortes, punch-i
 zooms, sonidos y marca. Un vídeo nunca aporta su propio perfil, kit ni ejemplos.
 Medir es necesario pero no suficiente: el criterio final son los minutos de corrección
 del autor sobre clips nuevos.
+
+## Recursos automáticos
+
+- **Clips no numerados** de la carpeta de tomas (`grok46.mkv`…) se colocan solos
+  (`video-studio/asset-sourcing.js`): el nombre se lee como se dice (`grok46` →
+  "grok 4.6") y el recurso entra en la frase que lo nombra y anuncia algo visible.
+  Un anuncio fuerte ("os voy a mostrar") gana a un "aquí". Dos recursos nombrados
+  juntos van en composición `compare`; uno, en `side`; una imagen, en `full`.
+  Las geometrías están en `youtube-studio/layouts.json`, medidas de ediciones reales.
+- **Posts de X y páginas web**:
+
+```powershell
+npm run youtube:autoplan -- capture --url https://x.com/USUARIO/status/ID --urls notas.txt --output data/editorial-memory/autoplan/mi-video/assets
+npm run youtube:autoplan -- plan ... --assets data/editorial-memory/autoplan/mi-video/assets/assets.json
+```
+
+  Los posts salen del **oEmbed oficial** de X (sin login ni scraping) y se dibujan como
+  tarjeta oscura con autor, texto y fecha. oEmbed no trae avatar ni imágenes, así que
+  no se inventan. Las webs se capturan con el Chrome sin interfaz de Remotion. Cada
+  archivo lleva `.provenance.json` con URL, hash, fecha y nota de licencia. Un post o
+  una web se coloca donde se citan varias de sus palabras.
+- **Cola de pendientes**: un recurso sin momento claro o una URL que no se puede
+  capturar van a `pending-assets.json`. Nunca se renderiza un hueco (ver
+  `--substitute`).

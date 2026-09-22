@@ -40,6 +40,13 @@ export async function resolveBrandKit(edits, {probe, readFile, exists = existsSy
     kit.outro = {file, duration, width, height, uses: uses.length};
     break;
   }
+  // Backdrop behind composed layouts: a still the editor put on the main track.
+  for (const [file] of count(edits.flatMap((e) => e.takes.filter((t) => t.photo)), (t) => t.file)) {
+    if (!exists(file)) continue;
+    const {width, height} = await probe(file);
+    kit.background = {file, width, height};
+    break;
+  }
   const opening = edits.flatMap((e) => e.stickers.filter((s) => s.at < 5));
   for (const [dir, uses] of count(opening, (s) => s.file)) {
     const file = await resolveStickerGif(dir, {readFile});

@@ -8,6 +8,8 @@
  */
 
 import {CAPCUT_STICKER_BASE} from './render-plan.js';
+import {placeResources} from '../video-studio/asset-sourcing.js';
+import layouts from './layouts.json' with {type: 'json'};
 
 const round = (v, d = 3) => Math.round(v * 10 ** d) / 10 ** d;
 const FPS = 30;
@@ -78,7 +80,7 @@ function sentenceStarts(words) {
 const top = (counts) => Object.entries(counts ?? {}).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
 const median = (q, fallback) => (Number.isFinite(q?.median) ? q.median : fallback);
 
-export function planEdit({clips, profile, kit = {}, intents = {}}) {
+export function planEdit({clips, profile, kit = {}, intents = {}, assets = []}) {
   const {takes} = orderTakes(clips);
   if (!takes.length) throw Error('No hay tomas numeradas (1.mkv, 2.mkv...)');
   const p = profile;
@@ -112,6 +114,27 @@ export function planEdit({clips, profile, kit = {}, intents = {}}) {
   }
   const bodyEnd = clock;
 
+  // 1b. Resources (non-numbered clips, captured posts/pages) where the talk announces them.
+  const {resources} = orderTakes(clips);
+  const sources = [...resources.map((r) => ({...r, kind: 'video'})), ...assets];
+  const pendingAssets = [];
+  if (sources.length) {
+    const {placements, pending} = placeResources(sources, timelineSentences(segments, takes));
+    pendingAssets.push(...pending);
+    const insertSeconds = median(p.inserts?.seconds, 5);
+    const insertSound = top(p.sound.familyByEvent?.['image-in']) ?? 'whoosh';
+    const insertLead = median(p.sound.leadSecondsByEvent?.['image-in'], 0.15);
+    for (const place of placements) {
+      const items = place.resources.map((id) => sources.find((s) => s.id === id));
+      const takeEnd = segments.filter((s) => s.take === place.take).reduce((end, s) => Math.max(end, s.at + s.out - s.in), place.at);
+      const until = items.every((i) => i.kind === 'image') ? Math.min(takeEnd, place.at + insertSeconds) : takeEnd;
+      if (until - place.at < 1) {pendingAssets.push({resource: place.resources.join('+'), reason: 'La frase que lo anuncia cierra la toma'}); continue;}
+      decisions.push({type: 'insert', at: round(place.at), until: round(until), layout: place.layout, resources: place.resources, names: items.map((i) => i.sourceName ?? i.name), sound: insertSound, lead: insertLead,
+        reason: `Anunciado en: "${place.text.slice(0, 90)}"`});
+      if (place.layout !== 'full') markLayout(segments, place.at, until, place.layout);
+    }
+  }
+
   // 2. Sounds on take changes: a measured share, on topic shifts when known.
   const changes = segments.filter((s, i) => i > 0 && s.take !== segments[i - 1].take);
   const soundFamily = top(p.cuts.soundFamily) ?? 'whoosh';
@@ -130,7 +153,7 @@ export function planEdit({clips, profile, kit = {}, intents = {}}) {
   const peak = median(p.camera.peakZoom, 1.12);
   const easing = (p.camera.curveShare.share ?? 0) >= 0.5 ? 'curve' : 'linear';
   const candidates = [];
-  for (const seg of segments.filter((s) => s.zoom === 1)) {
+  for (const seg of segments.filter((s) => s.zoom === 1 && !s.layout)) {
     const clip = takes.find((c) => c.id === seg.clipId);
     for (const i of sentenceStarts(clip.words ?? [])) {
       const w = clip.words[i];
@@ -185,7 +208,36 @@ export function planEdit({clips, profile, kit = {}, intents = {}}) {
 
   if (!kit.music) warnings.push('Sin musica en el kit');
   return {version: 1, kind: 'youtube-edit-plan', profile: {projects: p.projects, excluded: p.excluded ?? [], recent: p.recent ?? null},
-    duration: round(total), segments, decisions: decisions.sort((a, b) => a.at - b.at), warnings, review: {editorial: 'pending'}};
+    duration: round(total), segments, decisions: decisions.sort((a, b) => a.at - b.at), pendingAssets, warnings, review: {editorial: 'pending'}};
+}
+
+/** Sentences of every segment on the edit clock, tagged with their take. */
+export function timelineSentences(segments, takes) {
+  const out = [];
+  for (const seg of segments) {
+    const clip = takes.find((c) => c.id === seg.clipId);
+    const words = (clip?.words ?? []).filter((w) => w.start >= seg.in && w.start < seg.out)
+      .map((w) => ({...w, start: round(seg.at + w.start - seg.in), end: round(seg.at + w.end - seg.in)}));
+    let start = 0;
+    for (let i = 1; i <= words.length; i++) {
+      const end = i === words.length || /[.!?]$/.test(String(words[i - 1].text ?? '').trim()) || words[i].start - words[i - 1].end > SENTENCE_PAUSE;
+      if (!end) continue;
+      out.push({at: words[start].start, take: seg.take, words: words.slice(start, i), text: words.slice(start, i).map((w) => String(w.text ?? '').trim()).join(' ')});
+      start = i;
+    }
+  }
+  return out;
+}
+
+/** Split segments at [from, until) and give that span a layout, keeping the edit clock intact. */
+function markLayout(segments, from, until, layout) {
+  for (const t of [from, until]) {
+    const i = segments.findIndex((s) => t > s.at + 1e-6 && t < s.at + s.out - s.in - 1e-6);
+    if (i < 0) continue;
+    const s = segments[i], cut = s.in + (t - s.at);
+    segments.splice(i, 1, {...s, out: round(cut)}, {...s, in: round(cut), at: round(t)});
+  }
+  for (const s of segments) if (s.at >= from - 1e-6 && s.at < until - 1e-6) s.layout = layout;
 }
 
 function takeLength(segments, take) {
@@ -233,16 +285,17 @@ export function anchor(clip, zoom) {
 }
 
 /** Translate the edit plan into the renderer's layer plan. */
-export function compileEditPlan(plan, {clips, kit = {}}) {
+export function compileEditPlan(plan, {clips, kit = {}, assets = []}) {
   const frame = (s) => Math.round(s * FPS);
-  const byId = new Map(clips.map((c) => [c.id, c]));
+  const byId = new Map([...clips, ...assets].map((c) => [c.id, c]));
+  const plain = (x, y, scale) => ({x, y, scaleX: scale, scaleY: scale, rotation: 0, opacity: 1});
   const pushes = plan.decisions.filter((d) => d.type === 'push').sort((a, b) => a.at - b.at);
   const layers = [];
   for (const [i, seg] of plan.segments.entries()) {
     const clip = byId.get(seg.clipId);
     const length = seg.out - seg.in;
     const curves = {};
-    if (seg.zoom === 1) {
+    if (seg.zoom === 1 && !seg.layout) {
       const times = [0, length, ...pushes.flatMap((m) => [m.at - seg.at, m.at + m.seconds - seg.at]).filter((t) => t > 0 && t < length)].sort((a, b) => a - b);
       const keys = [...new Set(times.map((t) => round(t)))].map((t) => ({time: t, value: round(zoomAt(pushes, seg.at + t), 4), easing: pushes.some((m) => m.easing === 'curve' && seg.at + t > m.at && seg.at + t <= m.at + m.seconds + 1e-6) ? 'smooth' : 'linear'}));
       if (keys.some((k) => k.value !== 1)) {
@@ -254,15 +307,31 @@ export function compileEditPlan(plan, {clips, kit = {}}) {
     }
     layers.push({id: `seg-${i + 1}`, type: 'video', file: clip.file, from: frame(seg.at), duration: frame(seg.at + length) - frame(seg.at),
       sourceIn: seg.in, volume: 1, width: clip.width, height: clip.height,
-      transform: {...anchor(clip, seg.zoom), scaleX: seg.zoom, scaleY: seg.zoom, rotation: 0, opacity: 1}, curves, z: 0, trackIndex: 0, name: seg.sourceName});
+      transform: seg.layout && layouts[seg.layout].narrator ? plain(layouts[seg.layout].narrator.x, layouts[seg.layout].narrator.y, layouts[seg.layout].narrator.scale)
+        : {...anchor(clip, seg.zoom), scaleX: seg.zoom, scaleY: seg.zoom, rotation: 0, opacity: 1}, curves, z: 0, trackIndex: 0, name: seg.sourceName});
   }
   const sfxCount = {};
   for (const d of plan.decisions) {
-    if (d.type === 'sfx' || (d.type === 'punch-in' && d.sound)) {
+    if (d.type === 'insert') {
+      const layout = layouts[d.layout];
+      if (layout.background && kit.background) layers.push({id: `bg-${d.at}`, type: 'image', file: kit.background.file, from: frame(d.at), duration: frame(d.until) - frame(d.at),
+        sourceIn: 0, volume: 0, width: kit.background.width, height: kit.background.height, transform: plain(0, 0, 1), curves: {}, z: 0, trackIndex: -1, name: 'background'});
+      d.resources.forEach((id, i) => {
+        const item = byId.get(id), place = layout.resources[i] ?? layout.resources[0];
+        const span = d.until - d.at, length = item.kind === 'image' ? span : item.durationSeconds;
+        // A resource shorter than the passage restarts, as the editor did with grok46/47.
+        for (let at = d.at, n = 0; at < d.until - 1 / FPS; at += length, n++) {
+          layers.push({id: `ins-${id}-${n}-${d.at}`, type: item.kind === 'image' ? 'image' : 'video', file: item.file, from: frame(at), duration: frame(Math.min(d.until, at + length)) - frame(at),
+            sourceIn: 0, volume: 0, width: item.width, height: item.height, transform: plain(place.x, place.y, place.scale), curves: {}, z: 0, trackIndex: 2 + i, name: item.sourceName ?? item.name ?? id});
+        }
+      });
+    }
+    if (d.type === 'sfx' || (d.type === 'punch-in' && d.sound) || (d.type === 'insert' && d.sound)) {
       const family = d.family ?? d.sound, options = kit.sounds?.[family] ?? [];
       if (!options.length) throw Error(`El kit no tiene sonidos de la familia ${family}`);
       const sound = options[(sfxCount[family] = (sfxCount[family] ?? -1) + 1) % options.length];
-      layers.push({id: `sfx-${layers.length}`, type: 'audio', file: sound.file, from: frame(Math.max(0, d.at)), duration: Math.max(1, frame(sound.duration)),
+      const start = d.type === 'insert' ? d.at - (d.lead ?? 0) : d.at;
+      layers.push({id: `sfx-${layers.length}`, type: 'audio', file: sound.file, from: frame(Math.max(0, start)), duration: Math.max(1, frame(sound.duration)),
         sourceIn: 0, volume: sound.volume ?? 1, width: 1, height: 1, transform: {x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, opacity: 1}, curves: {}, z: 0, trackIndex: 20, name: family});
     }
     if (d.type === 'outro') layers.push({id: 'outro', type: 'video', file: kit.outro.file, from: frame(d.at), duration: frame(d.at + d.seconds) - frame(d.at),

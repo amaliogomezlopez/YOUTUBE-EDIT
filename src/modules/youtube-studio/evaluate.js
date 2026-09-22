@@ -5,7 +5,7 @@
  */
 
 const round = (v, d = 3) => (Number.isFinite(v) ? Math.round(v * 10 ** d) / 10 ** d : null);
-const TOLERANCE = {punch: 0.6, move: 3, sound: 0.6};
+const TOLERANCE = {punch: 0.6, move: 3, sound: 0.6, insert: 3};
 
 function locate(pieces, t) {
   const piece = pieces.find((p) => t >= p.at - 1e-6 && t < p.at + (p.out - p.in) - 1e-6);
@@ -50,6 +50,11 @@ export function evaluatePlan(plan, edit) {
   const moveActual = onClock(actualPieces, edit.cameraMoves.filter((m) => m.track === 0 && m.to > m.from).map((m) => m.at));
   const soundPlan = onClock(planPieces, plan.decisions.filter((d) => d.type === 'sfx' || (d.type === 'punch-in' && d.sound)).map((d) => d.at + (d.lead ?? 0)));
   const soundActual = onClock(actualPieces, edit.sounds.filter((s) => s.event !== 'start').map((s) => s.at + (s.lead ?? 0)));
+  // Inserts compare on the edit clock by resource name: during a composition the main track may be a backdrop.
+  const plannedInserts = plan.decisions.filter((d) => d.type === 'insert').flatMap((d) => (d.names ?? []).map((name) => ({name, source: d.at})));
+  const firstUse = new Map();
+  for (const i of edit.inserts ?? []) if (!firstUse.has(i.name) || i.at < firstUse.get(i.name)) firstUse.set(i.name, i.at);
+  const actualInserts = [...firstUse].map(([name, at]) => ({name, source: at}));
   const has = (type) => plan.decisions.some((d) => d.type === type);
   return {
     version: 1,
@@ -61,6 +66,7 @@ export function evaluatePlan(plan, edit) {
     punchIns: match(punchPlan, punchActual, TOLERANCE.punch),
     moves: match(movePlan, moveActual, TOLERANCE.move),
     sounds: match(soundPlan, soundActual, TOLERANCE.sound),
+    inserts: match(plannedInserts, actualInserts, TOLERANCE.insert),
     brand: {
       music: {plan: has('music'), edit: edit.music.length > 0, planVolume: plan.decisions.find((d) => d.type === 'music')?.volume ?? null,
         editVolume: edit.music[0]?.volume ?? null},
@@ -79,6 +85,7 @@ export function summarizeEvaluation(e) {
     `Punch-ins: ${pr(e.punchIns)}.`,
     `Zooms: ${pr(e.moves)}.`,
     `Sonidos: ${pr(e.sounds)}.`,
+    `Recursos: ${pr(e.inserts)}.`,
     `Musica ${e.brand.music.plan ? 'si' : 'no'} (real ${e.brand.music.edit ? 'si' : 'no'}), sticker ${e.brand.sticker.plan ? 'si' : 'no'} (real ${e.brand.sticker.edit ? 'si' : 'no'}), cierre ${e.brand.outro.plan ? 'si' : 'no'} (real ${e.brand.outro.edit ? 'si' : 'no'}).`
   ].join('\n');
 }
