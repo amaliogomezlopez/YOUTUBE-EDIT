@@ -15,7 +15,7 @@ export function audioFilter(layers,{fps,durationInFrames,soundMix=1}) {
 export async function mixTimelineAudio(props,resolveMedia,output) {
  const layers=[];
  for(const l of props.layers){
-  if(l.type==='image'||l.type==='text'||(l.type==='audio'&&!props.soundEnabled)||l.volume===0)continue;
+  if(l.type==='image'||l.type==='gif'||l.type==='text'||(l.type==='audio'&&!props.soundEnabled)||l.volume===0)continue;
   const file=await resolveMedia(l.src),probe=await ffprobe(file);
   if(probe.raw.streams.some(s=>s.codec_type==='audio'))layers.push({...l,file});
  }

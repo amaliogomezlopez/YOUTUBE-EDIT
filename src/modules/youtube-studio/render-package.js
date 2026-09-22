@@ -22,8 +22,8 @@ export async function packageRender(plan,{publicRoot,packageName,allowIncomplete
   const assets=[],seen=new Map(),warnings=[...plan.warnings];
   for(const layer of plan.layers){
     if(layer.type==='text'){const {file,...data}=layer;props.layers.push({...data,src:''});continue;}
-    const source=path.isAbsolute(layer.file)?await realpath(layer.file).catch(e=>{if(e.code==='ENOENT'&&allowIncomplete){warnings.push({segmentId:layer.id,message:'Recurso ausente: '+layer.name});return null;}throw e;}):await resolveInside(publicRoot,layer.file);
-    if(!source)continue;
+    // A missing visual would leave a gap over the background; not even calibration may skip it.
+    const source=path.isAbsolute(layer.file)?await realpath(layer.file).catch(e=>{if(e.code==='ENOENT')throw Error(`Recurso ausente (${layer.name??layer.id}): ${layer.file}. Recuperarlo o declarar --substitute ORIGINAL=REEMPLAZO`);throw e;}):await resolveInside(publicRoot,layer.file);
     let asset=seen.get(source);
     if(!asset){
       const sourceHash=await hashMedia(source);

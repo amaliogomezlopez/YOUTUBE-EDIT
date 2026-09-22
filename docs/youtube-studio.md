@@ -228,10 +228,22 @@ Para calibrar una referencia externa:
 npm run youtube:render -- prepare --project referencia --reference data/editorial-memory/ejemplo/capcut-edit-recipe.json --timeline ID --from 0 --to 27 --keyframe-clock source
 ```
 
+Los stickers GIF de CapCut (`InfoSticker` con `config.json`) se resuelven solos desde
+su caché y se renderizan como capa `gif` en bucle a su velocidad nativa. La escala base
+(`CAPCUT_STICKER_BASE`) está calibrada con una sola referencia y deja aviso.
+
+Un recurso ausente **siempre** detiene el empaquetado, también con `--allow-incomplete`:
+dejaría un hueco con el fondo. Si el original no se puede recuperar, declarar el
+sustituto; queda en `provenance.substitutions` del plan y del paquete:
+
+```powershell
+npm run youtube:render -- prepare ... --substitute "C:/ruta/original.png=data/editorial-memory/ejemplo/recuperado.png"
+```
+
 La selección de timeline y el reloj de keyframes son explícitos. No se aplana el
 padre compuesto. La geometría importada usa centro normalizado, Y hacia arriba,
 escala sobre contain y prioridad de pista. Curvas desconocidas, inverso y velocidad
-variable se rechazan. Sticker, transición y recorte no soportados generan avisos.
+variable se rechazan. Transición y recorte no soportados generan avisos.
 Textos usan fuente/sombra aproximadas; la máscara rectangular conserva región con
 acabado de borde aproximado. `--allow-incomplete` permite únicamente preparar una
 calibración con esos avisos, que permanecen en el paquete y su QA.

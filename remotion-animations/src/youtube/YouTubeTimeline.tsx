@@ -1,5 +1,6 @@
 import {Video, Audio} from '@remotion/media';
 import {AbsoluteFill, Img, Sequence, staticFile, useCurrentFrame, useVideoConfig, CalculateMetadataFunction} from 'remotion';
+import {Gif} from '@remotion/gif';
 import {z} from 'zod';
 // @ts-expect-error Shared pure evaluator with the Node planner.
 import {sampleCurve} from '../../../src/modules/video-studio/timeline-curves.js';
@@ -10,7 +11,7 @@ const scalar=z.number().finite();
 const key=z.object({time:scalar,value:scalar,easing:z.enum(['linear','smooth','bezier']),inControl:z.object({time:scalar,value:scalar}).optional(),outControl:z.object({time:scalar,value:scalar}).optional()});
 const transform=z.object({x:scalar,y:scalar,scaleX:scalar.positive(),scaleY:scalar.positive(),rotation:scalar,opacity:scalar.min(0).max(1)});
 const cameraKey=z.object({time:scalar,zoom:scalar.min(1),x:scalar,y:scalar});
-const layerSchema=z.object({id:z.string(),type:z.enum(['video','image','audio','text']),src:z.string().refine(s=>s===''||(s.startsWith('projects/youtube/')&&!s.includes('..'))),
+const layerSchema=z.object({id:z.string(),type:z.enum(['video','image','gif','audio','text']),src:z.string().refine(s=>s===''||(s.startsWith('projects/youtube/')&&!s.includes('..'))),
   from:z.number().int().nonnegative(),duration:z.number().int().positive(),sourceIn:scalar.nonnegative(),volume:scalar.nonnegative(),
   width:scalar.positive(),height:scalar.positive(),transform,curves:z.object({x:z.array(key).optional(),y:z.array(key).optional(),scaleX:z.array(key).optional(),scaleY:z.array(key).optional(),rotation:z.array(key).optional(),opacity:z.array(key).optional()}),
   mask:z.object({left:scalar,right:scalar,top:scalar,bottom:scalar,round:scalar,feather:scalar}).optional(),text:z.object({value:z.string(),fontSize:scalar.positive(),color:z.string()}).optional(),
@@ -37,6 +38,7 @@ const MediaLayer:React.FC<{layer:Layer;soundEnabled:boolean;soundMix:number}>=({
    const scale=width/crop.w;
    style={position:'absolute',width:l.width*scale,height:l.height*scale,left:-crop.x*scale,top:-crop.y*scale};
  }
+ if(l.type==='gif')return <div style={style}><Gif src={staticFile(l.src)} width={Number(style.width)} height={Number(style.height)} fit='fill' loopBehavior='loop'/></div>;
  return l.type==='image'?<Img src={staticFile(l.src)} style={style}/>:<Video src={staticFile(l.src)} trimBefore={trimBefore} volume={()=>l.volume} style={style}/>;
 };
 export const YouTubeTimeline:React.FC<Props>=(props)=><AbsoluteFill style={{background:'#000',overflow:'hidden'}}>{props.layers.map(l=><Sequence key={l.id} from={l.from} durationInFrames={l.duration} name={l.id}><MediaLayer layer={l} soundEnabled={props.soundEnabled} soundMix={props.soundMix}/></Sequence>)}</AbsoluteFill>;

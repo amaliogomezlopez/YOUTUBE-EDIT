@@ -17,8 +17,12 @@ export function fromSnapshot(snapshot) {
   return {version:1,kind:'youtube-render-plan',format:build.format,durationInFrames:build.durationInFrames,layers,warnings,provenance:{snapshotId:snapshot.id},review:{visual:'pending',audio:'pending',editorial:'pending'}};
 }
 
-/** Explicit calibration adapter for one selected timeline, never silently flattens compounds. */
-export function fromCapcut(reference,{timelineId,from=0,to,keyframeClock}) {
+// Measured on GROK/0921: a 280 px GIF at scale 0.4526 spans 335.6 px, not the 489 px of contain.
+export const CAPCUT_STICKER_BASE=0.6866;
+
+/** Explicit calibration adapter for one selected timeline, never silently flattens compounds.
+ * stickers: material id -> {file,width,height} of the local GIF; substitutions: original path -> declared replacement. */
+export function fromCapcut(reference,{timelineId,from=0,to,keyframeClock,stickers={},substitutions={}}) {
   if(reference?.kind!=='capcut-editorial-reference'||reference.timeUnit!=='microseconds')throw Error('Referencia CapCut requerida');
   if(keyframeClock!=='source')throw Error('Declarar keyframeClock source tras revisar el draft');
   const t=reference.timelines.find(x=>x.id===timelineId);
@@ -31,7 +35,8 @@ export function fromCapcut(reference,{timelineId,from=0,to,keyframeClock}) {
     if(a>=b||s.visible===false)continue;
     const warn=message=>warnings.push({segmentId:s.id,from:a-from,to:b-from,message});
     const m=materials.get(s.material_id);
-    if(!m||(track.type!=='text'&&!m.path)||!['video','audio','text'].includes(track.type)){warn(`No soportado: pista ${track.type} / material ${m?.type??'desconocido'}`);continue;}
+    const sticker=track.type==='sticker'?stickers[m?.id]:undefined;
+    if(!m||(track.type!=='text'&&!m.path)||!['video','audio','text'].includes(track.type)&&!sticker){warn(`No soportado: pista ${track.type} / material ${m?.type??'desconocido'}`);continue;}
     if(s.speed!==1||s.reverse||s.is_loop)throw Error('Velocidad, inverso o loop no soportado: '+s.id);
     const sourceIn=(s.source_timerange?.start??0)/1e6+(a-start);
     const clip=s.clip??{},transform={x:clip.transform?.x??0,y:clip.transform?.y??0,scaleX:clip.scale?.x??1,scaleY:clip.scale?.y??1,rotation:clip.rotation??0,opacity:clip.alpha??1};
@@ -50,6 +55,11 @@ export function fromCapcut(reference,{timelineId,from=0,to,keyframeClock}) {
       curves[property]=keys.map(k=>({time:k.time_offset/1e6-sourceIn,value:k.values[0],easing:k.curveType==='Line'?'linear':'bezier',inControl:{time:(k.left_control?.x??0)/1e6,value:k.left_control?.y??0},outControl:{time:(k.right_control?.x??0)/1e6,value:k.right_control?.y??0}}));
     }
     if(s.uniform_scale?.on&&curves.scaleX&&!curves.scaleY)curves.scaleY=structuredClone(curves.scaleX);
+    if(sticker){
+      for(const k of ['scaleX','scaleY']){transform[k]*=CAPCUT_STICKER_BASE;for(const key of curves[k]??[])key.value*=CAPCUT_STICKER_BASE;}
+      warn('Sticker: escala calibrada con una sola referencia; revisar tamano contra el MP4');
+    }
+    const file=sticker?.file??substitutions[m.path]??m.path??'';
     if(clip.flip?.horizontal||clip.flip?.vertical)throw Error('Flip no soportado');
     for(const id of s.extra_material_refs??[]){const extra=materials.get(id);if(['transitions','common_mask'].includes(extra?.kind)||extra?.animations?.length)warn(extra.kind==='common_mask'?'Mascara rectangular: geometria recuperada, borde y feather aproximados':`Efecto nativo pendiente: ${extra.name??extra.kind}`);}
         let mask;
@@ -66,13 +76,14 @@ export function fromCapcut(reference,{timelineId,from=0,to,keyframeClock}) {
     }
     const crop=m.crop;
     if(crop&&['upper_left_x','upper_left_y','upper_right_y','lower_left_x'].some(k=>crop[k]!==undefined&&crop[k]!==0))warn('Recorte de material pendiente de conversion');
-    layers.push({id:s.id,type:track.type==='text'?'text':track.type==='audio'?'audio':m.type==='photo'?'image':'video',file:m.path??'',mask,text,
+    layers.push({id:s.id,type:sticker?'gif':track.type==='text'?'text':track.type==='audio'?'audio':m.type==='photo'?'image':'video',file,mask,text,
+      ...(file!==(m.path??'')&&!sticker?{substitutedFrom:m.path}:{}),
       from:frame(a-from),duration:frame(b-from)-frame(a-from),sourceIn,volume:s.volume??1,
-      width:m.width||1920,height:m.height||1080,transform,curves,
+      width:sticker?.width??(m.width||1920),height:sticker?.height??(m.height||1080),transform,curves,
       z:s.render_index??0,trackIndex:s.track_render_index??0,name:m.material_name||m.name||m.id});
   }
   layers.sort((a,b)=>a.trackIndex-b.trackIndex||a.z-b.z);
   if(!layers.some(l=>l.type==='video'))throw Error('No hay video en el intervalo');
   return {version:1,kind:'youtube-render-plan',format:{width:1920,height:1080,fps},durationInFrames:frame(to-from),layers,warnings,
-    provenance:{sourceSha256:reference.sourceSha256,timelineId,from,to,keyframeClock,geometry:'CapCut center normalized; y up; scale relative to contain'},review:{visual:'pending',audio:'pending',editorial:'pending'}};
+    provenance:{sourceSha256:reference.sourceSha256,timelineId,from,to,keyframeClock,substitutions:layers.filter(l=>l.substitutedFrom).map(l=>({layerId:l.id,from:l.substitutedFrom,to:l.file})),geometry:'CapCut center normalized; y up; scale relative to contain'},review:{visual:'pending',audio:'pending',editorial:'pending'}};
 }

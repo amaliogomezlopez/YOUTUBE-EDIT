@@ -63,4 +63,28 @@ test('word-anchored snapshots reuse the shared camera track and verify source id
  const payload={kind:'youtube-edit-example',clips:[{id:'v',file:'projects/youtube/clip.mp4',sourceHash:'hash',width:1920,height:1080}],build:{surface:'youtube',format:{width:1920,height:1080,fps:30},durationInFrames:60,scenes:[{id:'s',clipId:'v',sourceHash:'hash',sourceIn:3,fromFrame:0,durationInFrames:60,track}]}};
  const result=fromSnapshot({id:fingerprint(payload),payload});assert.deepEqual(result.layers[0].camera,track);assert.equal(result.layers[0].sourceIn,3);
  payload.build.scenes[0].track.events=[{sound:{family:'tick'}}];assert.throws(()=>fromSnapshot({id:fingerprint(payload),payload}),/Resolver sonido/);
+});import {CAPCUT_STICKER_BASE} from '../src/modules/youtube-studio/render-plan.js';
+import {resolveCapcutStickers} from '../src/modules/editorial-memory/capcut.js';
+test('CapCut GIF stickers become gif layers with the calibrated base scale',async()=>{
+ const r=reference();r.timelines[0].materials.stickers=[{native:{id:'st',type:'sticker',path:'C:/cache/st'}}];
+ r.timelines[0].tracks.push({type:'sticker',segments:[{native:{id:'sub',material_id:'st',speed:1,target_timerange:{start:0,duration:5000000},clip:{scale:{x:.5,y:.5},transform:{x:.8,y:-.8}}}}]});
+ const files={'C:/cache/st/config.json':JSON.stringify({effect:{Link:[{type:'InfoSticker',format:'gif',path:'final.gif'}]}})};
+ const stickers=await resolveCapcutStickers(r,'t',{readFile:async f=>{if(!(f in files))throw Error('ENOENT');return files[f];},probe:async()=>({width:280,height:280})});
+ assert.deepEqual(stickers,{st:{file:'C:/cache/st/final.gif',width:280,height:280}});
+ const layer=fromCapcut(r,{timelineId:'t',from:0,to:3,keyframeClock:'source',stickers}).layers.find(l=>l.id==='sub');
+ assert.equal(layer.type,'gif');assert.equal(layer.width,280);assert.equal(layer.transform.scaleX,.5*CAPCUT_STICKER_BASE);
+});
+test('missing media fails even for calibration unless a substitution is declared',async()=>{
+ const dir=await mkdtemp(path.join(os.tmpdir(),'youtube-missing-'));
+ try {
+  const root=path.join(dir,'public');await mkdir(root);await writeFile(path.join(root,'v.mp4'),'video');
+  const r=reference();r.timelines[0].materials.images=[{native:{id:'img',type:'photo',path:path.join(dir,'gone.png'),width:10,height:10}}];
+  r.timelines[0].tracks.push({type:'video',segments:[{native:{id:'cap',material_id:'img',speed:1,target_timerange:{start:1000000,duration:1000000}}}]});
+  const plan=fromCapcut(r,{timelineId:'t',from:1,to:2,keyframeClock:'source'});
+  await assert.rejects(packageRender(plan,{publicRoot:root,packageName:'a',allowIncomplete:true}),/Recurso ausente/);
+  const replacement=path.join(dir,'recovered.png');await writeFile(replacement,'png');
+  const fixed=fromCapcut(r,{timelineId:'t',from:1,to:2,keyframeClock:'source',substitutions:{[path.join(dir,'gone.png')]:replacement}});
+  assert.deepEqual(fixed.provenance.substitutions,[{layerId:'cap',from:path.join(dir,'gone.png'),to:replacement}]);
+  assert.equal((await packageRender(fixed,{publicRoot:root,packageName:'b'})).payload.props.layers.length,2);
+ } finally {await rm(dir,{recursive:true,force:true});}
 });

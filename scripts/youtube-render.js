@@ -5,16 +5,26 @@ import {writeFile,mkdir,copyFile,cp} from 'node:fs/promises';
 import {fromSnapshot,fromCapcut} from '../src/modules/youtube-studio/render-plan.js';
 import {packageRender,verifyRenderPackage,loadPackage,savePackage} from '../src/modules/youtube-studio/render-package.js';
 import {run} from '../src/lib/utils.js';
+import {readFile} from 'node:fs/promises';
+import {ffprobe} from '../src/lib/ffmpeg.js';
+import {resolveCapcutStickers} from '../src/modules/editorial-memory/capcut.js';
 import {mixTimelineAudio} from '../src/modules/video-studio/timeline-audio.js';
 import {createRunDirectory,completeRun} from '../remotion-animations/scripts/lib/output-run.mjs';
 const root=path.resolve('remotion-animations'),publicRoot=path.join(root,'public');
 try {
- const {values:v,positionals:p}=parseArgs({allowPositionals:true,options:{snapshot:{type:'string'},reference:{type:'string'},timeline:{type:'string'},from:{type:'string'},to:{type:'string'},package:{type:'string'},project:{type:'string'},'allow-incomplete':{type:'boolean'},'keyframe-clock':{type:'string'},frame:{type:'string'},'sound-disabled':{type:'boolean'}}});
+ const {values:v,positionals:p}=parseArgs({allowPositionals:true,options:{snapshot:{type:'string'},reference:{type:'string'},timeline:{type:'string'},from:{type:'string'},to:{type:'string'},package:{type:'string'},project:{type:'string'},'allow-incomplete':{type:'boolean'},'keyframe-clock':{type:'string'},frame:{type:'string'},'sound-disabled':{type:'boolean'},substitute:{type:'string',multiple:true}}});
  const command=p[0];
- if(!['prepare','render','still'].includes(command)||p.length!==1||!v.project)throw Error('Uso: youtube-render prepare --project SLUG (--snapshot JSON | --reference JSON --timeline ID --from S --to S --keyframe-clock source) [--allow-incomplete]; render|still --project SLUG --package JSON [--frame N] [--sound-disabled]');
+ if(!['prepare','render','still'].includes(command)||p.length!==1||!v.project)throw Error('Uso: youtube-render prepare --project SLUG (--snapshot JSON | --reference JSON --timeline ID --from S --to S --keyframe-clock source [--substitute ORIGINAL=REEMPLAZO]) [--allow-incomplete]; render|still --project SLUG --package JSON [--frame N] [--sound-disabled]');
  if(command==='prepare'){
    if(Boolean(v.snapshot)===Boolean(v.reference))throw Error('Seleccionar snapshot o referencia');
-   const plan=v.snapshot?fromSnapshot(await loadPackage(v.snapshot)):fromCapcut(await loadPackage(v.reference),{timelineId:v.timeline,from:Number(v.from??0),to:Number(v.to),keyframeClock:v['keyframe-clock']});
+   const substitutions=Object.fromEntries((v.substitute??[]).map(pair=>{const i=pair.indexOf('=');if(i<1)throw Error('--substitute ORIGINAL=REEMPLAZO');return [pair.slice(0,i),path.resolve(pair.slice(i+1))];}));
+   let plan;
+   if(v.snapshot)plan=fromSnapshot(await loadPackage(v.snapshot));
+   else {
+     const reference=await loadPackage(v.reference);
+     const stickers=await resolveCapcutStickers(reference,v.timeline,{readFile,probe:async file=>{const {width,height}=await ffprobe(file);return {width,height};}});
+     plan=fromCapcut(reference,{timelineId:v.timeline,from:Number(v.from??0),to:Number(v.to),keyframeClock:v['keyframe-clock'],stickers,substitutions});
+   }
    const job=createRunDirectory({project:v.project,purpose:'prepare',outputRoot:path.join(root,'out')});
    await writeFile(path.join(job.directory,'render-plan.json'),JSON.stringify(plan,null,2),{flag:'wx'});
    const pkg=await packageRender(plan,{publicRoot,packageName:'render-'+job.runId,allowIncomplete:v['allow-incomplete']});
