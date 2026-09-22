@@ -108,7 +108,7 @@ export function compactCaptionCompounds(words) {
   const decimals = [];
   for (const word of words ?? []) {
     const previous = decimals.at(-1);
-    if (previous && /^\.\d+$/.test(word.text) && /^\d+$/.test(previous.text)) {
+    if (previous && /^\.\d+[,.;:!?]?$/.test(word.text) && /^\d+$/.test(previous.text)) {
       previous.text += word.text;
       previous.end = word.end;
       continue;

@@ -1,4 +1,7 @@
 import path from 'node:path';
+import {ffprobe} from '../../lib/ffmpeg.js';
+import {compileScreenCamera,contentHash} from './camera-project.js';
+import {hashMedia} from '../video-studio/folder-sounds.js';
 import {syncReelSoundTiming} from '../talking-head/sound-timing.js';
 import {existsSync} from 'node:fs';
 import {regionTransform, validSourceBox} from '../video-studio/framing.js';
@@ -140,14 +143,29 @@ export async function buildShort({slug, log = () => {}}) {
       const slot={left:(format.width-900)/2,top:350+i*620,width:900,height:560};
       return comparisonPanel(region,dimensions,slot);
     }) : null;
-    const captionRect = scene.layout === 'talking-head' ? {left:80,top:854,width:920,height:180} : comparison ? {left:54,top:110,width:900,height:180} : pip
+    let captionRect = scene.layout === 'talking-head' ? {left:80,top:854,width:920,height:180} : comparison ? {left:54,top:110,width:900,height:180} : pip
       ? {left: 54, top: pip.camCard.top + pip.camCard.height + 14, width: 900, height: Math.max(120, Math.min(190, pip.screen.top - pip.camCard.top - pip.camCard.height - 24))}
       : scene.screenEmphasis ? {left:54, top:172, width:900, height:180} : null;
 
     const words = transcripts.get(clip.id)?.words ?? [];
     if (!words.length) warnings.push(`${where}: el clip ${clip.id} no tiene transcripcion; sin subtitulos ni anclaje por palabra`);
 
-    const trim = resolveTrim(scene.trim, clip, words, padding);
+    let screenCamera = null;
+    if(scene.screenCamera){
+      if(scene.layout!=='pip'||scene.camera && scene.camera!=='static'||scene.comparison||scene.screenEmphasis)throw Error(where+': screenCamera requiere pip sin camara global/comparison/screenEmphasis');
+      if(format.width!==1080||format.height!==1920||fps!==60)throw Error('screenCamera requiere 1080x1920 @60');
+      const actualMedia=await ffprobe(path.join(REMOTION_ROOT,'public',clip.file));
+      if(actualMedia.width!==clip.width||actualMedia.height!==clip.height||!Number.isFinite(clip.durationSeconds)||Math.abs(actualMedia.duration-clip.durationSeconds)>.03||!actualMedia.raw.streams.some(s=>s.codec_type==='audio'))throw Error('Manifest de camara no coincide con el medio real');
+      const sourceHash=await hashMedia(path.join(REMOTION_ROOT,'public',clip.file));
+      screenCamera=compileScreenCamera({plan:{...scene.screenCamera.plan,captions:scene.captions!==false},regions:scene.screenCamera.regions,manifest:{sourceHash,width:clip.width,height:clip.height,duration:clip.durationSeconds},transcript:[{words}]});
+      if(scene.trim && (Math.abs(scene.trim.start-screenCamera.sourceIn)>.001||Math.abs(scene.trim.end-screenCamera.sourceOut)>.001))throw Error('screenCamera: trim contradice seleccion de palabras');
+      if(scene.webcamBox && JSON.stringify(scene.webcamBox)!==JSON.stringify(screenCamera.webcam))throw Error('screenCamera: webcamBox contradictoria');
+      captionRect={left:54,top:1570,width:892,height:160};
+      const rect=r=>({left:r.x,top:r.y,width:r.w,height:r.h});
+      pip.screen=rect(screenCamera.layout.screen);pip.camCard={...rect(screenCamera.layout.face),radius:0,stroke:0};pip.mask.visible=false;
+      for(const event of screenCamera.track.events)if(event.sound && screenCamera.soundEnabled)addSound(event.sound.family,cursor/fps+event.time,event.sound.intensity);
+    }
+    const trim = resolveTrim(screenCamera?{start:screenCamera.sourceIn,end:screenCamera.sourceOut}:scene.trim, clip, words, padding);
     const {startSeconds, endSeconds} = trim;
     if (endSeconds - startSeconds < 0.2) throw new Error(`${where}: recorte demasiado corto (${startSeconds}-${endSeconds})`);
     if (trim.trimmedSeconds > 0.05) {
@@ -273,8 +291,9 @@ export async function buildShort({slug, log = () => {}}) {
       layout: scene.layout,
       intent: scene.intent ?? null,
       reason: scene.reason ?? null,
+      screenCamera,
       comparison,
-      screenRegion: scene.screenRegion ?? null,
+      screenRegion: screenCamera?{...screenCamera.screen,webcamPolicy:'exclude'}:scene.screenRegion ?? null,
       screenEmphasis: Boolean(scene.screenEmphasis),
       screenTransform,
       captionRect,
@@ -282,10 +301,10 @@ export async function buildShort({slug, log = () => {}}) {
       sourceHeight: clip.height,
       camera,
       cameraIntensity: Number(scene.cameraIntensity ?? 1),
-      focus: scene.focus ?? clip.focus,
+      focus: scene.focus ?? clip.focus ?? {x:.5,y:.5},
       // Un focus fijado a mano en el plan manda sobre el seguimiento de la cara.
       focusTrack: scene.focus ? null : (scene.focusTrack?.length >= 2 ? scene.focusTrack : clip.focusTrack ?? null),
-      webcamBox,
+      webcamBox:screenCamera?.webcam ?? webcamBox,
       pip,
       fit,
       transitionIn,
@@ -356,6 +375,7 @@ export async function buildShort({slug, log = () => {}}) {
     );
   }
 
+  build.projectInputsHash=contentHash({plan,manifest,transcripts:[...transcripts]});
   await writeJson(path.join(project, 'short-build.json'), build);
   // El registro que importa Root.tsx se regenera aqui: un proyecto nuevo aparece
   // como composicion sin editar codigo, y uno borrado desaparece.

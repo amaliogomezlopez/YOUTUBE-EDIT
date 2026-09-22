@@ -67,7 +67,10 @@
     "talking-head:plan": "node scripts/talking-head-plan.js",
     "talking-head:sounds": "node scripts/talking-head-sounds.js",
     "talking-head": "node scripts/talking-head.js",
-    "talking-head:sounds:import": "node scripts/talking-head.js sounds"
+    "talking-head:sounds:import": "node scripts/talking-head.js sounds",
+    "shorts:camera": "node scripts/shorts-camera.js",
+    "shorts:project": "node scripts/shorts-project.js",
+    "shorts:benchmark": "node scripts/shorts-camera-benchmark.js"
   },
   "engines": {
     "node": ">=20"

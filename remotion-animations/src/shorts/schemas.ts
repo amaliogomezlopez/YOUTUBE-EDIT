@@ -65,6 +65,8 @@ export const captionPageSchema = z.object({
   words: z.array(captionWordSchema),
 });
 
+const cameraBoxSchema=z.object({x:z.number(),y:z.number(),w:z.number(),h:z.number()});
+const screenCameraSchema=z.object({screen:cameraBoxSchema,webcam:cameraBoxSchema,layout:z.object({screen:cameraBoxSchema,face:cameraBoxSchema}),track:z.object({keys:z.array(z.object({time:z.number(),x:z.number(),y:z.number(),zoom:z.number()}))}).passthrough()}).passthrough();
 export const shortSceneSchema = z.object({
   id: z.string(),
   clipId: z.string(),
@@ -76,6 +78,7 @@ export const shortSceneSchema = z.object({
   silenceTrimmedSeconds: z.number().optional(),
   layout: z.enum(["full", "split", "stage", "pip", "fit", "talking-head"]),
   camera: z.enum(["static", "punch-in", "push-out", "drift-left", "drift-right"]),
+  screenCamera:screenCameraSchema.nullable().optional(),
   cameraIntensity: z.number().default(1),
   sourceWidth: z.number().optional(),
   sourceHeight: z.number().optional(),

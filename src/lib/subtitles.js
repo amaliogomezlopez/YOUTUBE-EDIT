@@ -91,7 +91,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`
           if (active) {
             return `{\\1c${activeTag}\\fscx108\\fscy108\\bord${Math.min(12, style.outlineSize + 1)}}${text}{\\fscx100\\fscy100\\bord${style.outlineSize}\\1c${primaryTag}}`;
           }
-          if (future) return `{\\1a&H70&}${text}{\\1a&H00&}`;
+          if (future && style.preset !== 'talking-head-green') return `{\\1a&H70&}${text}{\\1a&H00&}`;
           return text;
         });
         const tags = `{\\an${alignment}\\pos(${line.x},${line.y})\\fn${style.font}\\fs${line.fontSize}\\fsp${style.tracking}\\bord${style.outlineSize}\\shad${style.shadow}\\q2}`;
@@ -231,4 +231,10 @@ export async function writeAssFile(file, captions, options = {}) {
   const document = buildSubtitleDocument(captions, options);
   await writeFile(file, document.ass, 'utf8');
   return document;
+}
+
+/** Preserve the shared montage pagination and word clocks in the ASS adapter. */
+export function shortCaptionPagesToAss(pages,{fps,style,rect}){
+ const plan={style,pages:pages.map(page=>({start:page.fromFrame/fps,end:(page.fromFrame+page.durationInFrames)/fps,lines:[{align:'center',case:style.uppercase?'upper':null,x:rect.left+rect.width/2,y:rect.top+30,fontSize:Math.min(style.baseFontSize,rect.width/Math.max(1,page.words.map(w=>w.text).join(' ').length*.65)),words:page.words.map((w,i)=>({id:String(i),text:w.text,start:w.fromFrame/fps,end:w.toFrame/fps}))}]}))};
+ return karaokeAss(plan);
 }

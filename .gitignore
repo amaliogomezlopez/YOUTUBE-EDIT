@@ -61,3 +61,9 @@ data/opus5final-run/
 /remotion-animations/projects/shorts-astra-*/
 # Sitio de TikTok: repositorio independiente ya versionado.
 /tiktok-developer-site/
+
+# Frozen render versions and private camera evaluation project
+remotion-animations/projects/**/versions/
+remotion-animations/projects/**/.freeze.lock
+remotion-animations/projects/**/version-latest.json
+remotion-animations/projects/shorts-camera-unified-pilot/

@@ -405,3 +405,11 @@ Contexto VPS conocido para pruebas:
 - Ejecutar `npm test` tras cambios de logica.
 - Si se toca render, ejecutar `npm run smoke` cuando sea viable.
 - Si se toca publicacion multi-plataforma, actualizar `docs/multiplatform-video-publishing.md`.
+
+## Camara de pantalla reproducible
+
+Para aplicar el piloto de zooms a una toma de pantalla con webcam, subtitulos verdes y sonido, usar `.agents/skills/create-screen-camera-shorts/SKILL.md` y `docs/shorts-screen-camera.md`. Usar `shorts:camera prepare` para la ingesta y `shorts:project adopt-camera` para incorporar el piloto al proyecto comun. Despues, compilar con `shorts:build` y exportar con `shorts:render`. No necesita Computer Use ni generar codigo por video. El agente elige palabras y targets revisados; el compilador valida y el adaptador seleccionado exporta. FFmpeg admite una toma continua en vertical; Remotion permite el montaje general de varias escenas.
+
+## Motores de Shorts y versiones congeladas
+
+La camara dirigida vive en scenes[].screenCamera de short-plan.json y se compila con shorts:build. Migrar el piloto con shorts:project adopt-camera; shorts:camera solo prepara la ingesta antigua. Consultar shorts:project capabilities, congelar con shorts:project freeze y exportar con shorts:render --engine ffmpeg|remotion --version HASH. Pixi no esta implementado. No modificar una version para que pase la comprobacion de hashes. Ver docs/shorts-screen-camera.md para capacidades, fuentes archivadas, transiciones y benchmark agy.

@@ -1,3 +1,4 @@
+import {ScreenCameraStage} from './ScreenCameraStage';
 import {Video} from "@remotion/media";
 import {interpolate, staticFile, useCurrentFrame, useVideoConfig} from "remotion";
 import {ShortScene} from "./schemas";
@@ -19,6 +20,7 @@ export const PipStage: React.FC<PipStageProps> = ({scene, volume}) => {
   const trimBefore = Math.round(scene.trimStartSeconds * fps);
   const pip = scene.layout === "pip" ? scene.pip : null;
   const fit = scene.layout === "fit" ? scene.fit : null;
+  if(scene.screenCamera)return <ScreenCameraStage scene={scene}/>;
   if (!pip && !fit) return null;
   if (scene.comparison?.length) return <div style={{position:"absolute",inset:0,background:"#111720"}}>
     {scene.comparison.map((item,i)=><div key={i} style={{position:"absolute",...item.slot,overflow:"hidden",borderRadius:18,background:"#080c12"}}>
