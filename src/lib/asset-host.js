@@ -47,11 +47,15 @@ export function getAssetHostConfig(env = process.env) {
   if ((env.ASSET_HOST_PROVIDER || '').toLowerCase() !== 'ssh') {
     return {configured: false, provider: env.ASSET_HOST_PROVIDER || '', missingEnv: ['ASSET_HOST_PROVIDER']};
   }
-  const missingEnv = REQUIRED_SSH_ENV.filter((key) => !env[key]);
+  const alias = String(env.ASSET_HOST_SSH_ALIAS || '').trim();
+  if (alias && !/^[a-z0-9][a-z0-9._-]*$/i.test(alias)) throw new Error('ASSET_HOST_SSH_ALIAS invalido.');
+  const required = alias ? REQUIRED_SSH_ENV.slice(3) : REQUIRED_SSH_ENV;
+  const missingEnv = required.filter((key) => !env[key]);
   if (missingEnv.length) return {configured: false, provider: 'ssh', missingEnv};
   return {
     configured: true,
     provider: 'ssh',
+    alias: alias || null,
     host: env.ASSET_HOST_SSH_HOST,
     port: Number(env.ASSET_HOST_SSH_PORT || 22),
     user: env.ASSET_HOST_SSH_USER,
@@ -74,29 +78,28 @@ export function buildHostedAssetTarget(videoFile, {remoteDir, publicBaseUrl, fil
   };
 }
 
+export function assetHostSshArgs(config, scp = false) {
+  return [
+    ...(config.alias ? [] : ['-i', config.keyPath, scp ? '-P' : '-p', String(config.port)]),
+    '-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=accept-new'
+  ];
+}
+
 export async function uploadAssetToSshHost(videoFile, {env = process.env, timeoutMs, signal} = {}) {
   const config = getAssetHostConfig(env);
   if (!config.configured) {
     return {ok: false, status: 'requires_manual_action', missingEnv: config.missingEnv};
   }
   const target = buildHostedAssetTarget(videoFile, config);
-  const commonSshArgs = [
-    '-i', config.keyPath,
-    '-p', String(config.port),
-    '-o', 'BatchMode=yes',
-    '-o', 'StrictHostKeyChecking=accept-new'
-  ];
-  const remote = `${config.user}@${config.host}`;
+  const commonSshArgs = assetHostSshArgs(config);
+  const remote = config.alias || `${config.user}@${config.host}`;
   await runCommand('ssh', [
     ...commonSshArgs,
     remote,
     `mkdir -p ${remoteQuote(config.remoteDir)}`
   ], {timeoutMs, signal});
   await runCommand('scp', [
-    '-i', config.keyPath,
-    '-P', String(config.port),
-    '-o', 'BatchMode=yes',
-    '-o', 'StrictHostKeyChecking=accept-new',
+    ...assetHostSshArgs(config, true),
     videoFile,
     `${remote}:${target.remotePath}`
   ], {timeoutMs, signal});
@@ -110,12 +113,9 @@ export async function deleteHostedAsset(remotePath, {env = process.env, timeoutM
   if (!normalized.startsWith(`${config.remoteDir}/`) || normalized.includes('/../')) {
     throw new Error('La ruta remota no pertenece al directorio de assets de Shortsmith.');
   }
-  const remote = `${config.user}@${config.host}`;
+  const remote = config.alias || `${config.user}@${config.host}`;
   await runCommand('ssh', [
-    '-i', config.keyPath,
-    '-p', String(config.port),
-    '-o', 'BatchMode=yes',
-    '-o', 'StrictHostKeyChecking=accept-new',
+    ...assetHostSshArgs(config),
     remote,
     `rm -f -- ${remoteQuote(normalized)}`
   ], {timeoutMs, signal});

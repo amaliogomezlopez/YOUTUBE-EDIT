@@ -413,3 +413,25 @@ Para aplicar el piloto de zooms a una toma de pantalla con webcam, subtitulos ve
 ## Motores de Shorts y versiones congeladas
 
 La camara dirigida vive en scenes[].screenCamera de short-plan.json y se compila con shorts:build. Migrar el piloto con shorts:project adopt-camera; shorts:camera solo prepara la ingesta antigua. Consultar shorts:project capabilities, congelar con shorts:project freeze y exportar con shorts:render --engine ffmpeg|remotion --version HASH. Pixi no esta implementado. No modificar una version para que pase la comprobacion de hashes. Ver docs/shorts-screen-camera.md para capacidades, fuentes archivadas, transiciones y benchmark agy.
+
+## Montaje largo horizontal de YouTube
+
+Para montar varios clips en un video largo horizontal con zooms a la webcam
+(opiniones) y a la pantalla (explicaciones), leer docs/youtube-studio.md.
+La superficie es src/modules/youtube-studio y el comando npm run youtube:studio.
+Reutiliza video-studio; no ramificar pipeline.js ni reutilizar el build vertical.
+Estado inicial: ingest, prepare y compare; todavia sin render horizontal,
+integracion Recordly ni aprendizaje automatico. Consultar capabilities.
+Los perfiles son provisionales hasta compararlos con una referencia del usuario.
+Guardar propuestas/correcciones en data/editorial-memory, fuera de Git.
+No confundirlo con intro-studio (cabecera) ni con metadata/publicacion.
+
+### Exportacion horizontal y feedback
+
+`npm run youtube:render -- prepare|render|still` conecta snapshots de youtube-studio
+al Remotion existente. Documentacion: `docs/youtube-studio.md`. Para calibracion
+CapCut seleccionar timeline y reloj expresamente; no aplanar compuestos ni omitir
+warnings. `--allow-incomplete` identifica pilotos con diferencias conocidas.
+`youtube:qa` compara referencia/export y `youtube:feedback` guarda comentarios reales
+por frame y version, pendientes de validacion editorial. No afirmar aprendizaje
+universal, freeze de codigo ni paridad con CapCut por superar tests.

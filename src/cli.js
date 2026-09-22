@@ -18,6 +18,9 @@ Options:
   --max           Maximum clip duration in seconds. Default: 60.
   --render-mode   crop, fit, or pip. Default: pip for horizontal videos, crop for vertical.
   --render-engine ffmpeg or remotion. Default: ffmpeg.
+  --render-stage  prepare (build only), preview (30 fps), master (60 fps). Default: master.
+  --encoder       auto, cpu, nvenc (Remotion). Default: auto.
+  --render-concurrency Browser tabs per clip, 1-16. Default: 1.
   --editing-profile sobrio, dinamico o energico. Activa montaje adaptativo con Remotion.
   --no-effects    Desactiva efectos manteniendo encuadres y subtitulos.
   --music         Archivo local de musica opcional (MP3/WAV/M4A/OGG).
@@ -78,6 +81,8 @@ async function main() {
       renderEngine: args['editing-profile'] ? 'remotion' : args['render-engine'],
       editing: {enabled: Boolean(args['editing-profile']), profile: args['editing-profile'] ?? 'dinamico', effects: !args['no-effects'], tighten: !args['keep-pauses'], musicFile: args.music ? path.resolve(String(args.music)) : undefined},
       renderQuality: args.quality ?? 'high',
+      renderStage: args['render-stage'] ?? 'master',
+      renderPerformance: {encoder: args.encoder ?? 'auto', concurrency: Number(args['render-concurrency'] ?? 1)},
       subtitleMode: args['subtitle-mode'] ?? 'karaoke',
       subtitleStyle: {
         preset: args['subtitle-preset'] ?? 'karaoke-highlight',
@@ -103,7 +108,7 @@ async function main() {
   console.log(`Done: ${result.id}`);
   console.log(`Output: ${result.outputDir}`);
   for (const clip of result.clips) {
-    console.log(`#${clip.rank} score=${clip.viralScore} ${clip.files.video}`);
+    console.log(`#${clip.rank} score=${clip.viralScore} ${clip.files.video ?? clip.files.preview ?? clip.files.build}`);
   }
 }
 

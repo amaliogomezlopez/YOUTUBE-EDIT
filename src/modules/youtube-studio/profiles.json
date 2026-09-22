@@ -1,0 +1,10 @@
+{
+  "youtube-calm-v1": {
+    "status": "pilot-not-approved",
+    "silencePaddingSeconds": 0.18,
+    "maxZoom": 4,
+    "transitionSeconds": 0.8,
+    "minHoldSeconds": 3,
+    "maxCuesPerMinute": 8
+  }
+}

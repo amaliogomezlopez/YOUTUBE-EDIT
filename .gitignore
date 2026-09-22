@@ -67,3 +67,7 @@ remotion-animations/projects/**/versions/
 remotion-animations/projects/**/.freeze.lock
 remotion-animations/projects/**/version-latest.json
 remotion-animations/projects/shorts-camera-unified-pilot/
+
+# Private horizontal editing projects and reference evidence
+/data/editorial-memory/
+/remotion-animations/projects/youtube-*/

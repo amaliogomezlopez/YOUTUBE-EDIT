@@ -3,17 +3,18 @@ import {existsSync} from 'node:fs';
 import {readFile} from 'node:fs/promises';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
+import {resolveRenderPerformance} from '../../../../src/modules/video-studio/render-performance.js';
 import {writeJson} from '../../../../src/lib/utils.js';
 
 function parseArgs(argv) {
   const result = {dryRun: false};
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
-    if (arg === '--dry-run') {
-      result.dryRun = true;
+    if (arg === '--dry-run' || arg === '--force-render') {
+      result[arg === '--dry-run' ? 'dryRun' : 'forceRender'] = true;
       continue;
     }
-    if (!['--job', '--spec'].includes(arg)) throw new Error(`Argumento desconocido: ${arg}`);
+    if (!['--job', '--spec', '--stage'].includes(arg)) throw new Error(`Argumento desconocido: ${arg}`);
     const value = argv[index + 1];
     if (!value || value.startsWith('--')) throw new Error(`Falta el valor de ${arg}`);
     result[arg.slice(2)] = value;
@@ -42,15 +43,23 @@ function prepareRefinements(state, items, captions) {
     for (const key of ['subtitleStyle', 'editing']) {
       if (item[key] !== undefined && (!item[key] || typeof item[key] !== 'object' || Array.isArray(item[key]))) throw new Error(`${clip.id}: ${key} debe ser un objeto`);
     }
+    if (item.renderStage !== undefined && !['prepare','preview','master'].includes(item.renderStage)) throw new Error('Etapa no valida');
+    if (item.renderPerformance !== undefined) {
+      if (!item.renderPerformance || typeof item.renderPerformance !== 'object' || Array.isArray(item.renderPerformance)) throw new Error('renderPerformance debe ser un objeto');
+      resolveRenderPerformance(item.renderPerformance);
+    }
     const edits = {start, end};
-    for (const key of ['subtitleMode', 'renderMode', 'webcamBox', 'editing']) {
+    for (const key of ['subtitleMode', 'renderMode', 'webcamBox', 'editing', 'renderStage', 'renderPerformance']) {
       if (item[key] !== undefined) edits[key] = item[key];
     }
     if (item.quality !== undefined) edits.renderQuality = item.quality;
     if (item.subtitleStyle !== undefined || item.subtitlePreset !== undefined) {
       edits.subtitleStyle = {...item.subtitleStyle, ...(item.subtitlePreset !== undefined ? {preset: item.subtitlePreset} : {})};
     }
-    return {clip, item, edits, sourceCaptionIds: selected.map((caption) => caption.id).filter(Boolean)};
+    const mediaChanged = start !== clip.start || end !== clip.end || ['subtitleMode','subtitlePreset','subtitleStyle','quality','renderMode','webcamBox','editing','renderStage','renderPerformance'].some(key => item[key] !== undefined);
+    const metadataOnly = !mediaChanged && (item.title !== undefined || item.rank !== undefined);
+    const needsRender = mediaChanged || (!clip.files?.video && !metadataOnly);
+    return {clip, item, edits, needsRender, sourceCaptionIds: selected.map((caption) => caption.id).filter(Boolean)};
   });
 }
 
@@ -66,13 +75,14 @@ function applyEditorialFields(clip, item, sourceCaptionIds) {
   if (clip.publishing.youtube_shorts) clip.publishing.youtube_shorts.title = clip.suggestedTitle;
 }
 
-export async function refineClips({state, items, captions, dryRun = false, rerenderClip, saveJobState, persistMetadata = writeJson, log = console.log}) {
+export async function refineClips({state, items, captions, dryRun = false, forceRender = false, stage, rerenderClip, saveJobState, persistMetadata = writeJson, log = console.log}) {
   // Validate the entire batch before the first render; dry-run uses the same preflight.
+  if (stage !== undefined && !['prepare','preview','master'].includes(stage)) throw new Error('Etapa no valida');
   const prepared = prepareRefinements(state, items, captions);
-  for (const {clip, item, edits, sourceCaptionIds} of prepared) {
-    log(`${dryRun ? '[DRY]' : '[RENDER]'} #${item.rank ?? clip.rank} ${clip.id} ${edits.start.toFixed(2)}-${edits.end.toFixed(2)} ${item.title ?? clip.suggestedTitle ?? ''}`);
+  for (const {clip, item, edits, needsRender, sourceCaptionIds} of prepared) {
+    log(`${dryRun ? '[DRY]' : needsRender || forceRender || stage ? '[' + (stage ?? 'master').toUpperCase() + ']' : '[METADATA]'} #${item.rank ?? clip.rank} ${clip.id} ${edits.start.toFixed(2)}-${edits.end.toFixed(2)} ${item.title ?? clip.suggestedTitle ?? ''}`);
     if (dryRun) continue;
-    const rendered = await rerenderClip(state, clip.id, edits);
+    const rendered = needsRender || forceRender || stage !== undefined ? await rerenderClip(state, clip.id, {...edits, ...(stage ? {renderStage: stage} : {})}) : clip;
     applyEditorialFields(rendered, item, sourceCaptionIds);
     if (rendered.files?.metadata) await persistMetadata(rendered.files.metadata, rendered);
     state.clips.sort((a, b) => Number(a.rank ?? 999) - Number(b.rank ?? 999));
@@ -84,14 +94,14 @@ export async function refineClips({state, items, captions, dryRun = false, reren
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
-  if (!args.job || !args.spec) throw new Error('Uso: node refine-clips.mjs --job <job-id> --spec <clips.json> [--dry-run]');
+  if (!args.job || !args.spec) throw new Error('Uso: node refine-clips.mjs --job <job-id> --spec <clips.json> [--dry-run] [--stage prepare|preview|master] [--force-render]');
   const pipelineFile = path.join(process.cwd(), 'src', 'lib', 'pipeline.js');
   if (!existsSync(pipelineFile)) throw new Error('Ejecuta este script desde la raíz del proyecto Shortsmith');
   const rawSpec = JSON.parse(await readFile(path.resolve(args.spec), 'utf8'));
   const {loadJobState, rerenderClip, saveJobState} = await import(pathToFileURL(pipelineFile).href);
   const state = await loadJobState(args.job);
   const captions = JSON.parse(await readFile(path.join(state.jobDir, 'transcript.json'), 'utf8'));
-  await refineClips({state, items: Array.isArray(rawSpec) ? rawSpec : rawSpec?.clips, captions, dryRun: args.dryRun, rerenderClip, saveJobState});
+  await refineClips({state, items: Array.isArray(rawSpec) ? rawSpec : rawSpec?.clips, captions, dryRun: args.dryRun, forceRender: args.forceRender, stage: args.stage, rerenderClip, saveJobState});
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {

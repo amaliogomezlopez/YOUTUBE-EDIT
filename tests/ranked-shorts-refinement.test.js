@@ -30,7 +30,7 @@ async function fixture(t) {
 test('refinement preserves approved settings and persists current text, title and artifact paths', async (t) => {
   const context = await fixture(t);
   let options;
-  await refineClips({...context, items: [{clipId: 'clip-1', rank: 1, title: 'Título nuevo'}],
+  await refineClips({...context, forceRender: true, items: [{clipId: 'clip-1', rank: 1, title: 'Título nuevo'}],
     rerenderClip: (state, id, edits) => {
       assert.deepEqual(edits, {start: 10, end: 20});
       return rerenderClip(state, id, edits, {renderClip: async (args) => {
@@ -81,7 +81,7 @@ test('refinement forwards explicit adaptive edits without replacing the mounted 
 test('refinement failure preserves the original editorial fields and video', async (t) => {
   const context = await fixture(t);
   const before = structuredClone(context.state.clips[0]);
-  await assert.rejects(refineClips({...context, items: [{clipId: 'clip-1', rank: 1, title: 'No guardar'}],
+  await assert.rejects(refineClips({...context, forceRender: true, items: [{clipId: 'clip-1', rank: 1, title: 'No guardar'}],
     rerenderClip: (state, id, edits) => rerenderClip(state, id, edits, {renderClip: async () => {throw new Error('render failed');}})
   }), /render failed/);
   const clip = context.state.clips[0];
@@ -124,7 +124,7 @@ test('completed refinements are saved even when a later clip fails', async () =>
   ]};
   const saved = [];
   const metadata = [];
-  await assert.rejects(refineClips({state, captions: [{start: 0, end: 30, text: 'Palabras'}],
+  await assert.rejects(refineClips({state, forceRender:true, captions: [{start: 0, end: 30, text: 'Palabras'}],
     items: [{clipId: 'one', rank: 1, title: 'Completado'}, {clipId: 'two', title: 'Fallido'}],
     rerenderClip: async (job, id) => {
       if (id === 'two') throw new Error('second failed');
@@ -137,4 +137,41 @@ test('completed refinements are saved even when a later clip fails', async () =>
   assert.equal(saved[0].clips[0].suggestedTitle, 'Completado');
   assert.equal(metadata[0].clip.suggestedTitle, 'Completado');
   assert.equal(state.clips[1].suggestedTitle, 'Original');
+});
+
+
+test('metadata-only refinement never renders and keeps the current master', async (t) => {
+  const context = await fixture(t);
+  const original = context.state.clips[0].files.video;
+  await refineClips({...context, items: [{clipId:'clip-1',title:'Solo titulo',rank:1}],
+    rerenderClip: async () => assert.fail('metadata must not render')});
+  assert.equal(context.state.clips[0].files.video, original);
+  assert.equal(context.state.clips[0].suggestedTitle, 'Solo titulo');
+  assert.equal(await readFile(original,'utf8'), 'old');
+});
+
+test('prepare preserves old master separately and never presents it as current', async (t) => {
+  const context = await fixture(t);
+  const clip=context.state.clips[0];
+  clip.renderSettings.engine='remotion';
+  const original=clip.files.video;
+  await refineClips({...context, stage:'prepare', items:[{clipId:clip.id,start:11,end:20}],
+    rerenderClip:(state,id,edits)=>rerenderClip(state,id,edits,{renderCandidate:async(args)=>{
+      assert.equal(args.stage,'prepare');
+      return {outputFile:null,buildFile:'build.json',renderMode:'fit',duration:9};
+    }})});
+  assert.equal(clip.files.video,null);
+  assert.equal(clip.status,'prepared');
+  assert.equal(clip.previousVideo,original);
+  assert.equal(await readFile(original,'utf8'),'old');
+});
+
+
+test('retitling a prepared clip does not implicitly create a master',async(t)=>{
+  const context=await fixture(t);
+  context.state.clips[0].files.video=null;
+  context.state.clips[0].status='prepared';
+  await refineClips({...context,items:[{clipId:'clip-1',title:'Preparado'}],rerenderClip:async()=>assert.fail('title must not export')});
+  assert.equal(context.state.clips[0].files.video,null);
+  assert.equal(context.state.clips[0].status,'prepared');
 });

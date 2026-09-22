@@ -2,7 +2,7 @@ import {Video} from '@remotion/media';
 import {staticFile,useCurrentFrame,useVideoConfig} from 'remotion';
 import {ShortScene} from './schemas';
 // The pure evaluator is also used by FFmpeg; no second easing implementation.
-// @ts-ignore shared JavaScript module
+// @ts-expect-error shared JavaScript module
 import {cameraAt,cameraCrop} from '../../../src/modules/video-studio/camera-track.js';
 export const ScreenCameraStage:React.FC<{scene:ShortScene}>=({scene})=>{
  const frame=useCurrentFrame(),{fps}=useVideoConfig(),c=scene.screenCamera;

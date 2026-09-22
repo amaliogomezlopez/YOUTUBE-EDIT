@@ -1,4 +1,5 @@
 import {loadDotEnv} from '../src/lib/utils.js';
+import {getAssetHostConfig} from '../src/lib/asset-host.js';
 import {describeInstagramConfig, validateInstagramToken} from '../src/lib/instagram-oauth.js';
 import {describeTiktokConfig, validateTiktokToken} from '../src/lib/tiktok-oauth.js';
 
@@ -7,17 +8,11 @@ function present(name) {
 }
 
 function assetHostReport() {
-  const required = [
-    'ASSET_HOST_PROVIDER',
-    'ASSET_HOST_SSH_HOST',
-    'ASSET_HOST_SSH_USER',
-    'ASSET_HOST_SSH_KEY_PATH',
-    'ASSET_HOST_REMOTE_DIR',
-    'ASSET_HOST_PUBLIC_BASE_URL'
-  ];
+  const config = getAssetHostConfig();
   return {
-    configured: required.every(present),
-    missingEnv: required.filter((key) => !present(key)),
+    configured: config.configured,
+    missingEnv: config.missingEnv ?? [],
+    connectionMode: config.alias ? 'ssh-alias' : 'identity-file',
     provider: process.env.ASSET_HOST_PROVIDER || null,
     publicBaseUrl: process.env.ASSET_HOST_PUBLIC_BASE_URL || null
   };

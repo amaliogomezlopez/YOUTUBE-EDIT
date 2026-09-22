@@ -22,7 +22,7 @@ Esta skill extrae cortes de un vídeo largo. Para montar varios clips desde cero
 Ejemplo para **dos** cortes; ajustar `--top` a la cantidad acordada:
 
 ```powershell
-npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 2 --min 18 --max 60 --quality high --editing-profile dinamico --subtitle-mode karaoke --subtitle-preset talking-head-green --no-llm
+npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 2 --min 18 --max 60 --quality high --render-stage prepare --encoder auto --editing-profile dinamico --subtitle-mode karaoke --subtitle-preset talking-head-green --no-llm
 ```
 
 El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` según la preferencia del usuario. Estos son valores iniciales: al revisar un job, conservar su perfil y subtítulos aprobados salvo cambio solicitado. Mantener `--no-llm` salvo que el encargo o la autorización previa incluya usar el LLM configurado.
@@ -30,6 +30,19 @@ El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` se
 Leer `transcript.json`, `candidates.json` y `job.json`. Revisar los límites automáticos y escoger ideas que se entiendan sin el vídeo largo, con gancho, desarrollo y cierre. Ajustar inicio y final a frases naturales; evitar palabras cortadas, saludos y contexto prescindible. Mantener normalmente 18–60 segundos, salvo otra duración solicitada o una idea completa que justifique la excepción.
 
 Ordenar por gancho/conflicto (30 %), novedad (20 %), conclusión (20 %), comprensión autónoma (15 %), temas reconocibles (10 %) y ritmo (5 %). Evitar ángulos repetidos. El `viralScore` es una estimación editorial; no inventar métricas reales ni garantizar viralidad.
+
+## Rendimiento: preparar, revisar y exportar una vez
+
+La primera ejecución usa `--render-stage prepare`: selecciona, analiza y compila todos los cortes, sin MP4. Revisar y corregir rangos/ranking antes del primer máster. El contrato y opciones están en [Rendimiento de Shorts](../../../docs/shorts-render-performance.md).
+
+1. Refinar rangos con el helper y `--stage prepare`; leer las nuevas escenas antes de corregirlas. Las correcciones posteriores de escenas/palabras también usan `--stage prepare`.
+2. Revisar stills del build de cada corte: inicio, mitad, final, transiciones y pantalla densa. Para sincronía y audio, renderizar un preview de los cortes que lo necesiten con `--stage preview` (30 fps). No renderizar todos los másters como exploración.
+3. Con selección, encuadres y palabras revisados, ejecutar el helper una sola vez con `--stage master` sobre todos los seleccionados. Conserva 1080×1920 a 60 fps. Revisar los MP4 finales y repetir solo los que fallen.
+4. Cambios únicamente de título/ranking actualizan metadata sin render. `--force-render` fuerza regeneración cuando sea necesaria. `--dry-run` solo valida, no genera builds.
+
+El pipeline detecta NVENC con una prueba real; `auto` cae a CPU si no está disponible. En Windows usa ANGLE y una pestaña de render por clip; permite ajustar concurrencia tras medir un fragmento representativo. No lanzar varios clips en paralelo sin medir memoria y tiempo. NVENC usa bitrate sin CRF; el wrapper ya respeta esa combinación. Se conserva la fuente 4K para no perder detalle al ampliar webcam o texto.
+
+Reutilizar cortes y análisis cacheados: no borrar proyectos ni regenerar jobs de la misma fuente durante una revisión. Consultar `performance-history.jsonl` del proyecto y `renderHistory` del clip. Las entradas preparadas no tienen vídeo actual; los previews están en `clip.files.preview`, el máster solo en `clip.files.video`.
 
 ## Subtítulos predeterminados
 
@@ -64,7 +77,7 @@ El `--dry-run` comprueba identificadores, rangos y presencia de transcripción p
 
 Cambiar entrada/salida reconstruye el plan y descarta ediciones anteriores de escenas y palabras. Cambiar perfil reconstruye escenas y conserva palabras. Hacer primero ese cambio, leer el nuevo plan y después corregir sus escenas/palabras en una segunda pasada: no enviar correcciones basadas en el plan antiguo junto al cambio de rango o perfil. Anclar correcciones a los índices reales de palabras; regiones de pantalla en píxeles de la fuente y centro facial entre 0 y 1.
 
-El helper guarda el título y ranking después de un render correcto y actualiza el JSON del clip. Si falla un corte posterior, conserva los anteriores completados. Consultar siempre `job.json` y `clip.files.video` al retomar.
+El helper guarda el título y ranking después de preparar o renderizar correctamente y actualiza el JSON del clip. Si falla un corte posterior, conserva los anteriores completados. Consultar siempre `job.json` y `clip.files.video` al retomar.
 
 ## Control de calidad
 

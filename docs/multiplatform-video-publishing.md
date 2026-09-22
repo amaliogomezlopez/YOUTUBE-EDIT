@@ -233,6 +233,15 @@ Runbook detallado: `docs/meta-instagram-reauthorization.md`.
 
 ## Asset host SSH/SCP
 
+Puede configurarse `ASSET_HOST_SSH_ALIAS=sibelion` para usar la identidad y el
+puerto definidos en la configuracion OpenSSH del usuario que ejecuta Shortsmith.
+En ese modo no se requieren HOST, USER ni KEY_PATH; se mantienen REMOTE_DIR y
+PUBLIC_BASE_URL. El proceso debe ejecutarse bajo un usuario con acceso a su
+configuracion SSH y clave. Un sandbox sin ese acceso necesita autorizacion para
+la ejecucion de la subida; el alias no elude permisos de Windows. No copiar claves
+ni ampliar sus ACL para resolver ese aislamiento. Los procesos ya arrancados
+deben reiniciarse para cargar cambios de codigo y entorno.
+
 Para Instagram, Shortsmith incluye un asset host temporal por SSH/SCP en `src/lib/asset-host.js`.
 
 Variables:

@@ -1,6 +1,22 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {buildHostedAssetTarget, getAssetHostConfig} from '../src/lib/asset-host.js';
+import {assetHostSshArgs, buildHostedAssetTarget, getAssetHostConfig} from '../src/lib/asset-host.js';
+
+test('SSH alias uses system identity for both ssh and scp', () => {
+  const config = getAssetHostConfig({ASSET_HOST_PROVIDER: 'ssh', ASSET_HOST_SSH_ALIAS: 'sibelion', ASSET_HOST_REMOTE_DIR: '/videos', ASSET_HOST_PUBLIC_BASE_URL: 'https://example.com/videos'});
+  assert.equal(config.configured, true);
+  assert.equal(config.alias, 'sibelion');
+  for (const scp of [false, true]) {
+    assert.deepEqual(assetHostSshArgs(config, scp), ['-o', 'BatchMode=yes', '-o', 'StrictHostKeyChecking=accept-new']);
+  }
+  assert.throws(() => getAssetHostConfig({ASSET_HOST_PROVIDER: 'ssh', ASSET_HOST_SSH_ALIAS: '-oProxyCommand=bad'}), /invalido/);
+});
+
+test('explicit identity retains SSH and SCP port flags', () => {
+  const config = {keyPath: 'key', port: 2223};
+  assert.deepEqual(assetHostSshArgs(config).slice(0, 4), ['-i', 'key', '-p', '2223']);
+  assert.deepEqual(assetHostSshArgs(config, true).slice(0, 4), ['-i', 'key', '-P', '2223']);
+});
 
 test('asset host reports missing ssh configuration', () => {
   const config = getAssetHostConfig({ASSET_HOST_PROVIDER: 'ssh'});

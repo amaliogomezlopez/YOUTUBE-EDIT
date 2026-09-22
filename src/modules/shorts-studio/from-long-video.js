@@ -2,7 +2,9 @@ import {classifyDetection} from '../video-studio/framing.js';
 import {analyzeVisualTimeline} from '../video-studio/visual-analysis.js';
 import {planAdaptiveShort, applySceneEdits} from './editing-plan.js';
 import {finalizeShortAudio, verifyShortMedia} from '../video-studio/render-quality.js';
-import {copyFile, readdir} from 'node:fs/promises';
+import {copyFile, readdir, stat, appendFile, rename, unlink} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+import {resolveRenderPerformance, resolveEncoder, remotionPerformanceArgs} from '../video-studio/render-performance.js';
 import path from 'node:path';
 import {resolveCaptionStyle} from '../../lib/captions/presets.js';
 import {captionsToTimedWords} from '../../lib/captions/planner.js';
@@ -108,8 +110,20 @@ export async function renderCandidateWithRemotion({
   editing = {},
   subtitleMode = 'karaoke',
   subtitleStyle = {},
-  quality = 'high'
+  quality = 'high',
+  stage = 'master',
+  renderPerformance = {}
 }) {
+  if (!['prepare', 'preview', 'master'].includes(stage)) throw new Error('Etapa: prepare, preview o master');
+  const started = performance.now();
+  const timings = {stage, startedAt: new Date().toISOString(), phases: {}};
+  const measure = async (name, task) => {
+    const before = performance.now();
+    try {return await task();} finally {timings.phases[name] = round((performance.now() - before) / 1000, 3);}
+  };
+  const settings = resolveRenderPerformance(renderPerformance);
+  settings.encoder = runners.cutClip && (runners.render || stage === 'prepare') ? 'cpu' : await resolveEncoder(settings.encoder, {signal, log});
+  timings.settings = {...settings, intermediateEncoder: 'libx264'};
   const slug = slugify(`short-${state.id}-${candidate.id}`);
   if (!slug) throw new Error(`No se pudo derivar un slug para el candidato ${candidate.id}`);
   const media = mediaDir(slug);
@@ -147,14 +161,15 @@ export async function renderCandidateWithRemotion({
 
   // 2. Corte del segmento. Re-encode siempre: con `-c:v copy` los puntos de
   // corte caen en el keyframe anterior y el short no empieza donde se pidio.
+  // NVENC intermediates stall WebCodecs on this source; keep the validated CPU cut.
   const cutClip = runners.cutClip ?? defaultCutClip;
-  await cutClip({
+  await measure('cut', () => cutClip({
     videoFile: state.sourceVideo,
     outputFile: clipFile,
     start: candidate.start,
     durationSeconds,
     signal
-  });
+  }));
 
   // 3. Sin webcam en esquina, la decision cara/fit necesita el clip cortado.
   if (!effectiveMode) {
@@ -184,10 +199,16 @@ export async function renderCandidateWithRemotion({
     words[correction.index].text = correction.text.trim();
   }
   await writeJson(path.join(project, 'transcripts', '01.json'), {clipId: '01', language: null, words});
+  const clipStat = await stat(clipFile).catch(() => null);
+  const analysisKey = JSON.stringify({size:clipStat?.size,mtime:clipStat?.mtimeMs,start:candidate.start,end:candidate.end,words});
+  const analysisCacheFile = path.join(project, 'analysis-cache.json');
+  const cachedAnalysis = clipStat ? await readJson(analysisCacheFile).catch(() => null) : null;
   const previousAnalysis = candidate.analysisFile && candidate.analysisStart === candidate.start && candidate.analysisEnd === candidate.end ? await readJson(candidate.analysisFile).catch(()=>null) : null;
   const analysis = editing.enabled
-    ? previousAnalysis ?? await (runners.analyze ?? analyzeVisualTimeline)(clipFile, faceMedia, {outDir: project, words, signal})
+    ? await measure('analysis', () => previousAnalysis ?? (cachedAnalysis?.key === analysisKey ? cachedAnalysis.analysis : null) ?? (runners.analyze ?? analyzeVisualTimeline)(clipFile, faceMedia, {outDir: project, words, signal}))
     : null;
+
+  if (analysis && clipStat) await writeJson(analysisCacheFile, {key:analysisKey, analysis});
 
   // 5. Manifest. El clip cortado conserva la resolucion de la fuente, asi que
   // las medidas del job y el webcamBox valen tal cual.
@@ -225,6 +246,11 @@ export async function renderCandidateWithRemotion({
   const style = resolveCaptionStyle({preset: subtitleMode === 'progressive' ? 'progressive-punchy' : 'karaoke-highlight', ...subtitleStyle});
   plan.captions = {...style, maxWords: Math.min(5,style.maxWords), maxPageChars:Math.min(36,style.maxPageChars), pauseBreakSeconds:style.pauseBreak,maxPageSeconds:style.maxPageDuration,mode:subtitleMode};
   plan.captionStyle = {...style, mode:subtitleMode, renderer:'styled'};
+  if (editing.clipVolume !== undefined) {
+    const clipVolume = Number(editing.clipVolume);
+    if (!Number.isFinite(clipVolume) || clipVolume <= 0 || clipVolume > 1) throw new Error('El volumen del clip debe estar entre 0 y 1.');
+    plan.sound = {...plan.sound, clipVolume};
+  }
   if (editing.musicFile) {
     if (!/\.(mp3|wav|m4a|ogg)$/i.test(editing.musicFile)) throw new Error('La musica debe ser un archivo de audio.');
     const musicName='music'+path.extname(editing.musicFile).toLowerCase();
@@ -233,28 +259,36 @@ export async function renderCandidateWithRemotion({
   }
   if (editing.music) plan.sound = {...plan.sound, music: editing.music};
   plan = applySceneEdits(plan, editing.sceneEdits);
+  // Recompile anchors at preview FPS; an encoder-only FPS override changes timing.
+  plan.format = {width: 1080, height: 1920, fps: stage === 'preview' ? 30 : 60};
   await writeJson(path.join(project, 'short-plan.json'), plan);
   const build = runners.build ?? buildShort;
-  const compiled = await build({slug, log});
+  const compiled = await measure('build', () => build({slug, log}));
 
   // 7. Render con render-safe.mjs. La salida se localiza por el manifest del
   // run, no parseando stdout.
   const render = runners.render ?? defaultRemotionRender;
-  const renderedFile = await render({slug, signal, quality});
+  const renderedFile = stage === 'prepare' ? null : await measure('render', () => render({slug, signal, quality: stage === 'preview' ? 'draft' : quality, settings}));
 
   // 8. Copia al output del job, junto al resto de artefactos del candidato.
   const destination = outputFile || path.join(state.outputDir, candidate.id, 'short.mp4');
   await ensureDir(path.dirname(destination));
   let qa = null;
-  if (!runners.render) {
-    await finalizeShortAudio(renderedFile, destination, {signal, duration: compiled?.durationSeconds});
-    qa = await verifyShortMedia(destination, {duration: compiled?.durationSeconds, signal});
-    await writeJson(path.join(project, 'render-qa.json'), qa);
-    if (qa.errors.length) throw new Error('El render no supera QA: ' + qa.errors.join('; '));
-  } else await copyFile(renderedFile, destination);
+  if (renderedFile && !runners.render) {
+    await measure('finalize', async () => {
+      await finalizeShortAudio(renderedFile, destination, {signal, duration: compiled?.durationSeconds});
+      qa = await verifyShortMedia(destination, {duration: compiled?.durationSeconds, signal});
+      await writeJson(path.join(project, 'render-qa.json'), qa);
+      if (qa.errors.length) throw new Error('El render no supera QA: ' + qa.errors.join('; '));
+    });
+  } else if (renderedFile) await copyFile(renderedFile, destination);
+  timings.elapsedSeconds = round((performance.now() - started) / 1000, 3);
+  await appendFile(path.join(project, 'performance-history.jsonl'), JSON.stringify(timings) + '\n');
 
   return {
-    outputFile: destination,
+    outputFile: renderedFile ? destination : null,
+    stage,
+    performance: timings,
     slug,
     buildFile: path.join(project, 'short-build.json'),
     captionTiming,
@@ -268,34 +302,45 @@ export async function renderCandidateWithRemotion({
   };
 }
 
-async function defaultCutClip({videoFile, outputFile, start, durationSeconds, signal}) {
+export async function defaultCutClip({videoFile, outputFile, start, durationSeconds, signal}) {
   await ensureDir(path.dirname(outputFile));
-  await run('ffmpeg', [
-    '-y',
-    '-ss', String(round(start, 3)),
-    '-i', videoFile,
-    '-t', String(durationSeconds),
-    '-af', LOUDNESS_FILTER,
-    '-c:v', 'libx264',
-    '-preset', 'medium',
-    '-crf', '16',
-    '-pix_fmt', 'yuv420p',
-    '-c:a', 'aac',
-    '-b:a', '192k',
-    '-movflags', '+faststart',
-    outputFile
-  ], {signal});
+  const source = await stat(videoFile);
+  const key = createHash('sha256').update(JSON.stringify({version: 3, file: path.resolve(videoFile), size: source.size, mtime: source.mtimeMs, start, durationSeconds, encoder: 'cpu'})).digest('hex');
+  const cacheFile = outputFile + '.cache.json';
+  const cached = await readJson(cacheFile).catch(() => null);
+  const existing = await stat(outputFile).catch(() => null);
+  if (cached?.key === key && existing?.size === cached.size && existing?.mtimeMs === cached.mtimeMs) return outputFile;
+  const temporary = outputFile + '.pending.mp4';
+  try {
+    await run('ffmpeg', [
+      '-y',
+      '-ss', String(round(start, 3)),
+      '-i', videoFile,
+      '-t', String(durationSeconds),
+      '-af', LOUDNESS_FILTER,
+      '-c:v','libx264','-preset','fast','-crf','16',
+      '-pix_fmt', 'yuv420p',
+      '-c:a', 'aac',
+      '-b:a', '192k',
+      '-ar', '48000',
+      '-movflags', '+faststart',
+      temporary
+    ], {signal});
+    await rename(temporary, outputFile);
+    const result = await stat(outputFile);
+    await writeJson(cacheFile, {key, size: result.size, mtimeMs: result.mtimeMs});
+  } finally {await unlink(temporary).catch(() => {});}
   return outputFile;
 }
 
-async function defaultRemotionRender({slug, signal, quality = 'high'}) {
+async function defaultRemotionRender({slug, signal, quality = 'high', settings}) {
   const compositionId = compositionIdForSlug(slug);
   // Runs existentes ANTES de lanzar: el render tarda minutos y cualquier otra
   // ejecucion de render-safe (un still de verificacion, otro job) puede dejar
   // runs nuevos por medio. El run de ESTE render es uno que no estaba antes.
   const before = await listRunIds(slug);
   await run(process.execPath,
-    ['scripts/render-safe.mjs', 'render', 'shorts-' + slug, compositionId, slug + '.mp4', '--color-space=bt709', '--crf=' + ({draft:23,standard:19,high:17}[quality] ?? 17)],
+    ['scripts/render-safe.mjs', 'render', 'shorts-' + slug, compositionId, slug + '.mp4', ...remotionPerformanceArgs(settings, quality)],
     {cwd: REMOTION_ROOT, signal});
   return locateRunOutput(slug, before);
 }

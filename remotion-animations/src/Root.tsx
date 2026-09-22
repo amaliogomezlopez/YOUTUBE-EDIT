@@ -102,9 +102,12 @@ import {introVideoSchema} from "./intro/schemas";
 // Registro generado por `npm run intro:build`: una intro nueva se registra sola.
 import {introBuilds} from "./intro/registry.generated";
 
+import {YouTubeTimeline, youtubeDefault, youtubeMetadata, youtubeTimelineSchema} from "./youtube/YouTubeTimeline";
+
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      <Folder name="YouTube"><Composition id="YouTube-Timeline" component={YouTubeTimeline} schema={youtubeTimelineSchema} defaultProps={youtubeDefault} calculateMetadata={youtubeMetadata} width={1920} height={1080} fps={30} durationInFrames={30}/></Folder>
       <Folder name="Shorts">
         {shortBuilds.map(({id, build}) => (
           <Composition

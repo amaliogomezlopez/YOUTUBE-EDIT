@@ -87,6 +87,9 @@ export async function processJob(state, options = {}) {
   const started = performance.now();
   if (options.editing?.enabled) options = {...options, renderEngine: 'remotion'};
   const {signal} = options;
+  const renderStage = options.renderStage ?? 'master';
+  if (!['prepare','preview','master'].includes(renderStage)) throw new Error('Etapa de render no valida');
+  if (renderStage !== 'master' && options.renderEngine !== 'remotion') throw new Error('prepare/preview requieren Remotion');
   try {
     throwIfCancelled(signal);
     state.status = 'probing';
@@ -246,7 +249,9 @@ export async function processJob(state, options = {}) {
           editing: options.editing,
           subtitleMode: options.subtitleMode,
           subtitleStyle: options.subtitleStyle,
-          quality: options.renderQuality
+          quality: options.renderQuality,
+          stage: renderStage,
+          renderPerformance: options.renderPerformance
         });
         if (result.captionTiming !== 'word') {
           const timingWarning = 'Los subtítulos karaoke usan tiempos aproximados porque la transcripción no contiene timestamps por palabra.';
@@ -256,6 +261,8 @@ export async function processJob(state, options = {}) {
         const metadata = {
           ...candidate,
           captionOverlay: null,
+          status: renderStage === 'prepare' ? 'prepared' : renderStage === 'preview' ? 'preview' : 'ready',
+          performance: result.performance,
           duration: result.duration ?? candidate.duration,
           editing: result.editing,
           transcript: result.transcript,
@@ -264,6 +271,8 @@ export async function processJob(state, options = {}) {
           renderSettings: {
             mode: result.renderMode,
             engine: 'remotion',
+            stage: renderStage,
+            performance: options.renderPerformance ?? {},
             quality: options.renderQuality ?? 'high',
             subtitleMode: options.subtitleMode ?? 'karaoke',
             subtitleStyle: result.captionStyle ?? options.subtitleStyle ?? {},
@@ -272,7 +281,9 @@ export async function processJob(state, options = {}) {
             webcamBox: result.webcamBox ?? null
           },
           files: {
-            video: result.outputFile,
+            video: renderStage === 'master' ? result.outputFile : null,
+            preview: renderStage === 'preview' ? result.outputFile : null,
+            build: result.buildFile,
             metadata: metadataFile
           }
         };
@@ -356,12 +367,12 @@ export async function processJob(state, options = {}) {
       await saveJobState(state);
     }
 
-    state.status = 'done';
+    state.status = renderStage === 'prepare' ? 'prepared' : renderStage === 'preview' ? 'preview' : 'done';
     state.clips = rendered;
     state.completedAt = new Date().toISOString();
     state.elapsedSeconds = round((performance.now() - started) / 1000, 2);
     await saveJobState(state);
-    await writeFile(path.join(state.outputDir, 'README.txt'), `Generated ${rendered.length} shorts for job ${state.id}\n`, 'utf8');
+    await writeFile(path.join(state.outputDir, 'README.txt'), `${renderStage}: ${rendered.length} shorts for job ${state.id}\n`, 'utf8');
     return state;
   } catch (error) {
     const cancelled = signal?.aborted || error?.name === 'AbortError';
@@ -472,6 +483,10 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
     : {...previousSubtitleStyle, ...requestedSubtitleStyle};
   const engine = editing.enabled ? 'remotion' : edits.renderEngine || clip.renderSettings?.engine || state.renderEngine || 'ffmpeg';
   const renderQuality = edits.renderQuality || clip.renderSettings?.quality || 'high';
+  const stage = edits.renderStage ?? 'master';
+  if (!['prepare','preview','master'].includes(stage)) throw new Error('Etapa de render no valida');
+  if (stage !== 'master' && engine !== 'remotion') throw new Error('prepare/preview requieren Remotion');
+  const renderPerformance = {...clip.renderSettings?.performance, ...edits.renderPerformance};
   const previousClip = structuredClone(clip);
   clip.status = 'rendering';
   clip.renderError = null;
@@ -489,7 +504,9 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         editing,
         subtitleMode,
         subtitleStyle,
-        quality: renderQuality
+        quality: renderQuality,
+        stage,
+        renderPerformance
       });
       const remotionPlan = buildProgressiveCaptionPlan(sliceCaptions(captions, start, end), {
         mode: subtitleMode,
@@ -504,13 +521,18 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         transcript: result.transcript,
         text: result.transcript?.map(w=>w.text).join(' ') || sliceCaptions(captions,start,end).map(c=>c.text).join(' '),
         qa: result.qa,
-        status: 'ready',
+        status: stage === 'prepare' ? 'prepared' : stage === 'preview' ? 'preview' : 'ready',
+        performance: result.performance,
+        renderHistory: [...(previousClip.renderHistory ?? []), ...(result.performance ? [result.performance] : [])],
+        previousVideo: previousClip.files?.video ?? previousClip.previousVideo ?? null,
         renderError: null,
-        renderedAt: new Date().toISOString(),
+        renderedAt: stage === 'master' ? new Date().toISOString() : null,
         captionOverlay: null,
         renderSettings: {
           mode: result.renderMode,
           engine: 'remotion',
+          stage,
+          performance: renderPerformance,
           quality: renderQuality,
           subtitleMode,
           subtitleStyle: result.captionStyle ?? subtitleStyle,
@@ -520,15 +542,18 @@ export async function rerenderClip(state, clipId, edits = {}, options = {}) {
         },
         files: {
           ...(previousClip.files ?? {}),
-          video: result.outputFile,
+          video: stage === 'master' ? result.outputFile : null,
+          preview: stage === 'preview' ? result.outputFile : null,
+          build: result.buildFile,
           metadata: metadataFile
         }
       };
       await writeJson(metadataFile, nextClip);
       Object.keys(clip).forEach((key) => delete clip[key]);
       Object.assign(clip, nextClip);
+      state.status = state.clips.every(item => item.status === 'ready') ? 'done' : stage === 'preview' ? 'preview' : 'prepared';
       await saveJobState(state);
-      const currentFiles = new Set(Object.values(nextClip.files ?? {}));
+      const currentFiles = new Set([...Object.values(nextClip.files ?? {}), nextClip.previousVideo]);
       const obsoleteFiles = Object.values(previousClip.files ?? {}).filter((file) => file && !currentFiles.has(file));
       await Promise.all(obsoleteFiles.map((file) => unlink(file).catch(() => {})));
       return clip;

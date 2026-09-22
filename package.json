@@ -5,6 +5,10 @@
   "type": "module",
   "description": "Local creator workflow for transcripts, vertical clips, metadata, stories and official multi-platform publishing.",
   "scripts": {
+    "youtube:studio": "node scripts/youtube-studio.js",
+    "youtube:render": "node scripts/youtube-render.js",
+    "youtube:feedback": "node scripts/youtube-feedback.js",
+    "youtube:qa": "node scripts/youtube-reference-qa.js",
     "process": "node src/cli.js process",
     "editorial-video": "node scripts/editorial-video.js",
     "episode:narration": "node scripts/prepare-episode-narration.js",

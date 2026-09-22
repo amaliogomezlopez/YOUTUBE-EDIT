@@ -1,5 +1,6 @@
 import {spawnSync} from "node:child_process";
 import path from "node:path";
+import {defaultQualityArgs} from './lib/render-quality.mjs';
 import {
   completeRun,
   createRunDirectory,
@@ -36,15 +37,8 @@ const remotionCli = path.resolve(
 // estandar del pipeline ffmpeg (CRF 17, preset slow). El caller puede pisar
 // ambos pasando --codec/--crf en la linea de comandos, y el CRF tambien por
 // entorno (REMOTION_CRF).
-const hasFlag = (name) =>
-  renderArgs.some((arg) => arg === name || arg.startsWith(`${name}=`));
-const qualityArgs =
-  command === "render"
-    ? [
-        ...(hasFlag("--codec") ? [] : ["--codec=h264"]),
-        ...(hasFlag("--crf") ? [] : [`--crf=${process.env.REMOTION_CRF ?? 17}`]),
-      ]
-    : [];
+const qualityArgs = defaultQualityArgs(command, renderArgs);
+const started = performance.now();
 
 console.log(`\nEjecución ${run.runId}`);
 console.log(`Renderizando ${compositionId} -> ${outputPath}`);
@@ -74,7 +68,7 @@ if (result.status !== 0) {
 
 const manifestPath = completeRun(run, {
   outputs: [outputPath],
-  metadata: {compositionId},
+  metadata: {compositionId, args: [...qualityArgs, ...renderArgs], elapsedSeconds: (performance.now() - started) / 1000},
 });
 console.log(`\nRender terminado en ${run.directory}`);
 console.log(`Manifest: ${manifestPath}`);

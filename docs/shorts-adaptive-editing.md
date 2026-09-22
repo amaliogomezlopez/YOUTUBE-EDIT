@@ -107,7 +107,7 @@ validador. Los planes antiguos sin presupuesto se declaran no evaluables.
 
 ## Exportación y métricas
 
-El render de alta calidad usa H.264 CRF 17 con color BT.709, 1080×1920 a 60 fps y AAC. Tras mezclar
+El máster de alta calidad usa H.264 NVENC a 24 Mb/s cuando está disponible, o CPU CRF 17, con color BT.709, 1080×1920 a 60 fps y AAC. El flujo prepare/preview/master, las cachés y las opciones se describen en [Rendimiento de Shorts](shorts-render-performance.md). Tras mezclar
 voz, efectos y música se normaliza a un objetivo de -14 LUFS y -1,5 dBTP sin
 recodificar de nuevo la imagen. render-qa.json comprueba resolución, codecs,
 duración y sonoridad. La revisión visual sigue siendo un paso distinto; el
