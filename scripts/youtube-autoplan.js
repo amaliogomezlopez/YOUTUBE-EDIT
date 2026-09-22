@@ -6,6 +6,7 @@ import {ffprobe} from '../src/lib/ffmpeg.js';
 import {planEdit, compileEditPlan, orderTakes} from '../src/modules/youtube-studio/autoplan.js';
 import {buildIntentMessages, retrieveExamples, validateIntents, sentencesOf} from '../src/modules/youtube-studio/intents.js';
 import {chatJson} from '../src/lib/llm.js';
+import {askAgy} from '../src/lib/agent-cli.js';
 import {loadDotEnv} from '../src/lib/utils.js';
 import {evaluatePlan, summarizeEvaluation} from '../src/modules/youtube-studio/evaluate.js';
 import {qaRender} from '../src/modules/youtube-studio/qa.js';
@@ -21,7 +22,7 @@ const CHROME = path.resolve('remotion-animations/node_modules/.remotion/chrome-h
 const CORPUS = path.resolve('data/editorial-memory/corpus');
 const USAGE = `Uso:
   youtube-autoplan capture --url URL... [--urls FILE] --output DIR
-  youtube-autoplan plan --project DIR --output DIR [--profile JSON] [--exclude ID]... [--intents JSON | --llm] [--assets assets.json]
+  youtube-autoplan plan --project DIR --output DIR [--profile JSON] [--exclude ID]... [--intents JSON | --llm | --agent agy [--agent-model M]] [--assets assets.json]
   youtube-autoplan qa --video MP4 --plan edit-plan.json --output DIR
   youtube-autoplan export --plan render-plan.json --output TIMELINE.fcpxml
   youtube-autoplan corrections --plan render-plan.json --edited EDITADO.fcpxml --output JSON
@@ -31,7 +32,7 @@ const readJson = async (file) => JSON.parse(await readFile(file, 'utf8'));
 try {
   const {values: v, positionals: p} = parseArgs({allowPositionals: true, options: {
     project: {type: 'string'}, output: {type: 'string'}, profile: {type: 'string'}, exclude: {type: 'string', multiple: true},
-    intents: {type: 'string'}, llm: {type: 'boolean'}, assets: {type: 'string'}, url: {type: 'string', multiple: true}, urls: {type: 'string'}, plan: {type: 'string'}, edit: {type: 'string'}, video: {type: 'string'}, edited: {type: 'string'}}});
+    intents: {type: 'string'}, llm: {type: 'boolean'}, agent: {type: 'string'}, 'agent-model': {type: 'string'}, assets: {type: 'string'}, url: {type: 'string', multiple: true}, urls: {type: 'string'}, plan: {type: 'string'}, edit: {type: 'string'}, video: {type: 'string'}, edited: {type: 'string'}}});
   if (p[0] === 'capture') {
     if (!v.output || !(v.url?.length || v.urls)) throw Error(USAGE);
     const urls = [...(v.url ?? []), ...(v.urls ? (await readFile(v.urls, 'utf8')).match(/https:\/\/[^\s)>"']+/g) ?? [] : [])];
@@ -77,7 +78,8 @@ try {
     };
     const kit = await resolveBrandKit(edits, {probe, readFile});
     let intents = v.intents ? await readJson(v.intents) : {};
-    if (v.llm) {
+    if (v.agent && v.agent !== 'agy') throw Error('Agente no soportado: ' + v.agent);
+    if (v.llm || v.agent) {
       // Examples from held-out videos never reach the prompt.
       const bank = [];
       for (const name of await readdir(path.join(CORPUS, 'examples'))) {
@@ -88,14 +90,26 @@ try {
       const text = takes.flatMap(sentencesOf).map((s) => s.text).join(' ');
       await loadDotEnv();
       try {
-        const raw = await chatJson(buildIntentMessages({takes, examples: retrieveExamples(bank, text)}), {temperature: 0.2, maxTokens: 4000});
-        intents = {...validateIntents(raw, takes), examples: bank.length};
+        const messages = buildIntentMessages({takes, examples: retrieveExamples(bank, text)});
+        if (v.agent) {
+          const answer = await askAgy(messages.map((m) => m.content).join('\n\n'), v['agent-model'] ? {model: v['agent-model']} : {});
+          intents = {...validateIntents(answer.json, takes), examples: bank.length, source: 'agy', model: v['agent-model'] ?? 'gemini-3.8-flash-medium', usage: answer.usage, seconds: answer.seconds};
+        } else {
+          const raw = await chatJson(messages, {temperature: 0.2, maxTokens: 4000});
+          intents = {...validateIntents(raw, takes), examples: bank.length};
+        }
       } catch (error) {
         // Same contract as the rest of Shortsmith: without an LLM the plan falls back to rules and says so.
         intents = {source: 'fallback', warning: 'LLM no disponible: ' + error.message};
       }
     }
-    const assets = v.assets ? (await readJson(v.assets)).assets : [];
+    // Files from the take folder's assets/ subfolder join the captured ones; images need their size.
+    const folderAssets = [];
+    for (const asset of manifest.assets ?? []) {
+      const size = asset.kind === 'image' ? await sharp(path.resolve('remotion-animations/public', asset.file)).metadata() : {};
+      folderAssets.push({...asset, width: asset.width ?? size.width, height: asset.height ?? size.height});
+    }
+    const assets = [...folderAssets, ...(v.assets ? (await readJson(v.assets)).assets : [])];
     const plan = planEdit({clips, profile, kit, intents, assets});
     if (intents.warning) plan.warnings.push(intents.warning);
     const renderPlan = compileEditPlan(plan, {clips, kit, assets});

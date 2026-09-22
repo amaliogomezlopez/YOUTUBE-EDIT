@@ -38,3 +38,13 @@ test('X posts come from the official oEmbed and the card never renders markup fr
   assert.ok(!xCardHtml(post).includes('<script>'));
   await assert.rejects(fetchXEmbed('https://example.com/a', {fetchImpl}), /no valida/);
 });
+import {agyStreamMessage, parseAgyResult} from '../src/lib/agent-cli.js';
+
+test('agy speaks NDJSON over stdin and only a SUCCESS result counts', () => {
+  assert.deepEqual(JSON.parse(agyStreamMessage('hola "x"')), {event: 'user', message: {role: 'user', content: 'hola "x"'}});
+  const result = {status: 'SUCCESS', response: '```json\n{"emphasis":[]}\n```', usage: {total_tokens: 5}, duration_seconds: 1};
+  const ok = '{"event":"init"}\n' + JSON.stringify({event: 'result', result}) + '\n';
+  assert.deepEqual(parseAgyResult(ok).json, {emphasis: []});
+  assert.throws(() => parseAgyResult('{"event":"result","result":{"status":"ERROR","error":"sin cuota"}}'), /sin cuota/);
+  assert.throws(() => parseAgyResult('{"event":"init"}'), /no devolvio/);
+});

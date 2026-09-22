@@ -295,7 +295,8 @@ npm run youtube:render -- render --project mi-video --package RUTA/render-packag
 - **Intenciones**: `--intents JSON` permite a cualquier agente elegir *dónde*
   (frases de énfasis, tomas que cambian de tema, cortes del gancho) sin tocar
   cantidades; `--llm` lo pide al LLM configurado y, si falla, sigue con reglas y lo
-  deja en `warnings`. Formato: `{"emphasis":[{"clipId":"03","atWord":12}],
+  deja en `warnings`. `--agent agy [--agent-model gemini-3.8-flash-medium]` usa el CLI de
+  Antigravity (stdin, carpeta temporal vacía, modo plan y sandbox; ~10 s por vídeo). Formato: `{"emphasis":[{"clipId":"03","atWord":12}],
   "topicShiftTakes":[4],"hookPunchRefs":[{"clipId":"01","atWord":5}]}`.
 
 ### Evaluación dejando uno fuera
@@ -313,6 +314,7 @@ del autor sobre clips nuevos.
 
 ## Recursos automáticos
 
+- **Subcarpeta `assets/`** de la carpeta de tomas: sus imágenes y vídeos se tratan igual.
 - **Clips no numerados** de la carpeta de tomas (`grok46.mkv`…) se colocan solos
   (`video-studio/asset-sourcing.js`): el nombre se lee como se dice (`grok46` →
   "grok 4.6") y el recurso entra en la frase que lo nombra y anuncia algo visible.
