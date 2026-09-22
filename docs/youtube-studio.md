@@ -355,7 +355,8 @@ npm run mcp
   `REVIEW.md` con decisiones, pendientes y avisos.
 - **FCPXML 1.9** para DaVinci Resolve y Final Cut: narración en la línea principal,
   recursos y audio en carriles conectados, zoom como keyframes. El GIF del sticker
-  no se repite en bucle en esos editores. `corrections` lee el FCPXML corregido
+  no se repite en bucle en esos editores y los rótulos no se exportan (necesitan
+  plantillas de título del editor). `corrections` lee el FCPXML corregido
   (sea cual sea su anidamiento), lo compara con el plan y guarda lo movido, recortado,
   reescalado, quitado o añadido como corrección pendiente (`scope: this-example`).
 - **MCP** (`scripts/shortsmith-mcp.js`, sin dependencias): `edit_video`,

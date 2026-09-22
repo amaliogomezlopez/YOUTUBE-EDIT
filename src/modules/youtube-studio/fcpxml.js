@@ -40,7 +40,8 @@ export function toFcpxml(plan, {name = 'Shortsmith', resolveFile = (f) => f, dur
     return assets.get(src);
   };
   const spineLayers = plan.layers.filter((l) => l.type === 'video' && (l.trackIndex === 0 || l.name === 'outro')).sort((a, b) => a.from - b.from);
-  const connected = plan.layers.filter((l) => !spineLayers.includes(l));
+  // Text layers need the editor's own title templates; they stay out of the handoff.
+  const connected = plan.layers.filter((l) => !spineLayers.includes(l) && l.type !== 'text');
   const lanes = new Map();
   const laneOf = (l) => {
     const key = l.type === 'audio' ? `a${l.trackIndex}` : `v${l.trackIndex}`;

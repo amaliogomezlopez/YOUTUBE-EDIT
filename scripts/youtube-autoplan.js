@@ -121,6 +121,7 @@ try {
     const durations = {};
     for (const layer of plan.layers) {
       const file = resolveFile(layer.file);
+      if (layer.type === 'text') continue;
       if (layer.type !== 'image' && !(file in durations)) durations[file] = (await ffprobe(file)).duration;
     }
     const xml = toFcpxml(plan, {name: path.basename(path.dirname(path.resolve(v.plan))), resolveFile, durations});
