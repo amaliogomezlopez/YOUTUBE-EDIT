@@ -264,7 +264,8 @@ test('processJob con renderEngine remotion usa el bridge y escribe su metadata',
   assert.equal(clip.renderSettings.engine, 'remotion');
   assert.equal(clip.renderSettings.mode, 'crop', 'fuente vertical: modo crop');
   assert.equal(clip.renderSettings.slug, 'short-job-engine-x');
-  assert.deepEqual(Object.keys(clip.files).sort(), ['metadata', 'video'], 'sin ass en la rama remotion');
+  assert.deepEqual(Object.keys(clip.files).sort(), ['build', 'metadata', 'preview', 'video'], 'sin ass en la rama remotion');
+  assert.equal(clip.files.preview, null, 'el master no deja preview');
   assert.equal(await readFile(clip.files.video, 'utf8'), 'mp4-remotion');
   assert.ok(
     (finalState.warnings ?? []).some((warning) => warning.includes('tiempos aproximados')),
