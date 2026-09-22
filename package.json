@@ -74,7 +74,8 @@
     "talking-head:sounds:import": "node scripts/talking-head.js sounds",
     "shorts:camera": "node scripts/shorts-camera.js",
     "shorts:project": "node scripts/shorts-project.js",
-    "shorts:benchmark": "node scripts/shorts-camera-benchmark.js"
+    "shorts:benchmark": "node scripts/shorts-camera-benchmark.js",
+    "editorial:corpus": "node scripts/editorial-corpus.js"
   },
   "engines": {
     "node": ">=20"
