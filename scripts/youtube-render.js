@@ -12,14 +12,15 @@ import {mixTimelineAudio} from '../src/modules/video-studio/timeline-audio.js';
 import {createRunDirectory,completeRun} from '../remotion-animations/scripts/lib/output-run.mjs';
 const root=path.resolve('remotion-animations'),publicRoot=path.join(root,'public');
 try {
- const {values:v,positionals:p}=parseArgs({allowPositionals:true,options:{snapshot:{type:'string'},reference:{type:'string'},timeline:{type:'string'},from:{type:'string'},to:{type:'string'},package:{type:'string'},project:{type:'string'},'allow-incomplete':{type:'boolean'},'keyframe-clock':{type:'string'},frame:{type:'string'},'sound-disabled':{type:'boolean'},substitute:{type:'string',multiple:true}}});
+ const {values:v,positionals:p}=parseArgs({allowPositionals:true,options:{snapshot:{type:'string'},'render-plan':{type:'string'},reference:{type:'string'},timeline:{type:'string'},from:{type:'string'},to:{type:'string'},package:{type:'string'},project:{type:'string'},'allow-incomplete':{type:'boolean'},'keyframe-clock':{type:'string'},frame:{type:'string'},'sound-disabled':{type:'boolean'},substitute:{type:'string',multiple:true}}});
  const command=p[0];
- if(!['prepare','render','still'].includes(command)||p.length!==1||!v.project)throw Error('Uso: youtube-render prepare --project SLUG (--snapshot JSON | --reference JSON --timeline ID --from S --to S --keyframe-clock source [--substitute ORIGINAL=REEMPLAZO]) [--allow-incomplete]; render|still --project SLUG --package JSON [--frame N] [--sound-disabled]');
+ if(!['prepare','render','still'].includes(command)||p.length!==1||!v.project)throw Error('Uso: youtube-render prepare --project SLUG (--snapshot JSON | --render-plan JSON | --reference JSON --timeline ID --from S --to S --keyframe-clock source [--substitute ORIGINAL=REEMPLAZO]) [--allow-incomplete]; render|still --project SLUG --package JSON [--frame N] [--sound-disabled]');
  if(command==='prepare'){
-   if(Boolean(v.snapshot)===Boolean(v.reference))throw Error('Seleccionar snapshot o referencia');
+   if([v.snapshot,v.reference,v['render-plan']].filter(Boolean).length!==1)throw Error('Seleccionar snapshot, referencia o render-plan');
    const substitutions=Object.fromEntries((v.substitute??[]).map(pair=>{const i=pair.indexOf('=');if(i<1)throw Error('--substitute ORIGINAL=REEMPLAZO');return [pair.slice(0,i),path.resolve(pair.slice(i+1))];}));
    let plan;
    if(v.snapshot)plan=fromSnapshot(await loadPackage(v.snapshot));
+   else if(v['render-plan']){plan=await loadPackage(v['render-plan']);if(plan.kind!=='youtube-render-plan')throw Error('render-plan invalido');}
    else {
      const reference=await loadPackage(v.reference);
      const stickers=await resolveCapcutStickers(reference,v.timeline,{readFile,probe:async file=>{const {width,height}=await ffprobe(file);return {width,height};}});

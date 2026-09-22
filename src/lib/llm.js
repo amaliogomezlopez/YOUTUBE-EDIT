@@ -54,7 +54,9 @@ function extractContent(json) {
   if (json.reply) return json.reply;
   if (json.text) return json.text;
   if (json.content) return json.content;
-  throw new Error('LLM response did not include assistant content.');
+  // MiniMax answers HTTP 200 with base_resp describing the failure (e.g. insufficient balance).
+  const status = json.base_resp?.status_msg;
+  throw new Error(status ? `LLM provider error: ${status}` : 'LLM response did not include assistant content.');
 }
 
 export function extractJson(text) {

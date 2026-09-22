@@ -51,3 +51,20 @@ export function buildDecisionExamples(edit, words, {project}) {
   }
   return examples.sort((a, b) => a.at - b.at);
 }
+
+/**
+ * Seconds of air the editor leaves around speech at each cut, measured on the
+ * exported audio: lead = speech onset - cut, tail = cut - speech offset of the
+ * previous take. Audio, not word timestamps: transcribers stretch words over silence.
+ */
+export function cutPadding(edit, silences, window = 1.5) {
+  const lead = [], tail = [];
+  for (const take of edit.takes.slice(1)) {
+    const cut = take.at;
+    const before = silences.filter((s) => s.start < cut + 0.02 && s.start > cut - window).at(-1);
+    if (before) tail.push(Math.round((cut - before.start) * 1000) / 1000);
+    const after = silences.find((s) => s.end > cut - 0.02 && s.end < cut + window && s.start < cut + 0.3);
+    if (after) lead.push(Math.round((after.end - cut) * 1000) / 1000);
+  }
+  return {lead, tail};
+}

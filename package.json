@@ -75,7 +75,8 @@
     "shorts:camera": "node scripts/shorts-camera.js",
     "shorts:project": "node scripts/shorts-project.js",
     "shorts:benchmark": "node scripts/shorts-camera-benchmark.js",
-    "editorial:corpus": "node scripts/editorial-corpus.js"
+    "editorial:corpus": "node scripts/editorial-corpus.js",
+    "youtube:autoplan": "node scripts/youtube-autoplan.js"
   },
   "engines": {
     "node": ">=20"

@@ -4,20 +4,22 @@ import os from 'node:os';
 import {parseArgs} from 'node:util';
 import {mkdir, readFile, readdir, writeFile} from 'node:fs/promises';
 import {discoverCapcutProjects, loadEditTimeline, normalizeEdit} from '../src/modules/editorial-memory/corpus.js';
-import {buildStyleProfile, summarizeStyle} from '../src/modules/editorial-memory/style-profile.js';
-import {buildDecisionExamples} from '../src/modules/editorial-memory/examples.js';
+import {buildStyleProfile, summarizeStyle, quantiles} from '../src/modules/editorial-memory/style-profile.js';
+import {buildDecisionExamples, cutPadding} from '../src/modules/editorial-memory/examples.js';
 import {transcribeAudio} from '../src/lib/stt.js';
 import {ffprobe} from '../src/lib/ffmpeg.js';
 import {loadDotEnv, run} from '../src/lib/utils.js';
 import {existsSync} from 'node:fs';
+import {detectSilences} from '../src/modules/video-studio/silences.js';
 
 const DEFAULT_ROOT = path.join(os.homedir(), 'AppData/Local/CapCut/User Data/Projects/com.lveditor.draft');
 const DEFAULT_OUT = path.resolve('data/editorial-memory/corpus');
-const USAGE = 'Uso: editorial-corpus scan [--root DIR] [--out DIR] | profile [--out DIR] | examples --project ID --export MP4 [--out DIR]';
+const USAGE = 'Uso: editorial-corpus scan [--root DIR] [--out DIR] | profile [--exclude ID]... [--recent N] [--output FILE] [--out DIR] | examples --project ID --export MP4 [--out DIR]';
 const slug = (id) => id.replace(/[^\w.-]+/g, '_');
 
 try {
-  const {values: v, positionals: p} = parseArgs({allowPositionals: true, options: {root: {type: 'string'}, out: {type: 'string'}, project: {type: 'string'}, export: {type: 'string'}}});
+  const {values: v, positionals: p} = parseArgs({allowPositionals: true, options: {root: {type: 'string'}, out: {type: 'string'}, project: {type: 'string'}, export: {type: 'string'},
+    exclude: {type: 'string', multiple: true}, recent: {type: 'string'}, output: {type: 'string'}}});
   const out = path.resolve(v.out ?? DEFAULT_OUT);
   if (p[0] === 'scan') {
     // Read-only over CapCut: drafts are parsed from disk, never written.
@@ -43,14 +45,31 @@ try {
     const edits = [];
     for (const name of await readdir(path.join(out, 'edits'))) edits.push(JSON.parse(await readFile(path.join(out, 'edits', name), 'utf8')));
     // Tiny timelines are exports or wrappers, not edits with decisions.
-    const usable = edits.filter((e) => e.takes.length + e.inserts.length >= 5);
+    // --exclude keeps a held-out video out of its own evaluation; --recent follows taste as it evolves.
+    const excluded = new Set(v.exclude ?? []);
+    const usable = edits.filter((e) => e.takes.length + e.inserts.length >= 5 && !excluded.has(e.project));
+    const recent = v.recent ? Number(v.recent) : null;
+    if (recent != null && !(Number.isInteger(recent) && recent > 0)) throw Error('--recent debe ser un entero positivo');
     const profiles = {};
     for (const format of ['horizontal', 'vertical']) {
-      profiles[format] = {...buildStyleProfile(usable, {format}), projects: usable.filter((e) => e.format === format).map((e) => e.project)};
+      const pool = usable.filter((e) => e.format === format).sort((a, b) => b.modifiedAt.localeCompare(a.modifiedAt)).slice(0, recent ?? Infinity);
+      // Cut padding needs the exported audio (written by `examples`); music sits below -30 dB.
+      const padding = {lead: [], tail: [], videos: []};
+      for (const edit of pool) {
+        const wav = path.join(out, 'transcripts', slug(edit.project) + '.wav');
+        if (!existsSync(wav)) continue;
+        const {lead, tail} = cutPadding(edit, await detectSilences(wav, {noise: -30, minSeconds: 0.08}));
+        padding.lead.push(...lead); padding.tail.push(...tail); padding.videos.push(edit.project);
+      }
+      const speech = {leadSeconds: quantiles(padding.lead), tailSeconds: quantiles(padding.tail), videos: padding.videos, method: 'silencedetect -30 dB sobre la exportacion'};
+      profiles[format] = {...buildStyleProfile(pool, {format}), speech, projects: pool.map((e) => e.project), excluded: [...excluded], recent};
     }
-    await writeFile(path.join(out, 'style-profile.json'), JSON.stringify(profiles, null, 2) + '\n');
     const summary = Object.values(profiles).filter((x) => x.videos).map(summarizeStyle).join('\n');
-    await writeFile(path.join(out, 'ESTILO.md'), summary);
+    if (v.output) await writeFile(path.resolve(v.output), JSON.stringify(profiles, null, 2) + '\n', {flag: 'wx'});
+    else {
+      await writeFile(path.join(out, 'style-profile.json'), JSON.stringify(profiles, null, 2) + '\n');
+      await writeFile(path.join(out, 'ESTILO.md'), summary);
+    }
     console.log(summary);
   } else if (p[0] === 'examples') {
     if (!v.project || !v.export) throw Error(USAGE);

@@ -55,6 +55,13 @@ export function buildStyleProfile(edits, {format}) {
     eventsOfSounds[s.event] ??= {};
     eventsOfSounds[s.event][s.family] = (eventsOfSounds[s.event][s.family] ?? 0) + 1;
   }
+  const HOOK_SECONDS = 20, OUTRO_SECONDS = 60;
+  const hookPunches = set.map((e) => e.takes.filter((t) => t.at < HOOK_SECONDS && t.staticZoom > 1.03));
+  const spacing = hookPunches.flatMap((list) => list.slice(1).map((t, i) => t.at - list[i].at));
+  const cutsWithSound = set.map((e) => {
+    const cuts = e.takes.slice(1).filter((t) => t.jumpCutGap == null).length;
+    return cuts ? e.sounds.filter((x) => x.event === 'take-change').length / cuts : null;
+  });
   return {
     version: 1,
     kind: 'editorial-style-profile',
@@ -77,6 +84,22 @@ export function buildStyleProfile(edits, {format}) {
       curveShare: share(moves.filter((m) => m.easing === 'curve').length, moves.length),
       staticPunchIn: share(takes.filter((t) => t.staticZoom > 1.03).length, takes.length),
       videosWithMoves: share(set.filter((e) => e.cameraMoves.length).length, set.length)
+    },
+    hook: {
+      videosWithPunchIns: share(hookPunches.filter((list) => list.length).length, set.length),
+      punchInsPerVideo: quantiles(hookPunches.map((list) => list.length)),
+      punchInZoom: quantiles(hookPunches.flat().map((t) => t.staticZoom)),
+      punchInSpacingSeconds: quantiles(spacing),
+      punchInSound: tally(set.flatMap((e) => e.sounds.filter((x) => x.at < HOOK_SECONDS && x.event === 'jump-cut')), (x) => x.family),
+      videosWithEarlyMoves: share(set.filter((e) => e.cameraMoves.some((m) => m.track === 0 && m.at < 30)).length, set.length)
+    },
+    outro: {
+      videosWithMoves: share(set.filter((e) => e.cameraMoves.some((m) => m.track === 0 && m.at > e.duration - OUTRO_SECONDS)).length, set.length),
+      moveSeconds: quantiles(set.flatMap((e) => e.cameraMoves.filter((m) => m.track === 0 && m.at > e.duration - OUTRO_SECONDS)).map((m) => m.duration))
+    },
+    cuts: {
+      soundShare: quantiles(cutsWithSound.filter((x) => x != null)),
+      soundFamily: tally(sounds.filter((x) => x.event === 'take-change'), (x) => x.family)
     },
     layout: {
       fullShare: quantiles(layouts.map((l) => l.full)),

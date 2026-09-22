@@ -267,3 +267,46 @@ por defecto es `this-example`. `--scope candidate-preference` propone una prefer
 sin convertirla automáticamente en regla universal ni marcarla aprobada.
 
 Pilotos privados y limitaciones: `data/editorial-memory/grok-reference/PILOT-RESULTS.md`.
+## Plan automático desde tomas en bruto
+
+Primer montaje sin intervención: `planEdit` ordena las tomas numeradas (`1.mkv`,
+`2.mkv`…; el resto son recursos), recorta cada una y decide punch-ins del gancho,
+zooms, sonidos en cortes, sticker, música y cierre. **Todas las cantidades salen del
+perfil medido** (`docs/editorial-memory.md`); cada decisión lleva en `reason` el campo
+del perfil que la produjo.
+
+```powershell
+npm run youtube:studio -- ingest --source "D:\clips" --slug mi-video
+npm run youtube:autoplan -- plan --project remotion-animations/projects/youtube-mi-video --output data/editorial-memory/autoplan/mi-video
+npm run youtube:render -- prepare --project mi-video --render-plan data/editorial-memory/autoplan/mi-video/render-plan.json
+npm run youtube:render -- render --project mi-video --package RUTA/render-package.json
+```
+
+- **Recortes por audio, no por palabras**: el transcriptor alarga la primera palabra
+  sobre el silencio previo. Entrada y salida se ajustan al inicio/fin de voz de
+  `silencedetect` más `speech.leadSeconds`/`tailSeconds`, medidos también con audio
+  sobre las exportaciones.
+- **Arranque fallido**: pocas palabras, un silencio de 1 s o más en el primer 40 % y la
+  toma empieza de nuevo. Whisper suele fundir la frase repetida; el silencio es la prueba.
+- **Kit**: sonidos por familia, música, cierre y sticker salen de lo que el corpus usó
+  y sigue existiendo en disco (`editorial-memory/kit.js`).
+- **Zoom anclado a la cara** (`focus` de la ingesta): la cara no se mueve y nunca
+  aparece borde, porque el desplazamiento no supera `zoom - 1`.
+- **Intenciones**: `--intents JSON` permite a cualquier agente elegir *dónde*
+  (frases de énfasis, tomas que cambian de tema, cortes del gancho) sin tocar
+  cantidades; `--llm` lo pide al LLM configurado y, si falla, sigue con reglas y lo
+  deja en `warnings`. Formato: `{"emphasis":[{"clipId":"03","atWord":12}],
+  "topicShiftTakes":[4],"hookPunchRefs":[{"clipId":"01","atWord":5}]}`.
+
+### Evaluación dejando uno fuera
+
+```powershell
+npm run editorial:corpus -- profile --exclude 0921 --recent 6 --output data/editorial-memory/corpus/profile-holdout-0921.json
+npm run youtube:autoplan -- plan --project ... --profile data/editorial-memory/corpus/profile-holdout-0921.json --output OUT
+npm run youtube:autoplan -- evaluate --plan OUT/edit-plan.json --edit data/editorial-memory/corpus/edits/0921.json --output OUT/evaluation.json
+```
+
+Compara en el reloj de cada toma (nombre + segundo de fuente): recortes, punch-ins,
+zooms, sonidos y marca. Un vídeo nunca aporta su propio perfil, kit ni ejemplos.
+Medir es necesario pero no suficiente: el criterio final son los minutos de corrección
+del autor sobre clips nuevos.

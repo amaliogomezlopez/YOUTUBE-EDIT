@@ -43,17 +43,22 @@ export function extractCapcutReference(input) {
       'Fotogramas clave y geometria son valores nativos; su reloj y curvas requieren validacion antes de convertir.',
       'Los presets, fuentes y recursos externos no se descargan ni reproducen. No equivale a revision visual o auditiva.']};
 }
+/** GIF of a CapCut InfoSticker cache directory, or null when it is not a GIF sticker. */
+export async function resolveStickerGif(dir,{readFile}) {
+  const config=JSON.parse(await readFile(dir+'/config.json','utf8').catch(()=>'null'));
+  const link=config?.effect?.Link?.find(l=>l.type==='InfoSticker'&&l.format==='gif');
+  return link&&!/[\/]|\.\./.test(link.path)?dir+'/'+link.path:null;
+}
+
 /** Resolve CapCut InfoSticker GIFs from their cache directories; only GIF links are accepted. */
 export async function resolveCapcutStickers(reference,timelineId,{readFile,probe}) {
   const timeline=reference.timelines.find(t=>t.id===timelineId);
   if(!timeline)throw Error('Timeline no encontrada: '+timelineId);
   const stickers={};
   for(const {native:m} of timeline.materials.stickers??[]){
-    if(!m.path)continue;
-    const config=JSON.parse(await readFile(m.path+'/config.json','utf8').catch(()=>'null'));
-    const link=config?.effect?.Link?.find(l=>l.type==='InfoSticker'&&l.format==='gif');
-    if(!link||/[\/]|\.\./.test(link.path))continue;
-    const file=m.path+'/'+link.path,{width,height}=await probe(file);
+    const file=m.path&&await resolveStickerGif(m.path,{readFile});
+    if(!file)continue;
+    const {width,height}=await probe(file);
     stickers[m.id]={file,width,height};
   }
   return stickers;
