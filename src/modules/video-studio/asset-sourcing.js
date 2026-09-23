@@ -19,12 +19,19 @@ const fold = (s) => String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,
 /** "grok46" -> ["grok", "4.6"]: letters stay words, trailing digits read as a version. */
 export function resourceTokens(name) {
   const base = fold(path.basename(name, path.extname(name))).replace(/[_-]+/g, ' ');
-  return base.split(/\s+/).filter(Boolean).flatMap((part) => {
+  const parts = base.split(/\s+/).filter(Boolean).flatMap((part) => {
     const m = /^([a-z]+)(\d+)$/.exec(part);
     if (!m) return [part];
     const digits = m[2].length > 1 ? `${m[2][0]}.${m[2].slice(1)}` : m[2];
     return [m[1], digits];
   });
+  // "claude-opus-5-5": consecutive single numbers in a slug are one version, "5.5".
+  const out = [];
+  for (const part of parts) {
+    if (/^\d+$/.test(part) && /^\d+$/.test(out.at(-1) ?? '')) out[out.length - 1] += '.' + part;
+    else out.push(part);
+  }
+  return out;
 }
 
 /** Normalizes spoken numbers so "4 .7", "4,7" and "4.7" compare equal. */
@@ -59,7 +66,7 @@ function windows(sentences) {
     let start = 0;
     for (let i = 1; i <= words.length; i++) {
       if (i === words.length || (i - start >= WINDOW_WORDS / 2 && /,$/.test(words[i - 1].text)) || i - start >= WINDOW_WORDS) {
-        out.push({...s, at: words[start].start ?? s.at, text: words.slice(start, i).map((w) => w.text).join(' ')});
+        out.push({...s, at: words[start].start ?? s.at, words: words.slice(start, i), text: words.slice(start, i).map((w) => w.text).join(' ')});
         start = i;
       }
     }
@@ -81,6 +88,16 @@ export function placeResources(resources, sentences) {
     return {...s, named: resources.filter((r) => named(s, r)), shows: SHOW_STRONG.test(text) ? 2 : SHOW_WEAK.test(text) ? 1 : 0};
   });
   const used = new Set();
+  // News captures go where the news is first named (usually the hook), announced or not.
+  for (const r of resources.filter((x) => x.firstMention)) {
+    const first = scored.filter((s) => s.named.includes(r)).sort((a, b) => a.at - b.at)[0];
+    if (!first) continue;
+    used.add(r.id);
+    // Show it on the word that names it, not at the start of the sentence.
+    const words = first.words ?? [];
+    const k = words.findIndex((w, i) => mentions(words.slice(0, i + 1).map((x) => x.text).join(' '), tokens.get(r.id)));
+    placements.push({resources: [r.id], at: k >= 0 ? words[k].start : first.at, take: first.take, text: first.text, layout: 'full', firstMention: true});
+  }
   const eligible = scored.filter((x) => x.named.length && (x.shows || x.named.every((r) => r.text)));
   for (const s of eligible.sort((a, b) => b.shows - a.shows || b.named.length - a.named.length || a.at - b.at)) {
     const fresh = s.named.filter((r) => !used.has(r.id));
@@ -170,13 +187,43 @@ export async function captureXPost(url, {dir, chrome, sharp, fetchImpl}) {
   return {file, kind: 'image', text: post.text, provenance: record};
 }
 
-export async function captureWebPage(url, {dir, chrome}) {
+const meta = (html, key) => {
+  const tag = new RegExp(`<meta[^>]+(?:property|name)="${key}"[^>]*>`, 'i').exec(html)?.[0] ?? '';
+  return decode(/content="([^"]*)"/i.exec(tag)?.[1] ?? '').trim();
+};
+
+/**
+ * A news page is represented by its publisher's own share image (og:image) and
+ * title: no cookie banners or intro animations, and it is what the page offers
+ * for reuse. Pages behind bot challenges are not worked around: they go pending
+ * for the editor to capture. Without og:image, a plain screenshot is the fallback.
+ */
+export async function captureWebPage(url, {dir, chrome, fetchImpl = fetch}) {
   if (!/^https:\/\//.test(url)) throw Error('Solo URLs https publicas: ' + url);
-  const name = 'web-' + createHash('sha256').update(url).digest('hex').slice(0, 12) + '.png';
-  const raw = path.join(dir, name.replace('.png', '.raw.png'));
-  await screenshot({chrome, target: url, output: raw, width: 1280, height: 900});
+  const response = await fetchImpl(url, {redirect: 'follow'});
+  const html = await response.text();
+  if (!response.ok || /cf-chl|challenge-platform|Just a moment/i.test(html)) {
+    throw Error(`Pagina protegida o no disponible (${response.status}); capturala a mano y dejala en assets/`);
+  }
+  const title = meta(html, 'og:title') || decode(/<title>([^<]*)<\/title>/i.exec(html)?.[1] ?? '').trim();
+  const slug = new URL(url).pathname.split('/').filter(Boolean).pop() || new URL(url).hostname;
+  const hash = createHash('sha256').update(url).digest('hex').slice(0, 12);
+  const image = meta(html, 'og:image');
+  if (image) {
+    const media = await fetchImpl(new URL(image, url));
+    if (!media.ok) throw Error(`La imagen de la pagina respondio ${media.status}`);
+    const type = media.headers.get('content-type') ?? '';
+    if (!/^image\//.test(type)) throw Error('og:image no es una imagen: ' + type);
+    const bytes = Buffer.from(await media.arrayBuffer());
+    const file = path.join(dir, `web-${hash}.${type.includes('png') ? 'png' : type.includes('webp') ? 'webp' : 'jpg'}`);
+    const record = await saveWithProvenance(file, bytes, {url, provider: 'og-image', license: 'Imagen para compartir publicada por la propia pagina; revisar derechos antes de publicar',
+      attribution: new URL(url).hostname, extra: {title, image: new URL(image, url).href}});
+    return {file, kind: 'image', name: slug, title, provenance: record};
+  }
+  const raw = path.join(dir, `web-${hash}.raw.png`);
+  await screenshot({chrome, target: url, output: raw, width: 1280, height: 900, waitMs: 9000});
   const bytes = await readFile(raw);
-  const file = path.join(dir, name);
-  const record = await saveWithProvenance(file, bytes, {url, provider: 'web-screenshot', license: 'Captura de pagina publica; revisar derechos antes de publicar', attribution: new URL(url).hostname});
-  return {file, kind: 'image', text: '', provenance: record};
+  const file = path.join(dir, `web-${hash}.png`);
+  const record = await saveWithProvenance(file, bytes, {url, provider: 'web-screenshot', license: 'Captura de pagina publica; revisar derechos antes de publicar', attribution: new URL(url).hostname, extra: {title}});
+  return {file, kind: 'image', name: slug, title, provenance: record};
 }

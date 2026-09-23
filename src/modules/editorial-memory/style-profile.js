@@ -91,7 +91,10 @@ export function buildStyleProfile(edits, {format}) {
       punchInZoom: quantiles(hookPunches.flat().map((t) => t.staticZoom)),
       punchInSpacingSeconds: quantiles(spacing),
       punchInSound: tally(set.flatMap((e) => e.sounds.filter((x) => x.at < HOOK_SECONDS && x.event === 'jump-cut')), (x) => x.family),
-      videosWithEarlyMoves: share(set.filter((e) => e.cameraMoves.some((m) => m.track === 0 && m.at < 30)).length, set.length)
+      videosWithEarlyMoves: share(set.filter((e) => e.cameraMoves.some((m) => m.track === 0 && m.at < 30)).length, set.length),
+      // The news capture flashed while the hook names it (a still over the speaker, not a backdrop).
+      videosWithImage: share(set.filter((e) => e.inserts.some((i) => i.photo && i.at < HOOK_SECONDS && i.duration < 15)).length, set.length),
+      imageSeconds: quantiles(set.flatMap((e) => e.inserts.filter((i) => i.photo && i.at < HOOK_SECONDS && i.duration < 15).map((i) => i.duration)))
     },
     outro: {
       videosWithMoves: share(set.filter((e) => e.cameraMoves.some((m) => m.track === 0 && m.at > e.duration - OUTRO_SECONDS)).length, set.length),

@@ -43,7 +43,8 @@ try {
           ? await captureXPost(url, {dir, chrome: CHROME, sharp})
           : await captureWebPage(url, {dir, chrome: CHROME});
         const {width, height} = await sharp(asset.file).metadata();
-        assets.push({id: 'asset-' + (assets.length + 1), kind: 'image', file: asset.file, width, height, name: asset.text || url, text: asset.text, url});
+        // Posts are placed by their quoted words (text); pages by the name in their URL, like clips.
+        assets.push({id: 'asset-' + (assets.length + 1), kind: 'image', file: asset.file, width, height, name: asset.name ?? url, title: asset.title, text: asset.text || undefined, url, firstMention: true});
       } catch (error) {
         pending.push({url, reason: error.message});
       }
@@ -109,8 +110,10 @@ try {
       const size = asset.kind === 'image' ? await sharp(path.resolve('remotion-animations/public', asset.file)).metadata() : {};
       folderAssets.push({...asset, width: asset.width ?? size.width, height: asset.height ?? size.height});
     }
-    const assets = [...folderAssets, ...(v.assets ? (await readJson(v.assets)).assets : [])];
+    const captured = v.assets ? await readJson(v.assets) : {assets: [], pending: []};
+    const assets = [...folderAssets, ...captured.assets];
     const plan = planEdit({clips, profile, kit, intents, assets});
+    plan.pendingAssets.push(...(captured.pending ?? []));
     if (intents.warning) plan.warnings.push(intents.warning);
     const renderPlan = compileEditPlan(plan, {clips, kit, assets});
     await mkdir(v.output, {recursive: true});

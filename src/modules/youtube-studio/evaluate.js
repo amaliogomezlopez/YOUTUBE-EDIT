@@ -51,10 +51,12 @@ export function evaluatePlan(plan, edit) {
   const soundPlan = onClock(planPieces, plan.decisions.filter((d) => d.type === 'sfx' || (d.type === 'punch-in' && d.sound)).map((d) => d.at + (d.lead ?? 0)));
   const soundActual = onClock(actualPieces, edit.sounds.filter((s) => s.event !== 'start').map((s) => s.at + (s.lead ?? 0)));
   // Inserts compare on the edit clock by resource name: during a composition the main track may be a backdrop.
-  const plannedInserts = plan.decisions.filter((d) => d.type === 'insert').flatMap((d) => (d.names ?? []).map((name) => ({name, source: d.at})));
+  // Stills match by kind and time: the editor's capture files have arbitrary names (Capt22ura.PNG).
+  const plannedInserts = plan.decisions.filter((d) => d.type === 'insert')
+    .flatMap((d) => (d.names ?? []).map((name, i) => ({name: d.kinds?.[i] === 'image' ? 'image' : name, source: d.at})));
   const firstUse = new Map();
-  for (const i of edit.inserts ?? []) if (!firstUse.has(i.name) || i.at < firstUse.get(i.name)) firstUse.set(i.name, i.at);
-  const actualInserts = [...firstUse].map(([name, at]) => ({name, source: at}));
+  for (const i of edit.inserts ?? []) if (!firstUse.has(i.name) || i.at < firstUse.get(i.name).at) firstUse.set(i.name, i);
+  const actualInserts = [...firstUse.values()].map((i) => ({name: i.photo ? 'image' : i.name, source: i.at}));
   const has = (type) => plan.decisions.some((d) => d.type === type);
   return {
     version: 1,

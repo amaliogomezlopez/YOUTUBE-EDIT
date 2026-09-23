@@ -129,9 +129,11 @@ export function planEdit({clips, profile, kit = {}, intents = {}, assets = []}) 
     for (const place of placements) {
       const items = place.resources.map((id) => sources.find((s) => s.id === id));
       const takeEnd = segments.filter((s) => s.take === place.take).reduce((end, s) => Math.max(end, s.at + s.out - s.in), place.at);
-      const until = items.every((i) => i.kind === 'image') ? Math.min(takeEnd, place.at + insertSeconds) : takeEnd;
+      // A news flash in the hook lasts what the editor gives it there; elsewhere, a normal insert.
+      const imageSeconds = place.firstMention && place.at < HOOK_SECONDS ? median(p.hook.imageSeconds, insertSeconds) : insertSeconds;
+      const until = items.every((i) => i.kind === 'image') ? Math.min(takeEnd, place.at + imageSeconds) : takeEnd;
       if (until - place.at < 1) {pendingAssets.push({resource: place.resources.join('+'), reason: 'La frase que lo anuncia cierra la toma'}); continue;}
-      decisions.push({type: 'insert', at: round(place.at), until: round(until), layout: place.layout, resources: place.resources, names: items.map((i) => i.sourceName ?? i.name), sound: insertSound, lead: insertLead,
+      decisions.push({type: 'insert', at: round(place.at), until: round(until), layout: place.layout, resources: place.resources, names: items.map((i) => i.sourceName ?? i.name), kinds: items.map((i) => i.kind), sound: insertSound, lead: insertLead,
         reason: `Anunciado en: "${place.text.slice(0, 90)}"`});
       if (place.layout !== 'full') markLayout(segments, place.at, until, place.layout);
     }

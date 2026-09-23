@@ -18,6 +18,14 @@ test('resources go where the speaker announces them, together when named togethe
   assert.deepEqual(pending.map((p) => p.resource), ['c']);
 });
 
+test('news captures flash on the first word that names them, announced or not', () => {
+  const words = 'saque Claude Opus 5 .5 porque fijaos'.split(' ').map((text, i) => ({text, start: 3 + i * 0.4, end: 3.3 + i * 0.4}));
+  const sentences = [{at: 3, take: 0, words, text: words.map((w) => w.text).join(' ')}, {at: 200, take: 4, text: 'os voy a mostrar Opus 5.5'}];
+  const {placements} = placeResources([{id: 'n', kind: 'image', name: 'claude-opus-5-5', firstMention: true}], sentences);
+  assert.deepEqual(placements.map((p) => [p.at, p.layout]), [[4.6, 'full']]);
+  assert.deepEqual(resourceTokens('claude-opus-5-5'), ['claude', 'opus', '5.5']);
+});
+
 test('captured posts are placed where their words are quoted', () => {
   assert.ok(sharesText('Elon dice que Grok 4.7 necesita unos días más de cocción', 'Grok 4.7 needs a few more días cocción'));
   const {placements} = placeResources([{id: 'x', kind: 'image', text: 'Initial training complete, adding SpaceX engineering data'}],
