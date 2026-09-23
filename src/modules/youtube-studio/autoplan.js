@@ -166,7 +166,10 @@ export function planEdit({clips, profile, kit = {}, intents = {}, assets = []}) 
   }
   const moves = [];
   const emphasis = new Set((intents.emphasis ?? []).map((e) => `${e.clipId}:${e.atWord}`));
+  // The hook has its own short zooms (3b); body pushes stay out of it.
+  const hookZooms = Math.round(median(p.hook.zoomsPerVideo, 0));
   const pick = (c) => {
+    if (hookZooms > 0 && c.at < HOOK_SECONDS) return;
     if (moves.some((m) => Math.abs(m.at - c.at) < seconds * 2)) return;
     moves.push(c);
   };
@@ -188,7 +191,6 @@ export function planEdit({clips, profile, kit = {}, intents = {}, assets = []}) 
   }
 
   // 3b. Hook: short stacked zooms on phrase starts, the first one on the opening frame when that is the habit.
-  const hookZooms = Math.round(median(p.hook.zoomsPerVideo, 0));
   if (hookZooms > 0) {
     const zoomSeconds = median(p.hook.zoomSeconds, 2), zoomPeak = median(p.hook.zoomPeak, 1.1);
     const plain = (s) => s.zoom === 1 && !s.layout;

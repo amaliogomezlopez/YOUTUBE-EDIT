@@ -126,3 +126,13 @@ test('FCPXML round-trips the plan and turns an editor change into a correction',
   const changes = diffTimelines(clips, edited);
   assert.deepEqual(changes.map((c) => [c.type, c.clip.name, c.deltas]), [['changed', 'i', {at: 0.5}]]);
 });
+
+test('hook zooms are short, stacked and start on the first frame when that is the habit', () => {
+  const p = profile();
+  p.hook = {...p.hook, videosWithPunchIns: share(0, 3), zoomsPerVideo: q(2), zoomSeconds: q(1.5), zoomPeak: q(1.12), videosZoomingAtStart: share(2, 3)};
+  const clips = [clip('01', '1.mkv', 'esto es el gancho. y aqui sigue la frase. otra frase mas'), clip('02', '2.mkv', 'segunda toma con mas contenido para explicar la idea')];
+  const pushes = planEdit({clips, profile: p, kit: {}}).decisions.filter((d) => d.type === 'push' && d.to > d.from && d.at < 20);
+  assert.equal(pushes.length, 2);
+  assert.equal(pushes[0].at, 0);
+  assert.deepEqual(pushes.map((d) => [d.to, d.seconds]), [[1.12, 1.5], [1.12, 1.5]]);
+});
