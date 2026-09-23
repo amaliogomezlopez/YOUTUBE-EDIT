@@ -187,6 +187,25 @@ export function planEdit({clips, profile, kit = {}, intents = {}, assets = []}) 
     decisions.push({type: 'push', at: round(m.at + seconds), clipId: m.clipId, from: peak, to: 1, seconds: Math.min(seconds, 3), easing, reason: 'Vuelta al plano'});
   }
 
+  // 3b. Hook: short stacked zooms on phrase starts, the first one on the opening frame when that is the habit.
+  const hookZooms = Math.round(median(p.hook.zoomsPerVideo, 0));
+  if (hookZooms > 0) {
+    const zoomSeconds = median(p.hook.zoomSeconds, 2), zoomPeak = median(p.hook.zoomPeak, 1.1);
+    const plain = (s) => s.zoom === 1 && !s.layout;
+    const starts = timelineSentences(segments, takes).filter((s) => s.at < HOOK_SECONDS).map((s) => s.at);
+    if (atLeast(p.hook.videosZoomingAtStart, 1 / 3)) starts.unshift(0);
+    const chosen = [];
+    for (const at of starts) {
+      const seg = segments.find((s) => at >= s.at - 1e-6 && at < s.at + s.out - s.in);
+      if (chosen.length >= hookZooms || !seg || !plain(seg) || chosen.some((c) => Math.abs(c - at) < zoomSeconds * 2)) continue;
+      if (moves.some((m) => Math.abs(m.at - at) < zoomSeconds * 2)) continue;
+      chosen.push(at);
+      decisions.push({type: 'push', at: round(at), clipId: seg.clipId, from: 1, to: zoomPeak, seconds: zoomSeconds, easing: 'linear',
+        reason: `Gancho: ${hookZooms} zooms cortos (hook.zoomsPerVideo), ${zoomSeconds} s hasta ${zoomPeak}`});
+      decisions.push({type: 'push', at: round(at + zoomSeconds), clipId: seg.clipId, from: zoomPeak, to: 1, seconds: zoomSeconds, easing: 'linear', reason: 'Vuelta al plano'});
+    }
+  }
+
   // 4. Breathing zoom over the last take when the closing habit exists.
   const lastTake = segments.filter((s) => s.take === segments.at(-1)?.take);
   if (atLeast(p.outro.videosWithMoves, 0.5) && lastTake.length) {
