@@ -38,6 +38,9 @@ const remotionCli = path.resolve(
 // ambos pasando --codec/--crf en la linea de comandos, y el CRF tambien por
 // entorno (REMOTION_CRF).
 const qualityArgs = defaultQualityArgs(command, renderArgs);
+const publicDirArgs = process.env.SHORTSMITH_RENDER_PUBLIC_DIR
+  ? [`--public-dir=${path.resolve(process.env.SHORTSMITH_RENDER_PUBLIC_DIR)}`]
+  : [];
 const started = performance.now();
 
 console.log(`\nEjecución ${run.runId}`);
@@ -51,6 +54,7 @@ const result = spawnSync(
     compositionId,
     outputPath,
     ...qualityArgs,
+    ...publicDirArgs,
     ...renderArgs,
   ],
   {

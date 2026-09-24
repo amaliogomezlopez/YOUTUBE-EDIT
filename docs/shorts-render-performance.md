@@ -33,6 +33,12 @@ El puente Remotion usa `encoder: auto`: prueba un fotograma H.264 con NVENC a
 del render; `nvenc` explícito falla con un error claro. No reintenta un render
 completo fallido con otro encoder.
 
+Si `public/` acumula medios de muchos proyectos y el disco temporal no puede
+alojar su copia, `render-safe.mjs` acepta `SHORTSMITH_RENDER_PUBLIC_DIR` con la
+ruta absoluta de un directorio público limitado a los medios, fuentes y sonidos
+del lote. El render debe conservar allí las mismas rutas relativas que usa el
+build; el directorio normal sigue siendo el valor por defecto.
+
 - NVENC: máster high 24 Mb/s; standard 16 Mb/s; draft/preview 8 Mb/s. Sin CRF.
 - CPU: CRF 17/19/23 según calidad. Los cortes intermedios usan CRF 16 y preset fast.
 - Cortes intermedios: CPU H.264 CRF 16, preset fast, audio AAC 48 kHz; resolución y fps originales. Los intermedios NVENC bloquearon la extracción WebCodecs en dos ensayos de esta fuente, incluso sin B-frames; no se activan en producción. La salida final sí usa NVENC.
