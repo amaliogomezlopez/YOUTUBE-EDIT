@@ -15,6 +15,16 @@ export {speechEdits} from '../video-studio/timeline.js';
 function observationAt(analysis, t) {
   return [...(analysis?.shots ?? [])].reverse().find((shot) => shot.start <= t) ?? {};
 }
+function continuesModelVersion(words, index) {
+  const current = String(words[index]?.text ?? '');
+  const previous = String(words[index - 1]?.text ?? '');
+  const next = String(words[index + 1]?.text ?? '');
+  const namedPrefix = /^[\p{L}][\p{L}\p{N}-]{1,15}$/u.test(previous);
+  return (namedPrefix && /^-?\d+(?:\.\d+)+$/.test(current)) ||
+    (namedPrefix && /^-\d+$/.test(current)) ||
+    (namedPrefix && /^\d+$/.test(current) && /^\.\d+/.test(next)) ||
+    (/^\.\d+/.test(current) && /^-?\d+$/.test(previous));
+}
 /** Palabras como anclas, imagenes como evidencia y cortes reversibles. */
 export function planAdaptiveShort({words, duration, analysis, renderMode, webcamBox, source, profile = 'dinamico', effects = true, tighten = true}) {
   const budget = editingBudget(profile);
@@ -28,6 +38,7 @@ export function planAdaptiveShort({words, duration, analysis, renderMode, webcam
     for (let i = 1; i < words.length; i++) {
       const word = words[i];
       if (word.start <= range.start || word.start >= range.end - budget.minSceneSeconds) continue;
+      if (continuesModelVersion(words, i)) continue;
       const last = boundaries.at(-1);
       const phrase = /[.!?:,;]$/.test(words[i - 1].text) || word.start - words[i - 1].end > 0.28;
       const visualCut = (analysis?.shots ?? []).some((shot) => shot.start > last + 0.1 && Math.abs(shot.start - word.start) < 0.7);

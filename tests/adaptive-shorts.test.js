@@ -10,7 +10,7 @@ import {parseSilences, stabilizeShots, textRegion, contextualRegion} from '../sr
 import {buildShortPlanForCandidate, locateRunOutput} from '../src/modules/shorts-studio/from-long-video.js';
 import {buildVerticalFilter} from '../src/lib/ffmpeg.js';
 import {validateJobOptions} from '../src/lib/job-request.js';
-import {buildCaptionPages} from '../src/modules/video-studio/captions.js';
+import {buildCaptionPages, compactCaptionCompounds} from '../src/modules/video-studio/captions.js';
 
 import {scoreCandidate} from '../src/lib/scoring.js';
 import adaptiveGeometry from '../src/modules/shorts-studio/rules/checks/shorts-adaptive-geometry.js';
@@ -126,4 +126,16 @@ test('una etiqueta ampliada conserva el contexto y nunca sale de la fuente',()=>
 });
 test('silencios al final quedan acotados a la duracion',()=>{
   assert.deepEqual(parseSilences('silence_start: 4',5),[{start:4,end:5}]);
+});
+
+
+test('los cortes y subtitulos mantienen juntos los nombres de modelo y sus versiones',()=>{
+  const words=[['Hoy',0,.4],['seguimos',4,4.2],['GPT',7.5,7.7],['-6',8.45,8.6],['mejora.',8.7,9.1],['Fable',13,13.2],['5',13.3,13.5],['.1',13.5,13.6],['termina.',13.7,14.1]]
+    .map(([text,start,end],index)=>({index,text,start,end}));
+  const plan=planAdaptiveShort({words,duration:18,source:media,analysis:{silences:[],shots:[{start:0,mode:'fit'},{start:4,mode:'fit'},{start:8.45,mode:'fit'},{start:13.3,mode:'fit'}]}});
+  const sceneAt=(time)=>plan.scenes.find(scene=>scene.trim.start<=time && time<scene.trim.end)?.id;
+  assert.equal(sceneAt(7.5),sceneAt(8.45));
+  assert.equal(sceneAt(13),sceneAt(13.5));
+  const compacted=compactCaptionCompounds([{text:'GPT',start:0,end:.2},{text:'-5',start:.2,end:.4},{text:'.6',start:.4,end:.5}]);
+  assert.deepEqual(compacted.map(word=>word.text),['GPT-5.6']);
 });

@@ -23,7 +23,7 @@ export default {
           const previous = String(words[index - 1]?.text ?? '');
           const fragment = /^\.\d+$/.test(text);
           const separatedModelVersion =
-            /^\d+(?:\.\d+)+$/.test(text) &&
+            /^(?:-\d+(?:\.\d+)*|\d+(?:\.\d+)+)$/.test(text) &&
             /^[\p{L}][\p{L}\p{N}-]{1,15}$/u.test(previous);
           if (fragment || separatedModelVersion) {
             issues.push({

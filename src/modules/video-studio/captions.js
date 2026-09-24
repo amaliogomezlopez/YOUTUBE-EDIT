@@ -108,7 +108,7 @@ export function compactCaptionCompounds(words) {
   const decimals = [];
   for (const word of words ?? []) {
     const previous = decimals.at(-1);
-    if (previous && /^\.\d+[,.;:!?]?$/.test(word.text) && /^\d+$/.test(previous.text)) {
+    if (previous && /^\.\d+[,.;:!?]?$/.test(word.text) && /^-?\d+$/.test(previous.text)) {
       previous.text += word.text;
       previous.end = word.end;
       continue;
@@ -121,10 +121,12 @@ export function compactCaptionCompounds(words) {
     const previous = compounds.at(-1);
     if (
       previous &&
-      /^\d+(?:\.\d+)+$/.test(word.text) &&
+      /^(?:-\d+(?:\.\d+)*|\d+(?:\.\d+)+)$/.test(word.text) &&
       /^[\p{L}][\p{L}\p{N}-]{1,15}$/u.test(previous.text)
     ) {
-      previous.text = `${previous.text}\u00A0${word.text}`;
+      previous.text = word.text.startsWith('-')
+        ? `${previous.text}${word.text}`
+        : `${previous.text}\u00A0${word.text}`;
       previous.end = word.end;
       continue;
     }
