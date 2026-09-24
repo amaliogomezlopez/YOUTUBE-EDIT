@@ -1,0 +1,123 @@
+{
+  "ruleId": "MO-R-010",
+  "check": "montage-visual-coverage",
+  "expect": "fail",
+  "note": "Un hueco de medio segundo entre dos beats: se renderizaria en negro.",
+  "context": {
+    "format": {
+      "id": "9x16",
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "durationInFrames": 270,
+    "budget": {
+      "profileId": "viral-short",
+      "minVisualSeconds": 1.5,
+      "maxVisualSeconds": 3,
+      "maxSecondsWithoutCut": 3,
+      "maxSecondsStatic": 0.5,
+      "maxCutsPer10s": 7,
+      "assetRepeatGapSeconds": 8
+    },
+    "geometry": {
+      "safeBottom": 1748,
+      "captionRect": {
+        "left": 60,
+        "top": 1210,
+        "width": 960,
+        "height": 270
+      },
+      "popRect": {
+        "left": 80,
+        "top": 380,
+        "width": 920,
+        "height": 380
+      }
+    },
+    "beats": [
+      {
+        "id": "beat-01",
+        "atWord": 0,
+        "fromFrame": 0,
+        "durationInFrames": 120,
+        "visual": {
+          "assetId": "beat-01",
+          "src": "projects/montage/fixture/assets/a.jpg",
+          "kind": "image",
+          "fit": "cover",
+          "focus": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "camera": {
+          "move": "push-in",
+          "easing": "in-out-sine",
+          "shake": 0,
+          "keys": [
+            {
+              "t": 0,
+              "scale": 1.06,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "t": 1,
+              "scale": 1.3,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "transitionIn": {
+          "kind": "cut",
+          "frames": 0
+        },
+        "sfx": [],
+        "overlays": []
+      },
+      {
+        "id": "beat-02",
+        "atWord": 0,
+        "fromFrame": 150,
+        "durationInFrames": 120,
+        "visual": {
+          "assetId": "beat-02",
+          "src": "projects/montage/fixture/assets/a.jpg",
+          "kind": "image",
+          "fit": "cover",
+          "focus": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "camera": {
+          "move": "push-in",
+          "easing": "in-out-sine",
+          "shake": 0,
+          "keys": [
+            {
+              "t": 0,
+              "scale": 1.06,
+              "x": 0,
+              "y": 0
+            },
+            {
+              "t": 1,
+              "scale": 1.3,
+              "x": 0,
+              "y": 0
+            }
+          ]
+        },
+        "transitionIn": {
+          "kind": "cut",
+          "frames": 0
+        },
+        "sfx": [],
+        "overlays": []
+      }
+    ]
+  }
+}

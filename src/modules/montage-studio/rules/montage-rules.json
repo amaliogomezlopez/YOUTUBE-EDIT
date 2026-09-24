@@ -1,0 +1,133 @@
+{
+  "version": 1,
+  "channelId": "montage-studio",
+  "title": "Lenguaje de montaje — Montaje viral con voz en off",
+  "intro": "Este contrato convierte cada corrección del montaje viral en una regla ejecutable. El validador recibe el build de un formato (`montage-build.9x16.json` o `montage-build.16x9.json`), así que mide el montaje resuelto en frames y en píxeles, no las intenciones del plan. Los umbrales de ritmo salen del `budget` del perfil de estilo activo (`viral-short`, `viral-long`): una regla de ritmo que no encuentra su umbral se declara no evaluable.",
+  "severities": {
+    "error": "Bloquea `montage build`. El formato no se compila.",
+    "warning": "No bloquea, pero aparece en el informe del build y exige justificación.",
+    "review": "Requiere mirada humana; no hay comprobación geométrica posible."
+  },
+  "scopes": {
+    "catalog": "Regla universal: aplica a cualquier montaje y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies.",
+    "channel": "Regla de marca del canal para el que se monta."
+  },
+  "promotionPolicy": "Una regla que se cumple igual en dos superficies asciende a `catalog` y su validador se mueve a `src/modules/video-studio/checks/`. Este set ya usa `cue-not-silent`, que nació montando shorts.",
+  "sections": [
+    {
+      "id": "coverage",
+      "number": 1,
+      "title": "Cobertura",
+      "notes": [
+        "El ancla temporal es la palabra (`atWord`) de la transcripción de la locución. El plan nunca escribe segundos."
+      ]
+    },
+    {
+      "id": "rhythm",
+      "number": 2,
+      "title": "Ritmo",
+      "notes": [
+        "El ritmo se mide en las dos direcciones: suelo (cuánto puede durar una visual o una cámara quieta) y techo (cuántos cortes caben en 10 s).",
+        "Movimientos de cámara: `push-in`, `pull-out`, `pan-left`, `pan-right`, `tilt-up`, `tilt-down`, `punch`, `drift-shake`. Transiciones: `cut`, `whip`, `zoom-blur`, `glitch`, `flash`, `slide`."
+      ]
+    },
+    {
+      "id": "safe-area",
+      "number": 3,
+      "title": "Zona segura",
+      "notes": [
+        "La geometría vive en `remotion-animations/src/montage/geometry.json` y la comparten el renderer y el validador."
+      ]
+    },
+    {
+      "id": "sound",
+      "number": 4,
+      "title": "Sonido",
+      "notes": [
+        "El sonido se pide por familia, nunca por fichero. Cada transición tiene familia por defecto en el perfil (`transitionSound`)."
+      ]
+    }
+  ],
+  "rules": [
+    {
+      "id": "MO-R-010",
+      "section": "coverage",
+      "statement": "Todo frame de la pieza tiene una visual resuelta: los beats empiezan en 0, se tocan sin hueco ni solape y acaban en la duración.",
+      "rationale": "Un hueco se renderiza como un fotograma negro; a este ritmo se lee como un fallo, nunca como una pausa. Si faltan assets, el build falla en vez de dejar el hueco.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "montage-visual-coverage",
+      "fixture": "tests/fixtures/montage-rules/MO-R-010.json"
+    },
+    {
+      "id": "MO-R-020",
+      "section": "rhythm",
+      "statement": "Ninguna visual dura más que `budget.maxSecondsWithoutCut`.",
+      "rationale": "El fallo real de un montaje viral no es pasarse de cortes, sino quedarse quieto: la retención cae en cuanto la imagen deja de cambiar.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "montage-max-seconds-without-cut",
+      "fixture": "tests/fixtures/montage-rules/MO-R-020.json"
+    },
+    {
+      "id": "MO-R-021",
+      "section": "rhythm",
+      "statement": "La cámara nunca está quieta más de `budget.maxSecondsStatic`: cada beat mueve escala o posición, o tiembla.",
+      "rationale": "Pedido del estilo: algo pasando en todo momento. Una imagen fija entre dos cortes rápidos se nota como un parón.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "montage-camera-always-moving",
+      "fixture": "tests/fixtures/montage-rules/MO-R-021.json"
+    },
+    {
+      "id": "MO-R-022",
+      "section": "rhythm",
+      "statement": "Ninguna visual (salvo la última) dura menos de `budget.minVisualSeconds` y no hay más de `budget.maxCutsPer10s` cortes en 10 s.",
+      "rationale": "Por encima de ese techo el ojo no llega a leer la imagen y el montaje se convierte en parpadeo.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "montage-cut-density",
+      "fixture": "tests/fixtures/montage-rules/MO-R-022.json"
+    },
+    {
+      "id": "MO-R-023",
+      "section": "rhythm",
+      "statement": "Dos beats seguidos no repiten movimiento de cámara.",
+      "rationale": "Dos `push-in` encadenados se leen como un solo zoom interrumpido por un corte; la alternancia es lo que hace sentir cada cambio como un golpe nuevo.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "montage-camera-no-repeat",
+      "fixture": "tests/fixtures/montage-rules/MO-R-023.json"
+    },
+    {
+      "id": "MO-R-024",
+      "section": "rhythm",
+      "statement": "Un asset no vuelve a salir antes de `budget.assetRepeatGapSeconds`.",
+      "rationale": "El planificador cambia encuadre y movimiento al repetir, pero con poco material el espectador reconoce la imagen. La salida es añadir material.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "montage-asset-repeat-gap",
+      "fixture": "tests/fixtures/montage-rules/MO-R-024.json"
+    },
+    {
+      "id": "MO-R-030",
+      "section": "safe-area",
+      "statement": "Subtítulos y textos emergentes quedan por encima de `geometry.safeBottom` del formato (y = 1748 en 9:16, y = 972 en 16:9).",
+      "rationale": "Por debajo dibuja la plataforma: botones y descripción de Shorts, barra y controles del reproductor de YouTube.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "montage-safe-area",
+      "fixture": "tests/fixtures/montage-rules/MO-R-030.json"
+    },
+    {
+      "id": "MO-R-040",
+      "section": "sound",
+      "statement": "Ningún texto emergente entra en silencio salvo que el plan lo justifique con `soundNote`.",
+      "rationale": "En este estilo cada cambio suena; un texto mudo se percibe como un fallo de montaje, no como una decisión.",
+      "scope": "catalog",
+      "severity": "error",
+      "check": "cue-not-silent",
+      "fixture": "tests/fixtures/montage-rules/MO-R-040.json"
+    }
+  ]
+}

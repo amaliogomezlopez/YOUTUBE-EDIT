@@ -71,3 +71,5 @@ remotion-animations/projects/shorts-camera-unified-pilot/
 # Private horizontal editing projects and reference evidence
 /data/editorial-memory/
 /remotion-animations/projects/youtube-*/
+# Montajes virales: voz y assets privados; el registro se commitea vacio.
+/remotion-animations/projects/montage-*/

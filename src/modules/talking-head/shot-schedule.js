@@ -1,5 +1,6 @@
 import {createHash} from 'node:crypto';
 import {selectionRanges} from './selection.js';
+import {partitionAtAnchors} from '../video-studio/shot-schedule.js';
 
 export function scheduleFingerprint({manifest, transcripts, selections, silences, budget}) {
   return createHash('sha256').update(JSON.stringify({clips:manifest.clips, transcripts, selections, silences, budget})).digest('hex');
@@ -25,28 +26,11 @@ export function scheduleShots({manifest, transcripts, selections, silences = {},
       cursor += frames;
     }
   });
-  const candidates = [...nodes, {frame:cursor}];
-  const min = Math.ceil(budget.minVisualSeconds*fps), max = Math.floor(budget.maxVisualSeconds*fps);
-  if (!(min > 0 && max >= min)) throw new Error('Falta presupuesto de ritmo');
-  const ideal = (min+max)/2, cost = candidates.map(()=>Infinity), next = candidates.map(()=>-1);
-  cost[candidates.length-1] = 0;
-  for (let i=candidates.length-2; i>=0; i--) {
-    for (let j=i+1; j<candidates.length; j++) {
-      const d = candidates[j].frame-candidates[i].frame;
-      if (d>max) break;
-      if (d<min || !Number.isFinite(cost[j])) continue;
-      const score = cost[j]+((d-ideal)/fps)**2;
-      if (score<cost[i]) {cost[i]=score;next[i]=j;}
-    }
-  }
-  if (!Number.isFinite(cost[0])) throw new Error('No se puede repartir este recorte en visuales de '+budget.minVisualSeconds+'-'+budget.maxVisualSeconds+' s ancladas a palabras. Revisar seleccion o tiempos de transcripcion.');
-  const shots = [];
-  for (let i=0; next[i]>=0; i=next[i]) {
-    const j = next[i];
-    shots.push({id:'visual-'+String(shots.length+1).padStart(2,'0'), ...candidates[i], endFrame:candidates[j].frame,
-      durationSeconds:(candidates[j].frame-candidates[i].frame)/fps,
-      spokenText:nodes.filter(n=>n.frame>=candidates[i].frame && n.frame<candidates[j].frame).map(n=>n.text).join(' ')});
-  }
+  const segments = partitionAtAnchors(nodes, cursor, budget, fps);
+  if (!segments) throw new Error('No se puede repartir este recorte en visuales de '+budget.minVisualSeconds+'-'+budget.maxVisualSeconds+' s ancladas a palabras. Revisar seleccion o tiempos de transcripcion.');
+  const shots = segments.map(({start, endFrame}, index) => ({id:'visual-'+String(index+1).padStart(2,'0'), ...start, endFrame,
+    durationSeconds:(endFrame-start.frame)/fps,
+    spokenText:nodes.filter(n=>n.frame>=start.frame && n.frame<endFrame).map(n=>n.text).join(' ')}));
   return {fps, durationInFrames:cursor, ranges, shots};
 }
 

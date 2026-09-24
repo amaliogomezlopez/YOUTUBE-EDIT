@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "defaultProfile": "viral-short",
+  "profiles": [
+    {
+      "id": "viral-short",
+      "description": "Short vertical de noticias: visual nuevo cada 1,5-3 s, siempre en movimiento, golpe de sonido en cada cambio y cifras en pantalla.",
+      "minVisualSeconds": 1.5,
+      "maxVisualSeconds": 3,
+      "maxSecondsWithoutCut": 3,
+      "maxSecondsStatic": 0.5,
+      "maxCutsPer10s": 7,
+      "assetRepeatGapSeconds": 8,
+      "zoom": {"min": 1.06, "max": 1.32},
+      "punchZoom": 1.16,
+      "cameraPattern": ["push-in", "pan-left", "pull-out", "tilt-up", "push-in", "pan-right", "drift-shake", "tilt-down"],
+      "transitionPattern": ["whip", "zoom-blur", "flash", "glitch", "slide", "whip", "zoom-blur", "cut"],
+      "transitionFrames": {"cut": 0, "whip": 8, "zoom-blur": 9, "glitch": 7, "flash": 6, "slide": 9},
+      "transitionSound": {"cut": "impact", "whip": "whip", "zoom-blur": "whoosh", "glitch": "glitch", "flash": "shutter", "slide": "whoosh"},
+      "emphasisSound": "boom",
+      "popSound": "pop",
+      "textPops": {"autoNumbers": true, "maxPer10s": 3, "maxWords": 3, "holdSeconds": 1.1},
+      "captions": {"mode": "progressive", "maxWords": 3, "maxPageChars": 18, "uppercase": true, "baseFontSize": 84, "activeColor": "#FFD23F"},
+      "soundMix": 0.8,
+      "voiceVolume": 1,
+      "music": {"volume": 0.22, "duckGainDb": -9}
+    },
+    {
+      "id": "viral-long",
+      "description": "Video largo horizontal con la misma energia: visual nuevo cada 2,5-4,5 s y reutilizacion de assets con otro encuadre.",
+      "minVisualSeconds": 2.5,
+      "maxVisualSeconds": 4.5,
+      "maxSecondsWithoutCut": 4.5,
+      "maxSecondsStatic": 0.5,
+      "maxCutsPer10s": 5,
+      "assetRepeatGapSeconds": 20,
+      "zoom": {"min": 1.05, "max": 1.25},
+      "punchZoom": 1.12,
+      "cameraPattern": ["push-in", "pan-right", "pull-out", "tilt-down", "push-in", "pan-left", "drift-shake", "tilt-up"],
+      "transitionPattern": ["whip", "cut", "zoom-blur", "slide", "flash", "cut", "glitch", "whip"],
+      "transitionFrames": {"cut": 0, "whip": 9, "zoom-blur": 10, "glitch": 7, "flash": 6, "slide": 10},
+      "transitionSound": {"cut": "impact", "whip": "whip", "zoom-blur": "whoosh", "glitch": "glitch", "flash": "shutter", "slide": "whoosh"},
+      "emphasisSound": "boom",
+      "popSound": "pop",
+      "textPops": {"autoNumbers": true, "maxPer10s": 2, "maxWords": 4, "holdSeconds": 1.4},
+      "captions": {"mode": "karaoke", "maxWords": 5, "maxPageChars": 30, "uppercase": false, "baseFontSize": 64, "activeColor": "#FFD23F"},
+      "soundMix": 0.7,
+      "voiceVolume": 1,
+      "music": {"volume": 0.18, "duckGainDb": -10}
+    }
+  ]
+}

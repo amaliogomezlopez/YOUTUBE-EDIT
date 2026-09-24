@@ -103,6 +103,7 @@ ramificando codigo**:
 | `shorts-studio` | 1080x1920 @60 | palabra (`atWord`) | `rules/shorts-rules.json` |
 | `intro-studio` | 1920x1080 @60 | beat (`atBeat`) | `rules/intro-rules.json` |
 | `editorial-video` | 1920x1080 @30 | palabra | `channels/<canal>/brand/editing-rules.json` |
+| `montage-studio` | 1080x1920 y 1920x1080 @60 (un build por formato) | palabra (`atWord`) | `rules/montage-rules.json` |
 
 `src/modules/video-studio/` es lo comun a las tres: ingesta (remux, loudness, cara,
 transcripcion, musica), rejilla de beats, recorte y ventanas de locucion, medidas del
@@ -136,6 +137,23 @@ No duplicar estas capacidades en pipeline.js ni introducir otro renderer.
 Las ampliaciones automaticas necesitan contexto y revision visual. Una etiqueta
 detectada por OCR no demuestra por si sola los limites de una grafica.
 La validacion tecnica del MP4 no sustituye la revision visual.
+
+## Montaje viral con voz en off
+
+Si el encargo es "monta un short/video viral de esta noticia con esta locucion y
+estos recursos" (sin camara, Finance Cavaliers u otro canal), es
+`src/modules/montage-studio` + `remotion-animations/src/montage`, documentado en
+`docs/montage-desde-cero.md`. No es el motor editorial (sobrio, sus reglas FC-R
+prohiben esta densidad y no se relajan) ni `shorts-studio` (exige clip de video).
+
+El ciclo es `npm run montage -- ingest` -> editar `montage-plan.json` ->
+`montage -- build` -> `montage -- render`. Un plan compila un build por formato
+(`9x16`, `16x9`). El agente decide *donde* (`emphasis`, `overrides`, `textPops`,
+todo por `atWord`); el planificador decide *cuanto* desde el perfil
+(`viral-short`, `viral-long` en `montage-profiles.json`): reparto en visuales,
+rotacion de assets, camara que nunca se repite ni se para, transicion y sonido en
+cada cambio. Las reglas MO-R leen sus umbrales del `budget`. Nunca se renderiza un
+hueco: sin assets utilizables el build falla.
 
 ## Introducciones a camara
 
@@ -219,6 +237,7 @@ Reglas duras del motor:
 - `src/modules/video-studio/`: capa comun de las superficies de montaje.
 - `src/modules/shorts-studio/`: superficie vertical 9:16.
 - `src/modules/intro-studio/`: superficie de introducciones 16:9 a camara.
+- `src/modules/montage-studio/`: montaje viral con voz en off, 9:16 y 16:9.
 - `src/lib/stories/planner.js`: plan editorial de Stories mediante MiniMax M3 y fallback local.
 - `src/lib/stories/renderer.js`: renderer SVG 1080x1920, temas y layouts deterministas.
 - `public/`: UI local.

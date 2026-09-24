@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "notes": "Geometria del montaje viral por formato. La comparten el renderer (MontageVideo) y el validador de zona segura (MO-R-030). safeBottom es la primera fila donde la interfaz de la plataforma tapa contenido: botones y descripcion de Shorts en 9:16, barra y controles del reproductor de YouTube en 16:9.",
+  "formats": {
+    "9x16": {
+      "safeBottom": 1748,
+      "captionRect": {"left": 60, "top": 1210, "width": 960, "height": 270},
+      "popRect": {"left": 80, "top": 380, "width": 920, "height": 380}
+    },
+    "16x9": {
+      "safeBottom": 972,
+      "captionRect": {"left": 240, "top": 780, "width": 1440, "height": 170},
+      "popRect": {"left": 360, "top": 120, "width": 1200, "height": 300}
+    }
+  }
+}

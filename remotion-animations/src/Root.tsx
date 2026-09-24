@@ -101,6 +101,11 @@ import {IntroVideo, introVideoMetadata} from "./intro/IntroVideo";
 import {introVideoSchema} from "./intro/schemas";
 // Registro generado por `npm run intro:build`: una intro nueva se registra sola.
 import {introBuilds} from "./intro/registry.generated";
+import {MontageVideo, montageVideoMetadata} from "./montage/MontageVideo";
+import {montageVideoSchema} from "./montage/schemas";
+// Registros generados por `npm run montage -- build`, uno por formato.
+import {montageBuilds9x16} from "./montage/registry-9x16.generated";
+import {montageBuilds16x9} from "./montage/registry-16x9.generated";
 
 import {YouTubeTimeline, youtubeDefault, youtubeMetadata, youtubeTimelineSchema} from "./youtube/YouTubeTimeline";
 
@@ -136,6 +141,22 @@ export const RemotionRoot: React.FC = () => {
             id={id}
             key={id}
             schema={introVideoSchema}
+            width={build.format.width}
+          />
+        ))}
+      </Folder>
+      <Folder name="Montajes">
+        {[...montageBuilds9x16, ...montageBuilds16x9].map(({id, build}) => (
+          <Composition
+            calculateMetadata={montageVideoMetadata}
+            component={MontageVideo}
+            defaultProps={build}
+            durationInFrames={build.durationInFrames}
+            fps={build.format.fps}
+            height={build.format.height}
+            id={id}
+            key={id}
+            schema={montageVideoSchema}
             width={build.format.width}
           />
         ))}

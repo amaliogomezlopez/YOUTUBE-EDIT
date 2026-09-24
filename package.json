@@ -33,6 +33,7 @@
     "shorts:feedback": "node scripts/shorts-feedback.js",
     "shorts:playbook": "node scripts/shorts-playbook.js",
     "shorts:playbook:check": "node scripts/shorts-playbook.js --check",
+    "montage": "node scripts/montage.js",
     "intro:ingest": "node scripts/intro-ingest.js",
     "intro:build": "node scripts/intro-build.js",
     "intro:render": "node scripts/intro-render.js",
