@@ -46,7 +46,8 @@ test('ninguna regla declara un validador inexistente', async () => {
 
 test('el playbook markdown está generado desde el JSON', async () => {
   const ruleSet = await loadRuleSet();
-  const current = await readFile(path.join(BRAND, 'editing-playbook.md'), 'utf8');
+  // Sin distinguir finales de linea: con core.autocrlf Git reescribe el fichero con CRLF.
+  const current = (await readFile(path.join(BRAND, 'editing-playbook.md'), 'utf8')).replace(/\r\n/g, '\n');
   assert.equal(
     current.trim(),
     renderPlaybook(ruleSet).trim(),

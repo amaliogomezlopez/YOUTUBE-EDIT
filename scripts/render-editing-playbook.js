@@ -129,7 +129,9 @@ async function main() {
   const markdown = renderPlaybook(ruleSet);
   if (check) {
     const current = await readFile(outputFile, 'utf8').catch(() => '');
-    if (current.trim() !== markdown.trim()) {
+    // Sin distinguir finales de linea: con core.autocrlf Git reescribe el fichero con CRLF.
+    const eol = (text) => text.replace(/\r\n/g, '\n').trim();
+    if (eol(current) !== eol(markdown)) {
       console.error(
         `${path.relative(ROOT, outputFile)} está desincronizado con editing-rules.json. ` +
         'Ejecuta `npm run channel:playbook`.'

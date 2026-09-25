@@ -153,7 +153,8 @@ test('el short de referencia pasa todas las reglas', async () => {
 test('el playbook de shorts esta generado desde el JSON', async () => {
   const ruleSet = await loadShortsRules();
   await loadShortsChecks();
-  const current = await readFile(PLAYBOOK, 'utf8');
+  // Sin distinguir finales de linea: con core.autocrlf Git reescribe el fichero con CRLF.
+  const current = (await readFile(PLAYBOOK, 'utf8')).replace(/\r\n/g, '\n');
   assert.equal(
     current.trim(),
     renderPlaybook(ruleSet, PLAYBOOK_OPTIONS).trim(),
