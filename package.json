@@ -37,6 +37,8 @@
     "intro:ingest": "node scripts/intro-ingest.js",
     "intro:build": "node scripts/intro-build.js",
     "intro:render": "node scripts/intro-render.js",
+    "intro:viral": "node scripts/intro-viral.js",
+    "sonidos:escucha": "node scripts/sound-board.js",
     "intro:feedback": "node scripts/intro-feedback.js",
     "intro:playbook": "node scripts/intro-playbook.js",
     "intro:playbook:check": "node scripts/intro-playbook.js --check",

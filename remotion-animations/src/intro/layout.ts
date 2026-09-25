@@ -1,7 +1,7 @@
 import {MotionTheme} from "../motion/DesignSystem";
 import geometry from "./geometry.json";
 
-export type IntroLayoutId = "hero" | "hero-left" | "hero-right" | "frame" | "insert";
+export type IntroLayoutId = "hero" | "hero-left" | "hero-right" | "frame" | "insert" | "card-left" | "circle";
 export type IntroDepth = "back" | "front";
 
 /**
@@ -46,7 +46,7 @@ export const slotRect = (slot: string): SlotRect =>
 /** Slots que solo tienen sentido detras del sujeto. */
 export const BACK_SLOTS = new Set<string>(geometry.backSlots);
 
-export type IntroTone = "neutral" | "accent" | "warning" | "danger" | "positive";
+export type IntroTone = "neutral" | "accent" | "warning" | "danger" | "positive" | "muted";
 
 export const toneColor = (
   tone: IntroTone,
@@ -63,6 +63,8 @@ export const toneColor = (
       return danger;
     case "positive":
       return theme.positive;
+    case "muted":
+      return theme.ink;
     default:
       return theme.ink;
   }

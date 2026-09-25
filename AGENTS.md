@@ -196,6 +196,35 @@ cerrada mientras su validador siga devolviendo `TODO`: `npm test` lo caza.
 El proyecto de referencia es `demo-canal`, con media sintetica que regenera `node
 scripts/intro-demo-media.js`.
 
+## Apertura viral de un video largo
+
+Si el encargo es "edita los clips 1, 2 y 3 con estilo viral" (los primeros clips a
+camara enteros, con zooms, b-roll real, palabras clave y sonidos del usuario), usar la
+skill `intro-viral` (`.claude/skills/intro-viral/SKILL.md`). Es intro-studio con el
+perfil `hype-apertura`, el cue `keyword` y `sound.library: "SONIDOS-REELS"`; recoge
+las preferencias del usuario sobre texto y sonido.
+
+El procedimiento es `npm run intro:viral -- start|assets|plan|render|review|status`
+(`src/modules/intro-viral/`), con una puerta por etapa. El agente solo escribe
+`escaleta.json` (intencion por frase, palabra que pesa, recurso, texto) con el
+vocabulario cerrado de `src/modules/intro-viral/decision-tables.json`; el compilador
+genera `intro-plan.json` (cortes al beat, jump cuts en silencios, camara, transicion,
+sonido) y no se edita a mano. Los recursos se piden en `asset-requests.json` y quedan
+con su procedencia. El modulo no renderiza: compone intro-studio y video-studio.
+Los efectos de SONIDOS-REELS con prefijo de uso (`impacto-grave_`, `remate_`,
+`whoosh-in_`, `clic_`, `ding-dato_`, `glitch_`, `tecleo_`) ocupan sus familias en la
+intro y no entran en la rotacion de los Reels. `intro:render` monta un `public`
+aislado con enlaces duros para que el bundle de Remotion no copie toda la media.
+Fuentes, colores y revelado del texto son tokens de
+`src/modules/intro-studio/text-styles.json` (`textStyleId` en el plan, `textStyle` en
+la escaleta); `intro:viral -- variants` renderiza la misma escaleta con varios estilos
+y una hoja comparativa.
+Vocabulario anadido tras medir una referencia del usuario: intenciones `agenda` (lista
+numerada, cue `list`) y `comparar` (dos cifras arriba), layouts `card-left` y `circle`
+(cara en tarjeta grande o en circulo sobre el b-roll), transicion `page-curl`. El sonido
+se elige por situacion en `SONIDOS-REELS/preferencias.json`; `SONIDOS-REELS/apertura/`
+es la seleccion de la biblioteca del usuario y no entra en los Reels.
+
 ## Motor de animacion editorial
 
 Si el encargo es "en esta carpeta estan los clips del episodio N, haz las

@@ -21,3 +21,17 @@ test('riser skips continuity cuts and rejects missing or too early visual change
  c.soundCues[0].durationSeconds=4;assert.throws(()=>syncReelSoundTiming(c),/no cabe/);c.scenes.pop();assert.throws(()=>syncReelSoundTiming(c),/cambio/);
 });
 test('wholly silent effects are rejected instead of being timed as real audio',()=>{assert.throws(()=>soundEdges([{start:0,end:2}],2),/audible/);});
+test('usos de montaje por prefijo o subcarpeta: fuera de la paleta de los Reels',()=>{
+ assert.equal(describeReelSound('impacto-grave_short-bass-hit_mixkit-2299.wav').use,'impact-low');
+ assert.equal(describeReelSound('whoosh-in_fast-whoosh_mixkit-1490.wav').use,'whoosh-in');
+ assert.equal(describeReelSound('ding-dato_dry-popup.wav').use,'data');
+ assert.equal(describeReelSound('impactos\\golpe.wav').use,'impact-low');
+ assert.equal(describeReelSound('clicks/raton.wav').use,'click');
+ assert.equal(describeReelSound('remate_money-drop.wav').use,'impact-finisher','el prefijo manda sobre la palabra money');
+ const s=semanticSoundSelection({entries:['whip.wav','impacto-grave_a.wav','clic_b.wav','Message sound.mp3'].map((sourceName,i)=>({sourceName,file:'sfx/e-'+i+'.wav',durationSeconds:.2}))});
+ assert.deepEqual(s.palette.whoosh,['sfx/e-0.wav']);
+ assert.deepEqual(s.palette.ui,['sfx/e-3.wav'],'un clic nunca suena en un mensaje');
+ assert.equal(Object.values(s.palette).flat().includes('sfx/e-1.wav'),false);
+ assert.ok(s.metadata['sfx/e-1.wav']);
+ assert.deepEqual(s.families,['whoosh']);
+});

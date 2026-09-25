@@ -29,6 +29,11 @@ export const SOUND_FAMILIES = {
   pop: family(['sfx/library-pop.wav', ...variants('reveal', 6)], 0.46, 0.5),
   reveal: family(variants('reveal', 6), 0.5, 0.55),
   tick: family(['sfx/amaliometria-data-tick.wav', ...variants('data', 6)], 0.26, 0.48),
+  // Tecleo de un titular escrito letra a letra. La libreria no tiene teclas: sus
+  // ticks de dato son el sustituto hasta que la biblioteca del usuario aporta tecleo.
+  typing: family(variants('data', 6), 0.5, 0.42),
+  // Papel: la transicion de hoja que se pliega. Sin papel del usuario, un whoosh suave.
+  paper: family(['sfx/library-smooth-whoosh.wav', ...variants('texture', 3)], 0.6, 0.5),
   ui: family(variants('interface', 6), 0.24, 0.54),
   chime: family(['sfx/amaliometria-success-chime.wav', ...variants('confirm', 6)], 0.52, 0.6),
   shimmer: family(['sfx/amaliometria-logo-shimmer.wav'], 0.9, 0.55),
@@ -49,7 +54,15 @@ export const SOUND_FAMILIES = {
   /** Rotura corta para glitch, RGB split y cortes duros. */
   glitch: family([...variants('break', 6), 'sfx/library-quick-whip.wav'], 0.24, 0.5),
   /** Barrido de obturador para el flash y el freeze. */
-  shutter: family(variants('shutter', 6), 0.3, 0.46)
+  shutter: family(variants('shutter', 6), 0.3, 0.46),
+
+  // Usos semanticos: nunca entran en la rotacion generica. La biblioteca del usuario
+  // (SONIDOS-REELS) los sustituye por su money.mp3 / Message sound; sin ella suenan
+  // con la toma de la libreria mas cercana.
+  /** Cifras de dinero en pantalla: precios, ingresos, ahorro. */
+  money: family(['sfx/amaliometria-success-chime.wav'], 0.52, 0.7),
+  /** Aparece un mensaje, chat, tuit o publicacion. */
+  message: family(variants('interface', 6), 0.24, 0.6)
 };
 
 export const soundFamilyIds = Object.keys(SOUND_FAMILIES);

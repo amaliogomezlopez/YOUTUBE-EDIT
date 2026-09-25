@@ -120,6 +120,7 @@ const cameraTransform = (scene: IntroScene, frame: number, fps: number) => {
       };
     }
     case "snap-zoom": {
+      // Mismo instante que SNAP_ZOOM_AT (intro-studio/constants.js): ahi suena el zoom.
       const at = Math.round(scene.durationInFrames * 0.45);
       return {
         scale: frame < at ? 1 : 1 + 0.12 * intensity,

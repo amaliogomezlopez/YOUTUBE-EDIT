@@ -17,9 +17,11 @@ import {clamp, rgba} from "../motion/Toolkit";
 import {BackdropLayer} from "./BackdropLayer";
 import {RgbSplitFilter, SceneEffects, sceneEffectStyle} from "./EffectLayer";
 import {IntroCueLayer} from "./IntroCueLayer";
+import {PageCurl, pageCurlClip} from "./PageCurl";
 import {SubjectStage} from "./SubjectStage";
 import {TitleCard} from "./TitleCard";
-import {INTRO_LAYOUT, subjectRect} from "./layout";
+import {DEFAULT_TEXT_STYLE, IntroTextStyle} from "./textStyle";
+import {INTRO_LAYOUT, stageRect, subjectRect} from "./layout";
 import {IntroScene, IntroVideoProps} from "./schemas";
 
 export const introVideoMetadata: CalculateMetadataFunction<IntroVideoProps> = ({props}) => ({
@@ -33,7 +35,8 @@ export const IntroVideo: React.FC<IntroVideoProps> = (props) => {
   const theme = getMotionTheme(props.themeId);
   const accent = props.accentColor ?? theme.accent;
   const danger = props.dangerColor ?? theme.danger;
-  const palette = {theme, accent, danger};
+  const text = props.textStyle ?? DEFAULT_TEXT_STYLE;
+  const palette = {theme, accent, danger, text};
 
   return (
     <AbsoluteFill style={{background: theme.background}}>
@@ -55,7 +58,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = (props) => {
           layout="none"
           name="titulo"
         >
-          <TitleCard accent={accent} theme={theme} title={props.titleCard} />
+          <TitleCard accent={accent} textStyle={text} theme={theme} title={props.titleCard} />
         </Sequence>
       ) : null}
 
@@ -75,7 +78,7 @@ export const IntroVideo: React.FC<IntroVideoProps> = (props) => {
 
 const SceneBlock: React.FC<{
   scene: IntroScene;
-  palette: {theme: ReturnType<typeof getMotionTheme>; accent: string; danger: string};
+  palette: {theme: ReturnType<typeof getMotionTheme>; accent: string; danger: string; text: IntroTextStyle};
   volume: number;
 }> = ({scene, palette, volume}) => {
   const frame = useCurrentFrame();
@@ -88,58 +91,62 @@ const SceneBlock: React.FC<{
 
   // El halo solo tiene sentido cuando el layout deja fondo alrededor del sujeto: en
   // `hero` el clip llega a los bordes y un borde luminoso seria un marco decorativo.
-  const glow = scene.layout === "frame" || scene.layout === "insert" ? palette.accent : null;
+  const glow = ["frame", "insert", "card-left", "circle"].includes(scene.layout) ? palette.accent : null;
 
   return (
-    <AbsoluteFill style={transition}>
-      {splitting ? <RgbSplitFilter id={filterId} offsetPx={effects.rgbSplitPx} /> : null}
-      <AbsoluteFill
-        style={{
-          transform: effects.transform,
-          filter: [effects.filter, splitting ? `url(#${filterId})` : null]
-            .filter(Boolean)
-            .join(" ") || undefined,
-        }}
-      >
-        {scene.backdrop ? (
-          <BackdropLayer
-            backdrop={scene.backdrop}
-            durationInFrames={scene.durationInFrames}
-            height={INTRO_LAYOUT.height}
-            width={INTRO_LAYOUT.width}
+    <>
+      <AbsoluteFill style={transition}>
+        {splitting ? <RgbSplitFilter id={filterId} offsetPx={effects.rgbSplitPx} /> : null}
+        <AbsoluteFill
+          style={{
+            transform: effects.transform,
+            filter: [effects.filter, splitting ? `url(#${filterId})` : null]
+              .filter(Boolean)
+              .join(" ") || undefined,
+          }}
+        >
+          {scene.backdrop ? (
+            <BackdropLayer
+              backdrop={scene.backdrop}
+              durationInFrames={scene.durationInFrames}
+              frame={scene.layout === "card-left" ? stageRect("card-left") : undefined}
+              height={INTRO_LAYOUT.height}
+              width={INTRO_LAYOUT.width}
+            />
+          ) : null}
+
+          <IntroCueLayer cues={scene.cues} depth="back" palette={palette} />
+
+          <SubjectStage
+            glow={glow}
+            height={subject.height}
+            left={subject.left}
+            radius={subject.radius}
+            scene={scene}
+            top={subject.top}
+            volume={volume}
+            width={subject.width}
           />
-        ) : null}
 
-        <IntroCueLayer cues={scene.cues} depth="back" palette={palette} />
+          <IntroCueLayer cues={scene.cues} depth="front" palette={palette} />
 
-        <SubjectStage
-          glow={glow}
-          height={subject.height}
-          left={subject.left}
-          radius={subject.radius}
-          scene={scene}
-          top={subject.top}
-          volume={volume}
-          width={subject.width}
+          {scene.label ? <SceneLabel accent={palette.accent} label={scene.label} /> : null}
+
+          {scene.captionPages.length ? (
+            <CaptionBand accent={palette.accent} pages={scene.captionPages} theme={palette.theme} />
+          ) : null}
+        </AbsoluteFill>
+
+        <SceneEffects
+          accent={palette.accent}
+          effects={scene.effects}
+          height={INTRO_LAYOUT.height}
+          sceneId={scene.id}
+          width={INTRO_LAYOUT.width}
         />
-
-        <IntroCueLayer cues={scene.cues} depth="front" palette={palette} />
-
-        {scene.label ? <SceneLabel accent={palette.accent} label={scene.label} /> : null}
-
-        {scene.captionPages.length ? (
-          <CaptionBand accent={palette.accent} pages={scene.captionPages} theme={palette.theme} />
-        ) : null}
       </AbsoluteFill>
-
-      <SceneEffects
-        accent={palette.accent}
-        effects={scene.effects}
-        height={INTRO_LAYOUT.height}
-        sceneId={scene.id}
-        width={INTRO_LAYOUT.width}
-      />
-    </AbsoluteFill>
+      {scene.transitionIn === "page-curl" ? <PageCurl frame={frame} /> : null}
+    </>
   );
 };
 
@@ -301,6 +308,9 @@ const transitionStyle = (
       // El corte ya ha ocurrido; lo que queda es el residuo de luz que lo tapa. El
       // fotograma blanco lo pone el efecto `flash` anclado al mismo beat.
       return {filter: `brightness(${interpolate(frame, [0, 5], [2.4, 1], clamp)})`};
+    case "page-curl":
+      // La escena solo se ve donde la hoja ya se ha levantado; la hoja la pinta PageCurl.
+      return {clipPath: pageCurlClip(frame)};
     case "glitch-cut": {
       const progress = interpolate(frame, [0, 7], [0, 1], clamp);
       return {

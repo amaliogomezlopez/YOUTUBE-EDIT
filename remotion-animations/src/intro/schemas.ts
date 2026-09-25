@@ -1,5 +1,6 @@
 import {z} from "zod";
 import {motionThemeSchema} from "../motion/DesignSystem";
+import {introTextStyleSchema} from "./textStyle";
 
 export const introFocusSchema = z.object({
   x: z.number(),
@@ -15,7 +16,7 @@ export const introRectSchema = z.object({
   height: z.number(),
 });
 
-export const introLayoutSchema = z.enum(["hero", "hero-left", "hero-right", "frame", "insert"]);
+export const introLayoutSchema = z.enum(["hero", "hero-left", "hero-right", "frame", "insert", "card-left", "circle"]);
 
 export const introCameraSchema = z.enum([
   "static",
@@ -38,6 +39,8 @@ export const introTransitionSchema = z.enum([
   /** Corte tapado por un fotograma blanco: el corte mas duro que no molesta. */
   "flash-cut",
   "glitch-cut",
+  /** Hoja blanca que se levanta desde la esquina y descubre la escena (entrar a una pantalla). */
+  "page-curl",
 ]);
 
 export const introEffectSchema = z.enum([
@@ -56,7 +59,7 @@ export const introEffectSchema = z.enum([
 
 export const introCueSchema = z.object({
   id: z.string(),
-  type: z.enum(["logo", "screenshot", "stat", "chip", "label", "brand"]),
+  type: z.enum(["logo", "screenshot", "stat", "chip", "label", "brand", "keyword", "list"]),
   assetId: z.string().nullable().optional(),
   src: z.string().nullable().optional(),
   slot: z.string().nullable().optional(),
@@ -69,7 +72,10 @@ export const introCueSchema = z.object({
   presentation: z.enum(["card", "plate", "plain", "blend"]).default("card"),
   text: z.string().nullable().optional(),
   note: z.string().nullable().optional(),
-  tone: z.enum(["neutral", "accent", "warning", "danger", "positive"]).default("neutral"),
+  /** Indices de palabra de `text` que se quedan en color de acento tras escribirse. */
+  highlight: z.array(z.number()).optional(),
+  /** `muted`: en tinta y algo atenuado (la primera cifra de una comparacion). */
+  tone: z.enum(["neutral", "accent", "warning", "danger", "positive", "muted"]).default("neutral"),
   /** Escala respecto al rectangulo del slot. Un cue de fondo entra por debajo de 1. */
   scale: z.number().default(1),
   blurPx: z.number().default(0),
@@ -80,6 +86,10 @@ export const introCueSchema = z.object({
   atSeconds: z.number(),
   fromFrame: z.number(),
   durationInFrames: z.number(),
+  /** Puntos de una lista numerada (`list`), con su fotograma de entrada relativo al cue. */
+  items: z.array(z.object({text: z.string(), fromFrame: z.number()})).optional(),
+  /** Punto resaltado de la lista; el resto se atenua. */
+  active: z.number().nullable().optional(),
 });
 
 export const introEffectCueSchema = z.object({
@@ -171,6 +181,7 @@ export const introVideoSchema = z.object({
   themeId: motionThemeSchema,
   accentColor: z.string().nullable().optional(),
   dangerColor: z.string().nullable().optional(),
+  textStyle: introTextStyleSchema.nullable().optional(),
   titleCard: introTitleSchema.nullable().optional(),
   music: introMusicSchema.nullable().optional(),
   soundEnabled: z.boolean().default(true),

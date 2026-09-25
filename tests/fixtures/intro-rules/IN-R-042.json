@@ -1,0 +1,94 @@
+{
+  "ruleId": "IN-R-042",
+  "statement": "En ninguna ventana del perfil hay más golpes (efectos fuertes y efectos de sonido) que los que autoriza su `hitBreathing`.",
+  "check": "intro-hit-breathing",
+  "expect": "fail",
+  "note": "Cinco efectos de sonido en 2 s con un perfil que admite 3 golpes cada 4 s.",
+  "context": {
+    "format": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 60
+    },
+    "durationInFrames": 480,
+    "durationSeconds": 8,
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "escena-fixture",
+        "clipId": "01",
+        "layout": "hero",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 480,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 8,
+        "cues": [],
+        "effects": [],
+        "captionPages": []
+      }
+    ],
+    "soundCues": [
+      {
+        "file": "sfx/library-quick-whip.wav",
+        "startSeconds": 0.5,
+        "durationSeconds": 0.2,
+        "volume": 0.5,
+        "attackSeconds": 0.01,
+        "releaseSeconds": 0.05,
+        "playbackRate": 1
+      },
+      {
+        "file": "sfx/library-quick-whip.wav",
+        "startSeconds": 1,
+        "durationSeconds": 0.2,
+        "volume": 0.5,
+        "attackSeconds": 0.01,
+        "releaseSeconds": 0.05,
+        "playbackRate": 1
+      },
+      {
+        "file": "sfx/library-quick-whip.wav",
+        "startSeconds": 1.5,
+        "durationSeconds": 0.2,
+        "volume": 0.5,
+        "attackSeconds": 0.01,
+        "releaseSeconds": 0.05,
+        "playbackRate": 1
+      },
+      {
+        "file": "sfx/library-quick-whip.wav",
+        "startSeconds": 2,
+        "durationSeconds": 0.2,
+        "volume": 0.5,
+        "attackSeconds": 0.01,
+        "releaseSeconds": 0.05,
+        "playbackRate": 1
+      },
+      {
+        "file": "sfx/library-quick-whip.wav",
+        "startSeconds": 2.5,
+        "durationSeconds": 0.2,
+        "volume": 0.5,
+        "attackSeconds": 0.01,
+        "releaseSeconds": 0.05,
+        "playbackRate": 1
+      }
+    ],
+    "duckWindows": [],
+    "budget": {
+      "profileId": "hype-apertura",
+      "maxStrongEffectsPerSecond": 10,
+      "maxSecondsWithoutChange": 10,
+      "beatToleranceSeconds": 0.06,
+      "durationBudgetSeconds": {
+        "min": 5,
+        "max": 25
+      },
+      "hitBreathing": {
+        "windowSeconds": 4,
+        "maxHits": 3
+      }
+    }
+  }
+}

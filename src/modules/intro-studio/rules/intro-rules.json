@@ -189,6 +189,20 @@
         "recordedAt": "2026-07-30T14:19:42Z"
       },
       "fixture": "tests/fixtures/intro-rules/IN-R-022.json"
+    },
+    {
+      "id": "IN-R-042",
+      "section": "rhythm",
+      "statement": "En ninguna ventana del perfil hay más golpes (efectos fuertes y efectos de sonido) que los que autoriza su `hitBreathing`.",
+      "rationale": "IN-R-041 solo cuenta lo que se ve; el espectador suma lo que ve y lo que oye. Un flash, el whoosh del corte y el sonido de la palabra clave a 300 ms son tres golpes, y un golpe por segundo sostenido convierte la apertura en ruido. El golpe va donde la frase lo pide; entre medias, un zoom de cámara continuo mantiene la vida sin sumar golpes. Los instantes a menos de 120 ms se funden en uno. El techo lo fija el perfil y la regla es no evaluable sin él.",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "intro-hit-breathing",
+      "origin": {
+        "feedback": "queda demasiado cargante: cada segundo hay efectos de video y de audio. Deja respirar, efectos solo cuando tengan sentido; mientras, pequenos zooms de camara",
+        "recordedAt": "2026-09-24T19:55:33Z"
+      },
+      "fixture": "tests/fixtures/intro-rules/IN-R-042.json"
     }
   ]
 }

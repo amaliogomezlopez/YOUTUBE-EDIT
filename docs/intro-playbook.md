@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje de intro en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier intro y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal para el que se monta la intro. |
 
-Reglas: **12** · con validador automático: **12** · marcadas `manual`: **0** · sin implementar: **0**.
+Reglas: **13** · con validador automático: **13** · marcadas `manual`: **0** · sin implementar: **0**.
 
 Una regla que se cumple igual en dos superficies asciende a `catalog` y su validador se mueve a `src/modules/video-studio/checks/`. Ya han ascendido `art-dark-on-alpha-needs-plate`, `art-solid-background-needs-blend` y `cue-not-silent`, que nacieron montando shorts. Las reglas de este set se registran con `npm run intro:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -115,6 +115,14 @@ No hay más golpes por segundo que los que autoriza el perfil, medido en ventana
 **Por qué:** Pasado ese techo la intro deja de tener ritmo y pasa a tener ruido: el ojo no distingue diez impactos en dos segundos, solo registra parpadeo, y en pantalla grande es incómoda de ver. Se mide en ventana deslizante porque por segundos enteros se cuelan cuatro golpes repartidos entre el final de uno y el principio del siguiente.
 
 **Validador:** `intro-effect-density-max`
+
+### IN-R-042 · `warning` · `catalog`
+
+En ninguna ventana del perfil hay más golpes (efectos fuertes y efectos de sonido) que los que autoriza su `hitBreathing`.
+
+**Por qué:** IN-R-041 solo cuenta lo que se ve; el espectador suma lo que ve y lo que oye. Un flash, el whoosh del corte y el sonido de la palabra clave a 300 ms son tres golpes, y un golpe por segundo sostenido convierte la apertura en ruido. El golpe va donde la frase lo pide; entre medias, un zoom de cámara continuo mantiene la vida sin sumar golpes. Los instantes a menos de 120 ms se funden en uno. El techo lo fija el perfil y la regla es no evaluable sin él.
+
+**Validador:** `intro-hit-breathing`
 
 ## 5. Sonido
 

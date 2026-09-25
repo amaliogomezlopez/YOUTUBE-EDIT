@@ -27,14 +27,20 @@ export const staticPath = paths.staticPath;
  */
 export const INTRO_FORMAT = {width: 1920, height: 1080, fps: 60};
 
-export const LAYOUTS = new Set(['hero', 'hero-left', 'hero-right', 'frame', 'insert']);
+/**
+ * Momento del salto de `snap-zoom`, en fraccion de la escena. Lo usa el renderer
+ * (SubjectStage.tsx) y aqui el sonido del zoom, que tiene que caer en el salto.
+ */
+export const SNAP_ZOOM_AT = 0.45;
+
+export const LAYOUTS = new Set(['hero', 'hero-left', 'hero-right', 'frame', 'insert', 'card-left', 'circle']);
 export const CAMERAS = new Set([
   'static', 'punch-in', 'push-out', 'drift-left', 'drift-right', 'handheld', 'snap-zoom'
 ]);
 export const TRANSITIONS = new Set([
-  'cut', 'fade', 'whip', 'slide-up', 'zoom-blur', 'flash-cut', 'glitch-cut'
+  'cut', 'fade', 'whip', 'slide-up', 'zoom-blur', 'flash-cut', 'glitch-cut', 'page-curl'
 ]);
-export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand']);
+export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand', 'keyword', 'list']);
 export const PRESENTATIONS = new Set(['card', 'plate', 'plain', 'blend']);
 export const DEPTHS = new Set(['back', 'front']);
 export const BACKDROP_MOTIONS = new Set(['static', 'parallax-left', 'parallax-right', 'slow-zoom']);

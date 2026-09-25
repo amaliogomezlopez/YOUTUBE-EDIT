@@ -11,8 +11,9 @@
  * metadata ni de publicación.
  */
 import {spawnSync} from 'node:child_process';
-import {access} from 'node:fs/promises';
+import {access, readFile} from 'node:fs/promises';
 import path from 'node:path';
+import {isolatePublicDir} from '../src/modules/video-studio/render-public.js';
 import {REMOTION_ROOT, projectDir} from '../src/modules/intro-studio/constants.js';
 import {compositionIdForSlug, discoverIntroProjects} from '../src/modules/intro-studio/registry.js';
 
@@ -51,6 +52,21 @@ if (!registered.some((project) => project.slug === slug)) {
   process.exit(1);
 }
 
+// El bundler copia `public` entero al temporal del sistema: con la media de todos
+// los proyectos no cabe. Se monta uno con solo lo que usa esta intro (enlaces duros),
+// salvo que SHORTSMITH_RENDER_PUBLIC_DIR ya diga cual usar.
+const env = {...process.env};
+if (!env.SHORTSMITH_RENDER_PUBLIC_DIR) {
+  const build = JSON.parse(await readFile(buildFile, 'utf8'));
+  const isolated = await isolatePublicDir({
+    publicRoot: path.join(REMOTION_ROOT, 'public'),
+    build,
+    target: path.join(REMOTION_ROOT, 'out', `intro-${slug}`, 'public')
+  });
+  env.SHORTSMITH_RENDER_PUBLIC_DIR = isolated.target;
+  console.log(`public aislado: ${isolated.files} ficheros del build + carpetas comunes`);
+}
+
 console.log(`Renderizando ${compositionId} (${slug})`);
 const result = spawnSync(
   process.execPath,
@@ -62,7 +78,7 @@ const result = spawnSync(
     `${slug}.mp4`,
     ...passthrough
   ],
-  {cwd: REMOTION_ROOT, stdio: 'inherit'}
+  {cwd: REMOTION_ROOT, stdio: 'inherit', env}
 );
 if (result.error) throw result.error;
 process.exit(result.status ?? 1);

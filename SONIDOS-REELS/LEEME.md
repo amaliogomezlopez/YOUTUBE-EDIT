@@ -4,7 +4,26 @@ Copia aqui los efectos que quieras usar. Puedes conservar sus nombres.
 
 - Formatos: WAV, MP3, M4A, AAC, FLAC, OGG y OPUS.
 - Basta con dejarlos directamente en esta carpeta. No hay que puntuarlos.
-- Si quieres organizarlos: subcarpetas opcionales `entradas`, `clicks` e `impactos`. El resto se usa para transiciones.
+- El **prefijo del nombre** dice para que sirve un efecto de montaje (lo lee `src/modules/talking-head/sound-usage.js`):
+
+  | Prefijo | Uso | En la apertura suena en |
+  |---|---|---|
+  | `impacto-grave_` | impacto grave y seco | `zoom-punch`, logos (familias `boom`, `hit`) |
+  | `remate_` | impacto con cuerpo | `shake` en el remate (`impact`) |
+  | `whoosh-in_` | whoosh inverso | transicion `zoom-blur` (`rewind`); su pico cae en el corte |
+  | `clic_` | clic de interfaz | `ui`: algo que se pulsa o aparece en una pantalla |
+  | `ding-dato_` | ding de dato | cifra que no es dinero (`stat`, familias `tick`, `chime`) |
+  | `glitch_` | glitch corto | transicion `glitch-cut` |
+  | `tecleo_` | tecleo | titular con `titleCard.sound: "typing"` |
+  | `bajada_` | bajada de bajo | sin uso todavia; no entra en ninguna rotacion |
+
+  Estos efectos **no** entran en la rotacion de transiciones de los Reels. Subcarpetas
+  equivalentes: `impactos` (= `impacto-grave_`) y `clicks` (= `clic_`); `entradas` y el
+  resto de ficheros sin prefijo son transiciones.
+- La subcarpeta `apertura/` guarda efectos solo para la apertura de los videos largos:
+  no suenan en los Reels. Donde suena cada uno lo dice `preferencias.json` (por
+  situacion, en orden de rotacion; repetir un sonido le da mas peso), que se edita a
+  mano o con `ESCUCHA.html` (`npm run sonidos:escucha`).
 - Se preparan automaticamente al montar el siguiente Reel. Para comprobarlos ahora: `npm run talking-head -- sounds`.
 - El importador crea copias WAV a 48 kHz, iguala el pico y conserva el tono y prepara una copia sin silencios de entrada/salida. No modifica tus originales.
 - Si hay sonidos aqui, los nuevos montajes usan solo estos y alternan entre ellos. Con un solo archivo se repetira ese archivo.

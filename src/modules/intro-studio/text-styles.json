@@ -1,0 +1,87 @@
+{
+  "version": 1,
+  "defaultStyle": "v3-fraunces",
+  "intro": "Estilos de texto de la intro: tokens con nombre que el renderer lee (fuentes, tamanos, color, revelado, resalte y cifra). Un estilo nuevo es una entrada de este JSON, nunca un componente. Las fuentes tienen que estar cargadas en remotion-animations/src/motion/fonts.ts. Tamanos en px sobre 1920x1080; espaciados en em. Ninguno pone cajas ni pastillas detras del texto (preferencia del usuario): la legibilidad la dan la sombra, el degradado inferior y, en la cifra flotante, un oscurecido radial.",
+  "tokens": {
+    "reveal": "letters (letra a letra) | words (palabra a palabra con subida) | mask (mascara que barre de izquierda a derecha) | fade (fundido con leve escala)",
+    "accentMode": "writing (la palabra que se escribe va en acento y las de highlight se quedan) | highlight (solo las de highlight en acento) | ink (todo en tinta; el resalte lo da el subrayado o la cursiva)",
+    "highlight": "underline: subrayado en acento que barre bajo la palabra resaltada; italic: la palabra resaltada en cursiva",
+    "stat.presentation": "column (columna lateral con el sujeto a un lado, la v3) | floating (cifra sobre el video, sin panel, con oscurecido radial)",
+    "stat.counter": "true: la cifra cuenta desde 0 hasta su valor"
+  },
+  "styles": [
+    {
+      "id": "v3-fraunces",
+      "label": "v3 aprobada: Fraunces display letra a letra",
+      "display": {"family": "Fraunces", "weight": 600, "variation": "'opsz' 144, 'SOFT' 30, 'WONK' 0", "letterSpacingEm": -0.016, "lineHeight": 1.02, "uppercase": false},
+      "label": {"family": "Instrument Sans", "weight": 600, "letterSpacingEm": 0.23, "uppercase": true},
+      "sizes": {"keyword": 92, "keywordLong": 74, "stat": 210, "statLong": 150, "title": 112, "note": 26, "statNote": 34, "kicker": 28, "list": 60},
+      "color": {"ink": "#FFFFFF", "accentMode": "writing"},
+      "highlight": {"underline": false, "italic": false},
+      "reveal": "letters",
+      "keywordAlign": "left",
+      "stat": {"presentation": "column", "counter": false, "family": null}
+    },
+    {
+      "id": "serif-editorial",
+      "label": "Instrument Serif con cursiva y subrayado, palabra a palabra",
+      "display": {"family": "Instrument Serif", "weight": 400, "variation": null, "letterSpacingEm": -0.01, "lineHeight": 1, "uppercase": false},
+      "label": {"family": "Instrument Sans", "weight": 600, "letterSpacingEm": 0.22, "uppercase": true},
+      "sizes": {"keyword": 104, "keywordLong": 84, "stat": 230, "statLong": 170, "title": 124, "note": 26, "statNote": 32, "kicker": 28},
+      "color": {"ink": "#FFFFFF", "accentMode": "highlight"},
+      "highlight": {"underline": true, "italic": true},
+      "reveal": "words",
+      "keywordAlign": "left",
+      "stat": {"presentation": "floating", "counter": true, "family": null}
+    },
+    {
+      "id": "bricolage-mascara",
+      "label": "Bricolage Grotesque negra, revelado por mascara, blanco con una palabra en acento",
+      "display": {"family": "Bricolage Grotesque", "weight": 700, "variation": "'opsz' 96, 'wdth' 100", "letterSpacingEm": -0.03, "lineHeight": 1, "uppercase": false},
+      "label": {"family": "Instrument Sans", "weight": 700, "letterSpacingEm": 0.18, "uppercase": true},
+      "sizes": {"keyword": 90, "keywordLong": 72, "stat": 220, "statLong": 160, "title": 118, "note": 24, "statNote": 30, "kicker": 26},
+      "color": {"ink": "#FFFFFF", "accentMode": "highlight"},
+      "highlight": {"underline": false, "italic": false},
+      "reveal": "mask",
+      "keywordAlign": "left",
+      "stat": {"presentation": "floating", "counter": true, "family": null}
+    },
+    {
+      "id": "anton-impacto",
+      "label": "Anton condensada en mayusculas, palabra a palabra, cifras enormes",
+      "display": {"family": "Anton", "weight": 400, "variation": null, "letterSpacingEm": 0.01, "lineHeight": 1.02, "uppercase": true},
+      "label": {"family": "Instrument Sans", "weight": 700, "letterSpacingEm": 0.2, "uppercase": true},
+      "sizes": {"keyword": 104, "keywordLong": 86, "stat": 260, "statLong": 190, "title": 128, "note": 26, "statNote": 32, "kicker": 28, "list": 68},
+      "color": {"ink": "#FFFFFF", "accentMode": "highlight"},
+      "highlight": {"underline": false, "italic": false},
+      "reveal": "words",
+      "keywordAlign": "left",
+      "stat": {"presentation": "floating", "counter": true, "family": null}
+    },
+    {
+      "id": "fraunces-sobrio",
+      "label": "Fraunces ligera y centrada, fundido, todo en blanco con subrayado",
+      "display": {"family": "Fraunces", "weight": 400, "variation": "'opsz' 144, 'SOFT' 100, 'WONK' 0", "letterSpacingEm": -0.012, "lineHeight": 1.04, "uppercase": false},
+      "label": {"family": "Instrument Sans", "weight": 500, "letterSpacingEm": 0.26, "uppercase": true},
+      "sizes": {"keyword": 88, "keywordLong": 72, "stat": 200, "statLong": 150, "title": 108, "note": 24, "statNote": 30, "kicker": 26},
+      "color": {"ink": "#FFFFFF", "accentMode": "ink"},
+      "highlight": {"underline": true, "italic": false},
+      "reveal": "fade",
+      "keywordAlign": "center",
+      "stat": {"presentation": "floating", "counter": false, "family": null}
+    },
+    {
+      "id": "mixto-serif-anton",
+      "label": "Palabras en Instrument Serif cursiva; cifras y titular en Anton",
+      "display": {"family": "Instrument Serif", "weight": 400, "variation": null, "letterSpacingEm": -0.01, "lineHeight": 1, "uppercase": false},
+      "label": {"family": "Instrument Sans", "weight": 600, "letterSpacingEm": 0.22, "uppercase": true},
+      "sizes": {"keyword": 100, "keywordLong": 82, "stat": 250, "statLong": 180, "title": 120, "note": 26, "statNote": 32, "kicker": 28},
+      "color": {"ink": "#FFFFFF", "accentMode": "highlight"},
+      "highlight": {"underline": false, "italic": true},
+      "reveal": "letters",
+      "keywordAlign": "left",
+      "stat": {"presentation": "floating", "counter": true, "family": "Anton"},
+      "title": {"family": "Anton", "uppercase": true}
+    }
+  ]
+}

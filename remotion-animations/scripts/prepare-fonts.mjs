@@ -40,6 +40,23 @@ const files = [
     ),
     target: "instrument-sans-latin-ext-variable.woff2",
   },
+  // Fuentes de los estilos de texto de la intro (src/modules/intro-studio/text-styles.json).
+  {
+    source: path.join(projectRoot, "node_modules", "@fontsource", "instrument-serif", "files", "instrument-serif-latin-400-normal.woff2"),
+    target: "instrument-serif-latin-400.woff2",
+  },
+  {
+    source: path.join(projectRoot, "node_modules", "@fontsource", "instrument-serif", "files", "instrument-serif-latin-400-italic.woff2"),
+    target: "instrument-serif-latin-400-italic.woff2",
+  },
+  {
+    source: path.join(projectRoot, "node_modules", "@fontsource-variable", "bricolage-grotesque", "files", "bricolage-grotesque-latin-standard-normal.woff2"),
+    target: "bricolage-grotesque-latin-variable.woff2",
+  },
+  {
+    source: path.join(projectRoot, "node_modules", "@fontsource", "anton", "files", "anton-latin-400-normal.woff2"),
+    target: "anton-latin-400.woff2",
+  },
 ];
 
 for (const file of files) {

@@ -73,3 +73,4 @@ remotion-animations/projects/shorts-camera-unified-pilot/
 /remotion-animations/projects/youtube-*/
 # Montajes virales: voz y assets privados; el registro se commitea vacio.
 /remotion-animations/projects/montage-*/
+data/intro-viral/*

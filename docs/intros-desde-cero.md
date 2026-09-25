@@ -198,6 +198,76 @@ de verdad gráfica y sus efectos explican un dato. Estos marcan ritmo.
 rojo y azul, los desplaza y los recompone con `screen`. No hace falta pintar el clip
 tres veces.
 
+### Palabra clave abajo (`keyword`)
+
+Texto sin caja en la franja inferior: slot `lower` (a sangre) o `lower-left`
+(deja libre la esquina del sujeto en `insert`). Se escribe letra a letra en la
+serif de display (Fraunces), con la palabra en curso en color de acento; `highlight`
+(indices de palabra) fija en acento las que importan y `note` pone un antetitulo en
+Instrument Sans. `stat`, `chip`, `label` y el titular usan el mismo sistema: ya
+no llevan pastilla ni tarjeta detras. Es la correccion del usuario sobre la primera
+apertura viral: las cajas de color con esquinas redondeadas y la columna lateral en
+cada escena se leian genericas.
+
+### Biblioteca de sonidos del usuario
+
+`"sound": {"library": "SONIDOS-REELS"}` resuelve las familias de cambio de imagen
+(`whip`, `whoosh`, `rewind`, `shutter`, `glitch`, `camera`, `pop`,
+`reveal`) con los efectos cortos de `SONIDOS-REELS` (0,7 s o menos por defecto,
+`maxTransitionSeconds`), rotando en un solo contador. En ese modo los efectos y
+movimientos de camara de esas familias no suenan por defecto: los efectos del
+usuario se reservan para cortes, entradas de imagen y palabras clave. `soundUse:
+"money" | "message"` con `soundNote` pide el sonido semantico del usuario (su
+`money.mp3` en las cifras de dinero) y `openingRiser: true` coloca su riser acabando
+en el primer corte.
+
+Los efectos de montaje del usuario se reconocen por el prefijo del fichero
+(`SONIDOS-REELS/LEEME.md`) y ocupan sus familias (`USER_EDIT_USES` en `sound.js`):
+
+| Prefijo | Familias | Nota |
+|---|---|---|
+| `impacto-grave_` | `boom`, `hit` | `zoom-punch`, logos; cola cortada a 0,9 s |
+| `remate_` | `impact` | `shake`; cola cortada a 1,4 s |
+| `whoosh-in_` | `rewind` | `zoom-blur`: empieza antes y su **pico** cae en el corte |
+| `clic_` | `ui` | |
+| `ding-dato_` | `tick`, `chime` | con la biblioteca, una `stat` sin dinero suena a `tick` |
+| `glitch_` | `glitch` | |
+| `tecleo_` | `typing` | solo si `titleCard.sound: "typing"` |
+
+Si falta un uso, su familia suena como antes (transiciones del usuario o libreria).
+Cada cue de sonido lleva `hitSeconds`, el instante que se oye como golpe: el final de
+un riser o el pico de un whoosh inverso. IN-R-042 mide ese instante, no el arranque.
+
+### Estilos de texto (`textStyleId`)
+
+Fuente, tamanos, color, revelado, resalte y presentacion de la cifra son tokens de
+`src/modules/intro-studio/text-styles.json`. El plan los elige con `textStyleId` (o
+el perfil con el suyo); el build copia el estilo resuelto a `intro-build.json` como
+`textStyle`, y `TypeReveal`, `IntroCueLayer` y `TitleCard` solo leen tokens. Sin
+estilo, el renderer usa la v3 (`v3-fraunces`), asi que los builds antiguos no
+cambian. Las fuentes nuevas se instalan con `@fontsource` en `remotion-animations`, se
+copian con `scripts/prepare-fonts.mjs` y se cargan en `src/motion/fonts.ts`.
+
+### Agenda, comparacion, caras y hoja plegada
+
+- Cue `list` (slot `agenda`): lista numerada que entra punto a punto (`items[].atWord`);
+  con `active` se atenua todo menos un punto (recordatorio).
+- Slots `top-left` y `top-right`: dos cifras a ambos lados de la cabeza. El tono
+  `muted` pinta una cifra en tinta y algo atenuada.
+- Layouts `card-left` (cara en tarjeta grande a la izquierda sobre el b-roll; palabra
+  clave en `lower-card`) y `circle` (cara en circulo abajo a la izquierda sobre una
+  pantalla; palabra clave en `lower-circle`).
+- Transicion `page-curl`: una hoja blanca que se levanta desde la esquina y descubre la
+  escena; suena con la familia `paper`.
+- El sonido de `snap-zoom` cae en el salto (`SNAP_ZOOM_AT` = 45 % de la escena).
+
+### Apertura viral (orquestador)
+
+Para montar enteros los primeros clips del video como apertura viral no se escribe el
+plan: se escribe una **escaleta** y la compila `npm run intro:viral -- plan`. El
+procedimiento con puertas, las tablas de decision y el contrato de recursos estan en
+la skill `intro-viral` y en `src/modules/intro-viral/decision-tables.json`.
+
 ## 3. Perfiles de estilo
 
 La superficie decide **qué** se puede hacer; el perfil decide **cuánto**. Es la misma
@@ -210,6 +280,7 @@ de modelos salgan del mismo código.
 | `hype-tech` | 0,55 | 3 | 2,5 s | 5–25 s | todos |
 | `sobrio-finanzas` | 0,28 | 1,5 | 3,5 s | 6–22 s | sin glitch ni aberración |
 | `directo-personal` | 0,2 | 1 | 4 s | 5–18 s | mínimos |
+| `hype-apertura` | 0,55 | 2 (y máximo 3 golpes con sonido cada 4 s, IN-R-042) | 4 s | 20–120 s | todos (apertura viral completa) |
 
 El build copia esos umbrales al `intro-build.json` como `budget`, y las reglas de
 ritmo los leen de ahí. **Ninguna regla de ritmo lleva su umbral dentro**: sin `budget`

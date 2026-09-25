@@ -28,7 +28,9 @@ async function main() {
   const markdown = renderPlaybook(await loadIntroRules(), PLAYBOOK_OPTIONS);
   if (check) {
     const current = await readFile(OUTPUT_FILE, 'utf8').catch(() => '');
-    if (current.trim() !== markdown.trim()) {
+    // Sin distinguir finales de linea: con core.autocrlf Git reescribe el fichero con CRLF.
+    const eol = (text) => text.replace(/\r\n/g, '\n').trim();
+    if (eol(current) !== eol(markdown)) {
       console.error(
         `${path.relative(ROOT, OUTPUT_FILE)} está desincronizado con intro-rules.json. ` +
         'Ejecuta `npm run intro:playbook`.'

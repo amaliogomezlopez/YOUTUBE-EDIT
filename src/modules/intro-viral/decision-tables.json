@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "comment": "Tablas de decision cerradas de la apertura viral. El agente elige, por escena, una intencion de `intents` segun lo que DICE la frase; el compilador (escaleta.js) traduce esa intencion a layout, camara, efecto, texto y sonido. Nada de esto se escribe a mano en el plan. Cambiar el estilo es cambiar este JSON (y anotarlo en la skill), nunca ramificar codigo. Los umbrales de ritmo siguen en el perfil `hype-apertura` de intro-studio.",
+  "profileId": "hype-apertura",
+  "intents": {
+    "gancho": {
+      "when": "La primera escena del video. Solo una, y siempre la primera.",
+      "layouts": ["hero"],
+      "cameras": ["punch-in"],
+      "effect": {"id": "zoom-punch", "intensity": 0.8, "needs": "optional"},
+      "assetSlots": ["fore-right"],
+      "fields": {"required": [], "optional": ["keyword", "asset", "hitWord"]}
+    },
+    "frase": {
+      "when": "Frase normal: explica, enlaza o da contexto. La mayoria de escenas. Sin golpe.",
+      "layouts": ["hero"],
+      "cameras": ["drift-right", "drift-left"],
+      "effect": null,
+      "fields": {"required": [], "optional": ["keyword", "agendaPoint"]}
+    },
+    "enfasis": {
+      "when": "La frase tiene UNA palabra que pesa (un adjetivo fuerte, un giro, una negacion rotunda). hitWord es esa palabra.",
+      "layouts": ["hero"],
+      "cameras": ["snap-zoom", "punch-in"],
+      "effect": {"id": "zoom-punch", "intensity": 0.7, "needs": "required"},
+      "fields": {"required": ["hitWord"], "optional": ["keyword", "agendaPoint"]}
+    },
+    "noticia": {
+      "when": "Se nombra una noticia, un anuncio o un producto que tiene portada oficial. El recurso entra cuando se nombra (asset.atWord).",
+      "layouts": ["hero"],
+      "cameras": ["punch-in", "drift-left", "drift-right"],
+      "effect": null,
+      "assetSlots": ["fore-left", "fore-right"],
+      "fields": {"required": ["asset"], "optional": ["keyword"]}
+    },
+    "mostrar": {
+      "when": "Se habla de algo que se puede ENSENAR en video o captura (una demo, una web, una grafica). B-roll a pantalla completa con la cara en la esquina, en tarjeta grande a la izquierda o en circulo. El favorito del usuario.",
+      "layouts": ["insert", "card-left", "insert", "circle"],
+      "faces": {"esquina": "insert", "tarjeta": "card-left", "circulo": "circle"},
+      "facesWhen": "esquina: cualquier b-roll (la favorita). tarjeta: collage, portada o imagen que se ve bien en grande. circulo: grabacion de pantalla o interfaz que hay que leer entera. Sin face, rotan por este orden.",
+      "cameras": ["static"],
+      "effect": null,
+      "backdrop": {"motion": "slow-zoom", "opacity": 1},
+      "fields": {"required": ["broll"], "optional": ["keyword", "face"]}
+    },
+    "agenda": {
+      "when": "Se anuncia lo que viene: los motivos, pasos o temas que se van a contar ('por dos motivos', 'vas a aprender'). Lista numerada que aparece punto a punto. Luego, en las escenas donde se cuenta cada punto, agendaPoint la recuerda con ese punto resaltado.",
+      "layouts": ["hero"],
+      "cameras": ["drift-right", "drift-left"],
+      "effect": null,
+      "maxPerPiece": 1,
+      "fields": {"required": ["agenda"], "optional": ["keyword"]}
+    },
+    "comparar": {
+      "when": "La frase compara dos cifras: de X a Y, antes y despues, un plan frente a otro. Las dos cifras flotan arriba a ambos lados de la cabeza; la segunda en acento.",
+      "layouts": ["hero"],
+      "cameras": ["punch-in", "drift-left"],
+      "effect": null,
+      "maxPerPiece": 2,
+      "fields": {"required": ["pair"], "optional": ["keyword"]}
+    },
+    "cifra": {
+      "when": "Una cifra estrella que merece protagonismo (maximo 2 por pieza). El resto de cifras van en `keyword`.",
+      "layouts": ["hero-left", "hero-right"],
+      "cameras": ["punch-in", "drift-left"],
+      "effect": null,
+      "maxPerPiece": 2,
+      "fields": {"required": ["stat"], "optional": []}
+    },
+    "remate": {
+      "when": "Cierre contundente de una idea o de una toma. hitWord es la ultima palabra fuerte. Como mucho uno por toma.",
+      "layouts": ["frame"],
+      "cameras": ["push-out"],
+      "effect": {"id": "shake", "intensity": 0.6, "needs": "required"},
+      "backdrop": {"motion": "slow-zoom", "opacity": 0.9},
+      "fields": {"required": ["broll", "hitWord"], "optional": ["keyword"]}
+    }
+  },
+  "transitions": {
+    "comment": "La transicion no la elige el agente: sale del tipo de cambio entre la escena anterior y esta. El sonido lo pone intro-studio segun la transicion (cut = mudo).",
+    "sameShot": "cut",
+    "silenceJump": "cut",
+    "newClip": "flash-cut",
+    "intoInsert": ["slide-up", "whip", "zoom-blur"],
+    "intoFrame": "zoom-blur",
+    "outOfBroll": "whip",
+    "intoColumn": "cut",
+    "intoCircle": "page-curl",
+    "sounds": {"newClip": "shutter", "intoInsert": "whoosh", "intoFrame": "rewind", "outOfBroll": "whip", "intoCircle": "paper"},
+    "soundsComment": "Familia de sonido de cada tipo de cambio: son las situaciones toma-nueva, entrar-broll, zoom-inverso y salir-broll de SONIDOS-REELS/preferencias.json."
+  },
+  "keyword": {
+    "minWords": 2,
+    "maxWords": 5,
+    "slot": {"default": "lower", "insert": "lower-left", "card-left": "lower-card", "circle": "lower-circle"},
+    "hold": {"baseSeconds": 1.2, "perWordSeconds": 0.25, "maxSeconds": 2.6},
+    "quietNote": "palabra clave que acompana la voz: el golpe lo lleva el cambio de imagen",
+    "transcriptionOverlap": 0.8
+  },
+  "stat": {"maxChars": 6, "holdSeconds": 2.6},
+  "agenda": {"minItems": 2, "maxItems": 8, "maxWordsPerItem": 4, "recallSeconds": 2.6, "quietNote": "la agenda acompana a la voz: el golpe lo lleva el cambio de imagen"},
+  "pair": {"maxChars": 8, "holdSeconds": 3, "slots": ["top-left", "top-right"], "quietNote": "primera cifra de la comparacion: suena la segunda"},
+  "zoomSound": {"family": "camera", "cameras": ["punch-in", "snap-zoom", "push-out"], "minGapSeconds": 0.3, "comment": "Los zooms de camara suenan (preferencia del usuario 2026-09-25: chunky camera y Camera Shutter) siempre que quepan en el techo de respiro del perfil (IN-R-042)."},
+  "asset": {"holdSeconds": 2.6, "sound": "pop"},
+  "money": {"pattern": "(\\$|€|£|\\beur|\\beuro|\\bd[oó]lar|\\busd\\b)"},
+  "cuts": {
+    "jumpSilenceSeconds": 0.4,
+    "headSeconds": 0.12,
+    "tailAirSeconds": 0.06,
+    "boundary": {"intoLastWordSeconds": 0.3, "afterNextStartSeconds": 0.05},
+    "splitableLayouts": ["hero"]
+  },
+  "sound": {
+    "library": "SONIDOS-REELS",
+    "openingRiser": true,
+    "simultaneousSeconds": 0.12,
+    "transitionSounds": ["flash-cut", "slide-up", "whip", "zoom-blur", "glitch-cut", "page-curl"]
+  },
+  "limits": {"maxStrongPerScene": 1},
+  "title": {"holdSeconds": 2.6, "sound": null},
+  "music": {"gainDb": -12, "minMarginSeconds": 5}
+}

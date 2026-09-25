@@ -10,6 +10,7 @@ import {
   INTRO_FORMAT,
   LAYOUTS,
   PRESENTATIONS,
+  SNAP_ZOOM_AT,
   STRONG_EFFECTS,
   TRANSITIONS,
   projectDir
@@ -20,6 +21,7 @@ import {analyzeArtwork} from '../video-studio/artwork.js';
 import {buildCaptionPages} from '../video-studio/captions.js';
 import {writeIntroRegistry} from './registry.js';
 import {formatIssue, runIntroRules} from './rules/index.js';
+import {resolveTextStyle} from './text-styles.js';
 import {
   DEFAULT_SILENCE_PADDING_SECONDS,
   edgeSilence,
@@ -32,9 +34,17 @@ import {
   DEFAULT_CUE_SOUND,
   DEFAULT_EFFECT_SOUND,
   DEFAULT_TRANSITION_SOUND,
+  SEMANTIC_SOUND_USES,
+  USER_LIBRARY_CUE_SOUND,
+  USER_TRANSITION_FAMILIES,
   createSoundRotation,
+  loadUserSoundPalette,
+  placeUserSound,
   resolveSoundCue
 } from './sound.js';
+
+/** Nombre con el que el plan pide la biblioteca de sonidos del usuario. */
+export const USER_SOUND_LIBRARY = 'SONIDOS-REELS';
 
 /**
  * Compila `intro-plan.json` contra `manifest.json`, las transcripciones y la rejilla
@@ -54,6 +64,8 @@ export async function buildIntro({slug, log = () => {}}) {
   const format = {...INTRO_FORMAT, ...(plan.format ?? {})};
   const {fps} = format;
   const profile = resolveIntroProfile(plan.profileId);
+  // Tokens de texto (text-styles.json): el renderer solo lee tokens, no nombres.
+  const textStyle = resolveTextStyle(plan.textStyleId ?? profile.textStyleId);
 
   const clipsById = new Map(manifest.clips.map((clip) => [clip.id, clip]));
   const assetsById = new Map(manifest.assets.map((asset) => [asset.id, asset]));
@@ -72,10 +84,32 @@ export async function buildIntro({slug, log = () => {}}) {
   const duckWindows = [];
   const rotate = createSoundRotation();
   const padding = Number(plan.silencePaddingSeconds ?? DEFAULT_SILENCE_PADDING_SECONDS);
+  // Con `sound.library: "SONIDOS-REELS"` los cambios de imagen suenan con los efectos
+  // cortos del usuario y las cifras de dinero con su money.mp3. El plan sigue pidiendo
+  // familias: la biblioteca solo cambia que fichero resuelve cada una.
+  const userSounds = plan.sound?.library === USER_SOUND_LIBRARY
+    ? await loadUserSoundPalette({maxTransitionSeconds: plan.sound?.maxTransitionSeconds})
+    : null;
+  if (plan.sound?.library && !userSounds) {
+    throw new Error(`sound.library "${plan.sound.library}" no existe (solo "${USER_SOUND_LIBRARY}")`);
+  }
   const addSound = (familyId, atSeconds, intensity = 1) => {
-    const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId));
+    // Una familia con ranking propio del usuario (preferencias.json) rota en su orden.
+    const shared = userSounds && USER_TRANSITION_FAMILIES.has(familyId) && !userSounds.ownRotation?.has(familyId);
+    const occurrence = rotate(shared ? '__user-transition' : familyId);
+    const cue = placeUserSound(resolveSoundCue(familyId, atSeconds, intensity, occurrence, userSounds ?? {}), atSeconds, userSounds);
     soundCues.push(cue);
     return cue;
+  };
+  // `soundUse` pide un uso semantico (money, message) y tiene que decir por que:
+  // el sonido de dinero en una frase que no habla de dinero se lee como un error.
+  const semanticFamily = (entry, where) => {
+    if (!entry.soundUse) return null;
+    if (!SEMANTIC_SOUND_USES.has(entry.soundUse)) {
+      throw new Error(`${where}: soundUse "${entry.soundUse}" no valido (${[...SEMANTIC_SOUND_USES].join(', ')})`);
+    }
+    if (!entry.soundNote?.trim()) throw new Error(`${where}: soundUse "${entry.soundUse}" exige soundNote`);
+    return entry.soundUse;
   };
   const artByAsset = await measureArtwork(manifest.assets, warnings, analyzeArtwork);
   let cursor = 0;
@@ -138,10 +172,27 @@ export async function buildIntro({slug, log = () => {}}) {
       if (cue.assetId && !asset) throw new Error(`${cueWhere}: assetId "${cue.assetId}" no existe en manifest.json`);
       const holdSeconds = Number(cue.holdSeconds ?? sceneSeconds - atSeconds);
       const cueFrames = Math.max(1, Math.round(Math.min(holdSeconds, sceneSeconds - atSeconds) * fps));
-      const soundFamily = cue.sound === false ? null : cue.sound ?? DEFAULT_CUE_SOUND[cue.type];
+      const soundFamily = cue.sound === false
+        ? null
+        : semanticFamily(cue, cueWhere) ?? cue.sound
+          ?? (userSounds ? USER_LIBRARY_CUE_SOUND[cue.type] : null) ?? DEFAULT_CUE_SOUND[cue.type];
       const sound = soundFamily
         ? addSound(soundFamily, sceneStartSeconds + atSeconds, Number(cue.soundIntensity ?? 1))
         : null;
+      // Lista numerada (agenda): cada punto entra cuando se dice (`atWord`) o, sin
+      // ancla, escalonado. `active` resalta un punto y atenua el resto (recordatorio).
+      let items = null;
+      if (cue.type === 'list') {
+        if (!Array.isArray(cue.items) || !cue.items.length || cue.items.length > 8) {
+          throw new Error(`${cueWhere}: una lista necesita de 1 a 8 puntos en items`);
+        }
+        items = cue.items.map((item, k) => {
+          const at = Number.isInteger(item.atWord)
+            ? resolveAnchor({atWord: item.atWord}, anchor, `${cueWhere} punto ${k + 1}`)
+            : atSeconds + k * 0.35;
+          return {text: String(item.text), fromFrame: Math.max(0, Math.round((at - atSeconds) * fps))};
+        });
+      }
 
       return {
         id: cue.id ?? `${scene.id}-cue-${cueIndex + 1}`,
@@ -153,6 +204,7 @@ export async function buildIntro({slug, log = () => {}}) {
         presentation: cue.presentation ?? 'card',
         text: cue.text ?? null,
         note: cue.note ?? null,
+        highlight: Array.isArray(cue.highlight) ? cue.highlight.filter(Number.isInteger) : [],
         tone: cue.tone ?? 'neutral',
         scale: round(scale, 3),
         blurPx: round(blurPx, 2),
@@ -165,7 +217,8 @@ export async function buildIntro({slug, log = () => {}}) {
         dense: cue.dense !== false,
         sound: soundFamily ? {family: soundFamily, file: sound.file} : null,
         soundNote: cue.soundNote ?? null,
-        art: cue.assetId ? artByAsset.get(cue.assetId) ?? null : null
+        art: cue.assetId ? artByAsset.get(cue.assetId) ?? null : null,
+        ...(items ? {items, active: Number.isInteger(cue.active) ? cue.active : null} : {})
       };
     }).sort((a, b) => a.fromFrame - b.fromFrame);
 
@@ -183,7 +236,17 @@ export async function buildIntro({slug, log = () => {}}) {
       const effectFrames = Math.max(1, Math.round(Math.min(seconds, sceneSeconds - atSeconds) * fps));
       const absoluteSeconds = sceneStartSeconds + atSeconds;
       const beat = nearestBeat(beats, absoluteSeconds);
-      const soundFamily = effect.sound === false ? null : effect.sound ?? DEFAULT_EFFECT_SOUND[effect.id];
+      // Con la biblioteca del usuario sus efectos cortos se reservan para los cambios
+      // de imagen: un flash o un RGB split dentro de la misma escena no pide whoosh,
+      // solo los golpes con cuerpo (zoom-punch, shake) conservan su impacto. El plan
+      // puede pedir sonido igualmente declarando `sound` en el efecto.
+      const defaultEffectFamily = DEFAULT_EFFECT_SOUND[effect.id];
+      const effectDefault = userSounds && USER_TRANSITION_FAMILIES.has(defaultEffectFamily)
+        ? null
+        : defaultEffectFamily;
+      const soundFamily = effect.sound === false
+        ? null
+        : semanticFamily(effect, effectWhere) ?? effect.sound ?? effectDefault;
       const sound = soundFamily
         ? addSound(soundFamily, absoluteSeconds, Number(effect.soundIntensity ?? effect.intensity ?? 1))
         : null;
@@ -226,10 +289,17 @@ export async function buildIntro({slug, log = () => {}}) {
         : scene.transitionSound ?? DEFAULT_TRANSITION_SOUND[transitionIn];
       if (transitionFamily) addSound(transitionFamily, sceneStartSeconds, Number(scene.transitionSoundIntensity ?? 0.9));
     }
+    // El movimiento de camara arranca con la escena: con la biblioteca del usuario ya
+    // suena la transicion en ese instante y apilar otro efecto corto lo ensucia.
+    const cameraDefault = userSounds && USER_TRANSITION_FAMILIES.has(DEFAULT_CAMERA_SOUND[camera])
+      ? null
+      : DEFAULT_CAMERA_SOUND[camera];
     const cameraFamily = scene.cameraSound === false
       ? null
-      : scene.cameraSound ?? DEFAULT_CAMERA_SOUND[camera];
-    if (cameraFamily) addSound(cameraFamily, sceneStartSeconds + 0.05, Number(scene.cameraSoundIntensity ?? 0.7));
+      : scene.cameraSound ?? cameraDefault;
+    // El snap-zoom salta a mitad de escena: su sonido va en el salto, no al entrar.
+    const cameraAt = camera === 'snap-zoom' ? sceneStartSeconds + sceneSeconds * SNAP_ZOOM_AT : sceneStartSeconds + 0.05;
+    if (cameraFamily) addSound(cameraFamily, cameraAt, Number(scene.cameraSoundIntensity ?? 0.7));
 
     scenes.push({
       id: scene.id ?? `scene-${index + 1}`,
@@ -258,12 +328,35 @@ export async function buildIntro({slug, log = () => {}}) {
 
   if (!scenes.length) throw new Error('El plan no tiene escenas.');
 
+  // Riser del usuario: una sola vez, terminando justo en el primer cambio de escena
+  // (asi lo pide SONIDOS-REELS/LEEME.md). Si no cabe antes del corte, no suena.
+  if (userSounds?.openingRiser && plan.sound?.openingRiser && scenes.length > 1) {
+    const cutSeconds = scenes[1].from / fps;
+    const riserSeconds = userSounds.metadata[userSounds.openingRiser].durationSeconds;
+    if (cutSeconds >= riserSeconds) {
+      // Un riser crece hasta el corte: el golpe que se oye es el final, no el arranque.
+      soundCues.push({
+        ...resolveSoundCue('riser', cutSeconds - riserSeconds, Number(plan.sound.openingRiserIntensity ?? 0.8), 0, {
+          palette: {riser: [userSounds.openingRiser]},
+          metadata: userSounds.metadata
+        }),
+        hitSeconds: cutSeconds
+      });
+    } else {
+      warnings.push(`riser de apertura omitido: dura ${riserSeconds}s y el primer corte llega a ${round(cutSeconds, 3)}s`);
+    }
+  }
+
   for (const ambience of plan.sound?.ambience ?? []) {
     addSound(ambience.family, Number(ambience.atSeconds ?? 0), Number(ambience.intensity ?? 1));
   }
 
   const durationSeconds = round(cursor / fps, 3);
   const titleCard = resolveTitleCard(plan.titleCard, {beats, durationSeconds, fps});
+  // El titular es mudo salvo que el plan pida familia (p. ej. `typing` para el tecleo).
+  if (titleCard && plan.titleCard.sound) {
+    addSound(plan.titleCard.sound, titleCard.atSeconds, Number(plan.titleCard.soundIntensity ?? 0.8));
+  }
 
   const build = {
     slug,
@@ -275,11 +368,16 @@ export async function buildIntro({slug, log = () => {}}) {
     themeId: plan.themeId ?? profile.themeId,
     accentColor: plan.accentColor ?? null,
     dangerColor: plan.dangerColor ?? null,
+    textStyleId: textStyle.id,
+    textStyle,
     titleCard,
     music,
     captionStyle: plan.captionStyle ?? {},
     silencePaddingSeconds: padding,
     soundEnabled: plan.sound?.enabled ?? true,
+    soundLibrary: userSounds
+      ? {id: USER_SOUND_LIBRARY, files: Object.fromEntries(Object.entries(userSounds.sources).filter(([file]) => userSounds.metadata[file]))}
+      : null,
     soundMix: Number(plan.sound?.mix ?? profile.soundMix),
     clipVolume: Number(plan.sound?.clipVolume ?? profile.clipVolume),
     // Presupuesto del perfil: las reglas de ritmo miden contra esto y no contra una

@@ -44,6 +44,7 @@ export function profileBudget(profile) {
     maxSecondsWithoutChange: profile.maxSecondsWithoutChange,
     beatToleranceSeconds: profile.beatToleranceSeconds,
     durationBudgetSeconds: profile.durationBudgetSeconds,
+    ...(profile.hitBreathing ? {hitBreathing: {...profile.hitBreathing}} : {}),
     effectAllowlist: [...profile.effectAllowlist]
   };
 }
