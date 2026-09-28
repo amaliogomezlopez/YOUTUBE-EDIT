@@ -8,6 +8,7 @@ import {regionTransform, validSourceBox} from '../video-studio/framing.js';
 import {readJson, round, writeJson} from '../../lib/utils.js';
 import {SHORT_FORMAT, projectDir, REMOTION_ROOT} from './constants.js';
 import {buildCaptionPages} from './captions.js';
+import {resolveCaptionStyle as resolvePresetCaptionStyle} from '../../lib/captions/presets.js';
 import {fitLayout, pipLayout} from './pip-layout.js';
 import {writeShortsRegistry} from './registry.js';
 import {analyzeArtwork} from './artwork.js';
@@ -30,6 +31,12 @@ import {
 // El recorte, las ventanas de locucion y el silencio de los extremos son comunes a
 // las superficies de montaje: `video-studio/timeline.js`.
 export {DEFAULT_SILENCE_PADDING_SECONDS, resolveTrim} from '../video-studio/timeline.js';
+
+// Subtitulos por defecto: los mismos que los shorts sacados de video largo
+// (Schibsted Grotesk blanca, contorno oscuro, palabra activa en verde). Un plan
+// que declara `captionStyle.renderer` conserva el suyo; `"renderer": "theme"`
+// vuelve al subtitulo del tema.
+export const DEFAULT_CAPTION_PRESET = 'talking-head-green';
 
 export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand', 'broll']);
 export const LAYOUTS = new Set(['full', 'split', 'stage', 'pip', 'fit', 'talking-head']);
@@ -76,6 +83,19 @@ export async function buildShort({slug, log = () => {}}) {
   // `captionStyle` (renderer); el build lo fija en los dos sitios para que el
   // paginador y Remotion no se desacuerden.
   const captionMode = plan.captions?.mode ?? plan.captionStyle?.mode ?? 'karaoke';
+  const presetCaptionStyle = plan.captionStyle?.renderer ? null : {
+    ...resolvePresetCaptionStyle({...(plan.captionStyle ?? {}), preset: plan.captionStyle?.preset ?? DEFAULT_CAPTION_PRESET}),
+    renderer: 'styled'
+  };
+  const captionOptions = presetCaptionStyle ? {
+    maxWords: presetCaptionStyle.maxWords,
+    strictMaxWords: presetCaptionStyle.strictMaxWords,
+    maxPageChars: presetCaptionStyle.maxPageChars,
+    maxLineChars: presetCaptionStyle.maxLineChars,
+    pauseBreakSeconds: presetCaptionStyle.pauseBreak,
+    maxPageSeconds: presetCaptionStyle.maxPageDuration,
+    ...(plan.captions ?? {})
+  } : (plan.captions ?? {});
   if (!['karaoke','progressive','words','lines'].includes(captionMode)) throw new Error('Modo de subtitulos invalido');
   const addSound = (familyId, atSeconds, intensity = 1) => {
     const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId), {palette:plan.sound?.palette,metadata:plan.sound?.metadata});
@@ -246,7 +266,7 @@ export async function buildShort({slug, log = () => {}}) {
     }).sort((a, b) => a.fromFrame - b.fromFrame);
 
     const captionPages = words.length && scene.captions !== false
-      ? buildCaptionPages(words, {startSeconds, endSeconds}, {...(plan.captions ?? {}), ...(captionMode === 'words' ? {maxWords:1} : {}), mode: captionMode}).map((page) => ({
+      ? buildCaptionPages(words, {startSeconds, endSeconds}, {...captionOptions, ...(captionMode === 'words' ? {maxWords:1} : {}), mode: captionMode}).map((page) => ({
         fromFrame: Math.round(page.startSeconds * fps),
         durationInFrames: Math.max(1, Math.round(page.endSeconds * fps) - Math.round(page.startSeconds * fps)),
         ...(captionMode === 'progressive' ? {heroIndex: page.heroIndex ?? -1} : {}),
@@ -344,7 +364,7 @@ export async function buildShort({slug, log = () => {}}) {
     accentColor: plan.accentColor ?? null,
     dangerColor: plan.dangerColor ?? null,
     backgroundImage: plan.backgroundImage ? (assetsById.get(plan.backgroundImage)?.file ?? plan.backgroundImage) : null,
-    captionStyle: {...(plan.captionStyle ?? {}), uppercase: !['false', false].includes(plan.captionStyle?.uppercase), mode: captionMode},
+    captionStyle: {...(presetCaptionStyle ?? plan.captionStyle ?? {}), uppercase: !['false', false].includes(plan.captionStyle?.uppercase), mode: captionMode},
     editingProfile: plan.editingProfile ?? null,
     budget: plan.budget ?? null,
     sourceMap: scenes.map(s => ({sourceStart:s.trimStartSeconds, sourceEnd:s.trimEndSeconds, outputStart:s.from/fps, outputEnd:(s.from+s.durationInFrames)/fps})),

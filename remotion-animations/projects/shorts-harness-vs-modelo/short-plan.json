@@ -13,7 +13,8 @@
   },
   "captionStyle": {
     "position": "lower",
-    "uppercase": true
+    "uppercase": true,
+    "renderer": "theme"
   },
   "sound": {
     "enabled": true,

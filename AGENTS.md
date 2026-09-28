@@ -71,8 +71,12 @@ remotion:capabilities`.
 
 Contratos que se suman a ese ciclo: los layouts `pip` (webcam + pantalla, exige
 `webcamBox`, replica el filtergraph del pipeline de video largo) y `fit`
-(horizontal sin webcam); los subtitulos admiten `captions.mode: "progressive"`
-(revelado palabra a palabra con palabra heroe) ademas del `karaoke` por defecto;
+(horizontal sin webcam); los subtitulos salen por defecto con el estilo de los
+shorts de video largo (preset `talking-head-green`: Schibsted Grotesk blanca
+`#FFFFFF`, contorno oscuro de 5 px, palabra activa en verde `#43F56C`, karaoke de
+hasta tres palabras) y el plan no debe fijar colores ni modo propios; solo los
+shorts antiguos llevan `captionStyle.renderer: "theme"` para no cambiar al
+reconstruirse;
 la ingesta guarda `focusTrack` y el encuadre sigue a la cara salvo que el plan
 fije `focus`; y `sound.music` anade una cama musical con ducking. El pipeline de
 video largo puede renderizar sus cortes con este mismo motor con

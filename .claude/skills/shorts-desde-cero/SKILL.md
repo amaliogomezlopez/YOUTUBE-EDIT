@@ -83,6 +83,17 @@ clips crudos) y `shorts:publish` delega en los conectores de `src/lib/publishers
    tomas de forma determinista. Para silenciar algo hay que decirlo:
    `"sound": false`, `"transitionSound": false`, `"cameraSound": false`.
 
+## Subtítulos: el estilo de los shorts de vídeo largo
+
+No declares `captions` ni `captionStyle` en un plan nuevo. Sin ellos, el build
+aplica el preset `talking-head-green`, el mismo de los shorts sacados de vídeo
+largo: Schibsted Grotesk blanca `#FFFFFF`, contorno oscuro de 5 px, la palabra que
+suena en verde `#43F56C`, karaoke de hasta tres palabras por página. No copies el
+bloque `captions` / `captionStyle` de `shorts-deepseek` o `shorts-harness-vs-modelo`:
+llevan `"renderer": "theme"` solo para que los shorts ya publicados no cambien al
+reconstruirse. Un modo `progressive` o más de tres palabras con el preset verde
+hacen fallar el build (SH-R-033).
+
 ## El texto en pantalla añade, no repite
 
 Un chip que repite la locución palabra por palabra sobra: eso ya lo dice el

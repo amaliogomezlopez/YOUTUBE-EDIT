@@ -15,7 +15,8 @@
   "captionStyle": {
     "position": "lower",
     "uppercase": true,
-    "mode": "progressive"
+    "mode": "progressive",
+    "renderer": "theme"
   },
   "sound": {
     "enabled": true,

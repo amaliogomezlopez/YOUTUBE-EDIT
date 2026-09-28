@@ -131,11 +131,16 @@ Reglas del formato:
   `holdSeconds`.
 - El texto en pantalla debe **añadir** información. Un chip que repite la locución
   palabra por palabra sobra: lo dice ya el subtítulo.
-- **Los subtítulos tienen dos modos.** `captions: {"mode": "karaoke"}` (por
-  defecto) mantiene la página entera visible e ilumina la palabra que suena.
-  `captions: {"mode": "progressive"}` revela las palabras al sonar y compone la
-  palabra más pesada de cada página en su propia línea, en mayúsculas y ~1.5×
-  (portado del planner progresivo del pipeline de video largo).
+- **Los subtítulos salen con el estilo de los shorts de vídeo largo.** Sin
+  `captionStyle.renderer`, el build aplica el preset `talking-head-green` de
+  `src/lib/captions/presets.js`: Schibsted Grotesk blanca `#FFFFFF`, contorno
+  oscuro de 5 px, la palabra que suena en verde `#43F56C` y karaoke de hasta tres
+  palabras por página. Un plan nuevo no declara `captions` ni `captionStyle`; los
+  campos que declare se aplican encima del preset, y SH-R-033 falla si rompen el
+  karaoke verde (por ejemplo `mode: "progressive"` o `maxWords` mayor que 3).
+  `"captionStyle": {"renderer": "theme"}` vuelve al subtítulo del tema (palabra
+  activa en `accentColor`, con modos `karaoke` y `progressive`); solo lo llevan
+  los shorts anteriores a este cambio, para no alterarse al reconstruirse.
 - **Cama musical opcional.** `sound: {"music": {"assetId": "mi-pista", "volume":
   0.35, "duckGainDb": -10}}` (o `"assetId": "music"` para la pista ingerida con
   `--music`). Suena en bucle y cede durante las ventanas de locución.
