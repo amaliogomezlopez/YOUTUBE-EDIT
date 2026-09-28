@@ -292,11 +292,13 @@ export function validateEscaleta(escaleta, {manifest, transcripts, tables = load
     if (count > 1) errors.push(`toma ${clip}: ${count} escenas \`remate\`; como mucho una por toma`);
   }
   if (!escaleta.titular) {
-    warnings.push('escaleta: sin `titular`. Va una vez, cuando se dice el nombre del producto o del tema: {text, kicker, clip, atWord}');
+    warnings.push('escaleta: sin `titular`. Va una vez, cuando se dice el nombre del producto o del tema: {text, clip, atWord}');
   } else {
     const t = escaleta.titular;
     const tw = transcripts[t.clip]?.words ?? [];
     if (!t.text) errors.push('titular: falta `text` (tipo oracion: "Claude Opus 5.5")');
+    // El usuario no quiere antetitulo encima del titular (correccion del 2026-09-28).
+    if (t.kicker) errors.push('titular: sin `kicker`; el titular va solo, sin antetitulo encima (preferencia del usuario)');
     if (!Number.isInteger(t.atWord) || t.atWord < 0 || t.atWord >= tw.length) errors.push(`titular: atWord ${t.atWord} no existe en la toma ${t.clip}`);
   }
   errors.push(...coverageErrors(escaleta, {manifest, transcripts}));
@@ -731,7 +733,6 @@ export function compileEscaleta(escaleta, {manifest, transcripts, beats = [], ta
   if (escaleta.titular) {
     plan.titleCard = {
       text: escaleta.titular.text,
-      ...(escaleta.titular.kicker ? {kicker: escaleta.titular.kicker} : {}),
       ...(titleBeat !== null ? {atBeat: titleBeat} : titleSeconds !== null ? {atSeconds: titleSeconds} : {}),
       holdSeconds: tables.title.holdSeconds,
       ...(tables.title.sound ? {sound: tables.title.sound} : {})

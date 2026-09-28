@@ -16,6 +16,7 @@ import {
   BACK_SLOTS,
   INTRO_GEOMETRY,
   faceRectOnScreen,
+  webcamCrop,
   insideSafeArea,
   rectsOverlap,
   scaledRect,
@@ -112,6 +113,29 @@ test('la cara se reencuadra al cambiar de layout', () => {
   const subject = INTRO_GEOMETRY.subject.frame;
   assert.ok(frame.left >= subject.left && frame.top >= subject.top);
   assert.ok(frame.left + frame.width <= subject.left + subject.width);
+});
+
+test('una webcam de esquina se recorta para llenar la tarjeta', () => {
+  // SONNET55/2.mkv: grabacion de pantalla con la webcam arriba a la derecha.
+  const box = {faceBox: {x: 1569, y: 136, w: 175, h: 224}, clipWidth: 1920, clipHeight: 1080};
+  for (const layout of ['card-left', 'circle', 'insert', 'frame']) {
+    const crop = webcamCrop({...box, layout});
+    assert.ok(crop, `${layout}: hay recorte`);
+    const window = INTRO_GEOMETRY.subject[layout];
+    assert.ok(Math.abs(crop.w / crop.h - window.width / window.height) < 0.01, `${layout}: misma proporcion que la ventana`);
+    assert.ok(crop.x <= box.faceBox.x && crop.x + crop.w >= box.faceBox.x + box.faceBox.w, `${layout}: la cara entra entera`);
+    assert.ok(crop.x + crop.w <= 1920 && crop.y >= 0 && crop.y + crop.h <= 1080);
+    const face = faceRectOnScreen({...box, focus: {x: 0.86, y: 0.23}, layout, crop});
+    const uncropped = faceRectOnScreen({...box, focus: {x: 0.86, y: 0.23}, layout});
+    assert.ok(face.width > uncropped.width * 2, `${layout}: la cara crece de verdad`);
+  }
+});
+
+test('una toma a camara no se recorta', () => {
+  const box = {faceBox: {x: 771, y: 301, w: 361, h: 481}, clipWidth: 1920, clipHeight: 1080};
+  assert.equal(webcamCrop({...box, layout: 'card-left'}), null);
+  // Y en `hero` nunca, aunque sea una webcam: ahi se ve la pantalla, que es el contenido.
+  assert.equal(webcamCrop({faceBox: {x: 1569, y: 136, w: 175, h: 224}, clipWidth: 1920, clipHeight: 1080, layout: 'hero'}), null);
 });
 
 test('sin caja de cara no hay rectangulo que medir', () => {

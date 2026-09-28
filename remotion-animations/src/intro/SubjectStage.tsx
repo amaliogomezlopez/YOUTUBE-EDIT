@@ -38,12 +38,25 @@ export const SubjectStage: React.FC<SubjectStageProps> = ({
   const {fps} = useVideoConfig();
   const camera = cameraTransform(scene, frame, fps);
 
-  const cover = coverGeometry({
-    width,
-    height,
-    focusX: scene.focus.x,
-    focusY: scene.focus.y,
-  });
+  // En una grabacion de pantalla con webcam, el recorte de la webcam llena la
+  // ventana; si no, el frame entero se encuadra con punto focal.
+  const crop = scene.subjectCrop;
+  const cover = crop
+    ? (() => {
+        const scale = width / crop.w;
+        return {
+          left: -crop.x * scale,
+          top: -crop.y * scale,
+          width: (scene.sourceWidth ?? 1920) * scale,
+          height: (scene.sourceHeight ?? 1080) * scale,
+        };
+      })()
+    : coverGeometry({
+        width,
+        height,
+        focusX: scene.focus.x,
+        focusY: scene.focus.y,
+      });
 
   return (
     <div

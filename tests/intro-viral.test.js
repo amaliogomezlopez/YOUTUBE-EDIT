@@ -46,7 +46,7 @@ function fixture() {
 
 const baseEscaleta = () => ({
   accentColor: '#D97757',
-  titular: {text: 'Producto X', kicker: 'Lo nuevo', clip: '02', atWord: 2},
+  titular: {text: 'Producto X', clip: '02', atWord: 2},
   scenes: [
     {id: 'a', clip: '01', from: 0, to: 14, intent: 'gancho', hitWord: 3},
     {id: 'b', clip: '01', from: 15, to: 22, intent: 'mostrar', broll: 'demo', keyword: {text: 'Una demo real', atWord: 17}},
@@ -110,6 +110,7 @@ test('la validacion explica cada error de escaleta', () => {
     [(e) => { e.scenes[1].broll = 'inexistente'; }, /broll "inexistente" no esta ingerido/],
     [(e) => { e.scenes[3].asset.id = 'demo'; }, /en primer plano solo van imagenes/],
     [(e) => { e.scenes[2].hitWord = 2; }, /hitWord 2 fuera de la escena/],
+    [(e) => { e.titular.kicker = 'Lo nuevo'; }, /titular: sin `kicker`/],
     [(e) => { e.accentColor = 'naranja'; }, /accentColor/],
     [(e) => { e.scenes.splice(2, 0, e.scenes.splice(3, 1)[0]); }, /no se vuelve a una toma ya cerrada/]
   ];

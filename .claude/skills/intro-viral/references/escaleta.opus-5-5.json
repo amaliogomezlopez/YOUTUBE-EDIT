@@ -3,7 +3,7 @@
   "slug": "opus-5-5",
   "accentColor": "#D97757",
   "note": "Apertura del video de Claude Opus 5.5 reescrita como escaleta: la v3 aprobada, expresada solo con intenciones. Clips 1 (gancho critico), 2 (giro) y 3 (promesa) enteros.",
-  "titular": {"text": "Claude Opus 5.5", "kicker": "Mi nuevo modelo del día a día", "clip": "03", "atWord": 10},
+  "titular": {"text": "Claude Opus 5.5","clip": "03", "atWord": 10},
   "omit": [],
   "scenes": [
     {"id": "hook", "clip": "01", "from": 0, "to": 9, "intent": "gancho", "hitWord": 5, "asset": {"id": "claudelogo", "atWord": 8}},

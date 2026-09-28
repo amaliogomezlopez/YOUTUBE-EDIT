@@ -15,7 +15,7 @@ import {
   TRANSITIONS,
   projectDir
 } from './constants.js';
-import {BACK_SLOTS, faceRectOnScreen, scaledRect, slotIds, slotRect} from './geometry.js';
+import {BACK_SLOTS, faceRectOnScreen, scaledRect, slotIds, slotRect, webcamCrop} from './geometry.js';
 import {profileBudget, resolveIntroProfile} from './profiles.js';
 import {analyzeArtwork} from '../video-studio/artwork.js';
 import {buildCaptionPages} from '../video-studio/captions.js';
@@ -140,12 +140,19 @@ export async function buildIntro({slug, log = () => {}}) {
     const anchor = {words, beats, sceneStartSeconds, sceneSeconds, trimStartSeconds: startSeconds};
 
     const focus = scene.focus ?? clip.focus;
+    const subjectCrop = webcamCrop({
+      faceBox: clip.faceBox,
+      clipWidth: clip.width,
+      clipHeight: clip.height,
+      layout: scene.layout
+    });
     const faceRect = faceRectOnScreen({
       faceBox: clip.faceBox,
       clipWidth: clip.width,
       clipHeight: clip.height,
       focus,
-      layout: scene.layout
+      layout: scene.layout,
+      crop: subjectCrop
     });
 
     const cues = (scene.cues ?? []).map((cue, cueIndex) => {
@@ -315,6 +322,7 @@ export async function buildIntro({slug, log = () => {}}) {
       camera,
       cameraIntensity: Number(scene.cameraIntensity ?? 1),
       focus,
+      ...(subjectCrop ? {subjectCrop, sourceWidth: clip.width, sourceHeight: clip.height} : {}),
       faceRect,
       transitionIn,
       label: scene.label ?? null,

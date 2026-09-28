@@ -50,6 +50,40 @@ export function rectsOverlap(a, b) {
 }
 
 /**
+ * Recorte de la webcam cuando la toma es una grabacion de pantalla.
+ *
+ * En una toma a camara la cara llena el frame y encoger el frame entero a una
+ * tarjeta funciona. En una grabacion de pantalla con la webcam en una esquina, lo
+ * mismo deja en la tarjeta la pantalla en miniatura y la cara del tamano de un sello.
+ * Aqui se devuelve el rectangulo del clip (px de origen) que hay que llevar a la
+ * ventana del layout, con su misma proporcion; `null` cuando no hace falta.
+ */
+export function webcamCrop({faceBox, clipWidth, clipHeight, layout, geometry = INTRO_GEOMETRY}) {
+  const rules = geometry.webcamCrop;
+  if (!rules || !faceBox || !clipWidth || !clipHeight) return null;
+  if (!rules.layouts.includes(layout)) return null;
+  if (faceBox.w / clipWidth >= rules.maxFaceShare) return null;
+
+  const window = subjectRect(layout, geometry);
+  const aspect = window.width / window.height;
+  let h = faceBox.h * rules.heightInFaces;
+  let w = h * aspect;
+  if (w > faceBox.w * rules.maxWidthInFaces) {
+    w = faceBox.w * rules.maxWidthInFaces;
+    h = w / aspect;
+  }
+  // Nunca mayor que el clip, conservando la proporcion de la ventana.
+  const fit = Math.min(1, clipWidth / w, clipHeight / h);
+  w *= fit;
+  h *= fit;
+  const cx = faceBox.x + faceBox.w / 2;
+  const cy = faceBox.y + faceBox.h / 2 + faceBox.h * rules.dropInFaces;
+  const x = Math.min(clipWidth - w, Math.max(0, cx - w / 2));
+  const y = Math.min(clipHeight - h, Math.max(0, cy - h / 2));
+  return {x: round(x, 2), y: round(y, 2), w: round(w, 2), h: round(h, 2)};
+}
+
+/**
  * Donde cae la cara del sujeto dentro de la composicion.
  *
  * Es la traduccion del `faceBox` que detecto YuNet sobre el clip original a la
@@ -61,14 +95,24 @@ export function rectsOverlap(a, b) {
  * El zoom de camara se ignora a proposito: crece desde el punto focal, asi que solo
  * puede agrandar la cara. Medir sobre el encuadre base es el caso conservador.
  */
-export function faceRectOnScreen({faceBox, clipWidth, clipHeight, focus, layout, geometry = INTRO_GEOMETRY}) {
+export function faceRectOnScreen({faceBox, clipWidth, clipHeight, focus, layout, crop = null, geometry = INTRO_GEOMETRY}) {
   if (!faceBox || !clipWidth || !clipHeight) return null;
   const window = subjectRect(layout, geometry);
-  const scale = Math.max(window.width / clipWidth, window.height / clipHeight);
-  const scaledWidth = clipWidth * scale;
-  const scaledHeight = clipHeight * scale;
-  const offsetLeft = Math.min(0, Math.max(window.width - scaledWidth, window.width / 2 - focus.x * scaledWidth));
-  const offsetTop = Math.min(0, Math.max(window.height - scaledHeight, window.height / 2 - focus.y * scaledHeight));
+  let scale;
+  let offsetLeft;
+  let offsetTop;
+  if (crop) {
+    // Recorte de webcam: el rectangulo `crop` del clip llena la ventana entera.
+    scale = window.width / crop.w;
+    offsetLeft = -crop.x * scale;
+    offsetTop = -crop.y * scale;
+  } else {
+    scale = Math.max(window.width / clipWidth, window.height / clipHeight);
+    const scaledWidth = clipWidth * scale;
+    const scaledHeight = clipHeight * scale;
+    offsetLeft = Math.min(0, Math.max(window.width - scaledWidth, window.width / 2 - focus.x * scaledWidth));
+    offsetTop = Math.min(0, Math.max(window.height - scaledHeight, window.height / 2 - focus.y * scaledHeight));
+  }
 
   const left = window.left + offsetLeft + faceBox.x * scale;
   const top = window.top + offsetTop + faceBox.y * scale;

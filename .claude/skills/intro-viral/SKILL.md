@@ -146,8 +146,9 @@ npm run intro:viral -- plan --slug <slug>
 | `pair` | `[{text, note?, atWord}, {text, note?, atWord, money?}]`: dos cifras que se comparan (`comparar`), ≤ 8 caracteres cada una |
 
 Arriba del todo: `accentColor` (color de la marca del tema, `#RRGGBB`) y `titular`
-`{text, kicker, clip, atWord}`: una vez, cuando se dice el nombre del producto, en tipo
-oración ("Claude Opus 5.5") con antetítulo corto.
+`{text, clip, atWord}`: una vez, cuando se dice el nombre del producto, en tipo
+oración ("Claude Opus 5.5"). **Sin antetítulo** (`kicker`): el usuario lo quitó el
+2026-09-28 y la validación lo rechaza.
 
 **Tabla A: qué intención tiene la escena.** Recórrela en orden; **gana la primera que
 encaje**.
@@ -334,6 +335,9 @@ porqué.
   del texto. Tampoco etiquetas (`chip`) en las esquinas.
 - La columna lateral (`cifra`) como máximo dos veces por pieza.
 - La palabra clave va abajo.
+- **El titular va solo, sin antetítulo encima** (el "NUEVO DE ANTHROPIC" en versalitas
+  amarillas sobre "CLAUDE SONNET 5.5"). Lo marcó en rojo el 2026-09-28: "que no
+  vuelvan a aparecer". La escaleta rechaza `titular.kicker`.
 - **Tipografía: Anton** (estilo `anton-impacto`, por defecto del perfil
   `hype-apertura`), en mayúsculas, palabra a palabra, para palabras clave, cifras y
   titular; Instrument Sans en versalitas para antetítulos. Lo eligió el 2026-09-25
@@ -384,6 +388,11 @@ porqué.
   `keyword` lleva su propio degradado abajo.
 - Un heredoc de bash con comillas simples y `$` dentro rompe el comando. Escribe los
   ficheros con la herramienta de ficheros.
+- Una toma que es grabación de pantalla con la webcam en una esquina (cara < 15 % del
+  ancho) se recorta sola a la webcam en `card-left`, `insert`, `circle` y `frame`
+  (`webcamCrop`, umbrales en `geometry.json`). En `hero` se ve la pantalla entera, que
+  ya enseña el recurso. Una `cifra`, `comparar` o `asset` flotante sobre esas tomas
+  suele tapar la webcam (IN-R-011): pásala a `mostrar`.
 - El aviso de Remotion "Use the objectFit prop" en los vídeos de fondo no afecta al
   encuadre.
 

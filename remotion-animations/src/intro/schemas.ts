@@ -136,6 +136,14 @@ export const introSceneSchema = z.object({
   camera: introCameraSchema,
   cameraIntensity: z.number().default(1),
   focus: introFocusSchema,
+  /**
+   * Rectangulo del clip (px de origen) que llena la ventana del sujeto. Solo en
+   * grabaciones de pantalla con webcam en una esquina: sin el, la tarjeta encoge el
+   * frame entero y la cara no se ve. Lo calcula `webcamCrop` en intro-studio.
+   */
+  subjectCrop: z.object({x: z.number(), y: z.number(), w: z.number(), h: z.number()}).optional(),
+  sourceWidth: z.number().optional(),
+  sourceHeight: z.number().optional(),
   /** Donde cae la cara en la composicion. Ningun cue de primer plano la tapa. */
   faceRect: introRectSchema.nullable().optional(),
   transitionIn: introTransitionSchema,

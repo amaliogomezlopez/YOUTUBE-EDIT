@@ -15,6 +15,14 @@
     "card-left": {"left": 96, "top": 180, "width": 420, "height": 540, "radius": 40},
     "circle": {"left": 96, "top": 572, "width": 380, "height": 380, "radius": 190}
   },
+  "webcamCrop": {
+    "layouts": ["frame", "insert", "card-left", "circle"],
+    "maxFaceShare": 0.15,
+    "heightInFaces": 2.1,
+    "maxWidthInFaces": 2.6,
+    "dropInFaces": 0.1,
+    "comment": "Toma de pantalla con la webcam en una esquina: la cara ocupa menos de `maxFaceShare` del ancho del clip. En los layouts de tarjeta el sujeto no es el frame entero encogido sino la webcam: un recorte de `heightInFaces` caras de alto (como mucho `maxWidthInFaces` de ancho, para no sacar la pantalla de al lado), centrado en la cara y bajado `dropInFaces` para que entren los hombros. Medido sobre la webcam de SONNET55/2.mkv y 3.mkv (2026-09-28): unas 3 caras de ancho y 2,4 de alto; con la cara algo descentrada en la webcam, mas de 2,6 caras de ancho ya asoma la pantalla."
+  },
   "stage": {
     "hero": {"left": 96, "top": 64, "width": 1728, "height": 908},
     "hero-left": {"left": 1216, "top": 64, "width": 608, "height": 908},
