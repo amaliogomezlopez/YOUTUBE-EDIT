@@ -38,8 +38,8 @@ const clock = (seconds) => {
  * en una rejilla de `columns`, con la marca de tiempo y la etiqueta encima de cada
  * celda. Un `file` por fotograma permite comparar versiones: una fila por render.
  */
-export async function frameSheet({file, frames, output, columns = 5, cellWidth = 384}) {
-  const cellHeight = Math.round(cellWidth * 9 / 16);
+export async function frameSheet({file, frames, output, columns = 5, cellWidth = 384, aspect = 16 / 9}) {
+  const cellHeight = Math.round(cellWidth / aspect);
   const band = 26;
   const work = path.join(path.dirname(output), '.frames-' + path.basename(output, path.extname(output)));
   await mkdir(work, {recursive: true});

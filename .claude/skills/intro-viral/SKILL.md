@@ -280,6 +280,11 @@ npm run intro:viral -- review --slug <slug>
   ```
   Copia `INTRO_1-2-3_viral.mp4` junto a las tomas.
 
+**¿También quiere el short?** Si el usuario pide un vertical de esta apertura para
+TikTok, Reels o Shorts, no se monta de nuevo: sigue la skill `short-desde-intro`
+(`npm run intro:short -- plan --slug <slug>`), que reutiliza esta escaleta, sus cortes y
+sus recursos.
+
 ## Estilos de texto y versiones
 
 La fuente, los tamaños, el color, cómo se revela el texto (`letters`, `words`,

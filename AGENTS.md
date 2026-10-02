@@ -229,6 +229,18 @@ numerada, cue `list`) y `comparar` (dos cifras arriba), layouts `card-left` y `c
 se elige por situacion en `SONIDOS-REELS/preferencias.json`; `SONIDOS-REELS/apertura/`
 es la seleccion de la biblioteca del usuario y no entra en los Reels.
 
+### Short 9:16 de la apertura
+
+Si ademas de la apertura se pide un short para TikTok, Reels o Shorts "con esa misma
+intro", usar la skill `short-desde-intro` (`.claude/skills/short-desde-intro/SKILL.md`).
+No se vuelve a editar: `src/modules/intro-short/translate.js` traduce la escaleta y el
+`intro-plan.json` de la apertura a un `short-plan.json` de shorts-studio (el motor de
+los shorts de video largo: cara abajo y recurso arriba, karaoke verde), y el proyecto
+`shorts-<slug>` apunta a la media de la apertura sin reingesta ni retranscripcion.
+Procedimiento: `npm run intro:short -- plan|render|review|publishing|status --slug
+<slug de la apertura>`. Lo unico editable es `data/intro-viral/<slug>/short.json`
+(`omit`, `scenes`, `title`, `music`); `short-plan.json` se regenera.
+
 ## Motor de animacion editorial
 
 Si el encargo es "en esta carpeta estan los clips del episodio N, haz las
