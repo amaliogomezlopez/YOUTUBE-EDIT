@@ -84,6 +84,9 @@ const MEASURE = `(() => {
     pageWidth: document.documentElement.scrollWidth, title: h1.innerText.trim(), doc: document.title, background: color};
 })()`;
 
+/** Paginas de error de CDN o servidor: se ven bien y se capturarian como si fueran la noticia. */
+export const ERROR_PAGE = /just a moment|attention required|access denied|request blocked|request could not be satisfied|\b(403|404|500|502|503) (error|forbidden|not found)\b|^\s*(403|404)\b/i;
+
 /**
  * Captura `url` encuadrada en su titular y la guarda en `output` (PNG). Devuelve el
  * titular leido de la pagina y el color de fondo, para rellenar sin costuras.
@@ -103,7 +106,8 @@ export async function captureHeadline(url, {chrome, output, width = 1440, height
     await sleep(settleMs);
     const {result} = await page.send('Runtime.evaluate', {expression: MEASURE, returnByValue: true});
     const box = result.value;
-    if (!box || /just a moment|attention required|access denied/i.test(box.doc ?? '')) {
+    // CDN and server error pages (CloudFront 403, 404...) render fine and would be captured as if they were the news.
+    if (!box || ERROR_PAGE.test(`${box.title ?? ''} ${box.doc ?? ''}`)) {
       throw new Error('Pagina sin titular o protegida; capturala a mano');
     }
     // Encuadre: el titular centrado en horizontal, con su antetitulo y fecha encima y

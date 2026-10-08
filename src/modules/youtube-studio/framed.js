@@ -229,6 +229,23 @@ export function frameShots(plan, {clips, takes, shots = [], assets = {}, profile
 }
 
 /**
+ * Shots drafted from the asset requests themselves: an asset that says where it
+ * belongs (`at: "toma:palabra"`, optional `until`, optional `layout`) becomes a shot.
+ * Video covers by default; images, pages and posts go in the corner card.
+ */
+export function draftShots(requests, catalog) {
+  const ref = (s) => {
+    const m = /^(\w+):(\d+)$/.exec(String(s ?? '').trim());
+    return m ? {clipId: m[1], word: Number(m[2])} : null;
+  };
+  return (requests.assets ?? []).filter((a) => ref(a.at) && catalog[a.id]).map((a) => {
+    const at = ref(a.at), until = ref(a.until);
+    return {clipId: at.clipId, atWord: at.word, ...(until && until.clipId === at.clipId ? {untilWord: until.word} : {}),
+      layout: a.layout ?? (catalog[a.id].kind === 'video' ? 'cover' : 'corner'), asset: a.id, reason: a.reason};
+  });
+}
+
+/**
  * What the agent reads to find assets and anchor shots: kept speech only, in
  * phrases, with the edit time and the `clipId:word` range of each phrase.
  */
@@ -412,9 +429,11 @@ export function compileFramedPlan(plan, {clips, takes, profile, wallpaper, kit =
     const shrink = {x: card.x + card.w * 0.04, y: card.y + card.h * 0.04, w: card.w * 0.92, h: card.h * 0.92};
     const length = item.kind === 'image' ? d.until - d.at : item.durationSeconds;
     // A clip shorter than the shot starts again, as with the other resources.
-    for (let at = d.at, k = 0; at < d.until - 1 / CANVAS.fps; at += length, k++) {
+    // A corner card stays under the face while it grows back, so the bare wallpaper never shows.
+    const until = d.layout === 'corner' ? Math.min(plan.duration, d.until + cam.enterSeconds) : d.until;
+    for (let at = d.at, k = 0; at < until - 1 / CANVAS.fps; at += length, k++) {
       layers.push(rectLayer({id: `shot-${d.resources[0]}-${k}-${d.at}`, type: item.kind === 'image' ? 'image' : 'video', file: item.file, from: frameOf(at),
-        duration: frameOf(Math.min(d.until, at + length)) - frameOf(at), width: item.width, height: item.height,
+        duration: frameOf(Math.min(until, at + length)) - frameOf(at), width: item.width, height: item.height,
         ...(d.layout === 'cover' ? {rect: full, fit: 'cover', trackIndex: 4, enter: k ? undefined : {seconds: 0.25, fade: true}}
           : {rect: card, fit: 'contain', frame: {...cardFrame, background: '#0d0f14'}, stage: true, trackIndex: 2, enter: k ? undefined : {seconds: cam.enterSeconds, from: shrink, fade: true}}),
         name: item.name ?? d.resources[0]}));

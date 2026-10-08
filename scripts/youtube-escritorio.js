@@ -24,7 +24,7 @@ import {resolveBrandKit} from '../src/modules/editorial-memory/kit.js';
 import {detectSilences} from '../src/modules/video-studio/silences.js';
 import {qaRender} from '../src/modules/youtube-studio/qa.js';
 import {reviewMarkdown} from '../src/modules/youtube-studio/review.js';
-import {framedProfile, classifyTake, zoomCandidates, frameEditPlan, compileFramedPlan, cardRect, faceCrop, transcriptMarkdown, CANVAS} from '../src/modules/youtube-studio/framed.js';
+import {framedProfile, classifyTake, zoomCandidates, frameEditPlan, compileFramedPlan, cardRect, faceCrop, transcriptMarkdown, draftShots, CANVAS} from '../src/modules/youtube-studio/framed.js';
 import {cameraCrop} from '../src/modules/video-studio/camera-track.js';
 import {excerptRenderPlan} from '../src/modules/youtube-studio/render-plan.js';
 import {assetRequestsTemplate, validateAssetRequests, resolveAssetRequests} from '../src/modules/intro-viral/assets.js';
@@ -217,6 +217,11 @@ async function assets(v) {
       reason: requests.assets.find((a) => a.id === id)?.reason ?? 'fichero dejado a mano'};
   }
   await save(path.join(d.work, 'assets.json'), catalog);
+  // Requests that say where they go become the shot list, unless the agent already wrote one by hand.
+  const planosFile = path.join(d.work, 'planos.json');
+  const current = existsSync(planosFile) ? await readJson(planosFile) : {version: 1, planos: []};
+  const drafted = draftShots(requests, catalog);
+  if (drafted.length && (!current.planos?.length || current.drafted)) await save(planosFile, {...current, drafted: true, planos: drafted});
   // One tile per asset so the agent sees what each id is before placing it.
   const ids = Object.keys(catalog), tw = 480, th = 270;
   if (ids.length) {
@@ -230,7 +235,7 @@ async function assets(v) {
     }
     await sharp({create: {width: 4 * tw, height: Math.ceil(ids.length / 4) * (th + 24), channels: 3, background: '#111'}}).composite(tiles).jpeg({quality: 85}).toFile(path.join(d.work, 'assets-sheet.jpg'));
   }
-  console.log(JSON.stringify({assets: ids, failed: result.failed, sheet: ids.length ? path.join(d.work, 'assets-sheet.jpg') : null,
+  console.log(JSON.stringify({assets: ids, failed: result.failed, planos: drafted.length, sheet: ids.length ? path.join(d.work, 'assets-sheet.jpg') : null,
     next: result.failed.length ? 'Resolver los fallidos (otra fuente o fichero a mano en assets/<id>.png) y repetir' : 'Escribir planos.json y ejecutar plan'}, null, 2));
   if (result.failed.length) process.exitCode = 2;
 }

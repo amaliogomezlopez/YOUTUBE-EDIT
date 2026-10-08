@@ -52,9 +52,14 @@ zoom sin whoosh. Prohibido escribir zoom, duraciones o curvas: salen de
    `intro-viral`: `web` con `"captura": "titular"` para noticias, `image`, `youtube`
    con `start`/`duration` de 4-8 s, `x`, `local`). Una idea, un recurso; anotar la
    frase en `reason`. Nunca inventar URLs: buscarlas y comprobarlas.
-3. `npm run youtube:escritorio -- assets --slug nombre` y mirar `assets-sheet.jpg`.
-   Un fallo (403, Cloudflare) no se salta: otra fuente o fichero a mano `assets/<id>.png`.
-4. Escribir `planos.json`:
+   Para automatizar el paso 4, cada recurso dice donde va: `"at": "01:3"`, opcional
+   `"until": "01:16"` (`toma:palabra` de `TRANSCRIPCION.md`) y `"layout"`.
+3. `npm run youtube:escritorio -- assets --slug nombre` y mirar `assets-sheet.jpg`:
+   cada recurso debe ensenar lo que se nombra (una foto de stock generica no vale,
+   una pagina de error tampoco). Un fallo (403, Cloudflare, sin titular) no se salta:
+   otra fuente que cuente lo mismo, o fichero a mano `assets/<id>.png`.
+4. Con `at` en los recursos, `assets` ya ha escrito `planos.json` (video -> `cover`,
+   imagen/pagina/post -> `corner`). Si no, escribirlo a mano:
 ```json
 {"version": 1, "planos": [
   {"clipId": "03", "atWord": 12, "untilWord": 30, "layout": "corner", "asset": "noticia-opus", "reason": "Se cita la noticia del lanzamiento"},

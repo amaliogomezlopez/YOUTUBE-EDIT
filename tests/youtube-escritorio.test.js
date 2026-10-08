@@ -165,3 +165,13 @@ test('camera variant rules: no zooms on a face take, shots need assets, no overl
   assert.match(run([]).plan.warnings.join(), /solo con tu cara/);
   assert.match(transcriptMarkdown(camBase(), [faceClip], camTakes), /`05:0-9`/);
 });
+
+test('asset requests that say where they go become shots; error pages are not news', async () => {
+  const {draftShots} = await import('../src/modules/youtube-studio/framed.js');
+  const {ERROR_PAGE} = await import('../src/modules/video-studio/page-capture.js');
+  const requests = {assets: [{id: 'noticia', at: '05:20', until: '05:29', reason: 'Se cita la noticia'}, {id: 'demo', at: '05:60', reason: 'La demo'}, {id: 'suelto', reason: 'sin ancla'}]};
+  assert.deepEqual(draftShots(requests, catalog).map((s) => [s.atWord, s.untilWord, s.layout]), [[20, 29, 'corner'], [60, undefined, 'cover']]);
+  assert.ok(ERROR_PAGE.test('403 ERROR ERROR: The request could not be satisfied'));
+  assert.ok(ERROR_PAGE.test('404 Not Found'));
+  assert.ok(!ERROR_PAGE.test('OpenAI adds $500 Pro subscription, nerfs its existing $200 tier'));
+});
