@@ -81,6 +81,7 @@
     "shorts:benchmark": "node scripts/shorts-camera-benchmark.js",
     "editorial:corpus": "node scripts/editorial-corpus.js",
     "youtube:autoplan": "node scripts/youtube-autoplan.js",
+    "youtube:escritorio": "node scripts/youtube-escritorio.js",
     "edit": "node scripts/youtube-edit.js",
     "mcp": "node scripts/shortsmith-mcp.js"
   },

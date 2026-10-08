@@ -45,7 +45,7 @@ test('Bezier interpolates time and value control points, not a linear guess',()=
 });
 test('audio uses absolute sample delays and disables automatic normalization',()=>{
  const filter=audioFilter([{type:'video',sourceIn:2,duration:30,from:15,volume:1},{type:'audio',sourceIn:0,duration:45,from:0,volume:.1}],{fps:30,durationInFrames:45,soundMix:.5});
- assert.match(filter,/adelay=24000S/);assert.match(filter,/volume=0.05/);assert.match(filter,/normalize=0/);assert.match(filter,/atrim=duration=1.5/);
+ assert.match(filter,/atrim=end_sample=24000/);assert.match(filter,/apad=whole_dur=1.5,atrim=end=1.5/);assert.match(filter,/volume=0.05/);assert.match(filter,/normalize=0/);
 });
 test('feedback binds actual quote and frame to version without approving a global rule',()=>{
  const payload={kind:'youtube-render-package',props:{durationInFrames:90,format:{fps:30},layers:[{id:'s',type:'video',from:0,duration:90,sourceIn:5}]},provenance:{snapshotId:'example'}};

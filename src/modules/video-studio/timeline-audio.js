@@ -7,9 +7,12 @@ export function audioFilter(layers,{fps,durationInFrames,soundMix=1}) {
  layers.forEach((l,i)=>{
    for(const n of [l.sourceIn,l.duration,l.from,l.volume])if(!Number.isFinite(n)||n<0)throw Error('Audio timeline invalida');
    const volume=l.volume*(l.type==='audio'?soundMix:1);
-   filters.push(`[${i}:a:0]atrim=start=${l.sourceIn}:duration=${l.duration/fps},asetpts=PTS-STARTPTS,aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,volume=${volume},adelay=${Math.round(l.from/fps*48000)}S:all=1[a${i}]`);
+   // Leading silence is real samples joined with concat: adelay shifts the timestamps of very short
+   // pieces instead of padding them, and the final trim then never ends (runaway WAV).
+   const delay=Math.round(l.from/fps*48000),body=`[${i}:a:0]atrim=start=${l.sourceIn}:duration=${l.duration/fps},asetpts=PTS-STARTPTS,aresample=48000,aformat=sample_fmts=fltp:channel_layouts=stereo,volume=${volume}`;
+   filters.push(delay?`${body}[x${i}];anullsrc=r=48000:cl=stereo,atrim=end_sample=${delay},aformat=sample_fmts=fltp:channel_layouts=stereo[s${i}];[s${i}][x${i}]concat=n=2:v=0:a=1[a${i}]`:`${body}[a${i}]`);
  });
- filters.push(layers.map((_,i)=>`[a${i}]`).join('')+`amix=inputs=${layers.length}:normalize=0:dropout_transition=0,apad,atrim=duration=${total}[mixed]`);
+ filters.push(layers.map((_,i)=>`[a${i}]`).join('')+`amix=inputs=${layers.length}:normalize=0:dropout_transition=0,apad=whole_dur=${total},atrim=end=${total}[mixed]`);
  return filters.join(';');
 }
 export async function mixTimelineAudio(props,resolveMedia,output) {
@@ -21,5 +24,5 @@ export async function mixTimelineAudio(props,resolveMedia,output) {
  }
  const duration=props.durationInFrames/props.format.fps;
  if(!layers.length){await run('ffmpeg',['-v','error','-n','-f','lavfi','-i','anullsrc=r=48000:cl=stereo','-t',String(duration),'-c:a','pcm_s16le',output]);return;}
- await run('ffmpeg',['-v','error','-n',...layers.flatMap(l=>['-i',l.file]),'-filter_complex',audioFilter(layers,{...props.format,durationInFrames:props.durationInFrames,soundMix:props.soundMix}),'-map','[mixed]','-c:a','pcm_s16le',output]);
+ await run('ffmpeg',['-v','error','-n',...layers.flatMap(l=>['-i',l.file]),'-filter_complex',audioFilter(layers,{...props.format,durationInFrames:props.durationInFrames,soundMix:props.soundMix}),'-map','[mixed]','-t',String(duration),'-c:a','pcm_s16le',output]);
 }

@@ -363,7 +363,7 @@ export function compileEditPlan(plan, {clips, kit = {}, assets = []}) {
       const sound = options[(sfxCount[family] = (sfxCount[family] ?? -1) + 1) % options.length];
       const start = d.type === 'insert' ? d.at - (d.lead ?? 0) : d.at;
       layers.push({id: `sfx-${layers.length}`, type: 'audio', file: sound.file, from: frame(Math.max(0, start)), duration: Math.max(1, frame(sound.duration)),
-        sourceIn: 0, volume: sound.volume ?? 1, width: 1, height: 1, transform: {x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, opacity: 1}, curves: {}, z: 0, trackIndex: 20, name: family});
+        sourceIn: 0, volume: (sound.volume ?? 1) * (d.gain ?? 1), width: 1, height: 1, transform: {x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, opacity: 1}, curves: {}, z: 0, trackIndex: 20, name: family});
     }
     if (d.type === 'outro') layers.push({id: 'outro', type: 'video', file: kit.outro.file, from: frame(d.at), duration: frame(d.at + d.seconds) - frame(d.at),
       sourceIn: 0, volume: 1, width: kit.outro.width, height: kit.outro.height, transform: {x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, opacity: 1}, curves: {}, z: 0, trackIndex: 1, name: 'outro'});

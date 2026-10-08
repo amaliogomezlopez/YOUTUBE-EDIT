@@ -18,7 +18,7 @@ export async function packageRender(plan,{publicRoot,packageName,allowIncomplete
   if(plan.warnings.length&&!allowIncomplete)throw Error('Hay incompatibilidades; revisar warnings y usar --allow-incomplete solo para calibracion');
   const relative=`projects/youtube/${packageName}`,dir=path.join(publicRoot,relative);
   await mkdir(path.dirname(dir),{recursive:true});await mkdir(dir);
-  const props={version:1,format:plan.format,durationInFrames:plan.durationInFrames,layers:[],soundEnabled:true,soundMix:1};
+  const props={version:1,format:plan.format,durationInFrames:plan.durationInFrames,layers:[],soundEnabled:true,soundMix:1,...(plan.stage?{stage:plan.stage}:{})};
   const assets=[],seen=new Map(),warnings=[...plan.warnings];
   for(const layer of plan.layers){
     if(layer.type==='text'){const {file,...data}=layer;props.layers.push({...data,src:''});continue;}

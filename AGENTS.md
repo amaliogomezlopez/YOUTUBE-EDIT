@@ -520,3 +520,22 @@ Skill: `.claude/skills/montaje-youtube/SKILL.md`. Comando unico:
   el FCPXML corregido en correcciones pendientes. No promoverlas a reglas sin el autor.
 - Medir con `youtube:autoplan evaluate` dejando el video fuera de su propio perfil.
   El criterio final son los minutos de correccion del autor, no los tests.
+
+## Montaje "escritorio" de un video largo
+
+Encargo tipico: "edita el video entero con un fondo de pantalla, la pantalla con
+esquinas redondeadas, mi webcam en una esquina y zooms cuando hablo de algo", o
+"solo tengo mi cara hablando: busca noticias, imagenes y videos y montalo".
+Skill: `.claude/skills/montaje-escritorio/SKILL.md`; documentacion
+`docs/youtube-escritorio.md`. Procedimiento: `npm run youtube:escritorio --
+start|assets|plan|preview|render|status`. Reutiliza el primer corte de youtube-studio y el
+render `YouTube-Timeline` (capas `rect` y camara de escenario); no es otro motor.
+El agente solo escribe `data/youtube-escritorio/<slug>/zooms.json` (palabra, caja de lo
+que se ve y motivo); cantidades y curva `glide` salen de
+`src/modules/youtube-studio/framed-profiles.json`, medido de una referencia y aun no
+aprobado por el autor.
+Si el unico input es la cara a camara (habitacion detras), es la misma skill con
+`--variant camara`: el agente pide recursos en `asset-requests.json` (descarga con
+`youtube:escritorio -- assets`, reutiliza intro-viral) y alterna en `planos.json` la
+cara a pantalla completa, `corner` (recurso en tarjeta, cara en burbuja) y `cover`
+(recurso a pantalla completa, sigue la voz).

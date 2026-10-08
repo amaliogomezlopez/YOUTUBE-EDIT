@@ -1,0 +1,76 @@
+{
+  "escritorio-v1": {
+    "status": "zoom-approved-by-author",
+    "source": "OpenAI 'ChatGPT for Word is now available' (youtube lxVMdEpe0RQ), medido fotograma a fotograma el 2026-10-07",
+    "card": {
+      "scale": 0.843,
+      "radius": 22,
+      "shadow": 48,
+      "_note": "0.843 tras feedback del autor (2026-10-08): 30 % menos de fondo alrededor que la referencia (0.776). Radio y sombra de partida"
+    },
+    "bubble": {
+      "placement": "embedded",
+      "pad": 14,
+      "radius": 28,
+      "border": 5,
+      "borderColor": "rgba(255,255,255,0.92)",
+      "shadow": 36,
+      "zoomedScale": 0.62,
+      "shrinkFullAtZoom": 1.6,
+      "corner": "top-right",
+      "width": 420,
+      "margin": 40,
+      "_note": "embedded: la burbuja tapa el sitio donde la grabacion ya trae la webcam. Una esquina (corner/width/margin) se usa con placement: corner. scale 1.1 tras feedback del autor (2026-10-08): webcam un poco mas grande",
+      "scale": 1.1
+    },
+    "wallpaper": {
+      "maxUpscale": 1.25,
+      "_note": "Un fondo menor que el lienzo se amplia; un degradado suave lo aguanta, una foto con detalle no"
+    },
+    "zoom": {
+      "inSeconds": 1.1,
+      "outSeconds": 0.8,
+      "ease": "glide",
+      "leadSeconds": 0.1,
+      "fill": 0.86,
+      "maxZoom": 2.8,
+      "minZoom": 1.25,
+      "driftPerSecond": 0.012,
+      "defaultHoldSeconds": 3.5,
+      "minHoldSeconds": 1.8,
+      "maxHoldSeconds": 9,
+      "minGapSeconds": 6,
+      "maxPerMinute": 3,
+      "maxSourceUpscale": 2.4,
+      "patchRevealWarn": 0.04,
+      "sound": "whoosh",
+      "_note": "Referencia: 1x -> 3,46x en ~1,1 s (cubic-bezier 0.1,0,0.6,1). Las salidas de la referencia son cortes; aqui se anima en outSeconds. maxZoom, ritmo y pausas son de partida hasta comparar con el autor. soundGain 0.45 (-7 dB): a volumen pleno el whoosh sobre la voz saturaba (+0,09 dBTP en el clip de prueba del 2026-10-08). Velocidad, cantidad, frecuencia (un zoom cada 20-30 s) y sonido aprobados por el autor el 2026-10-08",
+      "soundGain": 0.45
+    },
+    "camera": {
+      "_note": "Tomas a camara (solo cara). rest: la cara a pantalla completa. corner: recurso en tarjeta sobre el fondo y la cara en burbuja. cover: el recurso tapa todo y sigue la voz. Valores de partida, no aprobados.",
+      "bubble": {
+        "corner": "bottom-right",
+        "width": 460,
+        "aspect": 0.85,
+        "margin": 44,
+        "faceShare": 0.42,
+        "radius": 30,
+        "border": 5,
+        "borderColor": "rgba(255,255,255,0.92)",
+        "shadow": 36
+      },
+      "enterSeconds": 0.5,
+      "shots": {
+        "leadSeconds": 0.1,
+        "minSeconds": 2,
+        "maxSeconds": 14,
+        "defaultSeconds": 6,
+        "sound": "whoosh",
+        "maxFaceOnlySeconds": 20,
+        "maxCoverShare": 0.45,
+        "soundGain": 0.45
+      }
+    }
+  }
+}

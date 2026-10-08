@@ -87,3 +87,20 @@ export function fromCapcut(reference,{timelineId,from=0,to,keyframeClock,sticker
   return {version:1,kind:'youtube-render-plan',format:{width:1920,height:1080,fps},durationInFrames:frame(to-from),layers,warnings,
     provenance:{sourceSha256:reference.sourceSha256,timelineId,from,to,keyframeClock,substitutions:layers.filter(l=>l.substitutedFrom).map(l=>({layerId:l.id,from:l.substitutedFrom,to:l.file})),geometry:'CapCut center normalized; y up; scale relative to contain'},review:{visual:'pending',audio:'pending',editorial:'pending'}};
 }
+/** The same render plan cut to [from, to) seconds, to review a passage without rendering the whole video. */
+export function excerptRenderPlan(plan,from,to) {
+  const fps=plan.format.fps,F0=Math.round(from*fps),F1=Math.min(plan.durationInFrames,Math.round(to*fps));
+  if(!(F0>=0&&F1>F0))throw Error('Tramo fuera del montaje');
+  const layers=[];
+  for(const l of plan.layers){
+    const a=Math.max(l.from,F0),b=Math.min(l.from+l.duration,F1);
+    if(b<=a)continue;
+    const cut=(a-l.from)/fps,shift=k=>({...k,time:k.time-cut});
+    layers.push({...l,from:a-F0,duration:b-a,sourceIn:l.type==='video'||l.type==='audio'?l.sourceIn+cut:l.sourceIn,
+      curves:Object.fromEntries(Object.entries(l.curves??{}).map(([k,v])=>[k,v.map(shift)])),
+      ...(l.camera?{camera:{...l.camera,keys:l.camera.keys.map(shift)}}:{})});
+  }
+  // Earlier keys stay (at negative times) so a move that started before the cut keeps its curve.
+  const stage=plan.stage?{camera:{keys:plan.stage.camera.keys.map(k=>({...k,time:Math.round((k.time-from)*1e6)/1e6}))}}:undefined;
+  return {...plan,durationInFrames:F1-F0,layers,...(stage?{stage}:{}),provenance:{...plan.provenance,excerpt:{from,to}}};
+}
