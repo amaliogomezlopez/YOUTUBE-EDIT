@@ -36,3 +36,7 @@ npm run edit -- --source "CARPETA_DE_TOMAS" --slug nombre-del-video [--urls nota
 - Escribir cantidades (zoom, volumen, duraciones) a mano en el plan.
 - Afirmar que "esta aprobado" o "igual que CapCut" por pasar tests o QA.
 - Publicar o subir el video: es otra etapa (`prepare-youtube-upload`).
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

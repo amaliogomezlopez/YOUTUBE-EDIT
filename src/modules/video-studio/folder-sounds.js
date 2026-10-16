@@ -5,6 +5,7 @@ import {readdir, rename, rm} from 'node:fs/promises';
 import {ffprobe} from '../../lib/ffmpeg.js';
 import {ensureDir, readJson, run, writeJson} from '../../lib/utils.js';
 import {AUDIO_EXTENSIONS} from './paths.js';
+import {measureLoudness, soundMetadata} from './sound-loudness.js';
 
 export async function hashMedia(file) {
   const hash = createHash('sha256');
@@ -47,11 +48,15 @@ export async function importFolderSounds({folder, publicRoot, manifestFile, log=
           log('Importado: '+name);
         }
         durationSeconds ??= (await ffprobe(target)).duration;
+        // Sonoridad del efecto ya normalizado: la mezcla lo coloca frente a la voz por
+        // sonoridad, no por pico (sound-loudness.js). Se mide una vez por contenido.
+        let {momentaryLufs, truePeakDb} = cache.get(hash) ?? {};
+        if (!Number.isFinite(momentaryLufs)) ({maxMomentaryLufs: momentaryLufs, truePeakDb} = await measureLoudness(target));
         if (durationSeconds>3) warnings.push(name+': efecto de '+durationSeconds.toFixed(2)+' s; revisar su cola en las transiciones.');
         const group = relative.split(path.sep)[0]?.toLowerCase();
         const family = ({entradas:'reveal',clicks:'ui',impactos:'impact'})[group] ?? 'whoosh';
         seen.add(hash);
-        entries.push({hash,sourceName:name,file:output,family,durationSeconds,provenance:'user-provided'});
+        entries.push({hash,sourceName:name,file:output,family,durationSeconds,momentaryLufs,truePeakDb,provenance:'user-provided'});
       } catch (error) {errors.push(name+': '+error.message);}
     }
   }
@@ -62,7 +67,7 @@ export async function importFolderSounds({folder, publicRoot, manifestFile, log=
   const palette = {}, metadata = {};
   for (const e of entries) {
     (palette[e.family] ??= []).push(e.file);
-    metadata[e.file] = {durationSeconds:e.durationSeconds};
+    metadata[e.file] = soundMetadata(e);
   }
   return {...report,status:entries.length?'user-folder':'empty',families:Object.keys(palette),palette,metadata};
 }

@@ -48,3 +48,7 @@ La ingesta mide el nivel real de cada canal antes de normalizar. Si una grabacio
 ### Sincronizacion de efectos y risers
 
 Las copias de efectos se recortan hasta el inicio/final detectado del sonido (-45 dB), sin anadir margen de silencio y sin quitar pausas internas. Se generan copias nuevas versionadas; los originales y los renders anteriores se conservan. Los efectos normales comienzan en el frame del cambio visual, incluso si la palabra ancla llega unos milisegundos despues. El riser de apertura se coloca hacia atras desde el siguiente cambio de visual: su final coincide con ese corte, con precision de un frame, conservando su velocidad. Un corte de toma que mantiene la misma visual no es su destino. Si el riser no cabe, usar uno mas corto; si no hay cambio de visual, seleccionar soundUse transition.
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

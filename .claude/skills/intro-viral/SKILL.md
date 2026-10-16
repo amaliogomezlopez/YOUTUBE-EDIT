@@ -451,3 +451,7 @@ Cada corrección va a **un** sitio, y se anota de dónde viene:
 | Qué intención, transición, sonido o retención toca en cada caso | `decision-tables.json` (y su test) |
 | Gusto no medible (tipografía, qué recursos le gustan) | Sección "Preferencias" de esta skill |
 | Un sonido que falta o sobra | Fichero en `SONIDOS-REELS` con su prefijo y `CATALOGO.md` |
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

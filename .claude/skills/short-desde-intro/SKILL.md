@@ -166,3 +166,7 @@ medible sobre el montaje, a una regla con `npm run shorts:feedback`.
       `npm run remotion:capabilities`.
 - [ ] Resumen al usuario: duración, escenas, recursos usados, qué no se trasladó y la
       ruta del MP4.
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

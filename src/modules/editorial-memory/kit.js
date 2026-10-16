@@ -1,12 +1,13 @@
 import {existsSync} from 'node:fs';
 import {resolveStickerGif} from './capcut.js';
+import {calibratedVolume} from '../video-studio/sound-loudness.js';
 
 /**
  * The editor's own material, taken from what the corpus actually used and still
  * exists on disk: sound files per family, music bed, closing asset and opening
  * sticker with its usual placement. Frequency decides the order of options.
  */
-export async function resolveBrandKit(edits, {probe, readFile, exists = existsSync}) {
+export async function resolveBrandKit(edits, {probe, readFile, exists = existsSync, loudness}) {
   const count = (items, key) => {
     const map = new Map();
     for (const item of items) {
@@ -25,7 +26,12 @@ export async function resolveBrandKit(edits, {probe, readFile, exists = existsSy
     const family = uses[0].family;
     if (family === 'unmapped' || !exists(file)) continue;
     const {duration} = await probe(file);
-    (kit.sounds[family] ??= []).push({file, duration, volume: median(uses.map((u) => u.volume)) ?? 1, uses: uses.length});
+    const capcutVolume = median(uses.map((u) => u.volume)) ?? 1;
+    // Con `loudness` el volumen sale calibrado por sonoridad frente a la voz (la ingesta la
+    // deja a -14 LUFS), como en shorts y aperturas; el de CapCut queda como referencia.
+    const measured = loudness ? await loudness(file) : null;
+    const volume = calibratedVolume(family, {momentaryLufs: measured?.maxMomentaryLufs, truePeakDb: measured?.truePeakDb}) ?? capcutVolume;
+    (kit.sounds[family] ??= []).push({file, duration, volume, capcutVolume, ...(measured ? {calibrated: true} : {}), uses: uses.length});
   }
   for (const [file, uses] of count(edits.flatMap((e) => e.music), (m) => m.file)) {
     if (!exists(file)) continue;

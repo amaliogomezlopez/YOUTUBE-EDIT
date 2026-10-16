@@ -1,4 +1,6 @@
 import path from 'node:path';
+import {libraryLoudness, withSfxLoudness} from '../video-studio/sound-loudness.js';
+import {SOUND_FAMILIES} from '../video-studio/sound-families.js';
 import {ffprobe} from '../../lib/ffmpeg.js';
 import {compileScreenCamera,contentHash} from './camera-project.js';
 import {hashMedia} from '../video-studio/folder-sounds.js';
@@ -99,6 +101,9 @@ export async function buildShort({slug, log = () => {}}) {
   } : (plan.captions ?? {});
   if (!['karaoke','progressive','words','lines'].includes(captionMode)) throw new Error('Modo de subtitulos invalido');
   const soundPalette = resolvePlanSoundPalette(plan.sound, {publicRoot: path.join(REMOTION_ROOT, 'public'), warnings});
+  // Los efectos del usuario se calibran por sonoridad frente a la voz (sound-loudness.js).
+  if (soundPalette.palette) soundPalette.metadata = await withSfxLoudness(soundPalette.metadata, Object.values(soundPalette.palette).flat(), {publicRoot: path.join(REMOTION_ROOT, 'public')});
+  soundPalette.metadata = {...await libraryLoudness({publicRoot: path.join(REMOTION_ROOT, 'public'), files: Object.values(SOUND_FAMILIES).flatMap((family) => family.files)}), ...(soundPalette.metadata ?? {})};
   const addSound = (familyId, atSeconds, intensity = 1) => {
     const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId), {palette:soundPalette.palette,metadata:soundPalette.metadata});
     soundCues.push(cue);

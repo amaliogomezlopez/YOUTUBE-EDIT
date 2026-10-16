@@ -95,3 +95,7 @@ incrustada: mirar ese segundo.
 - Afirmar que esta aprobado por pasar QA; el perfil es una referencia medida,
   pendiente del gusto del autor. Sus comentarios: `npm run youtube:feedback`.
 - Publicar o subir: es otra etapa (`prepare-youtube-upload`).
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

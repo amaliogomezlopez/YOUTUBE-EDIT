@@ -140,7 +140,7 @@ function rotate(pattern, index, previous) {
  * @param {{id,width,height,fps}} input.format formato del build
  * @param {object} input.geometry rectangulos del formato (`captionRect`, `popRect`)
  */
-export function planMontage({words, voiceDurationSeconds, assets: allAssets, plan = {}, profile, format, geometry, musicAvailable = false}) {
+export function planMontage({words, voiceDurationSeconds, assets: allAssets, plan = {}, profile, format, geometry, musicAvailable = false, soundMetadata}) {
   const warnings = [];
   // Una imagen que hay que ampliar mas de 3x para llenar el cuadro se ve pixelada:
   // un logo de 80 px no es material de pantalla completa.
@@ -204,7 +204,7 @@ export function planMontage({words, voiceDurationSeconds, assets: allAssets, pla
   const soundCues = [];
   const hitEffects = [];
   const addSound = (family, frame, intensity = 1) => {
-    const cue = resolveSoundCue(family, round(frame / fps, 3), intensity, sound(family));
+    const cue = resolveSoundCue(family, round(frame / fps, 3), intensity, sound(family), {metadata: soundMetadata});
     soundCues.push(cue);
     return {family, file: cue.file};
   };

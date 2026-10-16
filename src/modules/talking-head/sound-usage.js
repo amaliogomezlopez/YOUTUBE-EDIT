@@ -1,3 +1,4 @@
+import {soundMetadata} from '../video-studio/sound-loudness.js';
 /**
  * Usos de montaje que el nombre del fichero (prefijo) o su subcarpeta declaran. No
  * tienen familia en los Reels: su paleta se indexa por familia y `message` ya ocupa
@@ -56,7 +57,7 @@ export function semanticSoundSelection(imported) {
   const palette={}, metadata={}, uses={};
   const entries=imported.entries.map(e=>({...e,...describeReelSound(e.sourceName)}));
   for(const e of entries) {
-    metadata[e.file]={durationSeconds:e.durationSeconds};
+    metadata[e.file]=soundMetadata(e);
     if (!e.family) continue;
     (palette[e.family]??=[]).push(e.file);
     uses[e.use]=e.family;

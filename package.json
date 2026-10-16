@@ -42,6 +42,7 @@
     "intro:viral": "node scripts/intro-viral.js",
     "intro:short": "node scripts/intro-short.js",
     "sonidos:escucha": "node scripts/sound-board.js",
+    "sonidos:openverse": "node scripts/sonidos-openverse.js",
     "intro:feedback": "node scripts/intro-feedback.js",
     "intro:playbook": "node scripts/intro-playbook.js",
     "intro:playbook:check": "node scripts/intro-playbook.js --check",

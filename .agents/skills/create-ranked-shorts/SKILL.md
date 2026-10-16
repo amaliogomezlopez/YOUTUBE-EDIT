@@ -140,3 +140,7 @@ Conservar plan aprobado, transcripción, assets y ajustes/versiones de render pa
 ## Entrega
 
 Entregar únicamente los cortes solicitados, en orden, con título provisional, duración real y enlace absoluto a cada MP4 actual. Enlazar el job cuando ayude a continuar. Indicar qué se verificó y cualquier comprobación pendiente; distinguir ejemplos renderizados, cambios permanentes del pipeline y ajustes particulares del plan. No publicar sin autorización.
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

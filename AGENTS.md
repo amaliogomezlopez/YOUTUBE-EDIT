@@ -231,6 +231,19 @@ Los efectos de SONIDOS-REELS con prefijo de uso (`impacto-grave_`, `remate_`,
 `whoosh-in_`, `clic_`, `ding-dato_`, `glitch_`, `tecleo_`) ocupan sus familias en la
 intro y no entran en la rotacion de los Reels. `intro:render` monta un `public`
 aislado con enlaces duros para que el bundle de Remotion no copie toda la media.
+Efectos nuevos sin atribucion: `npm run sonidos:openverse -- buscar|adoptar|demo`
+(`src/modules/video-studio/openverse-sounds.js`). Solo CC0/PDM de Openverse; los
+candidatos se miden y quedan en `data/openverse-sounds/`, y lo adoptado va a
+`SONIDOS-REELS/apertura/openverse/` con `procedencia.json`: es biblioteca y solo suena
+donde lo ponga `preferencias.json`. `demo` monta una hoja de escucha 16:9 con la voz a
+-14 LUFS y cada efecto calibrado por sonoridad (`video-studio/sound-loudness.js`,
+LU bajo la voz por situacion en `SFX_LEVELS_LU`), no por pico. Desde 2026-10-16 esa
+calibracion es la de todos los efectos (SONIDOS-REELS y libreria) en aperturas, Reels,
+shorts, montaje viral y videos largos (kit de CapCut, `capcutVolume` como referencia):
+`resolveSoundCue` da el volumen final (`calibrated: true`) y el Soundtrack no le aplica
+`soundMix` ni ducking. Los planes con la paleta copiada se completan desde
+`public/sfx/loudness-index.json`. Solo `episodio-animado` conserva su mezcla. No escribir
+volumenes de efectos a mano. Referencia: `docs/sonido-calibrado.md`.
 Fuentes, colores y revelado del texto son tokens de
 `src/modules/intro-studio/text-styles.json` (`textStyleId` en el plan, `textStyle` en
 la escaleta); `intro:viral -- variants` renderiza la misma escaleta con varios estilos

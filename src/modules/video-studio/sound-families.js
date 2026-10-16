@@ -16,6 +16,8 @@
  * defecto en cada tipo de cue: un logo en un short entra con `pop`, y en una intro
  * con `boom`. Eso vive en el modulo de sonido de cada superficie.
  */
+import {calibratedVolume} from './sound-loudness.js';
+
 const family = (files, durationSeconds, volume) => ({files, durationSeconds, volume});
 
 const variants = (name, count) =>
@@ -85,8 +87,11 @@ export function resolveSoundCue(familyId, atSeconds, intensity = 1, occurrence =
   const file = choices[index % choices.length];
   const durationSeconds = metadata?.[file]?.durationSeconds ?? preset.durationSeconds;
   if (!Number.isFinite(durationSeconds) || durationSeconds <= 0 || durationSeconds > 30) throw new Error('Duracion de sonido invalida');
+  // Un efecto medido (SONIDOS-REELS o libreria) va calibrado por sonoridad frente a la voz y no
+  // pasa por el soundMix ni por el ducking: su nivel ya es el final.
+  const calibrated = calibratedVolume(familyId, metadata?.[file], intensity);
   return {file,startSeconds:Math.max(0,atSeconds),durationSeconds,
-    volume:Math.min(1,Math.max(0,preset.volume*intensity)),attackSeconds:Math.min(.012,durationSeconds*.1),releaseSeconds:Math.min(.14,durationSeconds*.25),
+    volume:calibrated ?? Math.min(1,Math.max(0,preset.volume*intensity)),...(calibrated===null?{}:{calibrated:true}),attackSeconds:Math.min(.012,durationSeconds*.1),releaseSeconds:Math.min(.14,durationSeconds*.25),
     playbackRate:palette?1:PITCH_STEPS[index % PITCH_STEPS.length]};
 }
 export function createSoundRotation() {

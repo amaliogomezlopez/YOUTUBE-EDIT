@@ -12,6 +12,7 @@ import path from 'node:path';
 import {readFile} from 'node:fs/promises';
 import {REMOTION_ROOT} from '../video-studio/paths.js';
 import {measurePeakSeconds} from '../video-studio/sound-edges.js';
+import {soundMetadata} from '../video-studio/sound-loudness.js';
 import {SOUND_DROP_FOLDER, loadTalkingHeadSounds} from '../talking-head/sounds.js';
 
 export {
@@ -165,7 +166,7 @@ export function applySoundPreferences(result, entries, preferences) {
     const files = names.map((name) => {
       const entry = bySource.get(soundName(name));
       if (!entry) throw new Error(`preferencias.json: "${name}" (situacion ${situation.id}) no esta en SONIDOS-REELS`);
-      metadata[entry.file] ??= {durationSeconds: entry.durationSeconds};
+      metadata[entry.file] ??= soundMetadata(entry);
       return entry.file;
     });
     if (situation.openingRiser) openingRiser = files[0];
@@ -206,7 +207,7 @@ export function userSoundPalette(selection, {maxTransitionSeconds = DEFAULT_MAX_
   }
   const palette = {};
   const metadata = {};
-  const remember = (entry) => { metadata[entry.file] = {durationSeconds: entry.durationSeconds}; };
+  const remember = (entry) => { metadata[entry.file] = soundMetadata(entry); };
   for (const family of USER_TRANSITION_FAMILIES) palette[family] = transitions.map((entry) => entry.file);
   transitions.forEach(remember);
   for (const use of ['money', 'message']) {
@@ -222,9 +223,7 @@ export function userSoundPalette(selection, {maxTransitionSeconds = DEFAULT_MAX_
     if (!found.length) continue;
     for (const family of spec.families) palette[family] = found.map((entry) => entry.file);
     for (const entry of found) {
-      metadata[entry.file] = {
-        durationSeconds: spec.maxSeconds ? Math.min(entry.durationSeconds, spec.maxSeconds) : entry.durationSeconds
-      };
+      metadata[entry.file] = soundMetadata(entry, spec.maxSeconds ? Math.min(entry.durationSeconds, spec.maxSeconds) : entry.durationSeconds);
       if (spec.endAnchored) {
         const peak = Number(peaks[entry.file]);
         endAnchored[entry.file] = Number.isFinite(peak) && peak > 0 ? peak : entry.durationSeconds;

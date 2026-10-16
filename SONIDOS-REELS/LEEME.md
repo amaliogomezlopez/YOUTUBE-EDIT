@@ -38,3 +38,12 @@ Los usos concretos estan en CATALOGO.md. Money, riser y Message se reservan para
 ### Sincronizacion de efectos y risers
 
 Las copias de efectos se recortan hasta el inicio/final detectado del sonido (-45 dB), sin anadir margen de silencio y sin quitar pausas internas. Se generan copias nuevas versionadas; los originales y los renders anteriores se conservan. Los efectos normales comienzan en el frame del cambio visual, incluso si la palabra ancla llega unos milisegundos despues. El riser de apertura se coloca hacia atras desde el siguiente cambio de visual: su final coincide con ese corte, con precision de un frame, conservando su velocidad. Un corte de toma que mantiene la misma visual no es su destino. Si el riser no cabe, usar uno mas corto; si no hay cambio de visual, seleccionar soundUse transition.
+
+
+### Efectos libres de Openverse
+
+`npm run sonidos:openverse -- buscar --situacion zoom` busca en Openverse solo efectos **CC0 o dominio publico** (no hay que citar a nadie), los descarga a `data/openverse-sounds/` (fuera de esta carpeta) y los ordena por medida: ataque, pico y duracion util. `adoptar --situacion zoom --id <id8>` copia los elegidos a `apertura/openverse/` y anota su origen en `apertura/openverse/procedencia.json`. Ahi son sonidos de biblioteca: no cambian ningun montaje hasta que los elijas en ESCUCHA.html. `demo --video TOMA --broll a.png,b.png,c.mp4` monta un video de 20 s con el mejor de cada situacion para oirlos en contexto. Situaciones: `npm run sonidos:openverse -- situaciones`.
+
+Volumen: la demo pone la voz a -14 LUFS (como la ingesta) y cada efecto a una distancia fija por debajo segun su situacion (remate y golpe mas cerca, clic y pop mas lejos), medida por sonoridad EBU R128 y no por pico. La ganancia recomendada de cada sonido adoptado queda en `procedencia.json` (`gainDb`).
+
+Desde el 2026-10-16 esta calibracion por sonoridad se aplica a **todos** los efectos de esta carpeta en aperturas, Reels y shorts (no solo a los de Openverse): cada efecto queda a su distancia de la voz segun la situacion, sin ducking encima. Los niveles por situacion estan en `src/modules/video-studio/sound-loudness.js` (`SFX_LEVELS_LU`).

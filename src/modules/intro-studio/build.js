@@ -1,4 +1,7 @@
 import path from 'node:path';
+import {SOUND_FAMILIES} from '../video-studio/sound-families.js';
+import {REMOTION_ROOT} from '../video-studio/paths.js';
+import {libraryLoudness} from '../video-studio/sound-loudness.js';
 import {readJson, round, writeJson} from '../../lib/utils.js';
 import {
   BACKDROP_MOTIONS,
@@ -93,11 +96,15 @@ export async function buildIntro({slug, log = () => {}}) {
   if (plan.sound?.library && !userSounds) {
     throw new Error(`sound.library "${plan.sound.library}" no existe (solo "${USER_SOUND_LIBRARY}")`);
   }
+  // Todo efecto sale calibrado por sonoridad frente a la voz (sound-loudness.js): los
+  // del usuario traen su medida del importador; los de la libreria se miden aqui.
+  const libraryMetadata = await libraryLoudness({publicRoot: path.join(REMOTION_ROOT, 'public'), files: Object.values(SOUND_FAMILIES).flatMap((family) => family.files)});
+  const soundSource = {...(userSounds ?? {}), metadata: {...libraryMetadata, ...(userSounds?.metadata ?? {})}};
   const addSound = (familyId, atSeconds, intensity = 1) => {
     // Una familia con ranking propio del usuario (preferencias.json) rota en su orden.
     const shared = userSounds && USER_TRANSITION_FAMILIES.has(familyId) && !userSounds.ownRotation?.has(familyId);
     const occurrence = rotate(shared ? '__user-transition' : familyId);
-    const cue = placeUserSound(resolveSoundCue(familyId, atSeconds, intensity, occurrence, userSounds ?? {}), atSeconds, userSounds);
+    const cue = placeUserSound(resolveSoundCue(familyId, atSeconds, intensity, occurrence, soundSource), atSeconds, userSounds);
     soundCues.push(cue);
     return cue;
   };

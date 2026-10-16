@@ -237,3 +237,7 @@ npm run remotion:capabilities
 - No uses `src/lib/pipeline.js`: ese recorta vídeos largos, no monta desde cero.
 - No subas la tolerancia de una regla para que deje de saltar.
 - No pongas texto que repita la locución: para eso están los subtítulos.
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

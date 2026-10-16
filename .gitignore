@@ -11,6 +11,8 @@ data/models/*
 data/review/*
 data/transcriptions/*
 data/channels/*
+data/openverse-sounds/
+remotion-animations/public/sfx/loudness-index.json
 data/*.log
 data/.shortsmith.lock
 data/secrets/*

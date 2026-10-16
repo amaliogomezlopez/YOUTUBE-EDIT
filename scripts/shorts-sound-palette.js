@@ -15,6 +15,7 @@ import {loadDotEnv, parseCliArgs, readJson, writeJson} from '../src/lib/utils.js
 import {importFolderSounds} from '../src/modules/video-studio/folder-sounds.js';
 import {alignFolderSoundEdges} from '../src/modules/video-studio/sound-edges.js';
 import {REMOTION_ROOT} from '../src/modules/video-studio/paths.js';
+import {soundMetadata} from '../src/modules/video-studio/sound-loudness.js';
 import {SOUND_PALETTES_DIR} from '../src/modules/shorts-studio/sound.js';
 
 await loadDotEnv();
@@ -38,7 +39,7 @@ for (const [family, names] of Object.entries(spec.families ?? {})) {
     const entry = byName.get(name);
     if (!entry) { missing.push(`${family}: ${name}`); continue; }
     palette[family].push(entry.file);
-    metadata[entry.file] = {durationSeconds: Number(entry.durationSeconds.toFixed(3)), source: name};
+    metadata[entry.file] = {...soundMetadata(entry, Number(entry.durationSeconds.toFixed(3))), source: name};
   }
   if (!palette[family].length) delete palette[family];
 }

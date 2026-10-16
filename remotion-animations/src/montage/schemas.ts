@@ -50,6 +50,8 @@ const soundCueSchema = z.object({
   attackSeconds: z.number().optional(),
   releaseSeconds: z.number().optional(),
   playbackRate: z.number().optional(),
+  /** Nivel ya calibrado por sonoridad frente a la voz: sin master ni ducking. */
+  calibrated: z.boolean().optional(),
 });
 
 const captionPageSchema = z.object({

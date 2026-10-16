@@ -37,3 +37,7 @@ npm run montage -- render --slug SLUG --format 9x16
 - Revisa stills de varias visuales antes del render completo: la validacion tecnica
   no sustituye la revision visual.
 - Feedback del usuario sobre el montaje -> regla nueva con validador y fixture.
+
+## Efectos de sonido (desde 2026-10-16)
+
+Los efectos van calibrados por sonoridad frente a la voz (-14 LUFS), no por pico: cada uno a su distancia por situación (`SFX_LEVELS_LU` en `src/modules/video-studio/sound-loudness.js`), sin `soundMix` ni ducking encima. Es automático en el build: no escribir volúmenes de efectos a mano. Para efectos nuevos sin atribución, `npm run sonidos:openverse -- buscar|adoptar|demo` (solo CC0/dominio público, descargar exige permiso). Detalle y revisión de la mezcla: `docs/sonido-calibrado.md`.

@@ -21,6 +21,7 @@ import {detectWebcamBox} from '../src/lib/webcam.js';
 import {detectWebcamPanel, consensusPanels} from '../src/modules/video-studio/webcam-panel.js';
 import {planEdit, orderTakes} from '../src/modules/youtube-studio/autoplan.js';
 import {resolveBrandKit} from '../src/modules/editorial-memory/kit.js';
+import {measureLoudness} from '../src/modules/video-studio/sound-loudness.js';
 import {detectSilences} from '../src/modules/video-studio/silences.js';
 import {qaRender} from '../src/modules/youtube-studio/qa.js';
 import {reviewMarkdown} from '../src/modules/youtube-studio/review.js';
@@ -75,7 +76,7 @@ async function styleAndKit() {
     const edit = await readJson(path.join(CORPUS, 'edits', name));
     if (edit.format === 'horizontal' && !(profile.excluded ?? []).includes(edit.project)) edits.push(edit);
   }
-  const kit = await resolveBrandKit(edits, {readFile, probe: async (f) => {const i = await ffprobe(f); return {duration: i.duration, width: i.width, height: i.height};}});
+  const kit = await resolveBrandKit(edits, {loudness: (file) => measureLoudness(file), readFile, probe: async (f) => {const i = await ffprobe(f); return {duration: i.duration, width: i.width, height: i.height};}});
   return {profile, kit};
 }
 

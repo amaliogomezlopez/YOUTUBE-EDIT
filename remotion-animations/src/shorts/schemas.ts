@@ -145,6 +145,8 @@ export const soundCueSchema = z.object({
   releaseSeconds: z.number().optional(),
   /** Jitter de tono con el que rotan las tomas de una misma familia. */
   playbackRate: z.number().optional(),
+  /** Nivel ya calibrado por sonoridad frente a la voz: sin master ni ducking. */
+  calibrated: z.boolean().optional(),
 });
 
 export const shortVideoSchema = z.object({

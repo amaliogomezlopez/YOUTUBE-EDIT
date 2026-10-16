@@ -18,6 +18,11 @@ export type SoundCue = {
   releaseSeconds?: number;
   /** ANM-D06 — Jitter tímbrico determinista decidido por el director. */
   playbackRate?: number;
+  /**
+   * Efecto medido y calibrado por sonoridad frente a la voz (sound-loudness.js):
+   * `volume` ya es el nivel final y no pasa por el master ni por el ducking.
+   */
+  calibrated?: boolean;
 };
 
 /** ANM-D09 — Ventana en la que la locución domina y los efectos ceden. */
@@ -232,6 +237,7 @@ const CueAudio: React.FC<{
               );
           const absoluteSeconds =
             duckOffsetSeconds + soundCue.startSeconds + audioFrame / fps;
+          if (soundCue.calibrated) return soundCue.volume * Math.min(attack, release);
           const duck = duckWindows.length
             ? duckGainAt(absoluteSeconds, duckWindows, 0.06, 0.18)
             : 1;

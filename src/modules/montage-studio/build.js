@@ -3,6 +3,8 @@ import {readFileSync} from 'node:fs';
 import {readJson, writeJson} from '../../lib/utils.js';
 import {MONTAGE_FORMATS, REMOTION_ROOT, projectDir} from './constants.js';
 import {planMontage} from './planner.js';
+import {SOUND_FAMILIES} from '../video-studio/sound-families.js';
+import {libraryLoudness} from '../video-studio/sound-loudness.js';
 import {profileBudget, resolveMontageProfile} from './profiles.js';
 import {writeMontageRegistries} from './registry.js';
 import {formatIssue, runMontageRules} from './rules/index.js';
@@ -23,6 +25,9 @@ export async function buildMontage({slug, formats = null, log = () => {}}) {
   const profile = resolveMontageProfile(plan.profileId);
   const formatIds = formats ?? plan.formats ?? ['9x16'];
 
+  // Efectos calibrados por sonoridad frente a la voz (sound-loudness.js), tambien los
+  // de la libreria: el montaje viral no tiene camara y el sonido lleva mas peso.
+  const soundMetadata = await libraryLoudness({publicRoot: path.join(REMOTION_ROOT, 'public'), files: Object.values(SOUND_FAMILIES).flatMap((family) => family.files)});
   const builds = [];
   for (const formatId of formatIds) {
     const format = MONTAGE_FORMATS[formatId];
@@ -36,7 +41,8 @@ export async function buildMontage({slug, formats = null, log = () => {}}) {
       profile,
       format,
       geometry,
-      musicAvailable: Boolean(manifest.music)
+      musicAvailable: Boolean(manifest.music),
+      soundMetadata
     });
     const build = {
       version: 1,

@@ -12,6 +12,7 @@ import {evaluatePlan, summarizeEvaluation} from '../src/modules/youtube-studio/e
 import {qaRender} from '../src/modules/youtube-studio/qa.js';
 import {toFcpxml, readFcpxml, diffTimelines} from '../src/modules/youtube-studio/fcpxml.js';
 import {resolveBrandKit} from '../src/modules/editorial-memory/kit.js';
+import {measureLoudness} from '../src/modules/video-studio/sound-loudness.js';
 import {detectSilences} from '../src/modules/video-studio/silences.js';
 import {existsSync} from 'node:fs';
 import sharp from 'sharp';
@@ -77,7 +78,7 @@ try {
       const info = await ffprobe(file);
       return {duration: info.duration, width: info.width, height: info.height};
     };
-    const kit = await resolveBrandKit(edits, {probe, readFile});
+    const kit = await resolveBrandKit(edits, {loudness: (file) => measureLoudness(file), probe, readFile});
     let intents = v.intents ? await readJson(v.intents) : {};
     if (v.agent && v.agent !== 'agy') throw Error('Agente no soportado: ' + v.agent);
     if (v.llm || v.agent) {
