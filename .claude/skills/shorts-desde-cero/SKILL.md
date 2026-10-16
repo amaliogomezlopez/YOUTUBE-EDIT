@@ -1,6 +1,6 @@
 ---
 name: shorts-desde-cero
-description: Monta un Short vertical 9:16 a partir de clips grabados a propósito e imágenes de apoyo que el usuario deja en una carpeta, con subtítulos karaoke, zooms, transiciones y logos con sonido. Úsala cuando el encargo sea "en esta carpeta tengo unos clips, monta un short", "haz un vertical con estos clips y estos assets", o al retocar el montaje, los cues o el ritmo de un short ya montado. NO es para recortar un vídeo largo (eso es create-ranked-shorts), ni para intros 16:9 (intro-a-camara), ni para las animaciones editoriales del canal de finanzas (create-remotion-animations / episodio-animado).
+description: Monta un Short vertical 9:16 a partir de clips grabados a propósito e imágenes de apoyo que el usuario deja en una carpeta, con el estilo viral aprobado (karaoke amarillo, cara abajo y b-roll oficial arriba que cuadra con cada frase, logos a panel completo, escenario nunca vacío, riser, whooshes y sonido de caja en el dinero). Úsala cuando el encargo sea "en esta carpeta tengo unos clips, monta un short", "haz un vertical con estos clips y estos assets", o al retocar el montaje, los cues o el ritmo de un short ya montado. NO es para recortar un vídeo largo (eso es create-ranked-shorts), ni para intros 16:9 (intro-a-camara), ni para las animaciones editoriales del canal de finanzas (create-remotion-animations / episodio-animado).
 ---
 
 # Montar un Short desde cero
@@ -28,6 +28,65 @@ Lee, en este orden:
 `docs/shorts-playbook.md` se **genera** desde el JSON. Nunca lo edites a mano:
 `npm run shorts:playbook:check` te va a pillar.
 
+## Estilo aprobado (2026-10-15) — es el de todo short nuevo
+
+El usuario aprobó este estilo con el short `suscripcion-x-v3`; su plan
+(`remotion-animations/projects/shorts-suscripcion-x-v3/short-plan.json`) es la
+plantilla. Partir de él, no de `shorts-deepseek` ni `harness-vs-modelo`, que son
+anteriores.
+
+1. **Investigar la noticia y reunir recursos reales antes de planificar.** Leer las
+   fuentes que da el usuario y buscar material oficial: vídeos de los canales
+   oficiales (Grok, Cursor, SpaceX…: buscar solo metadatos con
+   `python -m yt_dlp "ytsearch6:<consulta>" --flat-playlist --print "%(id)s | %(channel)s | %(duration_string)s | %(title)s"`),
+   tuits, páginas de precios, logos SVG de la web oficial. **Descargar exige permiso
+   explícito**: listar fichero, fuente y tamaño aproximado y esperar el sí.
+   - Con permiso, escribir un `asset-requests.json` (contrato de la apertura viral:
+     cada recurso con `id`, `kind` —`youtube` con `start`/`duration` de 3-7 s, `x`,
+     `web`, `image`, `local`—, `url` o `path` y `reason`, la frase que lo nombra) y
+     ejecutar `npm run shorts:assets -- --requests <json> --out "<carpeta>/ASSETS"`:
+     baja solo el tramo pedido y deja `<id>.<ext>` + `.provenance.json`. Luego
+     `shorts:ingest --assets` (o `--slug <slug>` en `shorts:assets` para importarlos
+     a un proyecto ya ingerido sin repetir la ingesta).
+   - Para elegir el tramo, hacer una hoja de contactos del vídeo con ffmpeg
+     (`fps=1,tile=6x2,drawtext` con el tiempo) y mirar dónde está lo que se busca.
+   - Páginas protegidas (Cloudflare, 403): no saltarse la protección. Capturarlas
+     con el navegador integrado (sus capturas quedan en disco) y anotar la
+     procedencia a mano. Un logo SVG de la página se rasteriza en blanco a 960 px.
+     Un logo oscuro se recolorea a blanco antes de usarlo sobre el panel oscuro.
+2. **Corregir la transcripción** si Whisper oye mal un nombre («Brock» → Grok,
+   «Grogbot» → Grok Bot): editar `text` de esas palabras en `transcripts/NN.json`
+   sin añadir ni quitar palabras, para no mover los índices `atWord`.
+3. **Layouts.** `talking-head` (cara abajo, recurso arriba a panel completo) para
+   todo b-roll de vídeo, imagen o logo; `stage` para capturas con texto denso
+   (tarjetas de precio, FAQ, tuits largos); `full` con `punch-in` para remates de
+   2-4 s sin recurso. Sin `label` de escena ni `note` visibles: el texto propio se
+   reduce a una cifra potente (`stat`, p. ej. «+50 %») y la marca del cierre.
+4. **Lo que se ve cuadra con lo que se dice** y **el escenario nunca está vacío**
+   (SH-R-063, más de 1,5 s avisa). Partir escenas por frases (trims contiguos del
+   mismo clip) para que cada recurso entre con su palabra: si habla del plan de
+   30 $, la tarjeta de 30 $; si dice «Claude… OpenAI», sus logos. El primer
+   `broll` de una escena cubre desde el inicio de la escena.
+5. **Logos como `broll` a panel completo** (`mediaFit: "contain"`,
+   `mediaZoom: 1.1`, `sound: "pop"`), en cortes rápidos al nombrarlos. No poner
+   logos encima de un vídeo: SH-R-011 lo prohíbe y no se lee. Una imagen apaisada
+   que debe llenar el panel se rellena antes a 1080×960 con su color de fondo.
+6. **Sonido viral.** La paleta `viral-reels` (sonidos de SONIDOS-REELS) se aplica
+   por defecto; `npm run shorts:sonidos` la resuelve si faltan los ficheros. En el
+   plan:
+   - `broll` de vídeo con `sound: "whoosh"` y `mediaTransition: "cut"`.
+   - Transiciones `whip` y `slide-up` entre escenas.
+   - **Riser solo en el arranque**: en el cue que entra a los 1-3 s del gancho, con
+     `sound: "riser", soundAlign: "end"`, para que termine justo en ese corte.
+   - `sound: "money"` en cada cifra de dinero que aparece (precio, subida, cobro
+     aparte) y `"message"` cuando entra un tuit, siempre con `soundNote`.
+7. **Subtítulos**: no declararlos; el preset por defecto ya es el amarillo.
+
+Revisión antes de entregar: hoja de contactos del MP4 con un fotograma por cue
+(`ffmpeg -ss <s> -frames:v 1` y `tile`), comprobando para cada uno que el recurso
+cuadra con la palabra, que no hay panel vacío y que nada tapa la cara. Medir que
+los dos canales de audio están equilibrados (`volumedetect` por canal).
+
 ## El flujo
 
 ```bash
@@ -54,7 +113,7 @@ A diferencia de la intro, el short **sí se publica solo**: la metadata sale de
 `shorts:publishing` (describe la transcripción del short *montado*, no la de los
 clips crudos) y `shorts:publish` delega en los conectores de `src/lib/publishers/`.
 
-## Las seis reglas duras
+## Las siete reglas duras
 
 1. **`atWord` es el ancla canónica, no el segundo.** Es el índice de la palabra en
    `transcripts/NN.json` de *ese* clip. `atSeconds` solo se acepta si el clip no
@@ -82,16 +141,20 @@ clips crudos) y `shorts:publish` delega en los conectores de `src/lib/publishers
    `rewind`, `camera`, `texture`), nunca por fichero; cada familia rota varias
    tomas de forma determinista. Para silenciar algo hay que decirlo:
    `"sound": false`, `"transitionSound": false`, `"cameraSound": false`.
+7. **El escenario nunca se queda vacío** más de 1,5 s (SH-R-063): en `split`,
+   `stage` y `talking-head` siempre hay un recurso que cuadra con la frase. Si
+   salta, adelanta el recurso o parte la escena para que entre con su palabra.
 
-## Subtítulos: el estilo de los shorts de vídeo largo
+## Subtítulos: karaoke amarillo
 
 No declares `captions` ni `captionStyle` en un plan nuevo. Sin ellos, el build
-aplica el preset `talking-head-green`, el mismo de los shorts sacados de vídeo
-largo: Schibsted Grotesk blanca `#FFFFFF`, contorno oscuro de 5 px, la palabra que
-suena en verde `#43F56C`, karaoke de hasta tres palabras por página. No copies el
+aplica el preset `talking-head-yellow` (desde 2026-10-15 sustituye al verde, a
+petición del usuario): Schibsted Grotesk blanca `#FFFFFF`, contorno oscuro de 5 px,
+la palabra que suena en amarillo `#FFD60A`, karaoke de hasta tres palabras por
+página. El verde sigue disponible con `"preset": "talking-head-green"`. No copies el
 bloque `captions` / `captionStyle` de `shorts-deepseek` o `shorts-harness-vs-modelo`:
 llevan `"renderer": "theme"` solo para que los shorts ya publicados no cambien al
-reconstruirse. Un modo `progressive` o más de tres palabras con el preset verde
+reconstruirse. Un modo `progressive` o más de tres palabras con el preset karaoke
 hacen fallar el build (SH-R-033).
 
 ## El texto en pantalla añade, no repite
@@ -141,6 +204,10 @@ Dos cosas que distinguen una regla buena de una anotación:
 | Algo entra por debajo de la interfaz | Informativo por debajo de `y = 1748` (SH-R-040) |
 | Hay segundos de nadie hablando al inicio o al final | Extremo de `trim` declarado a mano; mira `speechLeadSeconds` / `speechTailSeconds` |
 | Un cue entra sin sonido | Falta `sound` de familia o falta el `soundNote` que justifique el silencio (SH-R-050) |
+| Aviso de escenario vacío | El recurso entra tarde; adelántalo o parte la escena (SH-R-063) |
+| Los sonidos suenan genéricos | La paleta `viral-reels` no está resuelta en esta máquina: `npm run shorts:sonidos` |
+| Un efecto suena cortado | Paleta propia sin `sound.metadata` con la duración real del fichero |
+| `shorts:render` muere con ENOSPC | Ya aísla `public/`; mira temporales `remotion-webpack-bundle-*` abandonados en C: |
 
 ## Antes de dar algo por terminado
 

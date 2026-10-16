@@ -5,7 +5,7 @@
     "maxZoom": 1.025,
     "soundMix": 0.38,
     "captionWords": 3,
-    "activeColor": "#43F56C",
+    "activeColor": "#FFD60A",
     "minVisualSeconds": 3,
     "maxVisualSeconds": 5,
     "visualSourcePolicy": "real",

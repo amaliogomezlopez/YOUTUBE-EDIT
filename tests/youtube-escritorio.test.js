@@ -131,7 +131,7 @@ test('an excerpt keeps the stage curve and shifts media in time', async () => {
 });
 
 const faceClip = {id: '05', sourceName: '5.mkv', file: 'projects/youtube/demo/clips/05.mp4', width: 1920, height: 1080, durationSeconds: 60, words,
-  focus: {faceHeightRatio: 0.44}, faceBox: {x: 800, y: 280, w: 360, h: 470}};
+  focus: {x: 0.5, y: 0.48, faceHeightRatio: 0.44}, faceBox: {x: 800, y: 280, w: 360, h: 470}};
 const camTakes = {'05': {kind: 'camera', webcam: null}};
 const camBase = () => ({...base(), segments: [{clipId: '05', sourceName: '5.mkv', in: 0, out: 60, at: 0, take: 0}], decisions: []});
 const catalog = {noticia: {id: 'noticia', kind: 'image', file: 'C:/a/noticia.png', width: 1600, height: 900}, demo: {id: 'demo', kind: 'video', file: 'C:/a/demo.mp4', width: 1920, height: 1080, durationSeconds: 3}};
@@ -155,15 +155,26 @@ test('camera variant: corner puts the asset in a card and the face in the bubble
   assert.ok(crop.x <= 800 && crop.x + crop.w >= 1160 && crop.y <= 280 && crop.y + crop.h >= 750, 'el recorte contiene la cara');
 });
 
-test('camera variant rules: no zooms on a face take, shots need assets, no overlaps, long face-only stretches warn', () => {
+test('camera variant rules: shots need assets, no overlaps, long face-only stretches warn', () => {
   const run = (shots, zooms = []) => frameEditPlan(camBase(), {clips: [faceClip], takes: camTakes, zooms, shots, assets: catalog, profile});
-  assert.match(run([], [{clipId: '05', atWord: 20, box, reason: 'zoom a la cara'}]).errors.join(), /planos\.json/);
   assert.match(run([{clipId: '05', atWord: 20, layout: 'corner', asset: 'nada', reason: 'recurso que falta'}]).errors.join(), /no existe/);
   assert.match(run([{clipId: '05', atWord: 20, layout: 'lado', asset: 'noticia', reason: 'layout raro'}]).errors.join(), /layout/);
   assert.match(run([{clipId: '05', atWord: 20, untilWord: 39, layout: 'corner', asset: 'noticia', reason: 'primero largo'},
     {clipId: '05', atWord: 30, untilWord: 39, layout: 'cover', asset: 'demo', reason: 'se solapa'}]).errors.join(), /solapa/);
   assert.match(run([]).plan.warnings.join(), /solo con tu cara/);
   assert.match(transcriptMarkdown(camBase(), [faceClip], camTakes), /`05:0-9`/);
+});
+
+test('camera variant: a zoom on a face take goes to the tracked face, capped, and moves the full-screen face', () => {
+  const {errors, plan} = frameEditPlan(camBase(), {clips: [faceClip], takes: camTakes, zooms: [{clipId: '05', atWord: 20, reason: 'Remate de la idea, a la cara'}], profile});
+  assert.deepEqual(errors, []);
+  const [zoom] = plan.zooms;
+  assert.ok(zoom.target.zoom > 1.25 && zoom.target.zoom <= profile.camera.zoom.maxZoom, `zoom ${zoom.target.zoom}`);
+  assert.ok(Math.abs(zoom.target.x - 0.5) < 0.01 && Math.abs(zoom.target.y - 0.48) < 0.05, 'centrado en la cara');
+  const rp = compileFramedPlan(plan, {clips: [faceClip], takes: camTakes, profile, wallpaper: {file: 'C:/fondo.png', width: 1920, height: 1080}});
+  assert.ok(rp.layers.filter((l) => l.id.startsWith('face-')).every((l) => l.stage), 'la cara a pantalla completa va en el escenario');
+  const blind = {...faceClip, focus: {}};
+  assert.match(frameEditPlan(camBase(), {clips: [blind], takes: camTakes, zooms: [{clipId: '05', atWord: 20, reason: 'sin cara detectada'}], profile}).errors.join(), /cara detectada/);
 });
 
 test('asset requests that say where they go become shots; error pages are not news', async () => {

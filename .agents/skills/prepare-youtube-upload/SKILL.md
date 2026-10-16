@@ -15,10 +15,10 @@ Generar un paquete editorial verificable a partir de la transcripción real del 
 4. Si tampoco existe, ejecutar Shortsmith desde la raíz del proyecto con `--top 0` para transcribir sin renderizar clips:
 
 ```powershell
-npm run process -- --video "<video.mp4>" --top 0 --stt-provider faster-whisper --stt-model small --stt-language es --stt-device cpu --stt-compute-type int8 --stt-python "<python-con-faster-whisper>" --no-llm
+npm run process -- --video "<video.mp4>" --top 0 --stt-provider faster-whisper --stt-model large-v3-turbo --stt-language es --stt-device cuda --stt-compute-type float16 --no-llm
 ```
 
-Usar el Python devuelto por `load_workspace_dependencies` cuando esté disponible. Si el usuario proporciona una transcripción, añadir `--transcript "<transcript>"` y omitir las opciones STT. Mantener `--no-llm` por defecto para no enviar la transcripción a terceros; quitarlo solo si el usuario autoriza el LLM configurado.
+Transcribir siempre en GPU (`cuda` + `float16`, RTX 4070 SUPER): es la preferencia fija del usuario. No usar `cpu`/`int8` salvo que CUDA falle, y en ese caso avisar antes de caer a CPU. El Python con faster-whisper sale de `FASTER_WHISPER_PYTHON` en `.env`; pasar `--stt-python` solo si hay que forzar otro. Si el usuario proporciona una transcripción, añadir `--transcript "<transcript>"` y omitir las opciones STT. Mantener `--no-llm` por defecto para no enviar la transcripción a terceros; quitarlo solo si el usuario autoriza el LLM configurado.
 
 5. Leer la transcripción completa, incluidos los tiempos. Corregir únicamente errores evidentes de nombres propios y términos técnicos. Verificar nombres dudosos en fuentes autorizadas sin introducir hechos que no aparezcan en el vídeo.
 6. Identificar tema central, noticias o bloques, opinión del creador, pruebas y conclusión.

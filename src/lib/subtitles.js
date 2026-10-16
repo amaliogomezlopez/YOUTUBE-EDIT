@@ -91,7 +91,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text`
           if (active) {
             return `{\\1c${activeTag}\\fscx108\\fscy108\\bord${Math.min(12, style.outlineSize + 1)}}${text}{\\fscx100\\fscy100\\bord${style.outlineSize}\\1c${primaryTag}}`;
           }
-          if (future && style.preset !== 'talking-head-green') return `{\\1a&H70&}${text}{\\1a&H00&}`;
+          if (future && !['talking-head-green', 'talking-head-yellow'].includes(style.preset)) return `{\\1a&H70&}${text}{\\1a&H00&}`;
           return text;
         });
         const tags = `{\\an${alignment}\\pos(${line.x},${line.y})\\fn${style.font}\\fs${line.fontSize}\\fsp${style.tracking}\\bord${style.outlineSize}\\shad${style.shadow}\\q2}`;

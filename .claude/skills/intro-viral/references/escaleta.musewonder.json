@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "slug": "musewonder",
+  "accentColor": "#FFD60A",
+  "textStyle": "anton-impacto",
+  "titular": null,
+  "note": "Version profesional a peticion del usuario (2026-10-12): sin texto en pantalla (ni keywords, ni titular, ni cifras); solo recursos reales, camara y un unico golpe.",
+  "omit": [],
+  "scenes": [
+    {"id": "meta-muerta", "clip": "01", "from": 0, "to": 4, "intent": "gancho", "asset": {"id": "metalogo", "atWord": 2}},
+    {"id": "zuckerberg", "clip": "01", "from": 5, "to": 11, "intent": "mostrar", "broll": "zuckerberg", "face": "tarjeta"},
+    {"id": "lanzamiento", "clip": "01", "from": 12, "to": 19, "intent": "mostrar", "broll": "meta-equipo", "face": "esquina"},
+    {"id": "muse-wonder", "clip": "01", "from": 20, "to": 25, "intent": "mostrar", "broll": "muse-wonder", "face": "esquina"},
+    {"id": "ranking", "clip": "01", "from": 26, "to": 31, "intent": "mostrar", "broll": "aa-ranking", "face": "esquina"},
+    {"id": "artificial-analysis", "clip": "01", "from": 32, "to": 36, "intent": "frase"},
+    {"id": "cosas-malas", "clip": "01", "from": 37, "to": 46, "intent": "enfasis", "hitWord": 42}
+  ]
+}

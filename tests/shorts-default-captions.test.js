@@ -15,16 +15,16 @@ async function buildWithPlan(slug, extra) {
   return buildShort({slug});
 }
 
-test('a short without caption style uses the long-video green karaoke', async () => {
+test('a short without caption style uses the yellow karaoke', async () => {
   const slug='test-default-captions-'+process.pid;
   try {
     const build=await buildWithPlan(slug,{});
     const style=build.captionStyle;
-    assert.equal(style.preset,'talking-head-green');
+    assert.equal(style.preset,'talking-head-yellow');
     assert.equal(style.renderer,'styled');
     assert.equal(style.font,'Schibsted Grotesk');
     assert.equal(style.primary,'#FFFFFF');
-    assert.equal(style.activeColor,'#43F56C');
+    assert.equal(style.activeColor,'#FFD60A');
     assert.equal(style.outlineSize,5);
     assert.equal(style.mode,'karaoke');
     assert.ok(build.scenes[0].captionPages.every((page)=>page.words.length<=3));

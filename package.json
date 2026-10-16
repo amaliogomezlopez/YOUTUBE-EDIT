@@ -26,6 +26,8 @@
     "sfx:synthesize": "node scripts/synthesize-sfx-library.js",
     "carousel": "node src/modules/carousels/cli.js",
     "shorts:ingest": "node scripts/shorts-ingest.js",
+    "shorts:assets": "node scripts/shorts-assets.js",
+    "shorts:sonidos": "node scripts/shorts-sound-palette.js",
     "shorts:build": "node scripts/shorts-build.js",
     "shorts:render": "node scripts/shorts-render.js",
     "shorts:publishing": "node scripts/shorts-publishing.js",

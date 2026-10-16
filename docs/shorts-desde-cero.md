@@ -131,13 +131,16 @@ Reglas del formato:
   `holdSeconds`.
 - El texto en pantalla debe **añadir** información. Un chip que repite la locución
   palabra por palabra sobra: lo dice ya el subtítulo.
-- **Los subtítulos salen con el estilo de los shorts de vídeo largo.** Sin
-  `captionStyle.renderer`, el build aplica el preset `talking-head-green` de
+- **Los subtítulos salen con el karaoke amarillo.** Sin `captionStyle.renderer`,
+  el build aplica el preset `talking-head-yellow` de
   `src/lib/captions/presets.js`: Schibsted Grotesk blanca `#FFFFFF`, contorno
-  oscuro de 5 px, la palabra que suena en verde `#43F56C` y karaoke de hasta tres
-  palabras por página. Un plan nuevo no declara `captions` ni `captionStyle`; los
-  campos que declare se aplican encima del preset, y SH-R-033 falla si rompen el
-  karaoke verde (por ejemplo `mode: "progressive"` o `maxWords` mayor que 3).
+  oscuro de 5 px, la palabra que suena en amarillo `#FFD60A` y karaoke de hasta
+  tres palabras por página (desde 2026-10-15; antes era el verde `#43F56C`, que
+  sigue disponible con `"captionStyle": {"preset": "talking-head-green"}`). Un
+  plan nuevo no declara `captions` ni `captionStyle`; los campos que declare se
+  aplican encima del preset, y SH-R-033 falla si rompen el karaoke (por ejemplo
+  `mode: "progressive"` o `maxWords` mayor que 3). `activeColors` (lista de
+  colores) hace rotar el relleno de la palabra activa palabra a palabra.
   `"captionStyle": {"renderer": "theme"}` vuelve al subtítulo del tema (palabra
   activa en `accentColor`, con modos `karaoke` y `progressive`); solo lo llevan
   los shorts anteriores a este cambio, para no alterarse al reconstruirse.
@@ -178,6 +181,40 @@ Reglas del formato:
 - `plain`: sin marco, para lo que ya trae su propio fondo.
 - `blend`: suma con `screen`, que hace desaparecer un fondo negro sólido. Para
   wordmarks exportados en JPG sin alfa.
+
+### Estilo viral aprobado (2026-10-15)
+
+Es el estilo de todo short nuevo, desde cero o desde vídeo largo. Plantilla:
+`remotion-animations/projects/shorts-suscripcion-x-v3/short-plan.json`. El método
+paso a paso está en `.claude/skills/shorts-desde-cero/SKILL.md`; aquí, los
+contratos que lo soportan:
+
+- **Recursos con procedencia**:
+  `npm run shorts:assets -- --requests <asset-requests.json> --out <ASSETS> [--slug <slug>]`.
+  Reutiliza el contrato de la apertura viral (`src/modules/intro-viral/assets.js`):
+  `youtube` baja solo el tramo `start`/`duration`, `x` usa el oEmbed oficial, `web`
+  captura la página (una protegida queda pendiente; no se salta), `image` y
+  `local`. Cada recurso declara `reason` (la frase que lo nombra). Con `--slug`
+  importa la carpeta al manifest de un proyecto existente (`importAssetFiles` de
+  `video-studio/media-ingest.js`, la misma que usa la ingesta).
+- **Layout `talking-head`** (cara abajo, `broll-panel` arriba a 1080×960) para
+  b-roll de vídeo, imagen o logo a panel completo (`mediaFit: "contain"`); `stage`
+  para capturas densas; `full` para remates. Nada de logos encima de un vídeo
+  (SH-R-011).
+- **Escenario nunca vacío** (SH-R-063): más de 1,5 s sin recurso en `split`, `stage`
+  o `talking-head` avisa. El primer `broll` de una escena cubre desde su inicio.
+- **Paleta de sonidos `viral-reels`** por defecto
+  (`src/modules/shorts-studio/sound-palettes/viral-reels.json`): `families` lista
+  ficheros de SONIDOS-REELS por familia y `npm run shorts:sonidos` la resuelve
+  (importa, recorta bordes, escribe `palette` y `metadata` con la duración real).
+  Una `sound.palette` propia del plan manda; `"paletteId": "none"` vuelve a la
+  librería genérica; sin ficheros en esta máquina, el build avisa y usa la librería.
+  Familias semánticas: `money` (cifras de dinero), `message` (tuits), `riser`
+  (arranque).
+- **`soundAlign: "end"`** en un cue: su sonido termina justo cuando el cue entra.
+  Es como el riser del gancho acaba en el corte.
+- **Subtítulos** amarillos por defecto; `captionStyle.activeColors` rota el color
+  de la palabra activa si algún día se pide.
 
 ## 3. Compilar y renderizar
 

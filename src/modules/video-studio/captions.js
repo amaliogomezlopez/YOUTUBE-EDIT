@@ -108,7 +108,8 @@ export function compactCaptionCompounds(words) {
   const decimals = [];
   for (const word of words ?? []) {
     const previous = decimals.at(-1);
-    if (previous && /^\.\d+[,.;:!?]?$/.test(word.text) && /^-?\d+$/.test(previous.text)) {
+    // `V2` + `.6` (MiMo V2.6) tambien es una version: letras delante del entero.
+    if (previous && /^\.\d+[,.;:!?]?$/.test(word.text) && /^(?:\p{L}{1,3})?-?\d+$/u.test(previous.text)) {
       previous.text += word.text;
       previous.end = word.end;
       continue;

@@ -43,7 +43,7 @@ try {
    await verifyRenderPackage(pkg,isolatedPublic);
    const propsFile=path.join(prepared.directory,'props.json');await writeFile(propsFile,JSON.stringify(props),{flag:'wx'});
    completeRun(prepared,{outputs:[propsFile],metadata:{packageId:pkg.id,packageFile:path.resolve(v.package)}});
-   const args=['scripts/render-safe.mjs',command,v.project,'YouTube-Timeline',command==='still'?'preview.png':v['sound-disabled']?'pilot_voice.mp4':'pilot_audio.mp4','--props='+propsFile,'--concurrency=2','--public-dir='+isolatedPublic];
+   const args=['scripts/render-safe.mjs',command,v.project,'YouTube-Timeline',command==='still'?'preview.png':v['sound-disabled']?'pilot_voice.mp4':'pilot_audio.mp4','--props='+propsFile,'--concurrency='+(process.env.REMOTION_CONCURRENCY??2),...(process.env.REMOTION_GL?['--gl='+process.env.REMOTION_GL]:[]),'--public-dir='+isolatedPublic];
    if(command==='still'){const frame=Number(v.frame??0);if(!Number.isInteger(frame)||frame<0||frame>=props.durationInFrames)throw Error('Frame fuera de rango');args.push('--frame='+frame);}
    else args.push('--codec=h264','--crf=17','--pixel-format=yuv420p','--muted');
    const rendered=await run(process.execPath,args,{cwd:root,onStdout:t=>process.stdout.write(t),onStderr:t=>process.stderr.write(t)});

@@ -1,6 +1,6 @@
 ---
 name: intro-viral
-description: Monta enteros los primeros clips a cámara de un vídeo largo de YouTube (los numerados 1, 2, 3…) como una apertura viral 16:9 con zooms, b-roll real a pantalla completa, palabras clave, cortes en el beat y los sonidos del usuario de SONIDOS-REELS. Procedimiento con puertas (`npm run intro:viral`) y tablas de decisión cerradas, pensado para que cualquier modelo lo siga. Úsala cuando el encargo sea "edita los clips 1, 2 y 3 con estilo viral", "hazme el arranque del vídeo", "mete imágenes, vídeos y efectos al principio del vídeo", o al iterar esa apertura. NO es para una cabecera corta de 10-20 s con logo (intro-a-camara), Shorts verticales, montaje con voz en off sin cámara (montaje-viral) ni el montaje completo del vídeo largo (montaje-youtube).
+description: Monta enteros los primeros clips a cámara de un vídeo largo de YouTube (los numerados 1, 2, 3…) como una apertura viral 16:9 con zooms, b-roll real a pantalla completa, sin texto en pantalla, cortes en el beat y los sonidos del usuario de SONIDOS-REELS. Procedimiento con puertas (`npm run intro:viral`) y tablas de decisión cerradas, pensado para que cualquier modelo lo siga. Úsala cuando el encargo sea "edita los clips 1, 2 y 3 con estilo viral", "hazme el arranque del vídeo", "mete imágenes, vídeos y efectos al principio del vídeo", o al iterar esa apertura. NO es para una cabecera corta de 10-20 s con logo (intro-a-camara), Shorts verticales, montaje con voz en off sin cámara (montaje-viral) ni el montaje completo del vídeo largo (montaje-youtube).
 ---
 
 # Apertura viral de un vídeo largo
@@ -23,15 +23,32 @@ su editor. **No se publica sola** y no lleva metadata.
 
 Nunca edites `intro-plan.json` a mano: se regenera desde la escaleta en cada `plan`.
 
-Referencia aprobada: `intro-opus-5-5` (Claude Opus 5.5, v3, "brutal"). Su escaleta
-está en `references/escaleta.opus-5-5.json`: úsala como ejemplo de cómo se rellena.
+## Estilo por defecto: sin texto (desde el 2026-10-13)
+
+El usuario prefiere la apertura de Muse Wonder (`intro-musewonder`, escaleta en
+`references/escaleta.musewonder.json`): **ningún texto en pantalla**. Ni palabras clave
+abajo, ni titular, ni cifras, ni agenda. Lo que cuenta la imagen son los recursos reales,
+la cámara y los cortes. Por eso la tabla `text.enabled` de `decision-tables.json` está a
+`false` y la validación rechaza `keyword`, `stat`, `pair`, `agenda`, `agendaPoint` y
+`titular`.
+
+- Intenciones que se usan: `gancho`, `frase`, `enfasis`, `noticia`, `mostrar` y
+  `remate`. `cifra`, `comparar` y `agenda` necesitan texto: no se usan.
+- **Mucho `mostrar`**: un recurso real por cada cosa que se nombra (portada oficial,
+  foto de la persona, vídeo oficial, gráfica legible con `"insert": true`).
+- **Pocos golpes**: uno o dos en toda la pieza, en la palabra que de verdad pesa. Entre
+  medias, cámara sin sonido.
+- La música, sobria (ver "Música de fondo").
+- Solo si el usuario pide texto expresamente, la escaleta lleva `"text": true` y vuelven
+  las tablas C y el titular. La v3 con texto (`intro-opus-5-5`,
+  `references/escaleta.opus-5-5.json`) sigue siendo la referencia para ese caso.
 
 ## Paso 0: lee esto antes de empezar
 
 1. Esta skill entera, en especial las **Preferencias del usuario** y las tablas.
 2. `src/modules/intro-viral/decision-tables.json`: el vocabulario de intenciones.
 3. `SONIDOS-REELS/CATALOGO.md`: qué sonido hay para cada uso.
-4. `references/escaleta.opus-5-5.json`: la v3 aprobada expresada como escaleta.
+4. `references/escaleta.musewonder.json`: la apertura sin texto aprobada.
 
 ## El procedimiento: cinco puertas
 
@@ -46,7 +63,7 @@ Todo el trabajo vive en `data/intro-viral/<slug>/` (fuera de Git).
 - **Entrada:** carpeta con las tomas `1.mkv`, `2.mkv`…; los números que pide el
   usuario; una pista de música.
 - **Música:** `C:\Users\amalio\Desktop\VIDEOS-YOUTUBE\VIDEOS YOUTUBE\BACKGROUND_MUSIC`.
-  Pulso claro y más larga que las tomas. `EPIC SONG.mp3` (180 BPM) funcionó.
+  Pulso claro y más larga que las tomas. Para el estilo sin texto, sobria: `documentary-suspense-ambient` (Muse Wonder, aprobada). `EPIC SONG.mp3` (180 BPM) para la v3 con texto. Ver "Música de fondo".
 - **Orden:**
   ```bash
   npm run intro:viral -- start --source "<carpeta de tomas>" --clips 1,2,3 --slug <slug> --music "<pista>"
@@ -244,7 +261,7 @@ Si dos sonidos caen a menos de 0,12 s, el compilador silencia el de menos priori
 | Aviso | Arreglo en la escaleta |
 |---|---|
 | IN-R-042 (demasiados golpes) | Pasa a `frase` la `enfasis` más cercana del tramo, o quita el `hitWord` del `gancho`. Nunca subas el techo |
-| IN-R-060 (tramo sin cambio) | Añade una `keyword` en esa escena o pártela en dos |
+| IN-R-060 (tramo sin cambio) | Pártela en dos o pásala a `mostrar` con un recurso |
 | IN-R-011 (tapa la cara) | Cambia la escena a `mostrar` o quita el `asset` |
 | IN-R-040 (golpe fuera de beat) | Mueve `hitWord` a la palabra fuerte más cercana |
 | keyword repite la locución | Condénsala (Tabla C) |
@@ -302,8 +319,11 @@ npm run intro:viral -- variants --slug <slug>            # compila y pasa reglas
 npm run intro:viral -- variants --slug <slug> --render   # renderiza y hace la hoja
 ```
 
-Cada línea de `data/intro-viral/<slug>/variantes.json` es una versión (`id`,
-`textStyle`, `accentColor`). Cada versión es un proyecto `intro-<slug>-<id>` que
+Cada línea de `data/intro-viral/<slug>/variantes.json` es una versión (`id` y, si
+cambian, `textStyle`, `accentColor` o `music`: ruta de otra pista de
+`BACKGROUND_MUSIC`). Con `music`, la pista se analiza y la escaleta se recompila sobre
+su rejilla de beats: sirve para comparar músicas sin reeditar (así se hizo con
+Muse Wonder el 2026-10-13). Con `REMOTION_CONCURRENCY=4` el render va más rápido. Cada versión es un proyecto `intro-<slug>-<id>` que
 comparte la media del base. Salen `review/variantes.jpg` (una fila por versión, los
 mismos momentos en columnas) y `VARIANTES.md`. Tras crear o borrar versiones:
 `npm run remotion:capabilities`.
@@ -336,6 +356,9 @@ porqué.
 - Una captura se pone cuando la locución la nombra, no antes.
 
 **Texto**
+- **Por defecto, ninguno** (2026-10-13, tras la apertura de Muse Wonder: "me gusta más
+  así"). Lo que sigue solo aplica si el usuario pide texto y la escaleta lleva
+  `"text": true`.
 - **Nada** de pastillas, cajas ni rectángulos de color con esquinas redondeadas detrás
   del texto. Tampoco etiquetas (`chip`) en las esquinas.
 - La columna lateral (`cifra`) como máximo dos veces por pieza.
@@ -355,6 +378,22 @@ porqué.
 - Las cifras estrella flotan sobre el vídeo, sin panel ni columna, y cuentan desde
   cero.
 - La palabra clave añade o condensa: 2-5 palabras, nunca la frase entera.
+
+**Música de fondo** (carpeta `BACKGROUND_MUSIC`; BPM medido con `analyzeMusicTrack`)
+
+| Pista | BPM | Carácter | Uso |
+|---|---|---|---|
+| `documentary-suspense-ambient-313131.mp3` | 170 (85) | ambiente, tensión suave | **Aprobada** para el estilo sin texto (Muse Wonder) |
+| `mystery-suspect-199367.mp3` | 190 (95) | misterio, intriga | Noticias con polémica o "tiene trampa" |
+| `soft-calm-background-music-346811.mp3` | 120 | tranquila, limpia | Tono neutro, explicativo |
+| `paulyudin-chill-chill-music-513017.mp3` | 96 | chill | Tono relajado |
+| `BACKGROUND_MUSIC1.mp3`, `MUSICA.mp3` | 108-110 | fondo genérico | Comodín |
+| `fm-freemusic-inspiring-optimistic…(chosic.com).mp3` | 85 | optimista, guitarra | Lanzamientos que gustan |
+| `EPIC SONG.mp3` | 180 | épica | La v3 con texto, muy "hype" |
+| `lo-fi-focus`, `vibehorn-lofi`, `Tokyo-Music-Walker`, `nastelbom-funky` | 88-188 | lo-fi, funky | Poco serias para una apertura sobria |
+
+Elegir por el tono de la noticia, no por costumbre. Un BPM entre paréntesis es la
+lectura a medio tempo (el detector a veces dobla).
 
 **Sonido**
 - **Sus** sonidos de `SONIDOS-REELS`, y solo en lo que **cambia la imagen de verdad**.

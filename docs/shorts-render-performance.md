@@ -3,7 +3,7 @@
 ## Flujo recomendado
 
 ```powershell
-npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 8 --editing-profile dinamico --subtitle-mode karaoke --subtitle-preset talking-head-green --render-stage prepare --encoder auto --no-llm
+npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 8 --editing-profile dinamico --subtitle-mode karaoke --subtitle-preset talking-head-yellow --render-stage prepare --encoder auto --no-llm
 node .agents/skills/create-ranked-shorts/scripts/refine-clips.mjs --job <job-id> --spec "<refinamientos.json>" --stage prepare
 node .agents/skills/create-ranked-shorts/scripts/refine-clips.mjs --job <job-id> --spec "<seleccion.json>" --stage preview
 node .agents/skills/create-ranked-shorts/scripts/refine-clips.mjs --job <job-id> --spec "<seleccion.json>" --stage master

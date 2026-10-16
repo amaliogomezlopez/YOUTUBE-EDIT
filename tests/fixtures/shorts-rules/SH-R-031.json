@@ -15,7 +15,7 @@
       {
         "id": "scene-fixture-000",
         "clipId": "01",
-        "layout": "split",
+        "layout": "full",
         "camera": "static",
         "from": 0,
         "durationInFrames": 240,
@@ -29,9 +29,21 @@
             "fromFrame": 0,
             "durationInFrames": 120,
             "words": [
-              {"text": "GLM", "fromFrame": 0, "toFrame": 30},
-              {"text": "5", "fromFrame": 30, "toFrame": 60},
-              {"text": ".2", "fromFrame": 60, "toFrame": 90}
+              {
+                "text": "GLM",
+                "fromFrame": 0,
+                "toFrame": 30
+              },
+              {
+                "text": "5",
+                "fromFrame": 30,
+                "toFrame": 60
+              },
+              {
+                "text": ".2",
+                "fromFrame": 60,
+                "toFrame": 90
+              }
             ]
           }
         ]

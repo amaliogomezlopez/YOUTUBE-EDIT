@@ -325,7 +325,7 @@ export function introToShortPlan({escaleta, introPlan, manifest, transcripts, re
     title: overrides.title ?? escaleta.titular?.text ?? escaleta.slug,
     derivedFrom: {surface: 'intro', slug: escaleta.slug, workflow: 'intro-short'},
     themeId: 'oxide-documentary',
-    accentColor: overrides.accentColor ?? '#43F56C',
+    accentColor: overrides.accentColor ?? '#FFD60A',
     dangerColor: '#FF5C5C',
     backgroundImage: null,
     sound: {

@@ -41,6 +41,10 @@ export function resolveCaptionStyle(options = {}) {
     primary: color(options.primary, preset.primary),
     accent,
     activeColor: color(options.activeColor, activeFallback),
+    // Relleno de la palabra activa que rota palabra a palabra (p. ej. verde/amarillo).
+    ...(Array.isArray(options.activeColors) && options.activeColors.some((value) => color(value, null))
+      ? {activeColors: options.activeColors.map((value) => color(value, null)).filter(Boolean)}
+      : {}),
     baseFontSize: Math.round(number(options.baseFontSize ?? options.fontSize, preset.baseFontSize, 48, 132)),
     heroScale: number(options.heroScale, preset.heroScale, 1, 2.6),
     leadScale: number(options.leadScale, preset.leadScale ?? 1, 0.7, 1.5),

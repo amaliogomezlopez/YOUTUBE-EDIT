@@ -2,6 +2,7 @@
   "version": 1,
   "slug": "opus-5-5",
   "accentColor": "#D97757",
+  "text": true,
   "note": "Apertura del video de Claude Opus 5.5 reescrita como escaleta: la v3 aprobada, expresada solo con intenciones. Clips 1 (gancho critico), 2 (giro) y 3 (promesa) enteros.",
   "titular": {"text": "Claude Opus 5.5","clip": "03", "atWord": 10},
   "omit": [],

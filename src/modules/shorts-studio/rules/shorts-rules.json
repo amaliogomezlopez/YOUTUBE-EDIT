@@ -274,8 +274,8 @@
     {
       "id": "SH-R-033",
       "section": "information",
-      "statement": "Los Reels a camara y el preset talking-head-green resaltan solo la palabra activa en verde; el preset conserva hasta tres unidades por pagina.",
-      "rationale": "La palabra pronunciada se rellena en verde, el resto queda blanco; bloques de hasta tres palabras.",
+      "statement": "Los Reels a camara y los presets karaoke (talking-head-yellow por defecto, talking-head-green) resaltan solo la palabra activa con el color del preset; conservan hasta tres unidades por pagina.",
+      "rationale": "La palabra pronunciada se rellena con el color del preset y el resto queda blanco; bloques de hasta tres palabras. Desde 2026-10-15 el amarillo sustituye al verde por defecto.",
       "scope": "channel",
       "severity": "error",
       "check": "shorts-talking-head-karaoke",
@@ -367,6 +367,20 @@
         "recordedAt": "2026-09-14T17:51:42Z"
       },
       "fixture": "tests/fixtures/shorts-rules/SH-R-025.json"
+    },
+    {
+      "id": "SH-R-063",
+      "section": "pacing",
+      "statement": "El escenario (la zona de recurso en split, stage y talking-head) no se queda vacio mas de 1.5 s seguidos: siempre muestra un recurso relacionado con lo que se dice.",
+      "rationale": "Un hueco gris mientras se habla se lee como un fallo de montaje; el recurso tiene que estar ya en pantalla y cuadrar con la frase (si se habla de la suscripcion de 30 dolares, se ve la de 30).",
+      "scope": "catalog",
+      "severity": "warning",
+      "check": "shorts-stage-never-empty",
+      "origin": {
+        "feedback": "El escenario (la zona bajo o sobre la cara en split, stage y talking-head) no se queda vacio mas de 1.5 s seguidos: siempre muestra un recurso relacionado con lo que se dice",
+        "recordedAt": "2026-10-15T11:39:17Z"
+      },
+      "fixture": "tests/fixtures/shorts-rules/SH-R-063.json"
     }
   ]
 }

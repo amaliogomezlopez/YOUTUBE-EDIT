@@ -1,0 +1,282 @@
+{
+  "version": 1,
+  "id": "viral-reels",
+  "description": "Paleta aprobada el 2026-10-15 (short suscripcion-x-v3): sonidos de SONIDOS-REELS por familia. Swooshes y whips en transiciones, camara en los zooms, pops en logos, papel y pops en capturas, money/kaching solo con dinero, Message sound con tuits y riser solo en el arranque. `families` se edita a mano con nombres de fichero de SONIDOS-REELS; `palette` y `metadata` los regenera `npm run shorts:sonidos`.",
+  "families": {
+    "whoosh": [
+      "swoosh_18.wav",
+      "swoosh_fast-05.wav",
+      "whoosh_short-13.mp3",
+      "whoosh_swoosh-19.wav",
+      "whoosh_digital-04.wav",
+      "whoosh_rm.wav"
+    ],
+    "whip": [
+      "DSGNWhsh_Short Whip, Short Whoosh 2_Ocular Sounds_Quick Whips_The Complete Whooshes Collection.wav",
+      "Whip 2 Sound Effect ( By Ashish Editz )_01.mp3",
+      "transicion_whoosh-4.mp3",
+      "swoosh_19.mp3"
+    ],
+    "camera": [
+      "chunky camera .wav",
+      "Camera Shutter 1A - _Crunch_ Click (-15 db) - Submitted by Ivan Khan.mp3",
+      "camara_shutter-2.wav"
+    ],
+    "rewind": [
+      "whoosh-in_phantom-signal-reverse_pixabay-534703.mp3",
+      "whoosh-in_fast-whoosh_mixkit-1490.wav",
+      "whoosh-in_digital-06.wav"
+    ],
+    "texture": [
+      "whoosh-in_short-sweep_mixkit-175.wav"
+    ],
+    "pop": [
+      "pop_ashish-4.mp3",
+      "pop_4.mp3",
+      "ES_Suction Pop 5 - SFX Producer.mp3",
+      "pop_click-3.wav"
+    ],
+    "reveal": [
+      "pop_sound-effect.mp3",
+      "papel_shutter.mp3",
+      "papel_paper.mp3"
+    ],
+    "message": [
+      "Message sound.mp3"
+    ],
+    "money": [
+      "money.mp3",
+      "caja_kaching.mp3",
+      "caja_billetes-2.mp3"
+    ],
+    "riser": [
+      "ES_Riser Metallic - SFX Producer.mp3"
+    ],
+    "impact": [
+      "impacto-grave_short-bass-hit_mixkit-2299.wav",
+      "impacto-grave_impact-thud_pixabay-291047.mp3",
+      "impacto-grave_low-thumpy-kick_pixabay-494833.mp3"
+    ],
+    "hit": [
+      "impacto-grave_impact-thud_pixabay-291047.mp3",
+      "impacto-grave_short-bass-hit_mixkit-2299.wav"
+    ],
+    "chime": [
+      "ding-dato_attention-bell_mixkit-586.wav",
+      "ding-dato_bells-positive.mp3"
+    ],
+    "alert": [
+      "glitch_scifi_mixkit-1022.wav"
+    ]
+  },
+  "palette": {
+    "whoosh": [
+      "sfx/user-reel-5ae92580161a44acde76949c-aligned-v2.wav",
+      "sfx/user-reel-b6643eff9f09f838216cf93b-aligned-v2.wav",
+      "sfx/user-reel-9b2234697fdc04edcbf8fa89-aligned-v2.wav",
+      "sfx/user-reel-5f11b21a4619f1af31e0a362-aligned-v2.wav",
+      "sfx/user-reel-615229fd13c80b22c1d9ac96-aligned-v2.wav",
+      "sfx/user-reel-9ed0c7ecadf1d0b676ae8f69-aligned-v2.wav"
+    ],
+    "whip": [
+      "sfx/user-reel-0ef07ce13a4713dff179c146-aligned-v2.wav",
+      "sfx/user-reel-7c8d7082a56a96b88429d402-aligned-v2.wav",
+      "sfx/user-reel-b2c102987a178811daf793fc-aligned-v2.wav",
+      "sfx/user-reel-896ef259c858439fdde741a9-aligned-v2.wav"
+    ],
+    "camera": [
+      "sfx/user-reel-36c0764388943f83c09c3288-aligned-v2.wav",
+      "sfx/user-reel-afa93a7ca46146661e866017-aligned-v2.wav",
+      "sfx/user-reel-1fcac4380d08eb48bc2a5961-aligned-v2.wav"
+    ],
+    "rewind": [
+      "sfx/user-reel-bb949f2fab66eafef3a37033-aligned-v2.wav",
+      "sfx/user-reel-2f914dcec1276107b888557e-aligned-v2.wav",
+      "sfx/user-reel-a9d94f480e9f5eee7ded5ee4-aligned-v2.wav"
+    ],
+    "texture": [
+      "sfx/user-reel-6b3d6d71c6724c27c155149e-aligned-v2.wav"
+    ],
+    "pop": [
+      "sfx/user-reel-a934c6406430fbbe58de0546-aligned-v2.wav",
+      "sfx/user-reel-0bc31755e6f468f799a5e2c6-aligned-v2.wav",
+      "sfx/user-reel-41b1e90f3aab87c027d65893-aligned-v2.wav",
+      "sfx/user-reel-62785f6e538795c7c74f7234-aligned-v2.wav"
+    ],
+    "reveal": [
+      "sfx/user-reel-d86a5b0ed74562a97116e4ba-aligned-v2.wav",
+      "sfx/user-reel-59245caf04701aa3ac695de3-aligned-v2.wav",
+      "sfx/user-reel-682e348fda059677f9d81af2-aligned-v2.wav"
+    ],
+    "message": [
+      "sfx/user-reel-4847d3f402822d49fad55c8f-aligned-v2.wav"
+    ],
+    "money": [
+      "sfx/user-reel-ae6702f67ca39475db2f82ea-aligned-v2.wav",
+      "sfx/user-reel-e82187c1e5e80d3b0ca659ef-aligned-v2.wav",
+      "sfx/user-reel-4c5287cbcb7f326308c0859a-aligned-v2.wav"
+    ],
+    "riser": [
+      "sfx/user-reel-e0417f4394b596d852aee973-aligned-v2.wav"
+    ],
+    "impact": [
+      "sfx/user-reel-77a3df3d6b3a15cb527ac890-aligned-v2.wav",
+      "sfx/user-reel-87c057c001f391f7085fc263-aligned-v2.wav",
+      "sfx/user-reel-6cb4dddf369002c2d66b00c5-aligned-v2.wav"
+    ],
+    "hit": [
+      "sfx/user-reel-87c057c001f391f7085fc263-aligned-v2.wav",
+      "sfx/user-reel-77a3df3d6b3a15cb527ac890-aligned-v2.wav"
+    ],
+    "chime": [
+      "sfx/user-reel-1785c4d2f011b4ebc9b917fa-aligned-v2.wav",
+      "sfx/user-reel-60e63e7f99728ad674f3b1db-aligned-v2.wav"
+    ],
+    "alert": [
+      "sfx/user-reel-5a4e8db3640e3da9ea2b9000-aligned-v2.wav"
+    ]
+  },
+  "metadata": {
+    "sfx/user-reel-5ae92580161a44acde76949c-aligned-v2.wav": {
+      "durationSeconds": 0.443,
+      "source": "swoosh_18.wav"
+    },
+    "sfx/user-reel-b6643eff9f09f838216cf93b-aligned-v2.wav": {
+      "durationSeconds": 0.314,
+      "source": "swoosh_fast-05.wav"
+    },
+    "sfx/user-reel-9b2234697fdc04edcbf8fa89-aligned-v2.wav": {
+      "durationSeconds": 0.57,
+      "source": "whoosh_short-13.mp3"
+    },
+    "sfx/user-reel-5f11b21a4619f1af31e0a362-aligned-v2.wav": {
+      "durationSeconds": 0.565,
+      "source": "whoosh_swoosh-19.wav"
+    },
+    "sfx/user-reel-615229fd13c80b22c1d9ac96-aligned-v2.wav": {
+      "durationSeconds": 0.68,
+      "source": "whoosh_digital-04.wav"
+    },
+    "sfx/user-reel-9ed0c7ecadf1d0b676ae8f69-aligned-v2.wav": {
+      "durationSeconds": 0.764,
+      "source": "whoosh_rm.wav"
+    },
+    "sfx/user-reel-0ef07ce13a4713dff179c146-aligned-v2.wav": {
+      "durationSeconds": 0.139,
+      "source": "DSGNWhsh_Short Whip, Short Whoosh 2_Ocular Sounds_Quick Whips_The Complete Whooshes Collection.wav"
+    },
+    "sfx/user-reel-7c8d7082a56a96b88429d402-aligned-v2.wav": {
+      "durationSeconds": 0.137,
+      "source": "Whip 2 Sound Effect ( By Ashish Editz )_01.mp3"
+    },
+    "sfx/user-reel-b2c102987a178811daf793fc-aligned-v2.wav": {
+      "durationSeconds": 0.31,
+      "source": "transicion_whoosh-4.mp3"
+    },
+    "sfx/user-reel-896ef259c858439fdde741a9-aligned-v2.wav": {
+      "durationSeconds": 0.304,
+      "source": "swoosh_19.mp3"
+    },
+    "sfx/user-reel-36c0764388943f83c09c3288-aligned-v2.wav": {
+      "durationSeconds": 0.595,
+      "source": "chunky camera .wav"
+    },
+    "sfx/user-reel-afa93a7ca46146661e866017-aligned-v2.wav": {
+      "durationSeconds": 0.391,
+      "source": "Camera Shutter 1A - _Crunch_ Click (-15 db) - Submitted by Ivan Khan.mp3"
+    },
+    "sfx/user-reel-1fcac4380d08eb48bc2a5961-aligned-v2.wav": {
+      "durationSeconds": 0.264,
+      "source": "camara_shutter-2.wav"
+    },
+    "sfx/user-reel-bb949f2fab66eafef3a37033-aligned-v2.wav": {
+      "durationSeconds": 0.745,
+      "source": "whoosh-in_phantom-signal-reverse_pixabay-534703.mp3"
+    },
+    "sfx/user-reel-2f914dcec1276107b888557e-aligned-v2.wav": {
+      "durationSeconds": 0.72,
+      "source": "whoosh-in_fast-whoosh_mixkit-1490.wav"
+    },
+    "sfx/user-reel-a9d94f480e9f5eee7ded5ee4-aligned-v2.wav": {
+      "durationSeconds": 0.588,
+      "source": "whoosh-in_digital-06.wav"
+    },
+    "sfx/user-reel-6b3d6d71c6724c27c155149e-aligned-v2.wav": {
+      "durationSeconds": 0.356,
+      "source": "whoosh-in_short-sweep_mixkit-175.wav"
+    },
+    "sfx/user-reel-a934c6406430fbbe58de0546-aligned-v2.wav": {
+      "durationSeconds": 0.139,
+      "source": "pop_ashish-4.mp3"
+    },
+    "sfx/user-reel-0bc31755e6f468f799a5e2c6-aligned-v2.wav": {
+      "durationSeconds": 0.234,
+      "source": "pop_4.mp3"
+    },
+    "sfx/user-reel-41b1e90f3aab87c027d65893-aligned-v2.wav": {
+      "durationSeconds": 0.256,
+      "source": "ES_Suction Pop 5 - SFX Producer.mp3"
+    },
+    "sfx/user-reel-62785f6e538795c7c74f7234-aligned-v2.wav": {
+      "durationSeconds": 0.291,
+      "source": "pop_click-3.wav"
+    },
+    "sfx/user-reel-d86a5b0ed74562a97116e4ba-aligned-v2.wav": {
+      "durationSeconds": 0.249,
+      "source": "pop_sound-effect.mp3"
+    },
+    "sfx/user-reel-59245caf04701aa3ac695de3-aligned-v2.wav": {
+      "durationSeconds": 0.391,
+      "source": "papel_shutter.mp3"
+    },
+    "sfx/user-reel-682e348fda059677f9d81af2-aligned-v2.wav": {
+      "durationSeconds": 0.529,
+      "source": "papel_paper.mp3"
+    },
+    "sfx/user-reel-4847d3f402822d49fad55c8f-aligned-v2.wav": {
+      "durationSeconds": 0.637,
+      "source": "Message sound.mp3"
+    },
+    "sfx/user-reel-ae6702f67ca39475db2f82ea-aligned-v2.wav": {
+      "durationSeconds": 2.275,
+      "source": "money.mp3"
+    },
+    "sfx/user-reel-e82187c1e5e80d3b0ca659ef-aligned-v2.wav": {
+      "durationSeconds": 1.223,
+      "source": "caja_kaching.mp3"
+    },
+    "sfx/user-reel-4c5287cbcb7f326308c0859a-aligned-v2.wav": {
+      "durationSeconds": 1.411,
+      "source": "caja_billetes-2.mp3"
+    },
+    "sfx/user-reel-e0417f4394b596d852aee973-aligned-v2.wav": {
+      "durationSeconds": 1.707,
+      "source": "ES_Riser Metallic - SFX Producer.mp3"
+    },
+    "sfx/user-reel-77a3df3d6b3a15cb527ac890-aligned-v2.wav": {
+      "durationSeconds": 0.841,
+      "source": "impacto-grave_short-bass-hit_mixkit-2299.wav"
+    },
+    "sfx/user-reel-87c057c001f391f7085fc263-aligned-v2.wav": {
+      "durationSeconds": 0.395,
+      "source": "impacto-grave_impact-thud_pixabay-291047.mp3"
+    },
+    "sfx/user-reel-6cb4dddf369002c2d66b00c5-aligned-v2.wav": {
+      "durationSeconds": 0.846,
+      "source": "impacto-grave_low-thumpy-kick_pixabay-494833.mp3"
+    },
+    "sfx/user-reel-1785c4d2f011b4ebc9b917fa-aligned-v2.wav": {
+      "durationSeconds": 0.87,
+      "source": "ding-dato_attention-bell_mixkit-586.wav"
+    },
+    "sfx/user-reel-60e63e7f99728ad674f3b1db-aligned-v2.wav": {
+      "durationSeconds": 0.852,
+      "source": "ding-dato_bells-positive.mp3"
+    },
+    "sfx/user-reel-5a4e8db3640e3da9ea2b9000-aligned-v2.wav": {
+      "durationSeconds": 0.662,
+      "source": "glitch_scifi_mixkit-1022.wav"
+    }
+  },
+  "resolvedAt": "2026-10-16T19:41:24.547Z"
+}

@@ -25,7 +25,7 @@ Debe cubrir:
 ## Reels desde un clip propio a camara
 
 Si el usuario da la ruta de una grabacion propia y pide cara abajo, recursos reales
-arriba y subtitulos verdes, leer `.agents/skills/create-talking-head-reels/SKILL.md`
+arriba y subtitulos amarillos (antes verdes), leer `.agents/skills/create-talking-head-reels/SKILL.md`
 y `docs/talking-head-reels.md`. El flujo reutilizable es `npm run talking-head --
 start|prepare|build|render`: ingesta, seleccion por palabras, guion de recursos con
 tiempos automaticos, importacion y exportacion con el estilo aprobado. No rehacer
@@ -39,6 +39,15 @@ Si el encargo es "en esta carpeta tengo unos clips y quiero montar un short", no
 el pipeline de `src/lib/pipeline.js` (ese recorta un video largo). Es
 `src/modules/shorts-studio` + `remotion-animations/src/shorts`, documentado en
 `docs/shorts-desde-cero.md`.
+
+Desde 2026-10-15 todo short (desde cero o desde video largo) sigue el **estilo
+viral aprobado**: karaoke amarillo, cara abajo y b-roll oficial arriba que cuadra
+con cada frase (`talking-head`), logos a panel completo, escenario nunca vacio
+(SH-R-063), paleta de sonidos `viral-reels` por defecto (`npm run shorts:sonidos`),
+riser de arranque con `soundAlign: "end"` y `money` en las cifras. Recursos con
+procedencia via `npm run shorts:assets`; descargar exige permiso del usuario.
+Plantilla: `shorts-suscripcion-x-v3`. Metodo: skill `shorts-desde-cero`; para cortes
+de video largo, seccion "Estilo viral" de `create-ranked-shorts`.
 
 Las reglas duras de ese flujo no son consejos: son un set ejecutable en
 `src/modules/shorts-studio/rules/shorts-rules.json` que `shorts:build` corre contra
@@ -71,10 +80,11 @@ remotion:capabilities`.
 
 Contratos que se suman a ese ciclo: los layouts `pip` (webcam + pantalla, exige
 `webcamBox`, replica el filtergraph del pipeline de video largo) y `fit`
-(horizontal sin webcam); los subtitulos salen por defecto con el estilo de los
-shorts de video largo (preset `talking-head-green`: Schibsted Grotesk blanca
-`#FFFFFF`, contorno oscuro de 5 px, palabra activa en verde `#43F56C`, karaoke de
-hasta tres palabras) y el plan no debe fijar colores ni modo propios; solo los
+(horizontal sin webcam); los subtitulos salen por defecto con el karaoke amarillo
+(preset `talking-head-yellow` desde 2026-10-15: Schibsted Grotesk blanca
+`#FFFFFF`, contorno oscuro de 5 px, palabra activa en amarillo `#FFD60A`, karaoke
+de hasta tres palabras; el verde `talking-head-green` queda como opcion) y el plan
+no debe fijar colores ni modo propios; solo los
 shorts antiguos llevan `captionStyle.renderer: "theme"` para no cambiar al
 reconstruirse;
 la ingesta guarda `focusTrack` y el encuadre sigue a la cara salvo que el plan
@@ -203,10 +213,12 @@ scripts/intro-demo-media.js`.
 ## Apertura viral de un video largo
 
 Si el encargo es "edita los clips 1, 2 y 3 con estilo viral" (los primeros clips a
-camara enteros, con zooms, b-roll real, palabras clave y sonidos del usuario), usar la
+camara enteros, con zooms, b-roll real y sonidos del usuario), usar la
 skill `intro-viral` (`.claude/skills/intro-viral/SKILL.md`). Es intro-studio con el
-perfil `hype-apertura`, el cue `keyword` y `sound.library: "SONIDOS-REELS"`; recoge
-las preferencias del usuario sobre texto y sonido.
+perfil `hype-apertura` y `sound.library: "SONIDOS-REELS"`; recoge las preferencias
+del usuario sobre texto y sonido. Desde el 2026-10-13 va **sin texto en pantalla**
+(`text.enabled: false` en `decision-tables.json`); la escaleta solo lo reactiva con
+`"text": true` si el usuario lo pide.
 
 El procedimiento es `npm run intro:viral -- start|assets|plan|render|review|status`
 (`src/modules/intro-viral/`), con una puerta por etapa. El agente solo escribe

@@ -13,7 +13,7 @@ Dos variantes, que pueden mezclarse en un mismo video (se decide por toma):
 | Toma | Lo que se ve | El agente escribe |
 |---|---|---|
 | Pantalla + webcam incrustada | tarjeta sobre el fondo, burbuja, zooms | `zooms.json` |
-| Solo cara (habitacion) | cara a pantalla completa por defecto; planos `corner` y `cover` | `asset-requests.json` y `planos.json` |
+| Solo cara (habitacion) | cara a pantalla completa por defecto; planos `corner` y `cover`; zooms a la cara | `asset-requests.json`, `planos.json` y `zooms.json` (sin `box`: la cara) |
 
 ## Paso 1: start
 ```powershell

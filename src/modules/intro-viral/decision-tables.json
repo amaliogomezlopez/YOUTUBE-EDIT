@@ -2,6 +2,10 @@
   "version": 1,
   "comment": "Tablas de decision cerradas de la apertura viral. El agente elige, por escena, una intencion de `intents` segun lo que DICE la frase; el compilador (escaleta.js) traduce esa intencion a layout, camara, efecto, texto y sonido. Nada de esto se escribe a mano en el plan. Cambiar el estilo es cambiar este JSON (y anotarlo en la skill), nunca ramificar codigo. Los umbrales de ritmo siguen en el perfil `hype-apertura` de intro-studio.",
   "profileId": "hype-apertura",
+  "text": {
+    "enabled": false,
+    "_note": "Sin texto en pantalla (keyword, titular, cifras, agenda, comparar) por defecto: el usuario prefirio la apertura de Muse Wonder sin rotulos el 2026-10-13. Una escaleta lo reactiva con \"text\": true solo si el usuario pide texto."
+  },
   "intents": {
     "gancho": {
       "when": "La primera escena del video. Solo una, y siempre la primera.",

@@ -23,7 +23,7 @@ function continuesModelVersion(words, index) {
   return (namedPrefix && /^-?\d+(?:\.\d+)+$/.test(current)) ||
     (namedPrefix && /^-\d+$/.test(current)) ||
     (namedPrefix && /^\d+$/.test(current) && /^\.\d+/.test(next)) ||
-    (/^\.\d+/.test(current) && /^-?\d+$/.test(previous));
+    (/^\.\d+/.test(current) && /^(?:\p{L}{1,3})?-?\d+$/u.test(previous));
 }
 /** Palabras como anclas, imagenes como evidencia y cortes reversibles. */
 export function planAdaptiveShort({words, duration, analysis, renderMode, webcamBox, source, profile = 'dinamico', effects = true, tighten = true}) {

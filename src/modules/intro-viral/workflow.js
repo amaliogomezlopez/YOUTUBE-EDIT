@@ -22,6 +22,7 @@ import {buildIntro} from '../intro-studio/build.js';
 import {projectDir} from '../intro-studio/constants.js';
 import {REMOTION_ROOT, VIDEO_EXTENSIONS} from '../video-studio/paths.js';
 import {frameSheet, measureLoudness} from '../video-studio/media-review.js';
+import {analyzeMusicTrack} from '../video-studio/music.js';
 import {compileEscaleta, escaletaTemplate, loadDecisionTables, transcriptMarkdown, validateEscaleta} from './escaleta.js';
 import {assetRequestsTemplate, resolveAssetRequests, validateAssetRequests} from './assets.js';
 
@@ -209,7 +210,7 @@ export async function planStage({slug, log = console.log}) {
 export function fixForRule(ruleId) {
   return ({
     'IN-R-042': 'Demasiados golpes seguidos: pasa a `frase` la escena `enfasis` mas cercana del tramo (o quita su hitWord si es gancho). Nunca subas el techo.',
-    'IN-R-060': 'Tramo sin cambio visible: anade una keyword muda en esa escena o partela en dos escenas (la camara cambia sola).',
+    'IN-R-060': 'Tramo sin cambio visible: partela en dos escenas (la camara cambia sola) o pasala a mostrar con un recurso.',
     'IN-R-050': 'Un cue sin sonido necesita soundNote: lo pone el compilador; si sale, revisa la escaleta.',
     'IN-R-061': 'Duracion fuera del perfil: revisa si falta o sobra una toma.',
     'IN-R-040': 'Golpe fuera de beat: cambia el hitWord a la palabra fuerte mas cercana a un beat.'
@@ -399,6 +400,25 @@ async function copyProjectShell(fromSlug, toSlug) {
 }
 
 /**
+ * Musica de una version: se copia junto a la de la base (misma carpeta de media), se
+ * analiza su rejilla y la version guarda su propio `music.json` y `manifest.music`.
+ */
+async function variantMusic({manifest, variant, project}) {
+  const base = manifest.music?.file;
+  if (!base) throw new Error('la base no tiene musica: no hay carpeta de media donde dejar la pista');
+  const name = `music-${variant.id}${path.extname(variant.music).toLowerCase()}`;
+  const staticFile = path.posix.join(path.posix.dirname(base), name);
+  const target = path.join(REMOTION_ROOT, 'public', ...staticFile.split('/'));
+  await copyFile(variant.music, target);
+  const music = {sourceName: path.basename(variant.music), file: staticFile, ...(await analyzeMusicTrack(target))};
+  await writeJson(path.join(project, 'music.json'), music);
+  const vmanifest = await readJson(path.join(project, 'manifest.json'));
+  // El build lee la rejilla del manifest: la de la base no vale para esta pista.
+  await writeJson(path.join(project, 'manifest.json'), {...vmanifest, music: {...vmanifest.music, ...music}});
+  return music;
+}
+
+/**
  * Compila (y con `render`, renderiza) una version por linea de `variantes.json`. Cada
  * version es un proyecto `intro-<slug>-<id>` que comparte la media del proyecto base
  * (su manifest apunta a ella): no se copia video. Termina con una hoja comparativa
@@ -423,22 +443,31 @@ export async function variantsStage({slug, render = false, only = null, log = co
       continue;
     }
     const vslug = `${slug}-${variant.id}`;
-    const escaletaV = {...escaleta, textStyle: variant.textStyle, accentColor: variant.accentColor ?? escaleta.accentColor};
+    const escaletaV = {...escaleta, textStyle: variant.textStyle ?? escaleta.textStyle, accentColor: variant.accentColor ?? escaleta.accentColor};
     const {errors} = validateEscaleta(escaletaV, {manifest, transcripts, tables});
     if (errors.length) {
       checks.push(check(false, `version ${variant.id}`, errors.join(' | ')));
       continue;
     }
+    if (variant.music && !existsSync(variant.music)) {
+      checks.push(check(false, `version ${variant.id}`, `la musica ${variant.music} no existe`));
+      continue;
+    }
     await copyProjectShell(slug, vslug);
-    const {plan} = compileEscaleta(escaletaV, {manifest, transcripts, beats, tables});
+    // Otra pista: se analiza su rejilla y la escaleta se recompila sobre sus beats.
+    const vmusic = variant.music ? await variantMusic({manifest, variant, project: projectDir(vslug)}) : null;
+    if (vmusic) checks.push(check(true, `musica ${variant.id}`, `${vmusic.sourceName}: ${vmusic.bpm} BPM`));
+    const manifestV = vmusic ? {...manifest, music: {...manifest.music, ...vmusic}} : manifest;
+    const {plan} = compileEscaleta(escaletaV, {manifest: manifestV, transcripts, beats: vmusic?.beatSeconds ?? beats, tables});
+    const label = [variant.music ? path.basename(variant.music) : null, variant.textStyle, variant.accentColor].filter(Boolean).join(', ');
     await writeJson(path.join(projectDir(vslug), 'intro-plan.json'),
-      {...plan, note: `${plan.note} Version ${variant.id}: ${variant.textStyle}, acento ${escaletaV.accentColor}.`});
+      {...plan, note: `${plan.note} Version ${variant.id}: ${label || 'como la base'}.`});
     try {
       const build = await buildIntro({slug: vslug, log: () => {}});
       const {summary, issues} = build.rules;
-      checks.push(check(summary.failed === 0 && !issues.length, `version ${variant.id} (${variant.textStyle}, ${escaletaV.accentColor})`,
+      checks.push(check(summary.failed === 0 && !issues.length, `version ${variant.id} (${label || 'como la base'})`,
         `${summary.passed}/${summary.total} reglas, ${issues.length} avisos`));
-      results.push({...variant, accentColor: escaletaV.accentColor, slug: vslug, build});
+      results.push({...variant, textStyle: escaletaV.textStyle, accentColor: escaletaV.accentColor, music: vmusic?.sourceName ?? manifest.music?.sourceName, slug: vslug, build});
     } catch (error) {
       checks.push(check(false, `version ${variant.id}`, error.message));
     }
@@ -456,7 +485,11 @@ export async function variantsStage({slug, render = false, only = null, log = co
   const rendered = results.filter((result) => result.mp4);
   let sheet = null;
   if (rendered.length) {
-    const moments = comparisonMoments(rendered[0].build);
+    // Sin texto no hay palabras clave que comparar: un fotograma por escena basta.
+    const b = rendered[0].build;
+    const found = comparisonMoments(b);
+    const moments = found.length ? found
+      : b.scenes.slice(0, 6).map((s) => ({id: s.id, seconds: (s.from + s.durationInFrames / 2) / b.format.fps, label: s.id}));
     await mkdir(paths.review, {recursive: true});
     sheet = path.join(paths.review, 'variantes.jpg');
     await frameSheet({
@@ -469,14 +502,14 @@ export async function variantsStage({slug, render = false, only = null, log = co
   const md = [
     `# Versiones de ${slug}`,
     '',
-    'La misma escaleta con distintos estilos de texto. Vota por version o por rasgo (fuente, revelado, cifra, color):',
-    'lo que elijas pasa a `text-styles.json` como estilo por defecto, no a codigo.',
+    'La misma escaleta con distinta musica o estilo de texto. Vota por version o por rasgo:',
+    'el estilo elegido pasa a `text-styles.json` y la musica a la tabla de la skill, no a codigo.',
     '',
     sheet ? `Hoja comparativa: \`${sheet}\` (una fila por version).` : 'Sin renders todavia: repite con `--render`.',
     '',
-    '| Version | Estilo | Acento | MP4 |',
-    '|---|---|---|---|',
-    ...results.map((r) => `| ${r.id} | ${r.textStyle} | ${r.accentColor} | ${r.mp4 ? `\`${r.mp4}\`` : '-'} |`),
+    '| Version | Musica | Estilo | Acento | MP4 |',
+    '|---|---|---|---|---|',
+    ...results.map((r) => `| ${r.id} | ${r.music ?? '-'} | ${r.textStyle} | ${r.accentColor} | ${r.mp4 ? `\`${r.mp4}\`` : '-'} |`),
     ''
   ].join('\n');
   await writeFile(path.join(paths.dir, 'VARIANTES.md'), md);

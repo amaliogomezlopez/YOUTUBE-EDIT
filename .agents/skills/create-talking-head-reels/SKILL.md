@@ -1,6 +1,6 @@
 ---
 name: create-talking-head-reels
-description: Monta Reels y TikToks desde la ruta de un clip propio a camara con el estilo aprobado, cortes de silencios, recursos reales arriba, cara abajo y karaoke verde. Automatiza ingesta, tiempos, importacion, sonidos de carpeta y exportacion. La extraccion de Shorts desde videos largos corresponde a create-ranked-shorts.
+description: Monta Reels y TikToks desde la ruta de un clip propio a camara con el estilo aprobado, cortes de silencios, recursos reales arriba, cara abajo y karaoke amarillo. Automatiza ingesta, tiempos, importacion, sonidos de carpeta y exportacion. La extraccion de Shorts desde videos largos corresponde a create-ranked-shorts.
 ---
 
 # Reels a camara con el estilo aprobado
@@ -16,11 +16,11 @@ Leer [el procedimiento completo](../../../docs/talking-head-reels.md) antes del 
 3. `npm run talking-head -- prepare --slug <slug>`. El programa quita pausas confirmadas y genera `asset-requests.json` con ventanas de 3–5 s y las palabras dichas en cada ventana. No calcular segundos ni escribir cues a mano.
 4. Buscar la noticia, producto o ejemplo concreto. Descargar imagenes/clips o capturar la parte relevante de la pagina/post. Completar **solo `resource`** en cada entrada del archivo generado: ruta local, URL de la fuente, tipo, etiqueta, licencia/procedencia real y motivo. El procedimiento incluye el contrato y criterios de seleccion. No pedir al usuario que busque los recursos cuando el agente dispone de esas herramientas.
 5. `npm run talking-head -- render --slug <slug>`. Importa recursos, carga automaticamente `SONIDOS-REELS`, compila, valida reglas, registra Remotion, renderiza en un run nuevo, finaliza audio y genera MP4, hoja de contacto e informe de revision.
-6. Revisar el MP4 y cada empalme: cara, pertinencia de visuales, palabra verde sincronizada, cortes de voz y mezcla. Corregir los JSON de trabajo y repetir. Entregar la ruta absoluta del MP4 revisado, sin cambiar el piloto aprobado.
+6. Revisar el MP4 y cada empalme: cara, pertinencia de visuales, palabra amarilla sincronizada, cortes de voz y mezcla. Corregir los JSON de trabajo y repetir. Entregar la ruta absoluta del MP4 revisado, sin cambiar el piloto aprobado.
 
 ## Decisiones que ya estan resueltas
 
-El perfil `talking-head-approved-v2` fija 1080x1920 a 60 fps, dos mitades iguales, presentador centrado abajo, visuales reales arriba, zoom 1→1.025, cortes limpios entre visuales y subtitulos Schibsted Grotesk de hasta tres unidades. Solo la palabra pronunciada tiene relleno verde `#43F56C`; el resto es blanco con contorno oscuro. No sustituirlo por tarjetas genericas, comparativas inventadas o imagenes generadas.
+El perfil `talking-head-approved-v2` fija 1080x1920 a 60 fps, dos mitades iguales, presentador centrado abajo, visuales reales arriba, zoom 1→1.025, cortes limpios entre visuales y subtitulos Schibsted Grotesk de hasta tres unidades. Solo la palabra pronunciada tiene relleno amarillo `#FFD60A` (desde 2026-10-15; antes verde `#43F56C`); el resto es blanco con contorno oscuro. No sustituirlo por tarjetas genericas, comparativas inventadas o imagenes generadas.
 
 El codigo reutiliza `shorts-studio` y `video-studio`. No crear un componente React por video ni otra pipeline. Las tomas, la busqueda semantica y la comprobacion perceptiva siguen siendo trabajo del agente; las operaciones mecanicas ya estan automatizadas. Si falta una herramienta de busqueda o revision, identificar esa limitacion concreta sin inventar fuentes ni una revision realizada.
 

@@ -1,0 +1,45 @@
+{
+  "ruleId": "SH-R-063",
+  "statement": "El escenario (la zona de recurso en split, stage y talking-head) no se queda vacio mas de 1.5 s seguidos: siempre muestra un recurso relacionado con lo que se dice.",
+  "check": "shorts-stage-never-empty",
+  "expect": "fail",
+  "note": "Escena split de 4 s cuyo unico recurso entra a los 2,5 s: el escenario pasa 2,5 s vacio.",
+  "context": {
+    "format": {
+      "width": 1080,
+      "height": 1920,
+      "fps": 60
+    },
+    "silencePaddingSeconds": 0.5,
+    "scenes": [
+      {
+        "id": "scene-fixture-000",
+        "clipId": "01",
+        "layout": "split",
+        "camera": "static",
+        "from": 0,
+        "durationInFrames": 240,
+        "trimStartSeconds": 0,
+        "trimEndSeconds": 4,
+        "speechLeadSeconds": 0.2,
+        "speechTailSeconds": 0.2,
+        "cues": [
+          {
+            "id": "c1",
+            "type": "stat",
+            "slot": "stage-full",
+            "fromFrame": 150,
+            "durationInFrames": 90,
+            "text": "+50 %",
+            "sound": {
+              "family": "impact"
+            }
+          }
+        ],
+        "captionPages": []
+      }
+    ],
+    "soundCues": [],
+    "duckWindows": []
+  }
+}

@@ -34,7 +34,10 @@ export function orderTakes(clips) {
  * from the profile; drop inner silences longer than maxPause.
  */
 export function trimTake(words, {headPad, tailPad, maxPause, silences = []}) {
-  const spoken = words.filter((w) => Number.isFinite(w.start) && Number.isFinite(w.end) && norm(w));
+  // A word lying wholly inside a measured silence was never said: transcribers
+  // hallucinate sign-offs ("gracias por ver el video") over the dead tail of a take.
+  const silent = (w) => silences.some((s) => s.start <= w.start && w.end <= s.end);
+  const spoken = words.filter((w) => Number.isFinite(w.start) && Number.isFinite(w.end) && norm(w) && !silent(w));
   if (!spoken.length) return null;
   let first = 0;
   const opening = spoken.slice(0, 3).map(norm).join(' ');

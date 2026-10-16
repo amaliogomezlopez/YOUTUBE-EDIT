@@ -5,7 +5,7 @@ import {SHORT_LAYOUT} from "./layout";
 import {MOTION_FONT_FAMILY} from "../motion/fonts";
 
 export type CaptionAppearance = {
-  font?:string;primary?:string;accent?:string;activeColor?:string;baseFontSize?:number;
+  font?:string;primary?:string;accent?:string;activeColor?:string;activeColors?:string[];baseFontSize?:number;
   tracking?:number;outlineSize?:number;shadow?:number;align?:string;uppercase?:boolean;
   emphasis?:string;heroScale?:number;
 };
@@ -13,13 +13,17 @@ type Rect={left:number;top:number;width:number;height:number};
 type Props={pages:CaptionPage[];mode:string;appearance:CaptionAppearance;rect:Rect};
 const textFor=(text:string,style:CaptionAppearance)=>style.uppercase?text.toLocaleUpperCase("es"):text;
 
-export const StyledCaptionTrack:React.FC<Props> = ({pages,...props}) => <>
-  {pages.map((page,i)=><Sequence key={i} from={page.fromFrame} durationInFrames={page.durationInFrames} layout="none">
-    <StyledPage {...props} page={page}/>
-  </Sequence>)}
-</>;
+export const StyledCaptionTrack:React.FC<Props> = ({pages,...props}) => {
+  // Ordinal de la primera palabra de cada pagina: la rotacion de activeColors sigue entre paginas.
+  const offsets=pages.map((_,i)=>pages.slice(0,i).reduce((sum,page)=>sum+page.words.length,0));
+  return <>
+    {pages.map((page,i)=><Sequence key={i} from={page.fromFrame} durationInFrames={page.durationInFrames} layout="none">
+      <StyledPage {...props} page={page} wordOffset={offsets[i]}/>
+    </Sequence>)}
+  </>;
+};
 
-const StyledPage:React.FC<Omit<Props,"pages">&{page:CaptionPage}> = ({page,mode,appearance:style,rect})=>{
+const StyledPage:React.FC<Omit<Props,"pages">&{page:CaptionPage;wordOffset:number}> = ({page,mode,appearance:style,rect,wordOffset})=>{
   const frame=useCurrentFrame()+page.fromFrame;
   const activeIndex=page.words.reduce((last,word,index)=>frame>=word.fromFrame && frame<word.toFrame ? index : last,-1);
   const font=style.font ?? MOTION_FONT_FAMILY;
@@ -44,7 +48,7 @@ const StyledPage:React.FC<Omit<Props,"pages">&{page:CaptionPage}> = ({page,mode,
       const visible=mode!=="progressive" || frame>=word.fromFrame;
       const emphasis=active && style.emphasis!=="off" && mode!=="lines";
       return <span key={i} style={{whiteSpace:"nowrap",opacity:visible?1:0,
-        color:emphasis?(style.activeColor??style.accent??"#B8F36B"):(style.primary??"#fff"),
+        color:emphasis?(style.activeColors?.length?style.activeColors[(wordOffset+i)%style.activeColors.length]:(style.activeColor??style.accent??"#B8F36B")):(style.primary??"#fff"),
         WebkitTextStroke:(style.outlineSize??2)+"px #10141b",paintOrder:"stroke fill",
         textShadow:"0 "+(style.shadow??3)+"px 9px #000",
         transform:emphasis && style.emphasis!=="color"?"translateY(-2px)":"none"}}>{textFor(word.text,style)}</span>;

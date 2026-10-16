@@ -19,7 +19,7 @@ Este contrato convierte cada corrección del montaje vertical en una regla ejecu
 | `catalog` | Regla universal: aplica a cualquier short y, si no depende del formato, su validador vive en `src/modules/video-studio/checks/` y lo comparten las demás superficies de montaje. |
 | `channel` | Regla de marca del canal que publica los shorts. |
 
-Reglas: **25** · con validador automático: **24** · marcadas `manual`: **1** · sin implementar: **0**.
+Reglas: **26** · con validador automático: **25** · marcadas `manual`: **1** · sin implementar: **0**.
 
 Una regla nacida de un short concreto que se aplica en dos proyectos asciende a `catalog`. Las reglas de este set se registran con `npm run shorts:feedback`, que crea regla, validador y fixture de una sola vez.
 
@@ -124,9 +124,9 @@ Los proyectos con estilo blanco dinamico aprobado mantienen Schibsted Grotesk bl
 
 ### SH-R-033 · `error` · `channel`
 
-Los Reels a camara y el preset talking-head-green resaltan solo la palabra activa en verde; el preset conserva hasta tres unidades por pagina.
+Los Reels a camara y los presets karaoke (talking-head-yellow por defecto, talking-head-green) resaltan solo la palabra activa con el color del preset; conservan hasta tres unidades por pagina.
 
-**Por qué:** La palabra pronunciada se rellena en verde, el resto queda blanco; bloques de hasta tres palabras.
+**Por qué:** La palabra pronunciada se rellena con el color del preset y el resto queda blanco; bloques de hasta tres palabras. Desde 2026-10-15 el amarillo sustituye al verde por defecto.
 
 **Validador:** `shorts-talking-head-karaoke`
 
@@ -243,6 +243,14 @@ El perfil talking-head usa material de fuente real y respeta su presupuesto de d
 **Por qué:** En Reels a camara usar recursos reales de la noticia, sin tarjetas editoriales genericas, y cambiar la visual cada 3-5 segundos.
 
 **Validador:** `shorts-talking-head-visuals`
+
+### SH-R-063 · `warning` · `catalog`
+
+El escenario (la zona de recurso en split, stage y talking-head) no se queda vacio mas de 1.5 s seguidos: siempre muestra un recurso relacionado con lo que se dice.
+
+**Por qué:** Un hueco gris mientras se habla se lee como un fallo de montaje; el recurso tiene que estar ya en pantalla y cuadrar con la frase (si se habla de la suscripcion de 30 dolares, se ve la de 30).
+
+**Validador:** `shorts-stage-never-empty`
 
 ## Ciclo de feedback
 

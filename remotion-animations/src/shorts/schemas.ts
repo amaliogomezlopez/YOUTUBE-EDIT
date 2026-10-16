@@ -168,6 +168,7 @@ export const shortVideoSchema = z.object({
       renderer: z.string().optional(),
       font: z.string().optional(),
       activeColor: z.string().optional(),
+      activeColors: z.array(z.string()).optional(),
       tracking: z.number().optional(),
       outlineSize: z.number().optional(),
       shadow: z.number().optional(),

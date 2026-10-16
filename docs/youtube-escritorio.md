@@ -73,9 +73,16 @@ catalogo con medidas y duracion.
 La cara nunca se quita del timeline: debajo de un `cover` sigue sonando. El recorte de
 la burbuja sale del `faceBox` de la ingesta (cara al 42 % de la altura). Reglas: el
 recurso debe existir, el plano dura entre 2 y 14 s, no se solapa con otro ni con un
-recurso del primer corte, y en una toma a camara no hay zooms. Avisos: mas de 20 s
+recurso del primer corte. Avisos: mas de 20 s
 seguidos solo con la cara y `cover` por encima del 45 % del video. Todo en
 `framed-profiles.json` (`camera`), valores de partida.
+
+Zoom a la cara: en una toma a camara, una entrada de `zooms.json` sin `box` amplia la
+cara detectada (`focus` de la ingesta, alto x `camera.zoom.faceBoxScale`) con la misma
+curva `glide`, ritmo y sonido que el zoom de pantalla, con tope `camera.zoom.maxZoom`
+(1,5x: no ampliar pixeles de 1080p). La cara a pantalla completa va en el escenario
+(`stage: true`); la burbuja de un plano `corner` no. Un zoom no puede coincidir con un
+plano.
 
 `TRANSCRIPCION.md` lista lo que queda tras los recortes por frases, con el minuto del
 montaje y el rango `toma:palabra` para anclar planos y zooms.

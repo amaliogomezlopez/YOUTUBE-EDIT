@@ -46,6 +46,22 @@ export function cardRect(profile, clip) {
   return {x: (CANVAS.width - w) / 2, y: (CANVAS.height - h) / 2, w, h, k: fit};
 }
 
+/** A camera take fills the canvas (cover): same shape as a card so boxes map the same way. */
+export function coverRect(clip) {
+  const k = Math.max(CANVAS.width / clip.width, CANVAS.height / clip.height);
+  const w = clip.width * k, h = clip.height * k;
+  return {x: (CANVAS.width - w) / 2, y: (CANVAS.height - h) / 2, w, h, k};
+}
+
+/** Default box of a face zoom: the tracked face with head room, in the take's 16:9. */
+export function faceZoomBox(clip, profile) {
+  const f = clip.focus;
+  if (!Number.isFinite(f?.x) || !Number.isFinite(f?.y) || !(f?.faceHeightRatio > 0)) return null;
+  const h = Math.min(clip.height, clip.height * f.faceHeightRatio * profile.camera.zoom.faceBoxScale);
+  const w = Math.min(clip.width, h * clip.width / clip.height);
+  return {x: Math.round(clamp(f.x * clip.width - w / 2, 0, clip.width - w)), y: Math.round(clamp(f.y * clip.height - h / 2, 0, clip.height - h)), w: Math.round(w), h: Math.round(h)};
+}
+
 export function toCanvas(box, card) {
   return {x: card.x + box.x * card.k, y: card.y + box.y * card.k, w: box.w * card.k, h: box.h * card.k};
 }
@@ -72,10 +88,10 @@ export function bubbleOrigin(rect) {
 }
 
 /** Stage camera that frames a canvas box with the profile's fill, inside the canvas. */
-export function zoomFor(box, profile) {
+export function zoomFor(box, profile, maxZoom = profile.zoom.maxZoom) {
   const z = profile.zoom;
   const raw = z.fill * Math.min(CANVAS.width / box.w, CANVAS.height / box.h);
-  const zoom = round(Math.min(z.maxZoom, raw), 4);
+  const zoom = round(Math.min(maxZoom, raw), 4);
   const half = 1 / (2 * zoom);
   return {zoom, x: round(clamp((box.x + box.w / 2) / CANVAS.width, half, 1 - half), 5), y: round(clamp((box.y + box.h / 2) / CANVAS.height, half, 1 - half), 5), raw: round(raw, 3)};
 }
@@ -292,10 +308,12 @@ export function frameEditPlan(plan, {clips, takes, zooms, shots = [], assets = {
     const words = clip?.words ?? [];
     const word = words[cue.atWord];
     if (!clip || !info) {errors.push(`${label}: la toma no existe`); continue;}
-    if (info.kind === 'camera') {errors.push(`${label}: en una toma a camara no hay pantalla que ampliar; usar un plano con un recurso (planos.json)`); continue;}
+    const face = info.kind === 'camera';
     if (!Number.isInteger(cue.atWord) || !Number.isFinite(word?.start)) {errors.push(`${label}: atWord no es una palabra de la transcripcion`); continue;}
     if (!cue.reason || String(cue.reason).trim().length < 8) errors.push(`${label}: falta reason (que se ve y por que importa)`);
-    const box = cue.box;
+    // On a camera take the zoom goes to the face: without a box, the tracked face.
+    const box = cue.box ?? (face ? faceZoomBox(clip, profile) : null);
+    if (face && !box) {errors.push(`${label}: la toma no tiene cara detectada; indicar box {x,y,w,h}`); continue;}
     if (!box || !['x', 'y', 'w', 'h'].every((k) => Number.isFinite(box[k])) || box.w < 16 || box.h < 16 || box.x < 0 || box.y < 0 || box.x + box.w > clip.width + 1 || box.y + box.h > clip.height + 1) {
       errors.push(`${label}: box {x,y,w,h} debe estar dentro de la toma (${clip.width}x${clip.height} px)`); continue;
     }
@@ -315,15 +333,16 @@ export function frameEditPlan(plan, {clips, takes, zooms, shots = [], assets = {
       continue;
     }
     holdEnd = round(holdEnd);
-    const card = cardRect(profile, clip);
-    const target = zoomFor(toCanvas(box, card), profile);
+    const card = face ? coverRect(clip) : cardRect(profile, clip);
+    const maxZoom = face ? profile.camera.zoom.maxZoom : z.maxZoom;
+    const target = zoomFor(toCanvas(box, card), profile, maxZoom);
     if (target.raw < z.minZoom) {errors.push(`${label}: la caja es casi toda la pantalla (zoom ${target.raw}); un zoom asi no destaca nada`); continue;}
     if (target.zoom * card.k > z.maxSourceUpscale) warnings.push(`${label}: amplia los pixeles de la grabacion ${round(target.zoom * card.k, 2)}x; revisar nitidez o usar una caja mayor`);
-    if (target.raw > z.maxZoom) warnings.push(`${label}: la caja pediria ${target.raw}x; se limita a ${z.maxZoom}x (zoom.maxZoom)`);
+    if (!face && target.raw > maxZoom) warnings.push(`${label}: la caja pediria ${target.raw}x; se limita a ${maxZoom}x (zoom.maxZoom)`);
     const outEnd = round(holdEnd + z.outSeconds);
     const clash = inserts.find((d) => at < d.until && outEnd > d.at);
     if (clash) {errors.push(`${label}: coincide con el recurso ${clash.names?.join(' + ') ?? clash.resources} (${clash.at}-${clash.until} s)`); continue;}
-    resolved.push({...cue, untilWord: until, at, inEnd: round(at + z.inSeconds), holdEnd, outEnd, target, card, webcam: info.webcam, kind: info.kind});
+    resolved.push({...cue, box, untilWord: until, at, inEnd: round(at + z.inSeconds), holdEnd, outEnd, target, card, webcam: info.webcam, kind: info.kind});
   }
   resolved.sort((a, b) => a.at - b.at);
   for (let i = 1; i < resolved.length; i++) {
@@ -407,7 +426,8 @@ export function compileFramedPlan(plan, {clips, takes, profile, wallpaper, kit =
         layers.push(rectLayer({id: `face-${i + 1}-${k + 1}`, type: 'video', file: clip.file, from: f0, duration: f1 - f0, sourceIn: round(seg.in + a - seg.at, 4), volume: 1,
           width: clip.width, height: clip.height, rect: layout === 'corner' ? camBubble : full, fit: 'cover', ...(layout === 'corner' ? {crop: faceCrop(clip, cam)} : {}),
           frame: layout === 'corner' ? {radius: cam.bubble.radius, shadow: cam.bubble.shadow, border: cam.bubble.border, borderColor: cam.bubble.borderColor} : undefined,
-          enter, name: seg.sourceName, trackIndex: layout === 'corner' ? 5 : 1}));
+          // Full screen, the face rides the stage camera so the face zooms move it.
+          enter, stage: layout === 'full', name: seg.sourceName, trackIndex: layout === 'corner' ? 5 : 1}));
         previous = shot?.layout === 'cover' ? 'cover' : layout;
       });
       continue;

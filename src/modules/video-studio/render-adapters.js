@@ -11,7 +11,7 @@ export function assertRenderCapability(engine,build){
  if(engine==='ffmpeg'){
   const s=build.scenes[0];
   if(build.scenes.length!==1||!s?.screenCamera||s.cues?.length||s.label||s.transitionIn!=='cut'||build.music||build.backgroundImage||s.camera!=='static')throw Error('FFmpeg requiere una escena screen-camera sin overlays, musica ni transiciones');
-  if(build.captionStyle?.mode!=='karaoke'||build.captionStyle?.baseFontSize!==68||build.captionStyle?.primary!=='#FFFFFF'||build.captionStyle?.accent!=='#43F56C'||build.captionStyle?.uppercase!==true||build.captionStyle?.font!=='Schibsted Grotesk'||build.captionStyle?.renderer!=='styled'||build.captionStyle?.emphasis!=='color')throw Error('FFmpeg requiere el preset de subtitulos camera-green; usar Remotion para personalizar');
+  if(build.captionStyle?.mode!=='karaoke'||build.captionStyle?.baseFontSize!==68||build.captionStyle?.primary!=='#FFFFFF'||!['#43F56C','#FFD60A'].includes(build.captionStyle?.accent)||build.captionStyle?.uppercase!==true||build.captionStyle?.font!=='Schibsted Grotesk'||build.captionStyle?.renderer!=='styled'||build.captionStyle?.emphasis!=='color')throw Error('FFmpeg requiere el karaoke de camara (amarillo o verde); usar Remotion para personalizar');
   if(build.clipVolume!==1||build.soundMix!==1)throw Error('FFmpeg requiere mezcla camera-green a volumen 1');
  }
  return adapter;

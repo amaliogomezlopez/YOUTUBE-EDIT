@@ -11,5 +11,12 @@
   "captions": "planner.js",
   "layout": "../shorts-studio/geometry.js",
   "rule": "SH-R-034",
-  "soundPreference": "Archivos copiados a SONIDOS-REELS; sin puntuaciones."
+  "soundPreference": "Archivos copiados a SONIDOS-REELS; sin puntuaciones.",
+  "captionColorChange": {
+    "changedAt": "2026-10-15",
+    "from": "#43F56C",
+    "to": "#FFD60A",
+    "approval": "Ya todos los reels que hagamos que aparezcan con este formato (amarillo), tanto los de video largo como los que salgo yo hablando a camara",
+    "reference": "shorts-suscripcion-x-v3"
+  }
 }

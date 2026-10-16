@@ -64,7 +64,7 @@ export function compileScreenCamera({plan,manifest,transcript,regions}){
  // Caption engine already used by Shorts. Preserve source word indices above;
  // compound joining only changes caption display, never camera anchors.
  const captionWords=compactCaptionCompounds(words.slice(fromWord,toWord+1).map((w,i)=>({...w,id:'word-'+(fromWord+i),start:w.start-sourceIn,end:w.end-sourceIn})));
- const caption=buildSubtitleDocument([{id:'camera',start:0,end:duration,text:captionWords.map(w=>w.text).join(' '),words:captionWords}],{mode:'karaoke',preset:'talking-head-green',baseFontSize:68,anchorY:CAMERA_LAYOUT.captionY,maxWords:3,emphasis:'off'});
+ const caption=buildSubtitleDocument([{id:'camera',start:0,end:duration,text:captionWords.map(w=>w.text).join(' '),words:captionWords}],{mode:'karaoke',preset:'talking-head-yellow',baseFontSize:68,anchorY:CAMERA_LAYOUT.captionY,maxWords:3,emphasis:'off'});
  if(caption.plan.pages.some(p=>p.lines.some(l=>l.y+l.fontSize*1.3>CAMERA_LAYOUT.safeBottom||l.y<CAMERA_LAYOUT.screen.y+CAMERA_LAYOUT.screen.h+12)))throw Error('Subtitulos fuera de la zona segura');
  for(let frame=0;frame<Math.ceil(duration*60);frame++)if(!inside(cameraCrop(screen,cameraAt(track,frame/60)),screen))throw Error('Camara fuera de pantalla');
  return {version:1,workflow:'shorts-screen-camera',renderer:'ffmpeg',profile:plan.profile,sourceIn,sourceOut,duration,layout:CAMERA_LAYOUT,screen,webcam,track,

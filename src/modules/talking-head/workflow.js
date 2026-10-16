@@ -228,7 +228,7 @@ export async function renderCompiledReel({slug,log=()=>{}}) {
   const contact=previewPathFor(delivery,'contact-sheet.jpg');
   await run('ffmpeg',['-n','-i',output,'-vf','fps=1/'+(build.durationSeconds/8)+',scale=270:480,tile=4x2','-frames:v','1',contact]);
   const report={output,rawRender:input,technical:qa,visualReview:'pending',audioReview:'pending',contactSheet:contact,
-    review:['Cara centrada y ojos/boca visibles','Ver cada cambio de imagen, incluido el ultimo','Palabra verde alineada con voz; sin nombres mal transcritos','Sin cortes de silabas, repeticion de tomas o silencios molestos','Fuentes pertinentes, reconocibles y legibles','Sonidos discretos y variados, sin solapar ni tapar voz'],project:c.project};
+    review:['Cara centrada y ojos/boca visibles','Ver cada cambio de imagen, incluido el ultimo','Palabra amarilla alineada con voz; sin nombres mal transcritos','Sin cortes de silabas, repeticion de tomas o silencios molestos','Fuentes pertinentes, reconocibles y legibles','Sonidos discretos y variados, sin solapar ni tapar voz'],project:c.project};
   await writeJson(path.join(delivery.directory,'review.json'),report);
   completeRun(delivery,{outputs:[output,contact,path.join(delivery.directory,'review.json')],metadata:{compositionId:compositionIdForSlug(slug),technicalPassed:qa.passed}});
   await writeJson(path.join(c.work,'latest-delivery.json'),report);

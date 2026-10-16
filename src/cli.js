@@ -27,7 +27,7 @@ Options:
   --keep-pauses   Conserva las pausas del corte original.
   --quality       draft, standard, or high. Default: high.
   --subtitle-mode karaoke, progressive, words, or lines. Default: karaoke.
-  --subtitle-preset talking-head-green, karaoke-highlight, progressive-reference, progressive-punchy, progressive-editorial, or progressive-clean.
+  --subtitle-preset talking-head-yellow (default), talking-head-green, karaoke-highlight, progressive-reference, progressive-punchy, progressive-editorial, or progressive-clean.
   --subtitle-font  Local font family name. Default: Arial Black.
   --subtitle-position upper-middle, center, lower-middle, or lower.
   --subtitle-color Main text color as #RRGGBB.
@@ -85,7 +85,7 @@ async function main() {
       renderPerformance: {encoder: args.encoder ?? 'auto', concurrency: Number(args['render-concurrency'] ?? 1)},
       subtitleMode: args['subtitle-mode'] ?? 'karaoke',
       subtitleStyle: {
-        preset: args['subtitle-preset'] ?? 'karaoke-highlight',
+        preset: args['subtitle-preset'] ?? 'talking-head-yellow',
         font: args['subtitle-font'],
         position: args['subtitle-position'],
         primary: args['subtitle-color'],

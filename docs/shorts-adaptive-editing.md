@@ -20,9 +20,10 @@ Opciones adicionales: `--keep-pauses`, `--no-effects` y
 se importa al proyecto y baja bajo la voz. No se descarga música automáticamente.
 
 Para los nuevos cortes creados con la skill create-ranked-shorts, el estilo preferido
-es `--subtitle-mode karaoke --subtitle-preset talking-head-green`: bloques de hasta
-tres unidades, Schibsted Grotesk blanca, contorno oscuro y palabra activa verde
-#43F56C. Reutiliza el renderer de subtítulos de los Reels a cámara y adapta su
+(desde 2026-10-15, y valor por defecto del CLI) es `--subtitle-mode karaoke
+--subtitle-preset talking-head-yellow`: bloques de hasta tres unidades, Schibsted
+Grotesk blanca, contorno oscuro y palabra activa amarilla #FFD60A. El verde
+`talking-head-green` sigue disponible. Reutiliza el renderer de subtítulos de los Reels a cámara y adapta su
 posición al layout. Requiere tiempos por palabra para una sincronía precisa;
 los tiempos aproximados deben revisarse. El preset es seleccionable y no cambia
 los ajustes guardados de jobs anteriores.

@@ -37,6 +37,12 @@ test('trims snap to audio onset and drop a false start the transcriber merged', 
   assert.deepEqual(trimTake(words('hola que tal', 1), {headPad: 0.04, tailPad: 0.08, maxPause: 2, silences: [{start: 0, end: 1.1}]}).pieces, [{in: 1.06, out: 2.18}]);
 });
 
+test('words the transcriber hallucinated inside the closing silence do not extend the take', () => {
+  const w = [...words('esto es un desastre', 1), {text: 'Gracias', start: 5.36, end: 5.4}, {text: 'video', start: 5.42, end: 5.46}];
+  const trim = trimTake(w, {headPad: 0.04, tailPad: 0.08, maxPause: 2, silences: [{start: 0, end: 1}, {start: 2.5, end: 5.5}]});
+  assert.equal(trim.pieces.at(-1).out, 2.58, 'la toma acaba con la ultima palabra dicha');
+});
+
 test('planEdit takes every amount from the profile and never invents missing material', () => {
   const clips = [clip('01', '1.mkv', 'esto es el gancho, del video y sigue, un poco mas'), clip('02', '2.mkv', 'segunda toma con mas contenido para explicar la idea completa hoy')];
   const kit = {sounds: {whip: [{file: 'C:/sfx/whip.wav', duration: 0.5}], shutter: [{file: 'C:/sfx/shutter.wav', duration: 0.4}]},

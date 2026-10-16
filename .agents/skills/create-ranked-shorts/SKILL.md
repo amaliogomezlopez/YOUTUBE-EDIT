@@ -1,6 +1,6 @@
 ---
 name: create-ranked-shorts
-description: "Convierte un vídeo largo MP4 en Shorts verticales 9:16 con Shortsmith, selecciona y refina los mejores cortes, añade subtítulos, comprueba los renders y los ordena por potencial viral. Usar cuando el usuario pida extraer, generar, reutilizar o rankear Shorts, Reels o vídeos cortos a partir de un vídeo largo."
+description: "Convierte un vídeo largo MP4 en Shorts verticales 9:16 con Shortsmith, selecciona y refina los mejores cortes, añade subtítulos karaoke amarillos y el estilo viral aprobado (b-roll oficial que cuadra con cada frase, logos, riser, whooshes y sonido de caja), comprueba los renders y los ordena por potencial viral. Usar cuando el usuario pida extraer, generar, reutilizar o rankear Shorts, Reels o vídeos cortos a partir de un vídeo largo."
 ---
 
 # Crear Shorts rankeados
@@ -22,7 +22,7 @@ Esta skill extrae cortes de un vídeo largo. Para montar varios clips desde cero
 Ejemplo para **dos** cortes; ajustar `--top` a la cantidad acordada:
 
 ```powershell
-npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 2 --min 18 --max 60 --quality high --render-stage prepare --encoder auto --editing-profile dinamico --subtitle-mode karaoke --subtitle-preset talking-head-green --no-llm
+npm run process -- --video "<video.mp4>" --transcript "<transcript.json>" --top 2 --min 18 --max 60 --quality high --render-stage prepare --encoder auto --editing-profile dinamico --subtitle-mode karaoke --subtitle-preset talking-head-yellow --no-llm
 ```
 
 El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` según la preferencia del usuario. Estos son valores iniciales: al revisar un job, conservar su perfil y subtítulos aprobados salvo cambio solicitado. Mantener `--no-llm` salvo que el encargo o la autorización previa incluya usar el LLM configurado.
@@ -46,9 +46,45 @@ Reutilizar cortes y análisis cacheados: no borrar proyectos ni regenerar jobs d
 
 ## Subtítulos predeterminados
 
-En nuevos cortes, usar karaoke con el preset talking-head-green, basado en los subtítulos aprobados de create-talking-head-reels: hasta tres unidades por bloque, Schibsted Grotesk en mayúsculas, blanco con contorno oscuro de 5 px y solo la palabra pronunciada en verde #43F56C, sin saltos ni aumento de tamaño. Los nombres compuestos siguen juntos. La posición se adapta al layout del short; conservar la clasificación por segmento del vídeo largo. Otros estilos siguen disponibles por petición del usuario.
+En nuevos cortes, usar karaoke con el preset talking-head-yellow (desde 2026-10-15 y valor por defecto del CLI): hasta tres unidades por bloque, Schibsted Grotesk en mayúsculas, blanco con contorno oscuro de 5 px y solo la palabra pronunciada en amarillo #FFD60A, sin saltos ni aumento de tamaño. Los nombres compuestos siguen juntos. La posición se adapta al layout del short; conservar la clasificación por segmento del vídeo largo. El verde talking-head-green y otros estilos siguen disponibles por petición del usuario.
 
-Para cambiar un job existente, pasar subtitleMode: "karaoke" y subtitlePreset: "talking-head-green" al helper de refinamiento. Omitir overrides anteriores que contradigan este preset y revisar el nuevo MP4. Comprobar tiempos reales por palabra: captionTiming: "approximate" indica karaoke estimado; obtener alineación por palabra antes de dar la sincronía por verificada.
+Para cambiar un job existente, pasar subtitleMode: "karaoke" y subtitlePreset: "talking-head-yellow" al helper de refinamiento. Omitir overrides anteriores que contradigan este preset y revisar el nuevo MP4. Comprobar tiempos reales por palabra: captionTiming: "approximate" indica karaoke estimado; obtener alineación por palabra antes de dar la sincronía por verificada.
+
+## Estilo viral aprobado (2026-10-15)
+
+Todo corte nuevo sale con el estilo que el usuario aprobó en el short
+`suscripcion-x-v3`. El método completo está en la sección «Estilo aprobado» de
+`.claude/skills/shorts-desde-cero/SKILL.md`; aquí solo lo que cambia al venir de un
+vídeo largo.
+
+- **Automático, sin trabajo del agente:** karaoke amarillo (por defecto del CLI) y
+  la paleta de sonidos `viral-reels` de SONIDOS-REELS, que aplica el build de
+  shorts-studio a todo corte con `--render-engine remotion` o `--editing-profile`.
+  Si el build avisa de que la paleta no está resuelta, ejecutar `npm run shorts:sonidos`.
+  El motor ffmpeg (sin perfil) no usa ni paleta ni b-roll: para este estilo, Remotion.
+- **Pasada de b-roll, por corte y al final.** Cada corte genera un proyecto de
+  shorts-studio editable, `remotion-animations/projects/shorts-short-<job>-<clipId>/`
+  (clip `01`, transcripción ya rebasada). Con rango, perfil y palabras ya
+  aprobados, porque `refine-clips` reconstruye el plan y borraría esta pasada:
+  1. Leer la transcripción del corte e identificar qué se nombra (productos,
+     precios, personas, empresas).
+  2. Buscar recursos oficiales y pedir permiso para descargar (fichero, fuente y
+     tamaño). Resolverlos e importarlos al proyecto del corte en un paso:
+     `npm run shorts:assets -- --requests <asset-requests.json> --out <carpeta ASSETS> --slug short-<job>-<clipId>`
+     (cada recurso lleva `reason`: la frase que lo nombra). No reingerir el
+     proyecto: su clip y su transcripción ya están preparados.
+  3. Editar `short-plan.json`: en los segmentos con la cara a pantalla completa
+     (`full`), partir escenas por frases y pasarlas a `talking-head` con `broll`
+     que cuadre con cada frase; capturas densas a `stage`; logos como `broll` a
+     panel completo; riser con `soundAlign: "end"` solo en el arranque; `money`
+     en cifras de dinero. Los segmentos de pantalla con webcam (`pip`) conservan
+     su layout: allí el recurso es la propia pantalla.
+  4. `npm run shorts:build` (SH-R-063: el escenario no queda vacío) y
+     `npm run shorts:render`; revisar la hoja de contactos con un fotograma por cue.
+     El MP4 de esta pasada es el entregable; el `clip.files.video` del job conserva
+     la versión anterior, así que indicarlo en la entrega.
+- **Corregir nombres mal transcritos** en la transcripción del job antes de
+  preparar (o en `transcripts/01.json` del proyecto, sin mover índices).
 
 ## Refinamiento del job
 

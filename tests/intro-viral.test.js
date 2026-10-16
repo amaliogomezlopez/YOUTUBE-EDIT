@@ -44,8 +44,10 @@ function fixture() {
   return {manifest, transcripts, beats};
 }
 
+// Escaleta con texto en pantalla (opcion explicita: por defecto no lleva).
 const baseEscaleta = () => ({
   accentColor: '#D97757',
+  text: true,
   titular: {text: 'Producto X', clip: '02', atWord: 2},
   scenes: [
     {id: 'a', clip: '01', from: 0, to: 14, intent: 'gancho', hitWord: 3},
@@ -120,6 +122,19 @@ test('la validacion explica cada error de escaleta', () => {
     const {errors} = validateEscaleta(escaleta, {manifest, transcripts});
     assert.ok(errors.some((e) => expected.test(e)), `${expected}: ${errors.join(' | ')}`);
   }
+});
+
+test('por defecto la apertura no lleva texto: sin titular ni palabras clave, y sin aviso por el titular', () => {
+  const {manifest, transcripts} = fixture();
+  assert.equal(tables.text.enabled, false, 'preferencia del usuario (2026-10-13)');
+  const {text, ...escaleta} = baseEscaleta();
+  const {errors} = validateEscaleta(escaleta, {manifest, transcripts});
+  assert.ok(errors.some((e) => /`titular` es texto en pantalla/.test(e)));
+  for (const field of ['keyword', 'stat']) assert.ok(errors.some((e) => new RegExp(`\`${field}\` pone texto`).test(e)), field);
+  const mute = {...escaleta, titular: null, scenes: escaleta.scenes.map(({keyword, ...s}) => (s.intent === 'cifra' ? {...s, intent: 'frase', stat: undefined} : s))};
+  const result = validateEscaleta(mute, {manifest, transcripts});
+  assert.deepEqual(result.errors, []);
+  assert.ok(!result.warnings.some((w) => /sin `titular`/.test(w)));
 });
 
 test('una palabra clave que transcribe la locucion da aviso', () => {

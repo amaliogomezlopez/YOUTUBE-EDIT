@@ -16,6 +16,55 @@ import {DEFAULT_FOCUS, trackFace} from './face-tracking.js';
 import {analyzeMusicTrack} from './music.js';
 
 /**
+ * Copia (o remuxea, si es video) los ficheros `names` de `assetsDir` a
+ * `<media>/assets` y devuelve sus entradas de manifest. El id sale del nombre.
+ */
+export async function importAssetFiles({assetsDir, names, media, paths, projectSlug, signal = null}) {
+  await ensureDir(path.join(media, 'assets'));
+  const assets = [];
+  for (const name of names) {
+    const rawExtension = path.extname(name);
+    const extension = rawExtension.toLowerCase();
+    // `path.basename(name, ext)` solo recorta si la extension coincide en
+    // mayusculas/minusculas: con "costs.PNG" hay que pasarle la original.
+    const id = slugify(path.basename(name, rawExtension));
+    const isVideo = VIDEO_EXTENSIONS.has(extension);
+    const targetName = isVideo ? `${id}.mp4` : `${id}${extension === '.jpeg' ? '.jpg' : extension}`;
+    const targetFile = path.join(media, 'assets', targetName);
+    if (isVideo) {
+      // Mismo motivo que con los clips: Chrome no decodifica Matroska. Un asset de
+      // video no lleva locucion, asi que no se normaliza su audio.
+      await toMp4(path.join(assetsDir, name), targetFile, {signal, normalizeAudio: false});
+    } else {
+      await copyFile(path.join(assetsDir, name), targetFile);
+    }
+    const size = await stat(targetFile);
+    const probe = isVideo ? await ffprobe(targetFile, {signal}) : null;
+    assets.push({
+      id,
+      kind: isVideo ? 'video' : 'image',
+      sourceName: name,
+      file: paths.staticPath(projectSlug, 'assets', targetName),
+      bytes: size.size,
+      ...(probe ? {durationSeconds: round(probe.duration, 3), width: probe.width, height: probe.height} : {})
+    });
+  }
+  return assets;
+}
+
+/** Ficheros de imagen o video de una carpeta de assets, en orden natural. */
+export async function listAssetFiles(dir) {
+  const isMedia = (name) => {
+    const extension = path.extname(name).toLowerCase();
+    return IMAGE_EXTENSIONS.has(extension) || VIDEO_EXTENSIONS.has(extension);
+  };
+  return (await readdir(dir, {withFileTypes: true}))
+    .filter((entry) => entry.isFile() && isMedia(entry.name))
+    .map((entry) => entry.name)
+    .sort(naturalCompare);
+}
+
+/**
  * Ingesta de un proyecto de montaje "desde cero": una carpeta con clips grabados a
  * proposito, mas imagenes, videos de apoyo y (opcionalmente) una pista de musica.
  *
@@ -127,34 +176,7 @@ export async function ingestMediaProject({
     });
   }
 
-  const assets = [];
-  for (const name of assetFiles) {
-    const rawExtension = path.extname(name);
-    const extension = rawExtension.toLowerCase();
-    // `path.basename(name, ext)` solo recorta si la extension coincide en
-    // mayusculas/minusculas: con "costs.PNG" hay que pasarle la original.
-    const id = slugify(path.basename(name, rawExtension));
-    const isVideo = VIDEO_EXTENSIONS.has(extension);
-    const targetName = isVideo ? `${id}.mp4` : `${id}${extension === '.jpeg' ? '.jpg' : extension}`;
-    const targetFile = path.join(media, 'assets', targetName);
-    if (isVideo) {
-      // Mismo motivo que con los clips: Chrome no decodifica Matroska. Un asset de
-      // video no lleva locucion, asi que no se normaliza su audio.
-      await toMp4(path.join(resolvedAssetsDir, name), targetFile, {signal, normalizeAudio: false});
-    } else {
-      await copyFile(path.join(resolvedAssetsDir, name), targetFile);
-    }
-    const size = await stat(targetFile);
-    const probe = isVideo ? await ffprobe(targetFile, {signal}) : null;
-    assets.push({
-      id,
-      kind: isVideo ? 'video' : 'image',
-      sourceName: name,
-      file: paths.staticPath(projectSlug, 'assets', targetName),
-      bytes: size.size,
-      ...(probe ? {durationSeconds: round(probe.duration, 3), width: probe.width, height: probe.height} : {})
-    });
-  }
+  const assets = await importAssetFiles({assetsDir: resolvedAssetsDir, names: assetFiles, media, paths, projectSlug, signal});
 
   const music = musicFile
     ? await ingestMusic({musicFile, media, project, paths, projectSlug, reuse: reuseTranscripts, signal, log})

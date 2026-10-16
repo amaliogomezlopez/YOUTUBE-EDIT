@@ -125,7 +125,9 @@ export function escaletaTemplate({slug, manifest, transcripts, tables = loadDeci
     accentColor: '#FFD60A',
     textStyle: 'anton-impacto',
     titular: null,
-    note: 'Rellena intent (tabla de decision-tables.json), keyword, asset, broll, stat y hitWord. `dice` es solo referencia.',
+    note: textEnabled({}, tables)
+      ? 'Rellena intent (tabla de decision-tables.json), keyword, asset, broll, stat y hitWord. `dice` es solo referencia.'
+      : 'Rellena intent (gancho, frase, enfasis, noticia, mostrar, remate), asset, broll, face y hitWord. Sin texto en pantalla. `dice` es solo referencia.',
     omit: [],
     scenes
   };
@@ -134,6 +136,14 @@ export function escaletaTemplate({slug, manifest, transcripts, tables = loadDeci
 // ---------------------------------------------------------------------------
 // Validacion
 // ---------------------------------------------------------------------------
+
+/** Campos de escena que dibujan texto en pantalla. */
+const TEXT_FIELDS = ['keyword', 'stat', 'pair', 'agenda', 'agendaPoint'];
+
+/** La escaleta puede pedir texto con `"text": true`; si no, manda la tabla. */
+export function textEnabled(escaleta, tables) {
+  return escaleta?.text ?? tables.text?.enabled ?? true;
+}
 
 /**
  * Valida la escaleta contra las tablas, la transcripcion y los recursos ingeridos.
@@ -154,6 +164,18 @@ export function validateEscaleta(escaleta, {manifest, transcripts, tables = load
   }
   if (escaleta.textStyle !== undefined && escaleta.textStyle !== null && !textStyleIds().includes(escaleta.textStyle)) {
     err('escaleta', `textStyle "${escaleta.textStyle}" no existe (${textStyleIds().join(', ')})`);
+  }
+  // Sin texto en pantalla salvo que la escaleta lo pida (preferencia del usuario, 2026-10-13).
+  const withText = textEnabled(escaleta, tables);
+  if (!withText) {
+    if (escaleta.titular) err('escaleta', '`titular` es texto en pantalla y esta desactivado (decision-tables `text.enabled`); quitalo o pon `"text": true` si el usuario pide texto');
+    for (const [index, scene] of escaleta.scenes.entries()) {
+      for (const field of TEXT_FIELDS) {
+        if (scene[field] !== undefined && scene[field] !== null) {
+          err(`escena ${index + 1} (${scene.id ?? 'sin id'})`, `\`${field}\` pone texto en pantalla y esta desactivado; usa mostrar, enfasis o frase sin texto, o \`"text": true\` si el usuario pide texto`);
+        }
+      }
+    }
   }
   const clips = new Map(manifest.clips.map((clip) => [clip.id, clip]));
   const assets = new Map((manifest.assets ?? []).map((asset) => [asset.id, asset]));
@@ -292,7 +314,7 @@ export function validateEscaleta(escaleta, {manifest, transcripts, tables = load
     if (count > 1) errors.push(`toma ${clip}: ${count} escenas \`remate\`; como mucho una por toma`);
   }
   if (!escaleta.titular) {
-    warnings.push('escaleta: sin `titular`. Va una vez, cuando se dice el nombre del producto o del tema: {text, clip, atWord}');
+    if (withText) warnings.push('escaleta: sin `titular`. Va una vez, cuando se dice el nombre del producto o del tema: {text, clip, atWord}');
   } else {
     const t = escaleta.titular;
     const tw = transcripts[t.clip]?.words ?? [];

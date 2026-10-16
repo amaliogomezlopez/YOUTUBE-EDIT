@@ -70,6 +70,11 @@
         "maxFaceOnlySeconds": 20,
         "maxCoverShare": 0.45,
         "soundGain": 0.45
+      },
+      "zoom": {
+        "faceBoxScale": 1.4,
+        "maxZoom": 1.5,
+        "_note": "Zoom a la cara en tomas a camara (peticion del autor 2026-10-12: zooms tambien a su cara). Caja por defecto: la cara detectada x1.4 de alto en 16:9; tope 1.5x para no ampliar pixeles de 1080p. Curva, ritmo y sonido son los del zoom de pantalla. Valores de partida, no aprobados."
       }
     }
   }

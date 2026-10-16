@@ -26,6 +26,10 @@ const passthrough = argv.filter((token, index) => (
     ? index !== slugIndex && index !== slugIndex + 1
     : token !== slug
 ));
+// Mas pestañas de Chrome en paralelo si no se pide otra cosa (las versiones no pasan opciones).
+if (process.env.REMOTION_CONCURRENCY && !passthrough.some((token) => token.startsWith('--concurrency'))) {
+  passthrough.push(`--concurrency=${process.env.REMOTION_CONCURRENCY}`);
+}
 
 if (!slug) {
   console.error('Uso: npm run intro:render -- --slug <slug> [...opciones de Remotion]');

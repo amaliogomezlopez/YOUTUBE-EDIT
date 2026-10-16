@@ -25,6 +25,7 @@ import {
   DEFAULT_CUE_SOUND,
   DEFAULT_TRANSITION_SOUND,
   createSoundRotation,
+  resolvePlanSoundPalette,
   resolveSoundCue
 } from './sound.js';
 
@@ -36,7 +37,7 @@ export {DEFAULT_SILENCE_PADDING_SECONDS, resolveTrim} from '../video-studio/time
 // (Schibsted Grotesk blanca, contorno oscuro, palabra activa en verde). Un plan
 // que declara `captionStyle.renderer` conserva el suyo; `"renderer": "theme"`
 // vuelve al subtitulo del tema.
-export const DEFAULT_CAPTION_PRESET = 'talking-head-green';
+export const DEFAULT_CAPTION_PRESET = 'talking-head-yellow';
 
 export const CUE_TYPES = new Set(['logo', 'screenshot', 'stat', 'chip', 'label', 'brand', 'broll']);
 export const LAYOUTS = new Set(['full', 'split', 'stage', 'pip', 'fit', 'talking-head']);
@@ -97,8 +98,9 @@ export async function buildShort({slug, log = () => {}}) {
     ...(plan.captions ?? {})
   } : (plan.captions ?? {});
   if (!['karaoke','progressive','words','lines'].includes(captionMode)) throw new Error('Modo de subtitulos invalido');
+  const soundPalette = resolvePlanSoundPalette(plan.sound, {publicRoot: path.join(REMOTION_ROOT, 'public'), warnings});
   const addSound = (familyId, atSeconds, intensity = 1) => {
-    const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId), {palette:plan.sound?.palette,metadata:plan.sound?.metadata});
+    const cue = resolveSoundCue(familyId, atSeconds, intensity, rotate(familyId), {palette:soundPalette.palette,metadata:soundPalette.metadata});
     soundCues.push(cue);
     return cue;
   };
@@ -236,6 +238,13 @@ export async function buildShort({slug, log = () => {}}) {
         ? addSound(soundFamily, cursor / fps + atSeconds, Number(cue.soundIntensity ?? 1))
         : null;
       if (sound) sound.cueId=cue.id ?? `${scene.id}-cue-${cueIndex + 1}`;
+      // `soundAlign: "end"`: el sonido (un riser) termina justo cuando entra el visual.
+      if (cue.soundAlign !== undefined && !['start', 'end'].includes(cue.soundAlign)) throw new Error(`${cueWhere}: soundAlign "${cue.soundAlign}" no valido (start, end)`);
+      if (sound && cue.soundAlign === 'end') {
+        const cueStart = cursor / fps + atSeconds;
+        sound.startSeconds = Math.max(0, cueStart - sound.durationSeconds);
+        sound.sync = {mode: 'end-at-cue', targetFrame: Math.round(cueStart * fps)};
+      }
       return {
         id: cue.id ?? `${scene.id}-cue-${cueIndex + 1}`,
         type: cue.type,
@@ -353,7 +362,8 @@ export async function buildShort({slug, log = () => {}}) {
   const build = {
     slug,
     workflow: plan.workflow ?? null,
-    soundPalette: plan.sound?.palette ?? null,
+    soundPalette: soundPalette.palette ?? null,
+    soundPaletteId: soundPalette.paletteId,
     soundUses: plan.sound?.uses ?? null,
     soundSelectionStatus: plan.sound?.selectionStatus ?? null,
     generatedAt: new Date().toISOString(),

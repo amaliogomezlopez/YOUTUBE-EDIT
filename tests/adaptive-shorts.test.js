@@ -130,12 +130,15 @@ test('silencios al final quedan acotados a la duracion',()=>{
 
 
 test('los cortes y subtitulos mantienen juntos los nombres de modelo y sus versiones',()=>{
-  const words=[['Hoy',0,.4],['seguimos',4,4.2],['GPT',7.5,7.7],['-6',8.45,8.6],['mejora.',8.7,9.1],['Fable',13,13.2],['5',13.3,13.5],['.1',13.5,13.6],['termina.',13.7,14.1]]
+  const words=[['Hoy',0,.4],['seguimos',4,4.2],['GPT',7.5,7.7],['-6',8.45,8.6],['mejora.',8.7,9.1],['Fable',13,13.2],['5',13.3,13.5],['.1',13.5,13.6],['termina.',13.7,14.1],['el',15,15.1],['V2',15.2,15.4],['.6',16.2,16.3],['Pro',16.4,16.7],['sigue',17.5,17.8],['hablando',18.5,18.9],['mucho.',19.5,20]]
     .map(([text,start,end],index)=>({index,text,start,end}));
-  const plan=planAdaptiveShort({words,duration:18,source:media,analysis:{silences:[],shots:[{start:0,mode:'fit'},{start:4,mode:'fit'},{start:8.45,mode:'fit'},{start:13.3,mode:'fit'}]}});
+  const plan=planAdaptiveShort({words,duration:22,source:media,analysis:{silences:[],shots:[{start:0,mode:'fit'},{start:4,mode:'fit'},{start:8.45,mode:'fit'},{start:13.3,mode:'fit'},{start:16.2,mode:'fit'}]}});
   const sceneAt=(time)=>plan.scenes.find(scene=>scene.trim.start<=time && time<scene.trim.end)?.id;
   assert.equal(sceneAt(7.5),sceneAt(8.45));
   assert.equal(sceneAt(13),sceneAt(13.5));
+  assert.equal(sceneAt(15.2),sceneAt(16.2));
   const compacted=compactCaptionCompounds([{text:'GPT',start:0,end:.2},{text:'-5',start:.2,end:.4},{text:'.6',start:.4,end:.5}]);
   assert.deepEqual(compacted.map(word=>word.text),['GPT-5.6']);
+  const prefixed=compactCaptionCompounds([{text:'el',start:0,end:.1},{text:'V2',start:.1,end:.3},{text:'.6',start:.3,end:.4},{text:'Pro',start:.4,end:.6}]);
+  assert.deepEqual(prefixed.map(word=>word.text),['el','V2.6','Pro']);
 });

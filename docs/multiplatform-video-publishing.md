@@ -77,8 +77,10 @@ La YouTube Data API no cobra por publicar. Desde junio de 2026 el bucket predete
 Shortsmith renueva el access token en cada subida usando `YOUTUBE_REFRESH_TOKEN`. Un error `invalid_grant` indica que el refresh token fue revocado, caducó o ya no corresponde al cliente OAuth:
 
 ```text
-http://localhost:3000/api/oauth/youtube/start
+http://127.0.0.1:<PORT>/api/oauth/youtube/start
 ```
+
+Con `npm run server` en marcha. `<PORT>` es el de `.env` (3000 por defecto) y el host debe coincidir con el de `YOUTUBE_REDIRECT_URI`; si 3000 responde con un error de `remotion-webpack-bundle`, ese puerto lo ocupa Remotion, no Shortsmith.
 
 Después de reautorizar, ejecutar `npm run publishing:doctor`.
 
@@ -443,3 +445,26 @@ El panel local /tiktok-sandbox.html permite configurar una sesión de Sandbox ai
 TIKTOK_SANDBOX_REDIRECT_URI permite un retorno exclusivo de pruebas. El retorno público nuevo /oauth/tiktok/callback/ en el sitio chatgpt.site transfiere los parámetros OAuth al servidor local 127.0.0.1:3100, con state de un solo uso, no-store y no-referrer. El retorno de producción a sibelion permanece pendiente de reparación.
 
 Prueba real: OAuth y creator info correctos; Direct Post privado rechazado por las normas de integración; inbox terminó en SEND_TO_USER_INBOX, con publicación manual pendiente en TikTok. No hay publicación pública ni nueva aprobación. El informe actualizado, las limitaciones del panel y la evidencia se describen en docs/tiktok-review-2026-09-06.md. El panel no sustituye la UI de publicación principal ni acredita todos los requisitos de Direct Post.
+
+## Publicacion escalonada de un job
+
+`scripts/publish-schedule.js` publica los clips de un job de video largo de uno en
+uno, en orden de ranking, reutilizando `publishJob` y la metadata de
+`clip.publishing`:
+
+```bash
+node scripts/publish-schedule.js plan --job <id> --every-hours 2 --platforms youtube,instagram --privacy public
+node scripts/publish-schedule.js run --job <id> [--task-name "Shortsmith\<nombre>"]
+node scripts/publish-schedule.js status --job <id>
+```
+
+- `plan` escribe `publish-schedule.json` en el job. `--privacy` fija el
+  `privacyStatus` de YouTube (por defecto del conector sigue siendo `private`).
+- `run` publica como mucho un clip por ejecucion y respeta la separacion minima con
+  el ultimo publicado, asi que un equipo que estuvo apagado no suelta los atrasados
+  de golpe. Se lanza cada 10 minutos desde el Programador de tareas de Windows; un
+  lock evita solapes y la clave de idempotencia `schedule:<job>:<clip>` evita
+  duplicados. Los fallos se reintentan cada 30 min (hasta 4 intentos, o durante 26 h
+  si el error es de cuota de YouTube). Con `--task-name` borra la tarea al terminar.
+- Instagram no admite programar Reels por API, por eso el calendario es local y
+  necesita el equipo encendido y la sesion iniciada.
