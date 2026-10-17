@@ -86,7 +86,8 @@
     "youtube:autoplan": "node scripts/youtube-autoplan.js",
     "youtube:escritorio": "node scripts/youtube-escritorio.js",
     "edit": "node scripts/youtube-edit.js",
-    "mcp": "node scripts/shortsmith-mcp.js"
+    "mcp": "node scripts/shortsmith-mcp.js",
+    "tomas": "node scripts/tomas-grabadas.js"
   },
   "engines": {
     "node": ">=20"

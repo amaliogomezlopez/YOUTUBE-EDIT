@@ -47,7 +47,9 @@ con cada frase (`talking-head`), logos a panel completo, escenario nunca vacio
 riser de arranque con `soundAlign: "end"` y `money` en las cifras. Recursos con
 procedencia via `npm run shorts:assets`; descargar exige permiso del usuario.
 Plantilla: `shorts-suscripcion-x-v3`. Metodo: skill `shorts-desde-cero`; para cortes
-de video largo, seccion "Estilo viral" de `create-ranked-shorts`.
+de video largo, seccion "Estilo viral" de `create-ranked-shorts`. Si el video largo se
+grabo con `CAMARA/` y `PANTALLA/` por separado, los shorts salen de la camara con
+`create-ranked-shorts/scripts/camera-cuts.mjs` (seccion "Grabacion separada").
 
 Las reglas duras de ese flujo no son consejos: son un set ejecutable en
 `src/modules/shorts-studio/rules/shorts-rules.json` que `shorts:build` corre contra
@@ -545,6 +547,17 @@ Skill: `.claude/skills/montaje-youtube/SKILL.md`. Comando unico:
   el FCPXML corregido en correcciones pendientes. No promoverlas a reglas sin el autor.
 - Medir con `youtube:autoplan evaluate` dejando el video fuera de su propio perfil.
   El criterio final son los minutos de correccion del autor, no los tests.
+
+### Grabacion separada (CAMARA/ y PANTALLA/)
+
+Si `VIDEOS_RECORDED` trae `CAMARA/` y `PANTALLA/` (tomas con fecha de OBS; solo la mezcla
+de la raiz tiene audio), antes de cualquier montaje largo `npm run tomas -- --recordings
+CARPETA --out data/youtube-src/SLUG` numera las tomas **de la mas antigua a la mas nueva**
+(salvo que el autor pida otro orden) con la imagen de la camara y el audio de la mezcla,
+midiendo el desfase de cada toma (`src/modules/video-studio/recorded-takes.js`). Se
+prefiere la cara; la pantalla entra como recurso recortado. Apertura con `intro-viral`
+sobre las primeras tomas y cuerpo con `montaje-escritorio --variant camara`.
+Directrices: `docs/grabacion-separada.md`.
 
 ## Montaje "escritorio" de un video largo
 

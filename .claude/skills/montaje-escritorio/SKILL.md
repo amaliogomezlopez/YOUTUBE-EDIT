@@ -15,6 +15,25 @@ Dos variantes, que pueden mezclarse en un mismo video (se decide por toma):
 | Pantalla + webcam incrustada | tarjeta sobre el fondo, burbuja, zooms | `zooms.json` |
 | Solo cara (habitacion) | cara a pantalla completa por defecto; planos `corner` y `cover`; zooms a la cara | `asset-requests.json`, `planos.json` y `zooms.json` (sin `box`: la cara) |
 
+## Paso 0: grabacion separada (CAMARA/ y PANTALLA/)
+
+Si la grabacion trae `CAMARA/` y `PANTALLA/` (las tomas de la raiz llevan fecha de OBS y
+son las unicas con audio), no se monta la mezcla: se preparan tomas numeradas, **de la
+mas antigua a la mas nueva** salvo que el autor diga otra cosa, con la imagen de la
+camara y el audio de la mezcla, y se monta con `--variant camara`:
+
+```powershell
+npm run tomas -- --recordings "CARPETA" --out data/youtube-src/nombre
+```
+
+- Las primeras tomas (gancho, newsletter) son la apertura con la skill `intro-viral`;
+  el cuerpo es el resto, renumerado desde 1 con enlaces duros en
+  `data/youtube-src/nombre-cuerpo/`. Al final se unen en un MP4 1080p30 a -14 LUFS.
+- Lo que el autor ensena en PANTALLA (`screen` de cada toma en `tomas.json`) entra como
+  recurso `local` recortado (la columna del post, sin barra de tareas) en un plano
+  `corner` cuando lo nombra. El autor prefiere verse: la mezcla solo si la pide.
+- Detalle: `docs/grabacion-separada.md`.
+
 ## Paso 1: start
 ```powershell
 npm run youtube:escritorio -- start --source "CARPETA_DE_TOMAS" --slug nombre --wallpaper "RUTA\FONDO.png" [--variant auto|pantalla|camara]

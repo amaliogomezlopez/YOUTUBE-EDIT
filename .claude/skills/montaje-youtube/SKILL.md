@@ -10,6 +10,20 @@ description: Monta automaticamente un video largo horizontal de YouTube a partir
 2. Leer `data/editorial-memory/corpus/ESTILO.md`. Si no existe o el autor ha editado
    videos nuevos en CapCut: `npm run editorial:corpus -- scan` y `-- profile`.
 
+## Paso 0b: grabacion separada (CAMARA/ y PANTALLA/)
+
+Si la carpeta trae `CAMARA/` y `PANTALLA/` y en la raiz las tomas con fecha de OBS (no
+`1.mkv`, `2.mkv`), primero se preparan las tomas numeradas, de la mas antigua a la mas
+nueva salvo que el autor diga otra cosa, con la imagen de la camara y el audio de la
+mezcla:
+
+```powershell
+npm run tomas -- --recordings "CARPETA" --out data/youtube-src/SLUG
+```
+
+y el montaje se hace sobre `data/youtube-src/SLUG`. Directrices (preferir la cara, la
+pantalla como recurso, apertura + cuerpo): `docs/grabacion-separada.md`.
+
 ## Paso 1: montaje
 ```powershell
 npm run edit -- --source "CARPETA_DE_TOMAS" --slug nombre-del-video [--urls notas.txt]

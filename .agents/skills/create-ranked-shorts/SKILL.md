@@ -7,7 +7,7 @@ description: "Convierte un vídeo largo MP4 en Shorts verticales 9:16 con Shorts
 
 Generar cortes verticales terminados y revisados. Reutilizar el pipeline Node existente. La publicación requiere autorización explícita; generar, corregir y verificar los archivos forma parte del encargo de montaje.
 
-Esta skill extrae cortes de un vídeo largo. Para montar varios clips desde cero, seguir `docs/shorts-desde-cero.md` y su flujo `shorts:ingest` → `shorts:build` → `shorts:render`.
+Esta skill extrae cortes de un vídeo largo. Para montar varios clips desde cero, seguir `docs/shorts-desde-cero.md` y su flujo `shorts:ingest` → `shorts:build` → `shorts:render`. Si la grabación tiene la cámara y la pantalla por separado (carpetas `CAMARA/` y `PANTALLA/`), seguir la sección «Grabación separada».
 
 ## Preparación
 
@@ -30,6 +30,60 @@ El perfil `dinamico` activa el montaje adaptativo; usar `sobrio` o `energico` se
 Leer `transcript.json`, `candidates.json` y `job.json`. Revisar los límites automáticos y escoger ideas que se entiendan sin el vídeo largo, con gancho, desarrollo y cierre. Ajustar inicio y final a frases naturales; evitar palabras cortadas, saludos y contexto prescindible. Mantener normalmente 18–60 segundos, salvo otra duración solicitada o una idea completa que justifique la excepción.
 
 Ordenar por gancho/conflicto (30 %), novedad (20 %), conclusión (20 %), comprensión autónoma (15 %), temas reconocibles (10 %) y ritmo (5 %). Evitar ángulos repetidos. El `viralScore` es una estimación editorial; no inventar métricas reales ni garantizar viralidad.
+
+## Grabación separada: cámara y pantalla (desde 2026-10-17)
+
+Si el vídeo largo viene de OBS con salidas separadas, el short sale de la **cámara**,
+no del MP4 montado ni de la mezcla:
+
+```text
+<grabaciones>/<toma>.mkv                  mezcla pantalla + webcam: la única con audio
+<grabaciones>/CAMARA/CAMARA <toma>.mkv    la cara a pantalla completa, muda
+<grabaciones>/PANTALLA/PANTALLA <toma>.mkv la pantalla limpia, muda
+```
+
+En ese caso no se usa `npm run process` (recorta el vídeo largo con su layout): cada
+short es un montaje de shorts-studio con la cara abajo y recursos arriba.
+
+1. **Elegir los momentos** leyendo la transcripción de las tomas (la del montaje largo
+   sirve: `remotion-animations/projects/youtube-<slug>/transcripts/NN.json`, en el
+   reloj de la cámara). Una idea por short, 30-60 s, con gancho y remate; se pueden
+   juntar varios tramos de la misma toma (cortar en frases, no a mitad de palabra).
+2. **Cortar** con `scripts/camera-cuts.mjs`: cada tramo sale como `1.mkv`, `2.mkv`…
+   con el vídeo de la cámara y el audio de la mezcla. Mide el desfase cámara→mezcla
+   por toma (movimiento de la cámara frente a las esquinas de la mezcla; una toma con
+   poca correlación usa la mediana de las demás) y deja `camera-cuts.json`.
+
+   ```powershell
+   node .agents/skills/create-ranked-shorts/scripts/camera-cuts.mjs --recordings "<grabaciones>" --spec cortes.json --out data/shorts-src/<video> --dry-run
+   node .agents/skills/create-ranked-shorts/scripts/camera-cuts.mjs --recordings "<grabaciones>" --spec cortes.json --out data/shorts-src/<video>
+   ```
+
+   `cortes.json`: `{"shorts": [{"slug": "...", "take": "2026-10-16 21-06-15", "segments": [[2.05, 42.1], [63.25, 67.95]]}]}`,
+   tiempos en segundos del reloj de la cámara.
+3. `npm run shorts:ingest -- --source data/shorts-src/<video>/<slug> --slug <slug>`
+   por short (transcripción en GPU, cara, −14 LUFS). Comprobar la primera y la última
+   palabra de cada clip y corregir nombres en `transcripts/NN.json` sin mover índices.
+4. **Recursos arriba**: los de la PANTALLA del autor son los más fieles a lo que dice
+   (recortar el post o la página, no la barra de tareas ni la webcam incrustada; la
+   columna de un post de X en 16:9 con fondo negro llena el panel en `cover`), más
+   vídeos oficiales, capturas de la noticia y logos (Wikimedia Commons con licencia;
+   logos oscuros recoloreados a blanco). Un vídeo largo se importa una vez y cada cue
+   elige su tramo con `mediaTrimSeconds`. Importar con
+   `npm run shorts:assets -- --requests <json> --out <carpeta>/ASSETS --slug <slug>`.
+5. **Plan** con el estilo viral aprobado (sección siguiente y `shorts-desde-cero`):
+   escenas `talking-head` partidas por frases con un recurso por cosa nombrada, `full`
+   con `punch-in` solo para remates sin recurso, riser de arranque con
+   `soundAlign: "end"`, `money` en cifras de dinero, `message` al entrar un post. Los
+   efectos salen de la paleta `viral-reels` y van **calibrados frente a la voz**
+   (`calibrated: true` en `short-build.json`): no escribir volúmenes. Los
+   `holdSeconds` cuentan desde la palabra del cue, no desde el corte de la escena.
+6. `npm run shorts:build` y `npm run shorts:render` por short, y la revisión de
+   «Control de calidad».
+
+Ejemplo completo: `data/shorts-src/noticias-1016/` (`cortes.json` y `make-plans.mjs`).
+La medida del desfase es la de `src/modules/video-studio/recorded-takes.js`, la misma que
+usa `npm run tomas` para el vídeo largo (`docs/grabacion-separada.md`).
 
 ## Rendimiento: preparar, revisar y exportar una vez
 

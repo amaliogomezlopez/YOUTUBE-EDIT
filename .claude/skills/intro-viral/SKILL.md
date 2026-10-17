@@ -62,6 +62,11 @@ Todo el trabajo vive en `data/intro-viral/<slug>/` (fuera de Git).
 
 - **Entrada:** carpeta con las tomas `1.mkv`, `2.mkv`…; los números que pide el
   usuario; una pista de música.
+- **Grabación separada** (carpeta con `CAMARA/` y `PANTALLA/` y tomas con fecha de
+  OBS): antes, `npm run tomas -- --recordings "<carpeta>" --out data/youtube-src/<slug>`
+  numera las tomas de la más antigua a la más nueva (salvo que el usuario diga otra
+  cosa), con la imagen de la cámara y el audio de la mezcla. La apertura usa las
+  primeras; `docs/grabacion-separada.md` tiene el resto del montaje.
 - **Música:** `C:\Users\amalio\Desktop\VIDEOS-YOUTUBE\VIDEOS YOUTUBE\BACKGROUND_MUSIC`.
   Pulso claro y más larga que las tomas. Para el estilo sin texto, sobria: `documentary-suspense-ambient` (Muse Wonder, aprobada). `EPIC SONG.mp3` (180 BPM) para la v3 con texto. Ver "Música de fondo".
 - **Orden:**
