@@ -6,6 +6,16 @@ Superficie: youtube-studio (16:9 @30). No es otro motor: reutiliza el primer cor
 automatico (`planEdit`: recortes por silencio, arranques fallidos, sonidos en cortes,
 musica, sticker, cierre, recursos) y el render `YouTube-Timeline`.
 
+## Fondo y musica por defecto
+
+Desde el 2026-10-18 el perfil `escritorio-v1` trae el fondo y la musica que pidio el
+autor: `wallpaper.default` (`WALLPAPER/OPENAIFONDO.png`, 1672x941, se amplia 1,15x) y
+`music.file` (`BACKGROUND_MUSIC/bensound-allthat.mp3`). `start` usa ese fondo si no se
+pasa `--wallpaper`. La musica sustituye a la del corpus en `plan`: su volumen se corrige
+por la diferencia de LUFS integrados con la del corpus (`musicGain`, `kit.music.gain`),
+asi suena igual de fuerte bajo la voz. Un proyecto ya empezado conserva su fondo
+(`state.json`); la musica nueva entra al volver a ejecutar `plan`.
+
 ## Piezas
 
 | Pieza | Fichero |
@@ -83,6 +93,14 @@ curva `glide`, ritmo y sonido que el zoom de pantalla, con tope `camera.zoom.max
 (1,5x: no ampliar pixeles de 1080p). La cara a pantalla completa va en el escenario
 (`stage: true`); la burbuja de un plano `corner` no. Un zoom no puede coincidir con un
 plano.
+
+Salida de un plano `corner` (arreglo del 2026-10-18, visto en `deepseek-v4-1-flash`):
+la tarjeta sigue `camera.enterSeconds` tras el plano para que no asome el fondo mientras
+la cara crece, pero esa cola va en la pista 0, **debajo** de la cara (pista 1); antes
+iba encima y tapaba la cara. Un zoom a la cara que empezaria durante ese crecimiento se
+retrasa hasta que la cara llena la pantalla. Dos planos `corner` separados por menos de
+`camera.shots.bridgeSeconds` se unen: la cara se queda en la burbuja en vez de crecer y
+encogerse en unos fotogramas.
 
 `TRANSCRIPCION.md` lista lo que queda tras los recortes por frases, con el minuto del
 montaje y el rango `toma:palabra` para anclar planos y zooms.

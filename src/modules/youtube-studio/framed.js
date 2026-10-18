@@ -26,6 +26,11 @@ export function framedProfile(id = 'escritorio-v1') {
   return {id, ...structuredClone(profile)};
 }
 
+/** Linear gain that puts a track measured at `lufs` at the loudness of `referenceLufs` (1 without both). */
+export function musicGain(referenceLufs, lufs) {
+  return Number.isFinite(referenceLufs) && Number.isFinite(lufs) ? round(10 ** ((referenceLufs - lufs) / 20), 4) : 1;
+}
+
 /**
  * A take is `camera` when the face fills the frame, `screen` otherwise. A screen
  * take keeps the webcam panel the recording already carries (OBS overlay), so the
@@ -214,6 +219,11 @@ export function frameShots(plan, {clips, takes, shots = [], assets = {}, profile
     resolved.push({...cue, untilWord, at, until, kind: asset.kind});
   }
   resolved.sort((a, b) => a.at - b.at);
+  // Two corner shots this close keep the face in the bubble: growing it back for a few frames reads as a flicker.
+  for (let i = 1; i < resolved.length; i++) {
+    const a = resolved[i - 1], b = resolved[i], gap = b.at - a.until;
+    if (a.layout === 'corner' && b.layout === 'corner' && gap > 0 && gap < (sh.bridgeSeconds ?? 0)) a.until = b.at;
+  }
   for (let i = 1; i < resolved.length; i++) if (resolved[i].at < resolved[i - 1].until) errors.push(`plano en ${resolved[i].at} s: se solapa con el anterior (acaba en ${resolved[i - 1].until} s)`);
   let missingSound = false;
   for (const r of resolved) {
@@ -298,7 +308,10 @@ export function frameEditPlan(plan, {clips, takes, zooms, shots = [], assets = {
   const segments = plan.segments.map(({zoom, layout, ...s}) => s);
   const framedShots = frameShots({...plan, segments}, {clips, takes, shots, assets, profile, kit});
   const errors = [...framedShots.errors], warnings = [...framedShots.warnings];
-  const decisions = [...plan.decisions.filter((d) => d.type !== 'push' && d.type !== 'punch-in'), ...framedShots.decisions];
+  // The profile's own music bed plays at the loudness the corpus bed had (kit.music.gain).
+  const gain = kit.music?.gain ?? 1;
+  const decisions = [...plan.decisions.filter((d) => d.type !== 'push' && d.type !== 'punch-in')
+    .map((d) => d.type === 'music' && gain !== 1 ? {...d, volume: round(d.volume * gain, 4), outroVolume: round(d.outroVolume * gain, 4)} : d), ...framedShots.decisions];
   const inserts = decisions.filter((d) => d.type === 'insert');
   const resolved = [];
   for (const [n, cue] of (zooms ?? []).entries()) {
@@ -322,7 +335,10 @@ export function frameEditPlan(plan, {clips, takes, zooms, shots = [], assets = {
     const until = cue.untilWord ?? defaultUntil(words, cue.atWord, z);
     if (!Number.isInteger(until) || until < cue.atWord || !Number.isFinite(words[until]?.end)) {errors.push(`${label}: untilWord invalido`); continue;}
     const segEnd = seg.at + seg.out - seg.in;
-    const at = round(Math.max(seg.at, seg.at + word.start - seg.in - z.leadSeconds));
+    let at = round(Math.max(seg.at, seg.at + word.start - seg.in - z.leadSeconds));
+    // Right after a corner shot the face is still growing back over the card: the zoom waits until it fills the screen.
+    const growing = inserts.find((d) => d.shot && d.layout === 'corner' && at >= d.until - 1e-6 && at < d.until + profile.camera.enterSeconds);
+    if (growing) at = round(growing.until + profile.camera.enterSeconds);
     let holdEnd = Math.min(seg.at + words[until].end - seg.in, segEnd - z.outSeconds);
     if (holdEnd - (at + z.inSeconds) > z.maxHoldSeconds) {
       holdEnd = at + z.inSeconds + z.maxHoldSeconds;
@@ -449,14 +465,22 @@ export function compileFramedPlan(plan, {clips, takes, profile, wallpaper, kit =
     const shrink = {x: card.x + card.w * 0.04, y: card.y + card.h * 0.04, w: card.w * 0.92, h: card.h * 0.92};
     const length = item.kind === 'image' ? d.until - d.at : item.durationSeconds;
     // A clip shorter than the shot starts again, as with the other resources.
-    // A corner card stays under the face while it grows back, so the bare wallpaper never shows.
+    // A corner card stays for the face's growth back, so the bare wallpaper never shows; that
+    // tail goes UNDER the face (track 0 < 1): above it, the card covered the face for that time.
     const until = d.layout === 'corner' ? Math.min(plan.duration, d.until + cam.enterSeconds) : d.until;
     for (let at = d.at, k = 0; at < until - 1 / CANVAS.fps; at += length, k++) {
-      layers.push(rectLayer({id: `shot-${d.resources[0]}-${k}-${d.at}`, type: item.kind === 'image' ? 'image' : 'video', file: item.file, from: frameOf(at),
-        duration: frameOf(Math.min(until, at + length)) - frameOf(at), width: item.width, height: item.height,
-        ...(d.layout === 'cover' ? {rect: full, fit: 'cover', trackIndex: 4, enter: k ? undefined : {seconds: 0.25, fade: true}}
-          : {rect: card, fit: 'contain', frame: {...cardFrame, background: '#0d0f14'}, stage: true, trackIndex: 2, enter: k ? undefined : {seconds: cam.enterSeconds, from: shrink, fade: true}}),
-        name: item.name ?? d.resources[0]}));
+      const end = Math.min(until, at + length);
+      const parts = at < d.until - 1e-6 && end > d.until + 1e-6 ? [[at, d.until], [d.until, end]] : [[at, end]];
+      for (const [a, b] of parts) {
+        const tail = a >= d.until - 1e-6;
+        if (frameOf(b) <= frameOf(a)) continue;
+        layers.push(rectLayer({id: `shot-${d.resources[0]}-${k}${tail ? '-tail' : ''}-${d.at}`, type: item.kind === 'image' ? 'image' : 'video', file: item.file, from: frameOf(a),
+          duration: frameOf(b) - frameOf(a), sourceIn: item.kind === 'image' ? 0 : round(a - at, 4), width: item.width, height: item.height,
+          ...(d.layout === 'cover' ? {rect: full, fit: 'cover', trackIndex: 4, enter: k ? undefined : {seconds: 0.25, fade: true}}
+            : {rect: card, fit: 'contain', frame: {...cardFrame, background: '#0d0f14'}, stage: true, trackIndex: tail ? 0 : 2,
+              enter: k || a > at ? undefined : {seconds: cam.enterSeconds, from: shrink, fade: true}}),
+          name: item.name ?? d.resources[0]}));
+      }
     }
   }
   for (const d of plan.decisions.filter((x) => x.type === 'insert' && !x.shot)) {

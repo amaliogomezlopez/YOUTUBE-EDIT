@@ -36,11 +36,13 @@ npm run tomas -- --recordings "CARPETA" --out data/youtube-src/nombre
 
 ## Paso 1: start
 ```powershell
-npm run youtube:escritorio -- start --source "CARPETA_DE_TOMAS" --slug nombre --wallpaper "RUTA\FONDO.png" [--variant auto|pantalla|camara]
+npm run youtube:escritorio -- start --source "CARPETA_DE_TOMAS" --slug nombre [--wallpaper "RUTA\FONDO.png"] [--variant auto|pantalla|camara]
 ```
 - `--variant camara` cuando todas las tomas son la cara; `auto` lo decide por toma.
-- Si el autor no dice fondo, listar su carpeta de wallpapers y preguntar; si no
-  contesta, usar un degradado suave de 1920x1080 o mayor (avisa si es pequeno).
+- Fondo por defecto (peticion del autor, 2026-10-18): `WALLPAPER\OPENAIFONDO.png`
+  (`wallpaper.default` del perfil). Solo pasar `--wallpaper` si el autor pide otro.
+- Musica por defecto: `BACKGROUND_MUSIC\bensound-allthat.mp3` (`music.file` del perfil),
+  a la sonoridad de la cama del corpus. No elegir otra pista salvo peticion del autor.
 - Deja en `data/youtube-escritorio/<slug>/`: `takes.json` (tipo de toma y panel de
   webcam), `candidates.json` (numeros y palabras que senalan algo), `frames/`.
 

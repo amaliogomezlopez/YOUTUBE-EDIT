@@ -147,7 +147,7 @@ test('camera variant: corner puts the asset in a card and the face in the bubble
   const bubble = faces.find((l) => l.crop);
   assert.ok(bubble && bubble.rect.w < 600 && bubble.enter.from.w === 1920, 'la cara se encoge de pantalla completa a la burbuja');
   assert.ok(faces.some((l) => l.enter?.from?.w === bubble.rect.w), 'y vuelve a crecer');
-  const card = rp.layers.find((l) => l.id.startsWith('shot-noticia'));
+  const card = rp.layers.find((l) => l.id.startsWith('shot-noticia') && !l.id.includes('-tail'));
   assert.ok(card.stage && card.fit === 'contain' && card.enter.fade);
   const covers = rp.layers.filter((l) => l.id.startsWith('shot-demo'));
   assert.ok(covers.length >= 2 && covers.every((l) => !l.stage && l.rect.w === 1920), 'un video corto se repite y tapa todo');
@@ -175,6 +175,46 @@ test('camera variant: a zoom on a face take goes to the tracked face, capped, an
   assert.ok(rp.layers.filter((l) => l.id.startsWith('face-')).every((l) => l.stage), 'la cara a pantalla completa va en el escenario');
   const blind = {...faceClip, focus: {}};
   assert.match(frameEditPlan(camBase(), {clips: [blind], takes: camTakes, zooms: [{clipId: '05', atWord: 20, reason: 'sin cara detectada'}], profile}).errors.join(), /cara detectada/);
+});
+
+test('a face zoom right after a corner shot waits for the face to fill the screen, and the outgoing card goes under it', () => {
+  // deepseek-v4-1-flash 02:73: the zoom started while the face grew back and the card sat on top of it.
+  const shots = [{clipId: '05', atWord: 20, untilWord: 29, layout: 'corner', asset: 'noticia', reason: 'Se nombra la noticia'}];
+  const {errors, plan} = frameEditPlan(camBase(), {clips: [faceClip], takes: camTakes, shots, assets: catalog, profile,
+    zooms: [{clipId: '05', atWord: 30, untilWord: 39, reason: 'Remate a la cara justo al acabar el plano'}]});
+  assert.deepEqual(errors, []);
+  const [shot] = plan.shots, [zoom] = plan.zooms;
+  assert.ok(zoom.at >= shot.until + profile.camera.enterSeconds - 1e-6, `zoom ${zoom.at} s, plano hasta ${shot.until} s`);
+  const rp = compileFramedPlan(plan, {clips: [faceClip], takes: camTakes, profile, wallpaper: {file: 'C:/fondo.png', width: 1920, height: 1080}, assets: Object.values(catalog)});
+  const until = Math.round(shot.until * CANVAS.fps);
+  const grown = rp.layers.find((l) => l.id.startsWith('face-') && l.from === until);
+  const main = rp.layers.find((l) => l.id.startsWith('shot-noticia') && !l.id.includes('-tail'));
+  const tail = rp.layers.find((l) => l.id.includes('-tail'));
+  assert.ok(grown?.enter?.from && grown.trackIndex === 1, 'la cara vuelve a crecer');
+  assert.equal(main.from + main.duration, until, 'la tarjeta deja de estar encima al acabar el plano');
+  assert.ok(tail && tail.from === until && tail.trackIndex < grown.trackIndex && !tail.enter, 'lo que queda de tarjeta va debajo de la cara');
+});
+
+test('two corner shots almost back to back keep the face in the bubble', () => {
+  const shots = [{clipId: '05', atWord: 20, untilWord: 29, layout: 'corner', asset: 'noticia', reason: 'Primera captura'},
+    {clipId: '05', atWord: 31, untilWord: 39, layout: 'corner', asset: 'noticia', reason: 'Segunda captura'}];
+  const {errors, plan} = frameEditPlan(camBase(), {clips: [faceClip], takes: camTakes, zooms: [], shots, assets: catalog, profile});
+  assert.deepEqual(errors, []);
+  assert.equal(plan.shots[0].until, plan.shots[1].at);
+  const rp = compileFramedPlan(plan, {clips: [faceClip], takes: camTakes, profile, wallpaper: {file: 'C:/fondo.png', width: 1920, height: 1080}, assets: Object.values(catalog)});
+  const at = Math.round(plan.shots[1].at * CANVAS.fps);
+  assert.ok(!rp.layers.some((l) => l.id.startsWith('face-') && !l.crop && l.from === Math.round(plan.shots[0].until * CANVAS.fps) && l.from < at), 'sin parpadeo a pantalla completa');
+});
+
+test('the profile music plays at the loudness of the corpus bed', async () => {
+  const {musicGain} = await import('../src/modules/youtube-studio/framed.js');
+  assert.equal(musicGain(-10.2, -8.9), 0.8610);
+  assert.equal(musicGain(null, -8.9), 1);
+  assert.ok(profile.music.file.endsWith('bensound-allthat.mp3') && profile.wallpaper.default.endsWith('OPENAIFONDO.png'));
+  const withMusic = {...camBase(), decisions: [{type: 'music', at: 0, until: 60, volume: 0.04, outroVolume: 0.15}]};
+  const {plan} = frameEditPlan(withMusic, {clips: [faceClip], takes: camTakes, zooms: [], profile, kit: {music: {file: 'C:/m.mp3', duration: 100, gain: 0.5}}});
+  const music = plan.decisions.find((d) => d.type === 'music');
+  assert.deepEqual([music.volume, music.outroVolume], [0.02, 0.075]);
 });
 
 test('asset requests that say where they go become shots; error pages are not news', async () => {

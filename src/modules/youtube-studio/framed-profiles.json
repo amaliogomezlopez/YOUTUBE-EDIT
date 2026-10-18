@@ -24,8 +24,13 @@
       "scale": 1.1
     },
     "wallpaper": {
+      "default": "C:/Users/amalio/Desktop/VIDEOS-YOUTUBE/VIDEOS YOUTUBE/WALLPAPER/OPENAIFONDO.png",
       "maxUpscale": 1.25,
-      "_note": "Un fondo menor que el lienzo se amplia; un degradado suave lo aguanta, una foto con detalle no"
+      "_note": "Un fondo menor que el lienzo se amplia; un degradado suave lo aguanta, una foto con detalle no. default: el fondo que pidio el autor el 2026-10-18; --wallpaper lo sustituye"
+    },
+    "music": {
+      "file": "C:/Users/amalio/Desktop/VIDEOS-YOUTUBE/VIDEOS YOUTUBE/BACKGROUND_MUSIC/bensound-allthat.mp3",
+      "_note": "Cama musical que pidio el autor el 2026-10-18 en lugar de la del corpus. Suena a la misma sonoridad que la musica del corpus: el volumen del plan se corrige por la diferencia de LUFS integrados"
     },
     "zoom": {
       "inSeconds": 1.1,
@@ -66,6 +71,8 @@
         "minSeconds": 2,
         "maxSeconds": 14,
         "defaultSeconds": 6,
+        "bridgeSeconds": 1,
+        "_bridgeNote": "Dos planos corner separados por menos de bridgeSeconds se unen: la cara no vuelve a pantalla completa unos pocos fotogramas para encogerse otra vez (parpadeo visto en deepseek-v4-1-flash, 2026-10-18)",
         "sound": "whoosh",
         "maxFaceOnlySeconds": 20,
         "maxCoverShare": 0.45,

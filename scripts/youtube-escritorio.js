@@ -25,13 +25,13 @@ import {measureLoudness} from '../src/modules/video-studio/sound-loudness.js';
 import {detectSilences} from '../src/modules/video-studio/silences.js';
 import {qaRender} from '../src/modules/youtube-studio/qa.js';
 import {reviewMarkdown} from '../src/modules/youtube-studio/review.js';
-import {framedProfile, classifyTake, zoomCandidates, frameEditPlan, compileFramedPlan, cardRect, faceCrop, transcriptMarkdown, draftShots, CANVAS} from '../src/modules/youtube-studio/framed.js';
+import {framedProfile, classifyTake, zoomCandidates, frameEditPlan, compileFramedPlan, cardRect, faceCrop, transcriptMarkdown, draftShots, musicGain, CANVAS} from '../src/modules/youtube-studio/framed.js';
 import {cameraCrop} from '../src/modules/video-studio/camera-track.js';
 import {excerptRenderPlan} from '../src/modules/youtube-studio/render-plan.js';
 import {assetRequestsTemplate, validateAssetRequests, resolveAssetRequests} from '../src/modules/intro-viral/assets.js';
 
 const USAGE = `Uso: npm run youtube:escritorio -- <comando>
-  start   --source CARPETA --slug SLUG --wallpaper IMAGEN [--variant auto|pantalla|camara] [--intents JSON] [--profile escritorio-v1]
+  start   --source CARPETA --slug SLUG [--wallpaper IMAGEN] [--variant auto|pantalla|camara] [--intents JSON] [--profile escritorio-v1]
   assets  --slug SLUG [--force]     (descarga asset-requests.json: webs, noticias, YouTube, X, ficheros)
   plan    --slug SLUG
   preview --slug SLUG --at SEGUNDOS
@@ -67,7 +67,7 @@ async function loadClips(project) {
 }
 
 /** Style profile and brand kit of the author's own edits, as the automatic first cut uses them. */
-async function styleAndKit() {
+async function styleAndKit(framed) {
   const file = path.join(CORPUS, 'style-profile.json');
   if (!existsSync(file)) throw Error('Falta el perfil de estilo: npm run editorial:corpus -- scan y -- profile');
   const profile = (await readJson(file)).horizontal;
@@ -77,6 +77,13 @@ async function styleAndKit() {
     if (edit.format === 'horizontal' && !(profile.excluded ?? []).includes(edit.project)) edits.push(edit);
   }
   const kit = await resolveBrandKit(edits, {loudness: (file) => measureLoudness(file), readFile, probe: async (f) => {const i = await ffprobe(f); return {duration: i.duration, width: i.width, height: i.height};}});
+  // The escritorio profile names its own music bed; it plays as loud as the corpus bed did.
+  const music = framed?.music?.file;
+  if (music) {
+    if (!existsSync(music)) throw Error(`No existe la musica del perfil ${framed.id}: ${music}`);
+    const [mine, reference] = await Promise.all([measureLoudness(music), kit.music ? measureLoudness(kit.music.file) : null]);
+    kit.music = {file: music, duration: (await ffprobe(music)).duration, gain: musicGain(reference?.integratedLufs, mine.integratedLufs), source: `perfil ${framed.id}`};
+  }
   return {profile, kit};
 }
 
@@ -128,16 +135,18 @@ const latestPlan = async (work) => {
 
 async function start(v) {
   const d = dirs(v.slug);
-  if (!v.source || !v.wallpaper) throw Error(USAGE);
+  if (!v.source) throw Error(USAGE);
   const profile = framedProfile(v.profile);
+  const wallpaper = v.wallpaper ?? profile.wallpaper.default;
+  if (!wallpaper) throw Error(`Sin fondo: pasar --wallpaper (el perfil ${profile.id} no trae wallpaper.default)`);
   if (!existsSync(path.join(d.project, 'manifest.json'))) await node('scripts/youtube-studio.js', ['ingest', '--source', path.resolve(v.source), '--slug', v.slug]);
   await mkdir(path.join(d.work, 'frames'), {recursive: true});
-  const wallpaperFile = path.resolve(v.wallpaper), wp = await sharp(wallpaperFile).metadata();
+  const wallpaperFile = path.resolve(wallpaper), wp = await sharp(wallpaperFile).metadata();
   const warnings = [];
   const upscale = Math.max(CANVAS.width / wp.width, CANVAS.height / wp.height);
   if (upscale > profile.wallpaper.maxUpscale) warnings.push(`El fondo mide ${wp.width}x${wp.height}: se amplia ${round(upscale, 2)}x para cubrir el lienzo. Un degradado suave lo aguanta; una foto con detalle se vera borrosa (mejor 1920x1080 o mayor).`);
   const {clips, assets} = await loadClips(d.project);
-  const {profile: style, kit} = await styleAndKit();
+  const {profile: style, kit} = await styleAndKit(profile);
   const intents = v.intents ? await readJson(v.intents) : {};
   const basePlan = planEdit({clips, profile: style, kit, intents, assets});
   const {takes: ordered} = orderTakes(clips);
@@ -246,7 +255,7 @@ async function plan(v) {
   const state = await readJson(d.state);
   const profile = framedProfile(state.profile);
   const {clips, assets} = await loadClips(state.project);
-  const {kit} = await styleAndKit();
+  const {kit} = await styleAndKit(profile);
   const takes = await readJson(path.join(d.work, 'takes.json'));
   const basePlan = await readJson(path.join(d.work, 'base-plan.json'));
   const {zooms} = await readJson(d.zooms);
