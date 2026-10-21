@@ -21,8 +21,11 @@ Ficha antes del guion y comprobacion de su `rules.json` antes de aprobar. Las sk
 este repo (`.claude/skills/*`, `.agents/skills/*`) van despues: deciden como se monta, no que se
 cuenta.
 
-- **Promesa de amaliometria**: pendiente de que el usuario la fije en una frase. Hasta entonces,
-  `guion-video` la pide antes de proponer temas.
+- **Promesa de amaliometria** (canal personal del autor, con su cara): *reseñas de modelos de IA
+  probados por el autor, sobre todo de texto y también de imagen, audio y vídeo: cuál es mejor para
+  qué, con sus ventajas y desventajas.* Los estudios de la receta se hicieron con vídeos sin rostro:
+  tema, hilo, packaging complementario y estructura valen igual; el ritmo de cambio de imagen es
+  orientativo.
 - **Promesa de Finance Cavaliers**: en `channels/finance-cavaliers/README.md`.
 - Excepciones de un canal a la receta: en su propia configuracion, y anotadas en la ficha.
 

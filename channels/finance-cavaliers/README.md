@@ -18,7 +18,7 @@ Antes de elegir tema, escribir guion, título o miniatura, o sacar un Short, se 
 `D:\0000-STUDIO\formats\youtube-largo\` y `D:\0000-STUDIO\formats\short\`: ficha antes del guion y
 comprobación de su `rules.json` antes de aprobar.
 
-- **Promesa del canal** (propuesta, pendiente de que el usuario la confirme): *economía y finanzas
+- **Promesa del canal**: *economía y finanzas
   contadas en clave documental: por qué pasa lo que mueve el dinero y qué consecuencias tiene, con
   datos y fuentes verificables.*
 - **Excepciones del canal**: episodios de 6 a 10 minutos (`channel.config.json`), algo más cortos que
