@@ -5,6 +5,8 @@ description: Monta Reels y TikToks desde la ruta de un clip propio a camara con 
 
 # Reels a camara con el estilo aprobado
 
+> **Receta obligatoria de STUDIO.** Qué se cuenta en el Reel, su arranque y su cierre sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\short\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 Usar desde la raiz de YouTube Edit. Esta skill es texto y comandos Node: sirve a cualquier agente con acceso al proyecto, terminal, busqueda web y revision de imagen/video/audio. No necesita herramientas exclusivas de Codex, un modelo concreto ni DaVinci MCP.
 
 Leer [el procedimiento completo](../../../docs/talking-head-reels.md) antes del primer montaje. Las reglas ejecutables son [shorts-rules.json](../../../src/modules/shorts-studio/rules/shorts-rules.json). La referencia aprobada esta en [approved-style.json](../../../src/modules/talking-head/approved-style.json).

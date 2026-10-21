@@ -5,6 +5,8 @@ description: Saca un Short vertical 9:16 para TikTok, Instagram Reels y YouTube 
 
 # Short 9:16 desde la apertura viral
 
+> **Receta obligatoria de STUDIO.** Qué tramo se usa y cómo arranca y termina el Short sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\short\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 El encargo típico llega justo después de montar la apertura: "edítame la intro del
 vídeo… y hazme también un short para TikTok e Instagram con esa misma intro". Suelen ser
 2-4 tomas y salen 30-60 s de vertical.

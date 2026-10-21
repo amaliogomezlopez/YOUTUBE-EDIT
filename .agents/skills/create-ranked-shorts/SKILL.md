@@ -5,6 +5,8 @@ description: "Convierte un vídeo largo MP4 en Shorts verticales 9:16 con Shorts
 
 # Crear Shorts rankeados
 
+> **Receta obligatoria de STUDIO.** La selección de los cortes (cada uno tiene que entenderse solo, con la idea en la primera frase) sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\short\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 Generar cortes verticales terminados y revisados. Reutilizar el pipeline Node existente. La publicación requiere autorización explícita; generar, corregir y verificar los archivos forma parte del encargo de montaje.
 
 Esta skill extrae cortes de un vídeo largo. Para montar varios clips desde cero, seguir `docs/shorts-desde-cero.md` y su flujo `shorts:ingest` → `shorts:build` → `shorts:render`. Si la grabación tiene la cámara y la pantalla por separado (carpetas `CAMARA/` y `PANTALLA/`), seguir la sección «Grabación separada».

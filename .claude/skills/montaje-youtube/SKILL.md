@@ -5,6 +5,8 @@ description: Monta automaticamente un video largo horizontal de YouTube a partir
 
 # Montaje automatico de YouTube
 
+> **Receta obligatoria de STUDIO.** El gancho, el orden de las tomas y el cierre del vídeo sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\youtube-largo\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 ## Paso 0
 1. Leer `docs/youtube-studio.md` (secciones "Plan automatico" y "Recursos automaticos").
 2. Leer `data/editorial-memory/corpus/ESTILO.md`. Si no existe o el autor ha editado

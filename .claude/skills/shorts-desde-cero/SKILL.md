@@ -5,6 +5,8 @@ description: Monta un Short vertical 9:16 a partir de clips grabados a propósit
 
 # Montar un Short desde cero
 
+> **Receta obligatoria de STUDIO.** El guion, el arranque y el cierre del Short sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\short\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 Un Short desde cero no es un recorte de un vídeo largo: es un montaje editorial de
 clips cortos grabados a propósito más imágenes. No usa `src/lib/pipeline.js`; usa
 `src/modules/shorts-studio` sobre la capa común `src/modules/video-studio`, y

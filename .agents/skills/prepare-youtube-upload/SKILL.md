@@ -5,6 +5,8 @@ description: "Analiza un vídeo largo MP4 con Shortsmith y prepara su paquete ed
 
 # Preparar publicación de YouTube
 
+> **Receta obligatoria de STUDIO.** Los títulos alternativos y el texto de la miniatura sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\youtube-largo\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 Generar un paquete editorial verificable a partir de la transcripción real del vídeo. Mantener el contenido en español salvo petición contraria y no subir ni publicar nada sin autorización explícita.
 
 ## Flujo

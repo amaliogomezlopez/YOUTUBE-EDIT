@@ -5,6 +5,8 @@ description: Monta enteros los primeros clips a cámara de un vídeo largo de Yo
 
 # Apertura viral de un vídeo largo
 
+> **Receta obligatoria de STUDIO.** Qué cuenta la apertura (la primera frase tiene que cumplir la promesa del título y la miniatura) sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\youtube-largo\`: promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 La apertura es el primer minuto y medio del vídeo largo: los primeros clips a cámara
 montados enteros, con jump cuts, zooms, recursos reales y sonido en cada cambio de
 imagen. Sale un MP4 1920×1080 a 60 fps que el usuario coloca al principio del vídeo en

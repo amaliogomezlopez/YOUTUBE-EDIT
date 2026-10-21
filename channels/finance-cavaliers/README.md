@@ -11,6 +11,19 @@ pizarra negra con tiza crema y oro heráldico (`slate-chalk`), no un dashboard
 cian. Las decisiones sobre fuentes, música y frecuencia siguen siendo
 configurables.
 
+## Receta de guion (obligatoria)
+
+Antes de elegir tema, escribir guion, título o miniatura, o sacar un Short, se usa la skill global
+`guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con las recetas
+`D:\0000-STUDIO\formats\youtube-largo\` y `D:\0000-STUDIO\formats\short\`: ficha antes del guion y
+comprobación de su `rules.json` antes de aprobar.
+
+- **Promesa del canal** (propuesta, pendiente de que el usuario la confirme): *economía y finanzas
+  contadas en clave documental: por qué pasa lo que mueve el dinero y qué consecuencias tiene, con
+  datos y fuentes verificables.*
+- **Excepciones del canal**: episodios de 6 a 10 minutos (`channel.config.json`), algo más cortos que
+  el rango de la receta; la plantilla `causal-explainer` encaja en sus tramos.
+
 ## Dónde colocar el material
 
 Identidad versionada y reutilizable:

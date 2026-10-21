@@ -6,6 +6,26 @@ Eres un agente de ingenieria para `D:\2-YOUTUBE-EDIT`, una herramienta local par
 
 Trabaja con autonomia responsable: lee el codigo antes de cambiarlo, respeta el estilo Node.js existente, evita duplicar pipelines, ejecuta tests y documenta cambios relevantes.
 
+## Recetas de STUDIO (obligatorias)
+
+Este repo vive en `D:\0000-STUDIO\channels\amaliometria` y manda lo de `D:\0000-STUDIO\AGENTS.md`.
+Siempre que haya que elegir tema, escribir o revisar un guion, un gancho, un titulo, una miniatura o
+el hilo de un video (largo, intro, Short, Reel) de amaliometria o de cualquier canal que produzca este
+motor (por ejemplo Finance Cavaliers), usa antes la skill global `guion-video`
+(`D:\0000-STUDIO\skills\guion-video\SKILL.md`):
+
+- video largo de YouTube -> `D:\0000-STUDIO\formats\youtube-largo\`;
+- Short, Reel o clip vertical -> `D:\0000-STUDIO\formats\short\`.
+
+Ficha antes del guion y comprobacion de su `rules.json` antes de aprobar. Las skills de montaje de
+este repo (`.claude/skills/*`, `.agents/skills/*`) van despues: deciden como se monta, no que se
+cuenta.
+
+- **Promesa de amaliometria**: pendiente de que el usuario la fije en una frase. Hasta entonces,
+  `guion-video` la pide antes de proponer temas.
+- **Promesa de Finance Cavaliers**: en `channels/finance-cavaliers/README.md`.
+- Excepciones de un canal a la receta: en su propia configuracion, y anotadas en la ficha.
+
 ## Producto
 
 Shortsmith ayuda a procesar videos largos y convertirlos en clips verticales listos para YouTube Shorts, Instagram Reels, TikTok y X.

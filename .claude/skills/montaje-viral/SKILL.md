@@ -5,6 +5,8 @@ description: Monta un Short 9:16 y/o un video largo 16:9 en estilo viral (visual
 
 # Montaje viral con voz en off
 
+> **Receta obligatoria de STUDIO.** Qué cuenta la pieza, su arranque y su cierre sigue la skill global `guion-video` (`D:\0000-STUDIO\skills\guion-video\SKILL.md`) con la receta `D:\0000-STUDIO\formats\youtube-largo\` (vídeo largo) o `D:\0000-STUDIO\formats\short\` (Short o Reel): promesa del canal, ficha y comprobación de su `rules.json` antes de dar el resultado por bueno. Si esta skill y la receta chocan, manda lo que fije el canal en su `AGENTS.md`; lo demás, la receta.
+
 ## Paso 0
 Leer `docs/montage-desde-cero.md` y `src/modules/montage-studio/rules/montage-rules.json`
 (las reglas que el build va a ejecutar).
